@@ -1,0 +1,69 @@
+@model IWSProject.Models.LoginModel
+@using IWSProject.Content
+
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    Action<MVCxFormLayoutItem> TextBoxSettingsMethod = (item) =>
+    {
+        item.NestedExtension().TextBox(s =>
+        {
+            s.Properties.Password = s.Name.Contains("Password");
+            s.Properties.ValidationSettings.ErrorTextPosition = ErrorTextPosition.Bottom;
+            s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.Text;
+            s.Properties.ValidationSettings.Display = Display.Dynamic;
+            s.ShowModelErrors = true;
+        });
+    };
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.DevExpress().FormLayout(settings =>
+{
+    settings.Name = "formLogin";
+
+    settings.Items.AddGroupItem(group =>
+    {
+        group.Caption = IWSLocalResource.UserCredential;
+        group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+        group.Items.Add(i => i.UserName, TextBoxSettingsMethod).Caption=IWSLocalResource.User;
+        group.Items.Add(i => i.Password, TextBoxSettingsMethod).Caption=IWSLocalResource.Password;
+    });
+
+    settings.Items.AddGroupItem(group =>
+    {
+        group.Caption = IWSLocalResource.AdditionalInformation;
+        group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+        group.Items.Add(i => i.RememberMe).Caption=IWSLocalResource.RememberMe;
+    });
+
+    settings.Items.AddGroupItem(group =>
+    {
+        group.Caption = "  ";
+        group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+        group.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.NestedExtension().Button(b =>
+            {
+                b.Name = "signIn";
+                b.Text = IWSLocalResource.SignUp;
+                b.UseSubmitBehavior = true;
+                b.Width = Unit.Pixel(120);
+            });
+        });
+    });
+
+}).GetHtml()
+}
+ 
+@* Enable this once you have account confirmation enabled for password reset functionality
+<br />
+@Html.ActionLink("Forgot your password?", "ForgotPassword")
+
+<br />
+@@Html.Partial("_ExternalLoginsListPartial", new IWSProject.Models.ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })*@

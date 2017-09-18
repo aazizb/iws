@@ -1,0 +1,77 @@
+﻿@using IWSProject.Content
+<script type="text/javascript">
+      function OnOIDSelectedIndexChanged(s, e) {
+        $.ajax({
+            url: '@Url.Action("Store", "VendorInvoices")',
+            type: "POST",
+            data: { selectedOIDIndex: s.GetValue() },
+            success: function (data) {
+                store.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("Supplier", "VendorInvoices")',
+            type: "POST",
+            data: { selectedOIDIndex: s.GetValue() },
+            success: function (data) {
+                account.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("HeaderText", "VendorInvoices")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                HeaderText.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+    }
+    var selectedIDs = null;
+    function OnBeginCallback(s, e) {
+        e.customArgs["selectedIDs"] = selectedIDs;
+    }
+    function OnSelectionChanged(s, e) {
+        s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
+    }
+    function GetSelectedFieldValuesCallback(values) {
+        selectedIDs = values.join(';');
+    }
+    function OnSubmitClick(s, e) {
+        callbackPanelPartialView.PerformCallback();
+    }
+
+    function OnRowClick(s, e) {
+        if (!s.IsValidated[e.visibleIndex])
+            return;
+        e.cancel = true;
+        s.SetFocusedRowIndex(e.visibleIndex);
+    }
+</script>
+
+@using (Html.BeginForm("Index", "VendorInvoices"))
+{
+    @Html.Hidden("cbxOID");
+
+    @Html.DevExpress().Button(
+    settings =>
+    {
+        settings.Name = "btnSubmit";
+        settings.ControlStyle.CssClass = "button";
+        settings.Text = IWSLocalResource.Validate;
+        settings.Width = Unit.Pixel(150);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnSubmitClick";
+    }
+    ).GetHtml()
+
+    @Html.Partial("CallbackPanelPartialView")
+}

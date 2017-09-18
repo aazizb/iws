@@ -1,0 +1,61 @@
+﻿@using IWSProject.Content;
+@using IWSProject.Models;
+@using System.Resources;
+@using System.Linq;
+@{
+        List<IWSProject.Models.Menu> menuItems = new List<IWSProject.Models.Menu>();
+        if (HttpContext.Current.Session["Menus"] != null)
+        {
+            menuItems = (List<IWSProject.Models.Menu>)HttpContext.Current.Session["Menus"];
+        } }
+ 
+@*Configure the header panel's menu *@
+@Html.DevExpress().Menu(settings =>
+{
+    settings.Name = "HeaderMenu";
+    settings.ItemAutoWidth = false;
+    settings.Width = Unit.Percentage(100);
+    settings.Styles.Style.Border.BorderWidth = Unit.Pixel(0);
+    settings.Styles.Style.BorderTop.BorderWidth = Unit.Pixel(1);
+
+    ResourceManager rm = new ResourceManager(typeof(IWSLocalResource));
+    if(HttpContext.Current.User.Identity.IsAuthenticated)
+    {
+        //get current user
+        var user = HttpContext.Current.User.Identity.Name;
+        //find current user assigned roles
+        string[] roles = Roles.GetRolesForUser(user);
+        //retrieve corrsponding menu items
+        var links = from item in menuItems
+                    where item.Roles.Split(new String[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                    .Any(x => roles.Contains(x) || x == "All") && item.HasAccess==true
+                    select item;
+        //build the action links
+        foreach (var link in links)
+        {
+            settings.Items.Add(items =>
+            {
+                 items.Name = link.Name;
+                 items.Text = rm.GetString(link.Name);
+                 items.NavigateUrl = DevExpressHelper.GetUrl(new { Controller = link.Controller, Action = link.Action });
+            });
+        }
+    }
+    else
+    {
+        var links = from item in menuItems
+                    where item.Roles.Split(new String[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                    .Any(x => new String[] { "All", "Anonymous" }.Contains(x)) && item.HasAccess==true
+                    select item;
+        foreach (var link in links)
+        {
+            settings.Items.Add(items =>
+            {
+                items.Name = link.Name;
+                items.Text = rm.GetString(link.Name);
+                items.NavigateUrl = DevExpressHelper.GetUrl(new { Controller = link.Controller, Action = link.Action });
+            });
+        }
+    }
+}).GetHtml()
+

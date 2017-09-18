@@ -1,0 +1,147 @@
+﻿@using IWSProject.Content
+
+@Html.DevExpress().GridView(settings =>
+{
+    settings.Name = "ResultatPartialView";
+    settings.Caption = IWSLocalResource.BalanceSheet;
+
+    settings.CallbackRouteValues = new { Controller = "Resultat", Action = "ResultatPartial" };
+
+    settings.KeyFieldName = "AccountId";
+
+    settings.SettingsBehavior.AllowSelectByRowClick = true;
+    settings.SettingsBehavior.EnableRowHotTrack = true;
+
+    settings.Styles.RowHotTrack.Cursor = "pointer";
+    settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.SettingsBehavior.AllowFocusedRow = true;
+
+    settings.Width = Unit.Percentage(100);
+
+    settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
+    settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+    settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+
+    settings.SettingsPager.PageSize = 24;
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "ClassName";
+        column.GroupIndex = 0;
+        column.Caption = IWSLocalResource.classx;
+        column.Width = Unit.Percentage(12);
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "SubClassName";
+        column.GroupIndex = 1;
+        column.Caption = IWSLocalResource.subClass;
+        column.Width = Unit.Percentage(14);
+        column.Visible = false;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "AccountId";
+        column.Caption = IWSLocalResource.accountid;
+        column.Width = Unit.Percentage(12);
+        column.Visible = false;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "AccountName";
+        column.Caption = IWSLocalResource.name;
+        column.Width = Unit.Percentage(32);
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "TDebit";
+        column.Caption = IWSLocalResource.tdebit;
+        column.Width = Unit.Percentage(12);
+        column.PropertiesEdit.DisplayFormatString = "N";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "TCredit";
+        column.Caption = IWSLocalResource.tcredit;
+        column.Width = Unit.Percentage(12);
+        column.PropertiesEdit.DisplayFormatString = "N";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Balance";
+        column.Caption = IWSLocalResource.balance;
+        column.Width = Unit.Percentage(12);
+        column.PropertiesEdit.DisplayFormatString = "N";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Currency";
+        column.Caption = IWSLocalResource.Currency;
+        column.Width = Unit.Percentage(6);
+    });
+
+    settings.CustomSummaryCalculate = (s, e) =>
+    {
+        ASPxSummaryItem item = ((ASPxSummaryItem)e.Item);
+
+        if (item.FieldName != "Currency")
+            return;
+
+        if (e.IsGroupSummary)
+        {
+            e.TotalValue = e.GetValue("Currency");
+        }
+    };
+
+    settings.SummaryDisplayText = (sender, e) =>
+    {
+        if (e.IsGroupSummary && e.Item.FieldName != "Currency")
+        {
+            e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
+        }
+    };
+
+    settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleIfExpanded;
+
+    ASPxSummaryItem tdebit = new ASPxSummaryItem();
+    tdebit.ShowInGroupFooterColumn = "TDebit";
+    tdebit.SummaryType = DevExpress.Data.SummaryItemType.Sum;
+    tdebit.FieldName = "TDebit";
+    settings.GroupSummary.Add(tdebit);
+
+    ASPxSummaryItem tcredit = new ASPxSummaryItem();
+    tcredit.ShowInGroupFooterColumn = "TCredit";
+    tcredit.SummaryType = DevExpress.Data.SummaryItemType.Sum;
+    tcredit.FieldName = "TCredit";
+    settings.GroupSummary.Add(tcredit);
+
+    ASPxSummaryItem sbalance = new ASPxSummaryItem();
+    sbalance.ShowInGroupFooterColumn = "Balance";
+    sbalance.SummaryType = DevExpress.Data.SummaryItemType.Sum;
+    sbalance.FieldName = "Balance";
+    settings.GroupSummary.Add(sbalance);
+
+    ASPxSummaryItem currency = new ASPxSummaryItem();
+    currency.ShowInGroupFooterColumn = "Currency";
+    currency.SummaryType = DevExpress.Data.SummaryItemType.Custom;
+    currency.FieldName = "Currency";
+    settings.GroupSummary.Add(currency);
+
+}).Bind(Model).GetHtml()
+

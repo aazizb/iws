@@ -1,0 +1,76 @@
+﻿@model List<EditUserViewModel>
+@using IWSProject.Content
+@using IWSProject.Models
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "UsersGridView";
+        settings.Caption = IWSLocalResource.RolesAssignement;
+
+        settings.CallbackRouteValues = new { Controller = "Account", Action = "UsersList" };
+
+        settings.KeyFieldName = "UserName";
+
+        settings.Settings.ShowGroupPanel = true;
+        settings.SettingsBehavior.AllowFocusedRow = true;
+
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowFilterRowMenu = true;
+
+        settings.Width = Unit.Percentage(100);
+        settings.SettingsPager.PageSize = 24;
+
+
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
+        settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+        settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+
+        settings.SettingsPager.PageSize = 24;
+
+        settings.ClientSideEvents.RowClick =
+                                   string.Format("function(s, e) {{ OnRowClicked(s, e, '{0}'); }}",
+                                   Url.Action("UserRoles"));
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "FirstName";
+            column.Caption = IWSLocalResource.FirstName;
+            column.Width = Unit.Percentage(20);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "LastName";
+            column.Caption = IWSLocalResource.LastName;
+            column.Width = Unit.Percentage(20);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "UserName";
+            column.Caption = IWSLocalResource.User;
+            column.Width = Unit.Percentage(25);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Email";
+            column.Caption = IWSLocalResource.Email;
+            column.Width = Unit.Percentage(30);
+        });
+
+        settings.DataBinding = (sender, e) =>
+        {
+            ((MVCxGridView)sender).ForceDataRowType(typeof(EditUserViewModel));
+        };
+    });
+    if (ViewData["GenericError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GenericError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()
+

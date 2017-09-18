@@ -1,0 +1,79 @@
+@using IWSProject.Content;
+@using IWSProject.Models;
+@using System.Resources;
+@using System.Linq;
+@{
+        List<IWSProject.Models.Menu> menuItems = new List<IWSProject.Models.Menu>();
+        if (HttpContext.Current.Session["Menus"] != null)
+        {
+            menuItems = (List<IWSProject.Models.Menu>)HttpContext.Current.Session["Menus"];
+        } }
+ 
+@*Configure the left panel's menu *@
+@Html.DevExpress().NavBar(settings =>
+{
+    settings.Name = "navBarMenu";
+    settings.AutoCollapse = true;
+    settings.EnableAnimation = true;
+    settings.Width = Unit.Percentage(100);
+    settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+    settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
+    ResourceManager rm = new ResourceManager(typeof(IWSLocalResource));
+    if (HttpContext.Current.User.Identity.IsAuthenticated)
+    {
+        //get current user
+        var user = HttpContext.Current.User.Identity.Name;
+        //find current user assigned roles
+        string[] roles = Roles.GetRolesForUser(user);
+        //retrieve corrsponding menu items
+        var menus = from item in menuItems
+                    where item.Roles.Split(new String[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                    .Any(x => roles.Contains(x) || x == "All")
+                    select item;
+        //build the action links
+        foreach (var link in menuItems.Where(p => (p.Parent == 0) && (p.HasAccess == false)).OrderBy(o=>o.MenuOrder))
+        {
+            settings.Groups.Add(group =>
+            {
+                group.Name = link.Name;
+                group.Text = rm.GetString(link.Name);
+
+                foreach (var mc in menus.Where(c => c.Parent == link.ID).OrderBy(o=>o.MenuOrder))
+                {
+                    group.Items.Add(item =>
+                    {
+                        item.Name = mc.Name;
+                        item.Text = rm.GetString(mc.Name);
+                        item.NavigateUrl = DevExpressHelper.GetUrl(new { Controller = mc.Controller, Action = mc.Action });
+                    });
+                }
+            });
+        }
+    }
+    else
+    {
+        var menus = from item in menuItems
+                    where item.Roles.Split(new String[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                    .Any(x => new String[] { "All" }.Contains(x))
+                    select item;
+        //build the action links
+        foreach (var link in menus.Where(p => (p.Parent == 0) && (p.HasAccess == false)))
+        {
+            settings.Groups.Add(group =>
+            {
+                group.Name = link.Name;
+                group.Text = rm.GetString(link.Name);
+                foreach (var mc in menus.Where(c => c.Parent == link.ID))
+                {
+                    group.Items.Add(item =>
+                    {
+                        item.Name = mc.Name;
+                        item.Text = rm.GetString(mc.Name);
+                        item.NavigateUrl = DevExpressHelper.GetUrl(new { Controller = mc.Controller, Action = mc.Action });
+                    });
+                }
+            });
+        }
+    }
+    
+}).GetHtml()

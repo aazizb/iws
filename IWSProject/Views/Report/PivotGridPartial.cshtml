@@ -1,0 +1,73 @@
+﻿@using IWSProject.Controllers
+@using IWSProject.Content
+
+@*@Html.DevExpress().PivotGrid(PivotGridHelper.Settings).Bind(Model).GetHtml()*@
+
+@Html.DevExpress().PivotGrid(settings =>
+{
+    settings.Name = "pivotGrid";
+    settings.CallbackRouteValues = new { Controller = "Report", Action = "PivotGridPartial" };
+    settings.Width = new System.Web.UI.WebControls.Unit(99, System.Web.UI.WebControls.UnitType.Percentage);
+    settings.Height = new System.Web.UI.WebControls.Unit(99, System.Web.UI.WebControls.UnitType.Percentage);
+    settings.OptionsPager.RowsPerPage = 21;
+    settings.Fields.Add(field =>
+    {
+        field.Area = PivotArea.RowArea;
+        field.FieldName = "ItemType";
+        field.Caption = IWSLocalResource.ItemType;
+        field.AreaIndex = 1;
+    });
+    settings.Fields.Add(field =>
+    {
+        field.Area = PivotArea.RowArea;
+        field.FieldName = "Owner";
+        field.Caption = IWSLocalResource.Owner;
+        field.AreaIndex = 0;
+    });
+    settings.Fields.Add(field =>
+    {
+        field.Area = PivotArea.ColumnArea;
+        field.AreaIndex = 0;
+        field.Caption = IWSLocalResource.Year;
+        field.FieldName = "TransDate";
+        field.GroupInterval = PivotGroupInterval.DateYear;
+    });
+    settings.Fields.Add(field =>
+    {
+        field.Area = PivotArea.FilterArea;
+        field.AreaIndex = 1;
+        field.Caption = IWSLocalResource.Quarter;
+        field.FieldName = "TransDate";
+        field.GroupInterval = PivotGroupInterval.DateQuarter;
+    });
+    settings.Fields.Add(field =>
+    {
+        field.Area = PivotArea.RowArea;
+        field.FieldName = "AccountName";
+        field.Caption = IWSLocalResource.account;
+        field.AreaIndex = 2;
+    });
+    settings.Fields.Add(field =>
+    {
+        field.Area = PivotArea.DataArea;
+        field.FieldName = "Amount";
+        field.Caption = IWSLocalResource.amount;
+        field.AreaIndex = 0;
+    });
+    settings.Fields.Add(field =>
+    {
+        field.Area = PivotArea.FilterArea;
+        field.FieldName = "Currency";
+        field.Caption = IWSLocalResource.Currency;
+        field.AreaIndex = 0;
+    });
+    settings.Fields.Add(field =>
+    {
+        field.Area = PivotArea.FilterArea;
+        field.FieldName = "Side";
+        field.Caption = IWSLocalResource.side;
+        field.AreaIndex = 1;
+    });
+
+}).Bind(Model).GetHtml()
+

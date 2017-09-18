@@ -1,0 +1,193 @@
+﻿@using IWSProject.Content
+@using IWSProject.Models
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "QuantityUnitsGridView";
+        settings.Caption = IWSLocalResource.quantityunit;
+
+        settings.CallbackRouteValues = new { Controller = "QuantityUnits", Action = "QuantityUnitsGridViewPartial" };
+
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "QuantityUnits", Action = "QuantityUnitsGridViewPartialAddNew" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "QuantityUnits", Action = "QuantityUnitsGridViewPartialUpdate" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "QuantityUnits", Action = "QuantityUnitsGridViewPartialDelete" };
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.Width = Unit.Percentage(6);
+
+        settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.Styles.RowHotTrack.Cursor = "pointer";
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
+
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
+        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
+        settings.SettingsCommandButton.NewButton.Text = " ";
+
+        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
+        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
+        settings.SettingsCommandButton.EditButton.Text = " ";
+        settings.CommandColumn.ShowEditButton = true;
+
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
+        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
+        settings.SettingsCommandButton.DeleteButton.Text = " ";
+        settings.CommandColumn.ShowDeleteButton = true;
+
+        settings.KeyFieldName = "id";
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsBehavior.EnableRowHotTrack = true;
+
+        settings.Styles.RowHotTrack.Cursor = "pointer";
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowFilterRowMenu = true;
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
+
+        settings.Width = Unit.Percentage(100);
+
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
+        settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+        settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+
+        settings.SettingsPager.PageSize = 24;
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "id";
+            column.Caption = IWSLocalResource.id;
+            column.Width = Unit.Percentage(6);
+        });
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "name";
+            column.Caption = IWSLocalResource.name;
+            column.Width = Unit.Percentage(30);
+        });
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "description";
+            column.Caption = IWSLocalResource.description;
+            column.Width = Unit.Percentage(70);
+        });
+
+
+        #region Template Edit
+        settings.SetEditFormTemplateContent(templateContent =>
+        {
+
+            Html.DevExpress().FormLayout(formLayoutSettings =>
+            {
+                formLayoutSettings.Name = "QuantityUnitViewEdit";
+                formLayoutSettings.Width = Unit.Percentage(100);
+                formLayoutSettings.ColCount = 3;
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "id";
+                    i.Caption = IWSLocalResource.id;
+                    i.Width = Unit.Percentage(50);
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(75);
+                    });
+                });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "name";
+                    i.Caption = IWSLocalResource.name;
+                    i.Width = Unit.Percentage(50);
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(75);
+                    });
+                });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "description";
+                    i.Caption = IWSLocalResource.description;
+                    i.Width = Unit.Percentage(50);
+                    i.NestedExtension().Memo(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(75);
+                        s.Height = Unit.Pixel(80);
+                    });
+                 });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
+
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                    i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
+                }).SetNestedContent(() =>
+                {
+                    Html.DevExpress().Button(
+                b =>
+                {
+                    b.Name = "btnUpdate";
+                    b.Text = "";
+                    b.ToolTip = IWSLocalResource.btnUpdate;
+                    b.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+                    b.Images.Image.IconID = IconID.ActionsApply16x16;
+                    b.Width = Unit.Pixel(80);
+                    b.ClientSideEvents.Click = "function(s, e){ QuantityUnitsGridView.UpdateEdit(); }";
+                }).Render();
+
+                    Html.DevExpress().Button(
+                b =>
+                {
+                    b.Name = "btnCancel";
+                    b.Text = "";
+                    b.ToolTip = IWSLocalResource.btnCancel;
+                    b.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+                    b.Images.Image.IconID = IconID.ActionsCancel16x16;
+                    b.Width = Unit.Pixel(80);
+                    b.ClientSideEvents.Click = "function(s, e){ QuantityUnitsGridView.CancelEdit(); }";
+                }).Render();
+                });
+            })
+            .Bind(ViewData["quantityunit"] ?? templateContent.DataItem)
+            .Render();
+        });
+        #endregion
+
+        settings.DataBinding = (sender, e) =>
+        {
+            ((MVCxGridView)sender).ForceDataRowType(typeof(QuantityUnit));
+        };
+    });
+    if (ViewData["GenericError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GenericError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()
+

@@ -1,0 +1,139 @@
+﻿@using IWSProject.Content
+<script type="text/javascript">
+
+    function OnSelectedIndexChanged(s, e) {
+        $.ajax({
+            url: '@Url.Action("PackUnit", "PurchaseOrders")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                unit.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("VatCode", "PurchaseOrders")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                Vat.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("Price", "PurchaseOrders")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                price.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("Currency", "PurchaseOrders")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                Currency.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+    }
+    var selectedIDs = null;
+    function OnBeginCallback(s, e) {
+        e.customArgs["selectedIDs"] = selectedIDs;
+    }
+    function OnSelectionChanged(s, e) {
+        s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
+    }
+    function GetSelectedFieldValuesCallback(values) {
+        selectedIDs = values.join(';');
+    }
+    function OnSubmitClick(s, e) {
+        callbackPanelPartialView.PerformCallback();
+    }
+
+    function OnRowClick(s, e) {
+        if (!s.IsValidated[e.visibleIndex])
+            return;
+        e.cancel = true;
+        s.SetFocusedRowIndex(e.visibleIndex);
+    }
+
+    function OnInitMaster(s, e) {
+        ASPxClientUtils.AttachEventToElement(
+            s.GetMainElement(),
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    //ENTER
+                    case 13:
+                        if (s.IsEditing()) {
+                            s.UpdateEdit();
+                        }
+                        break;
+                    //ESC
+                    case 27:
+                        if (s.IsEditing()) {
+                            s.CancelEdit();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+    }
+
+    function OnInitDetail(s, e) {
+        ASPxClientUtils.AttachEventToElement(
+            s.GetMainElement(),
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    //ENTER
+                    case 13:
+                        if (s.IsEditing()) {
+                            s.UpdateEdit();
+                            s.AddNewRow();
+                        }
+                        break;
+                    //ESC
+                    case 27:
+                        if (s.IsEditing()) {
+                            s.CancelEdit();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+    }
+
+</script>
+
+
+@using (Html.BeginForm("Index", "PurchaseOrders"))
+{
+
+    @Html.DevExpress().Button(
+    settings =>
+    {
+        settings.Name = "btnSubmit";
+        settings.ControlStyle.CssClass = "button";
+        settings.Text = IWSLocalResource.Validate;
+        settings.Width = Unit.Pixel(150);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnSubmitClick";
+    }
+    ).GetHtml()
+
+    @Html.Partial("CallbackPanelPartialView")
+}

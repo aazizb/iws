@@ -1,0 +1,14 @@
+﻿
+@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPanelPartialView";
+    settings.CallbackRouteValues = new { Controller = "GeneralLedgerOut", Action = "CallbackPanelPartialView" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("MasterGridViewPartial");
+
+    });
+    settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+}).GetHtml()
+

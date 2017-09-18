@@ -1,0 +1,12 @@
+﻿@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPanelPartialView";
+    settings.CallbackRouteValues = new { Controller = "BankStatements", Action = "CallbackPanelPartialView" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("BankStatementsGridViewPartial");
+
+    });
+    settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+}).GetHtml()

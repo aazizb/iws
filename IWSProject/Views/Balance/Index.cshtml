@@ -1,0 +1,65 @@
+﻿@using IWSProject.Models
+@using IWSProject.Content
+@model List<AccountBalanceViewModel>
+
+<script type="text/javascript">
+    var vStart = null;
+    var vEnd = null;
+    var vDetail = null;
+    function OnButtonClick(s, e) {
+        vStart = Start.GetText();
+        vEnd = End.GetText();
+        vDetail = Detail.GetCheckState();
+        callbackPartialView.PerformCallback();
+    }
+    function OnBeginCallback(s, e) {
+        e.customArgs["Start"] = vStart;
+        e.customArgs["End"] = vEnd;
+        e.customArgs["Detail"] = vDetail;
+    }
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.DevExpress().TextBox(
+    settings =>
+    {
+        settings.Properties.Native = true;
+        settings.Name = "Start";
+        settings.Width = Unit.Pixel(101);
+        settings.Height = Unit.Pixel(22);
+        settings.Properties.NullText = IWSLocalResource.PeriodFrom;
+    }
+    ).GetHtml()
+
+    @Html.DevExpress().TextBox(
+    settings =>
+    {
+        settings.Name = "End";
+        settings.Properties.Native = true;
+        settings.Width = Unit.Pixel(101);
+        settings.Height = Unit.Pixel(23);
+        settings.Properties.NullText = IWSLocalResource.PeriodTo;
+    }
+    ).GetHtml()
+
+    @Html.DevExpress().CheckBox(settings =>
+{
+    settings.Name = "Detail";
+    settings.Text = IWSLocalResource.Detail;
+    settings.Checked = true;
+}).GetHtml()
+
+    @Html.DevExpress().Button(
+    settings =>
+    {
+        settings.Name = "btnSubmit";
+        settings.ControlStyle.CssClass = "button";
+        settings.Text = IWSLocalResource.Validate;
+        settings.Width = Unit.Pixel(210);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnButtonClick";
+    }
+    ).GetHtml()
+    @Html.Partial("_CallbackPartialView")
+}

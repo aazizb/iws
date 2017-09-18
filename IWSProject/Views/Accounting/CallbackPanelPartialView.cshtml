@@ -1,0 +1,14 @@
+﻿@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPanelPartialView";
+    settings.CallbackRouteValues = new { Controller = "Accounting", Action = "CallbackPanelPartialView" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("ValidateBLPartialView");
+
+    });
+    settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+}).GetHtml()
+
+

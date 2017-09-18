@@ -1,0 +1,42 @@
+<script type="text/javascript">
+    function Init(s, e) {
+        s.SetValue(ASPxClientUtils.GetCookie("Culture"));
+    }
+    function SelectedIndexChanged(s) {
+        ASPxClientUtils.SetCookie("Culture", s.GetValue());
+        //alert(s.GetValue());
+        $("#form").submit();
+    }
+</script>
+
+@if(!Request.IsAuthenticated) {
+    @Html.ActionLink("Register", "Register", "Account") 
+    @: | 
+    @Html.ActionLink("Login", "Login", "Account")
+}
+else {
+ 
+    @: Welcome @Html.ActionLink(User.Identity.Name + "!", "ChangePassword", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })
+    @: |
+    @Html.ActionLink("Logout", "LogOff", "Account")
+}
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "form" }))
+{
+    <div class="uiCulture">
+        @Html.DevExpress().ComboBox(
+            settings =>
+            {
+                settings.Name = "SelectCulture";
+                settings.Width = Unit.Pixel(75);
+                settings.SelectedIndex = 0;
+                settings.Properties.ValueType = typeof(string);
+                settings.Properties.Items.Add("Deutsch", "de-DE");
+                settings.Properties.Items.Add("English", "en-US");
+                settings.Properties.Items.Add("Español", "es-ES");
+                settings.Properties.Items.Add("Français", "fr-FR");
+                settings.Properties.ClientSideEvents.SelectedIndexChanged = "SelectedIndexChanged";
+                settings.Properties.ClientSideEvents.Init = "Init";
+            }
+        ).GetHtml()
+    </div>
+} 

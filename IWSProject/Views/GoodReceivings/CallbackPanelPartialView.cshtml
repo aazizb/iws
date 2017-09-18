@@ -1,0 +1,13 @@
+﻿
+@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPanelPartialView";
+    settings.CallbackRouteValues = new { Controller = "GoodReceivings", Action = "CallbackPanelPartialView" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("MasterGridViewPartial");
+
+    });
+    settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+}).GetHtml()

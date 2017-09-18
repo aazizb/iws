@@ -1,0 +1,34 @@
+﻿<script type="text/javascript">
+
+    function OnCustomCommand(s, e) {
+        if (e.commandName == "UploadToDB") {
+            var items = FileManager.GetSelectedItems();
+            var names = [];
+
+            for (var i = 0; i < items.length; i++) {
+                names[i] = items[i].GetFullName();
+            }
+            $.ajax({
+                url: '@Url.Action("UploadToDB", "BankStatements")',
+                type: "POST",
+                dataType: "json",
+                data: { files: names },
+                success: function (Message) {
+                    alert(Message.Description);
+                }
+            })
+        }
+        }
+        function OnToolbarUpdating(s, e) {
+            var enabled = (FileManager.GetSelectedItems().length > 0) &&
+                                        e.activeAreaName != "None";
+            FileManager.GetToolbarItemByCommandName("UploadToDB").SetEnabled(enabled);
+
+            FileManager.GetContextMenuItemByCommandName("UploadToDB").SetEnabled(enabled);
+        }                
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.Action("ImportCSVPartial")
+}

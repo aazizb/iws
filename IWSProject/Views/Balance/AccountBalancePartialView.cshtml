@@ -1,0 +1,104 @@
+﻿@using IWSProject.Content
+
+@Html.DevExpress().GridView(settings =>
+{
+    settings.Name = "AccountBlanacePartialView";
+    settings.Caption = IWSLocalResource.AccountBalance;
+
+    settings.CallbackRouteValues = new { Controller = "Balance", Action = "AccountBalancePartialView" };
+
+    settings.KeyFieldName = "AccountID";
+
+
+    settings.SettingsBehavior.AllowSelectByRowClick = true;
+    settings.SettingsBehavior.EnableRowHotTrack = true;
+
+    settings.Styles.RowHotTrack.Cursor = "pointer";
+    settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.SettingsBehavior.AllowFocusedRow = true;
+
+    settings.Width = Unit.Percentage(100);
+
+    settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
+    settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+    settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+
+    settings.SettingsPager.PageSize = 24;
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "AccountID";
+        column.Caption = IWSLocalResource.account;
+        column.Width = Unit.Percentage(48);
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "IsBalance";
+        column.Caption = IWSLocalResource.IsBalanceSheetAccount;
+        column.Width = Unit.Percentage(18);
+        column.EditorProperties().CheckBox (checkBox =>
+        {
+        });
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Periode";
+        column.Caption = IWSLocalResource.periode;
+        column.Width = Unit.Percentage(12);
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Debit";
+        column.Caption = IWSLocalResource.debit;
+        column.Width = Unit.Percentage(18);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Credit";
+        column.Caption = IWSLocalResource.credit;
+        column.Width = Unit.Percentage(18);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Balance";
+        column.Caption = IWSLocalResource.balance;
+        column.Width = Unit.Percentage(18);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").DisplayFormat = "N";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").DisplayFormat = "N";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").DisplayFormat = "N";
+    settings.Settings.ShowFooter = true;
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").DisplayFormat = "N";
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").DisplayFormat = "N";
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").DisplayFormat = "N";
+    settings.Settings.ShowGroupPanel = true;
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Currency";
+        column.Caption = IWSLocalResource.Currency;
+        column.Width = Unit.Percentage(12);
+    });
+
+}).Bind(Model).GetHtml()
