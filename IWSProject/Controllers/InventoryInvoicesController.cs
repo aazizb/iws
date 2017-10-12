@@ -48,7 +48,7 @@ namespace IWSProject.Controllers
                 var model = db.InventoryInvoices;
                 item.IsValidated = false;
                 item.CompanyId = (string)Session["CompanyID"];
-                int itemOID = (int)item.oid;
+                int itemOID = item.oid;
                 ViewData["item"] = item;
                 bool result = false;
                 try
@@ -60,10 +60,13 @@ namespace IWSProject.Controllers
                         int itemID = db.InventoryInvoices.Max(i => i.id);
 
                         result = InsertLines(itemID, itemOID, IWSLookUp.DocsType.InventoryInvoice.ToString());
-                       
+
                         if (result)
+                        {
                             db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                        }
                     }
+                    ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)
                 {
@@ -127,8 +130,12 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetInventoryInvoice());
         }
         [ValidateInput(false)]
-        public ActionResult DetailGridViewPartial(int transid)
+        public ActionResult DetailGridViewPartial(int transid, object newKeyValue)
         {
+            if (newKeyValue != null)
+            {
+                ViewData["IsNewDetailRow"] = true;
+            }
             return PartialView("DetailGridViewPartial", db.LineInventoryInvoices.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
@@ -136,7 +143,7 @@ namespace IWSProject.Controllers
         {
             var model = db.LineInventoryInvoices;
             line.transid = transId;
-            ViewData["lineInventory"] = line;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try
@@ -158,8 +165,9 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineInventoryInvoice line, int transId)
         {
-            var model = db.LineInventoryInvoices;
-            ViewData["lineInventory"] = line;
+            var model = db.LineGoodReceivings;
+            line.transid = transId;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try

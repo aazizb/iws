@@ -16,7 +16,7 @@
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
 
- 
+
         settings.SettingsBehavior.ConfirmDelete = true;
 
         settings.CommandColumn.Visible = true;
@@ -68,7 +68,7 @@
         settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         settings.Columns.Add(column =>
         {
@@ -220,6 +220,8 @@
                             i.Width = Unit.Percentage(85);
                         });
                         combo.Properties.TextFormatString = "{0}-{1}";
+                        combo.Properties.CallbackPageSize = 15;
+                        combo.Properties.FilterMinLength = 2;
                         combo.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         combo.Width = Unit.Percentage(100);
                         combo.ShowModelErrors = true;
@@ -258,6 +260,8 @@
                             i.Width = Unit.Percentage(85);
                         });
                         combo.Properties.TextFormatString = "{0}-{1}";
+                        combo.Properties.CallbackPageSize = 15;
+                        combo.Properties.FilterMinLength = 2;
                         combo.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         combo.Width = Unit.Percentage(100);
                         combo.ShowModelErrors = true;

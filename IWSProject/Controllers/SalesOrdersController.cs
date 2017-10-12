@@ -45,7 +45,7 @@ namespace IWSProject.Controllers
             var model = db.SalesOrders;
             item.IsValidated = false;
             item.CompanyId = (string)Session["CompanyID"];
-            item.HeaderText = item.HeaderText ?? "NA";
+            item.HeaderText = item.HeaderText ?? "N/A";
             ViewData["item"] = item;
             if (ModelState.IsValid)
             {
@@ -53,6 +53,7 @@ namespace IWSProject.Controllers
                 {
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
+                    ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)
                 {
@@ -117,15 +118,18 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetSalesOrder());
         }
         [ValidateInput(false)]
-        public ActionResult DetailGridViewPartial(int transid)
+        public ActionResult DetailGridViewPartial(int transid, object newKeyValue)
         {
+            if (newKeyValue != null)
+            {
+                ViewData["IsNewDetailRow"] = true;
+            }
             return PartialView("DetailGridViewPartial", db.LineSalesOrders.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] LineSalesOrder line, int transId)
         {
             var model = db.LineSalesOrders;
-
             line.transid = transId;
             ViewData["line"] = line;
             if (ModelState.IsValid)
@@ -151,9 +155,7 @@ namespace IWSProject.Controllers
         public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineSalesOrder line, int transId)
         {
             var model = db.LineSalesOrders;
-
             line.transid = transId;
-
             ViewData["line"] = line;
             if (ModelState.IsValid)
             {

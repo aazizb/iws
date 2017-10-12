@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Collections;
-using System.Web.Mvc;
-using DevExpress.Web.Mvc;
+﻿using DevExpress.Web.Mvc;
 using IWSProject.Models;
-using IWSProject.Content;
+using System;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace IWSProject.Controllers
 {
@@ -49,7 +46,7 @@ namespace IWSProject.Controllers
             var model = db.CustomerInvoices;
             item.IsValidated = false;
             item.CompanyId = (string)Session["CompanyID"];
-            int itemOID = (int)item.oid;
+            int itemOID = item.oid;
             ViewData["item"] = item;
             bool result;
             if (ModelState.IsValid)
@@ -67,6 +64,7 @@ namespace IWSProject.Controllers
                         if (result)
                             db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                     }
+                    ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)
                 {
@@ -130,8 +128,12 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetCustomerInvoice());
         }
         [ValidateInput(false)]
-        public ActionResult DetailGridViewPartial(int transid)
+        public ActionResult DetailGridViewPartial(int transid, object newKeyValue)
         {
+            if (newKeyValue != null)
+            {
+                ViewData["IsNewDetailRow"] = true;
+            }
             return PartialView("DetailGridViewPartial", db.LineCustomerInvoices.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
@@ -162,6 +164,7 @@ namespace IWSProject.Controllers
         public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineCustomerInvoice line, int transId)
         {
             var model = db.LineCustomerInvoices;
+            line.transid = transId;
             ViewData["line"] = line;
             if (ModelState.IsValid)
             {

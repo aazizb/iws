@@ -28,14 +28,12 @@
             return View(model);
             
         }
-
         [ValidateInput(false)]
         public ActionResult BankStatementsGridViewPartial()
         {
             List<BankStatementViewModel> model = IWSLookUp.GetBankStatements((string)Session["CompanyID"], false);
             return PartialView(model);
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(string selectedIDs)
         {
@@ -116,7 +114,6 @@
             List<BankStatementViewModel> model=IWSLookUp.GetBankStatements((string)Session["CompanyID"], false);
             return PartialView("CallbackPanelPartialView", model); 
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult BankStatementsGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] BankStatement item)
         {
@@ -370,8 +367,6 @@
                             }
 
                         }
-
-
                         if (Headers.Equals(articles))
                         {
                             option = IWSLocalResource.articles;
@@ -535,8 +530,6 @@
                                     count += 1;
                                 }
                             }
-
-                            //==============================
                             List<Supplier> Suppliers = new List<Supplier>();
                             for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                             {
@@ -563,7 +556,6 @@
                                     count += 1;
                                 }
                             }
-
                         }
                         break;
                 }

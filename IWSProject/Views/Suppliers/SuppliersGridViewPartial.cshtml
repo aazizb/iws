@@ -52,7 +52,7 @@
         settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         settings.SettingsPager.Visible = true;
         settings.SettingsPager.Position = PagerPosition.Bottom;
@@ -63,6 +63,9 @@
 
         settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
         settings.SettingsDetail.ShowDetailRow = true;
+
+        settings.Images.DetailCollapsedButton.IconID = IconID.ActionsAdd16x16;
+        settings.Images.DetailExpandedButton.IconID = IconID.ActionsRemove16x16;
 
         settings.Columns.Add(column =>
         {

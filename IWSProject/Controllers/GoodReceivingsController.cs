@@ -48,7 +48,7 @@ namespace IWSProject.Controllers
                 var model = db.GoodReceivings;
                 item.IsValidated = false;
                 item.CompanyId = (string)Session["CompanyID"];
-                int itemOID = (int)item.oid;
+                int itemOID = item.oid;
                 ViewData["item"] = item;
                 bool result = false;
                 try
@@ -61,8 +61,11 @@ namespace IWSProject.Controllers
                         
                         result=InsertLines(itemID, itemOID, IWSLookUp.DocsType.GoodReceiving.ToString());
                         if (result)
+                        {
                             db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                        }
                     }
+                    ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)
                 {
@@ -76,7 +79,7 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetGoodReceiving());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult MasterGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Models.GoodReceiving item)
+        public ActionResult MasterGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] GoodReceiving item)
         {
             var model = db.GoodReceivings;
 
@@ -104,7 +107,7 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetGoodReceiving());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult MasterGridViewPartialDelete(Int32 id)
+        public ActionResult MasterGridViewPartialDelete(int id)
         {
             var model = db.GoodReceivings;
 
@@ -126,17 +129,20 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetGoodReceiving());
         }
         [ValidateInput(false)]
-        public ActionResult DetailGridViewPartial(int transid)
+        public ActionResult DetailGridViewPartial(int transid, object newKeyValue)
         {
+            if (newKeyValue != null)
+            {
+                ViewData["IsNewDetailRow"] = true;
+            }
             return PartialView("DetailGridViewPartial", db.LineGoodReceivings.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] LineGoodReceiving line, int transId)
         {
             var model = db.LineGoodReceivings;
-
             line.transid = transId;
-            ViewData["lineGood"] = line;
+            ViewData["line"] = line;
 
             if (ModelState.IsValid)
             {
@@ -157,15 +163,16 @@ namespace IWSProject.Controllers
             return PartialView("DetailGridViewPartial", model.Where(p=>p.transid==transId).ToList());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineGoodReceiving linegood, int transId)
+        public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineGoodReceiving line, int transId)
         {
             var model = db.LineGoodReceivings;
-            ViewData["lineGood"] = linegood;
+            line.transid = transId;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var modelItem = model.FirstOrDefault(p => p.id == linegood.id);
+                    var modelItem = model.FirstOrDefault(p => p.id == line.id);
 
                     if (modelItem != null)
                     {

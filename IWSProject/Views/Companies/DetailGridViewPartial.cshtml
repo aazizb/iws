@@ -15,7 +15,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Companies", Action = "DetailGridViewPartialDelete", owner = Session["owner"] };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
-        
+
         settings.SettingsBehavior.ConfirmDelete = true;
 
         settings.CommandColumn.Visible = true;
@@ -53,7 +53,7 @@
         settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         settings.SettingsPager.Visible = true;
         settings.Settings.ShowGroupPanel = true;
@@ -214,6 +214,8 @@
                         s.Properties.Columns.Add("id").Caption = IWSLocalResource.id;
                         s.Properties.Columns.Add("name").Caption = IWSLocalResource.name;
                         s.Properties.TextFormatString = "{0}-{1}";
+                        s.Properties.CallbackPageSize = 15;
+                        s.Properties.FilterMinLength = 2;
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);

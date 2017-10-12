@@ -63,6 +63,7 @@ namespace IWSProject.Controllers
                         if (result)
                             db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                     }
+                    ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)
                 {
@@ -104,7 +105,7 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetPayment());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult MasterGridViewPartialDelete(Int32 id)
+        public ActionResult MasterGridViewPartialDelete(int id)
         {
             var model = db.Payments;
 
@@ -126,17 +127,20 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetPayment());
         }
         [ValidateInput(false)]
-        public ActionResult DetailGridViewPartial(int transid)
+        public ActionResult DetailGridViewPartial(int transid, object newKeyValue)
         {
+            if (newKeyValue != null)
+            {
+                ViewData["IsNewDetailRow"] = true;
+            }
             return PartialView("DetailGridViewPartial", db.LinePayments.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] LinePayment line, int transId)
         {
             var model = db.LinePayments;
-
             line.transid = transId;
-            ViewData["linePayment"] = line;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try
@@ -156,15 +160,16 @@ namespace IWSProject.Controllers
             return PartialView("DetailGridViewPartial", model.Where(p => p.transid == transId).ToList());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LinePayment linegood, int transId)
+        public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LinePayment line, int transId)
         {
             var model = db.LinePayments;
-            ViewData["linePayment"] = linegood;
+            line.transid = transId;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var modelItem = model.FirstOrDefault(p => p.id == linegood.id);
+                    var modelItem = model.FirstOrDefault(p => p.id == line.id);
 
                     if (modelItem != null)
                     {

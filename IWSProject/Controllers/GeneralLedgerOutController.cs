@@ -66,6 +66,7 @@ namespace IWSProject.Controllers
                         if (result)
                             db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                     }
+                    ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)
                 {
@@ -129,8 +130,12 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetGeneralLedger(IWSLookUp.Area.GeneralLedger.ToString()));
         }
         [ValidateInput(false)]
-        public ActionResult DetailGridViewPartial(int transid)
+        public ActionResult DetailGridViewPartial(int transid, object newKeyValue)
         {
+            if (newKeyValue != null)
+            {
+                ViewData["IsNewDetailRow"] = true;
+            }
             return PartialView("DetailGridViewPartial", db.LineGeneralLedgers.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
@@ -139,7 +144,7 @@ namespace IWSProject.Controllers
             var model = db.LineGeneralLedgers;
 
             line.transid = transId;
-            ViewData["lineGeneralLedger"] = line;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try
@@ -159,15 +164,16 @@ namespace IWSProject.Controllers
             return PartialView("DetailGridViewPartial", model.Where(p => p.transid == transId).ToList());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineGeneralLedger linegood, int transId)
+        public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineGeneralLedger line, int transId)
         {
             var model = db.LineGeneralLedgers;
-            ViewData["lineGeneralLedger"] = linegood;
+            line.transid = transId;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var modelItem = model.FirstOrDefault(p => p.id == linegood.id);
+                    var modelItem = model.FirstOrDefault(p => p.id == line.id);
 
                     if (modelItem != null)
                     {

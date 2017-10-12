@@ -4,24 +4,18 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "ArticlesGridView";
-        settings.Caption = IWSLocalResource.articles;
+        settings.Caption = IWSLocalResource.company;
 
-        settings.CallbackRouteValues = new { Controller = "articles", Action = "ArticlesGridViewPartial" };
+        settings.CallbackRouteValues = new { Controller = "Articles", Action = "ArticlesGridViewPartial" };
 
-        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "articles", Action = "ArticlesGridViewPartialAddNew" };
-        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "articles", Action = "ArticlesGridViewPartialUpdate" };
-        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "articles", Action = "ArticlesGridViewPartialDelete" };
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Articles", Action = "ArticlesGridViewPartialAddNew" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Articles", Action = "ArticlesGridViewPartialUpdate" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Articles", Action = "ArticlesGridViewPartialDelete" };
 
-        settings.EnableRowsCache = true;
-
-        settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
-
-        settings.SettingsBehavior.EnableRowHotTrack = true;
-        settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
 
         settings.SettingsBehavior.AllowSelectByRowClick = true;
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
@@ -43,32 +37,34 @@
 
         settings.KeyFieldName = "id";
 
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
-        settings.SettingsBehavior.EnableRowHotTrack = true;
-
-        settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+        settings.InitNewRow = (s, e) =>
+        {
+            e.NewValues["avgprice"] = 0;
+            e.NewValues["IsService"] = true;
+        };
 
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = true;
         settings.Settings.ShowFilterRowMenu = true;
-
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.AllowSelectByRowClick = true;
 
         settings.Width = Unit.Percentage(100);
-        settings.Height = Unit.Percentage(100);
-
         settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
         settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsBehavior.EnableRowHotTrack = true;
+
+        settings.Styles.RowHotTrack.Cursor = "pointer";
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         settings.SettingsPager.Visible = true;
         settings.SettingsPager.Position = PagerPosition.Bottom;
         settings.SettingsPager.FirstPageButton.Visible = true;
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
-
         settings.SettingsPager.PageSize = 24;
 
         settings.InitNewRow = (s, e) =>
@@ -76,7 +72,6 @@
             e.NewValues["avgprice"] = 0;
             e.NewValues["IsService"] = true;
         };
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "id";
@@ -88,10 +83,6 @@
             column.FieldName = "name";
             column.Caption = IWSLocalResource.item;
             column.Width = Unit.Percentage(25);
-            column.EditorProperties().TextBox(textBox =>
-            {
-                textBox.Width = Unit.Percentage(100);
-            });
         });
         settings.Columns.Add(column =>
         {
@@ -208,10 +199,9 @@
 
         settings.SetEditFormTemplateContent(templateContent =>
         {
-
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
-                formLayoutSettings.Name = "ArticleViewEdit";
+                formLayoutSettings.Name = "ArticlesViewEdit";
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 3;
                 formLayoutSettings.Items.Add(i =>
@@ -225,7 +215,6 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "name";
@@ -239,7 +228,6 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "IsService";
@@ -249,7 +237,6 @@
 
                     });
                 });
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "price";
@@ -261,8 +248,6 @@
 
                     });
                 });
-
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "packunit";
@@ -291,7 +276,6 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "ExpenseAccount";
@@ -307,7 +291,6 @@
                             column.FieldName = "id";
                             column.Caption = IWSLocalResource.id;
                             column.Width = Unit.Percentage(15);
-
                         });
                         s.Properties.Columns.Add(column =>
                         {
@@ -321,7 +304,6 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "avgprice";
@@ -333,7 +315,6 @@
                         s.Width = Unit.Percentage(90);
                     });
                 });
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "qttyunit";
@@ -362,8 +343,6 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
-
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "RevenuAccountId";
@@ -393,7 +372,6 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "salesprice";
@@ -404,7 +382,6 @@
                         s.Width = Unit.Percentage(90);
                     });
                 });
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "VatCode";
@@ -434,9 +411,6 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
-
-
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "StockAccount";
@@ -467,8 +441,6 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
-
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "Currency";
@@ -499,8 +471,6 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
-
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "GroupId";
@@ -531,8 +501,6 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
-
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "description";
@@ -547,41 +515,41 @@
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.ShowCaption = DefaultBoolean.False;
                     i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
                 }).SetNestedContent(() =>
                 {
-                    Html.DevExpress().Button(b =>
 
-                    {
-                        b.Name = "btnUpdate";
-                        b.Text = "";
-                        b.ToolTip = IWSLocalResource.btnUpdate;
-                        b.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-                        b.Images.Image.IconID = IconID.ActionsApply16x16;
-                        b.Width = Unit.Pixel(80);
-                        b.ClientSideEvents.Click = "function(s, e){ ArticlesGridView.UpdateEdit(); }";
-                    }).Render();
-
-                    Html.DevExpress().Button(b =>
-
-                    {
-                        b.Name = "btnCancel";
-                        b.Text = "";
-                        b.ToolTip = IWSLocalResource.btnCancel;
-                        b.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
-                        b.Images.Image.IconID = IconID.ActionsCancel16x16;
-                        b.Width = Unit.Pixel(80);
-                        b.ClientSideEvents.Click = "function(s, e){ ArticlesGridView.CancelEdit(); }";
-                    }).Render();
+                    Html.DevExpress().Button(
+                b =>
+                {
+                    b.Name = "btnUpdate";
+                    b.Text = "";
+                    b.ToolTip = IWSLocalResource.btnUpdate;
+                    b.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+                    b.Images.Image.IconID = IconID.ActionsApply16x16;
+                    b.Width = Unit.Pixel(80);
+                    b.ClientSideEvents.Click = "function(s, e){ ArticlesGridView.UpdateEdit(); }";
+                }).Render();
+                    Html.DevExpress().Button(
+                b =>
+                {
+                    b.Name = "btnCancel";
+                    b.Text = "";
+                    b.ToolTip = IWSLocalResource.btnCancel;
+                    b.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+                    b.Images.Image.IconID = IconID.ActionsCancel16x16;
+                    b.Width = Unit.Pixel(80);
+                    b.ClientSideEvents.Click = "function(s, e){ ArticlesGridView.CancelEdit(); }";
+                }).Render();
                 });
             })
             .Bind(ViewData["article"] ?? templateContent.DataItem)
             .Render();
         });
+
         #endregion
 
         settings.DataBinding = (sender, e) =>
@@ -589,8 +557,10 @@
             ((MVCxGridView)sender).ForceDataRowType(typeof(Article));
         };
     });
-    if (ViewData["GenericError"] != null){
+    if (ViewData["GenericError"] != null)
+    {
         grid.SetEditErrorText((string)ViewData["GenericError"]);
     }
 }
 @grid.Bind(Model).GetHtml()
+

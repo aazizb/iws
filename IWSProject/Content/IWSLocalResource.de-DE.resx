@@ -768,4 +768,7 @@
   <data name="BillPeriod" xml:space="preserve">
     <value>Bill Period de-DE</value>
   </data>
+  <data name="DeliveryTerms" xml:space="preserve">
+    <value>Delivery Terms</value>
+  </data>
 </root>

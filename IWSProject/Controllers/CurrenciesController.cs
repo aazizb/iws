@@ -15,9 +15,10 @@ namespace IWSProject.Controllers
             db = new IWSDataContext();
         }
         // GET: Currencies
+        [OutputCache(VaryByParam = "none", Duration = 3600)]
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetCurrencies());
+            return View();// IWSLookUp.GetCurrencies());
         }
 
         [ValidateInput(false)]

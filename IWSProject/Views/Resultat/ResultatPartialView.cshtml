@@ -13,7 +13,7 @@
     settings.SettingsBehavior.EnableRowHotTrack = true;
 
     settings.Styles.RowHotTrack.Cursor = "pointer";
-    settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+    settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
     settings.Settings.ShowFilterRow = true;
     settings.Settings.ShowFilterRowMenu = true;
@@ -33,6 +33,9 @@
 
     settings.SettingsPager.PageSize = 24;
 
+    settings.Images.CollapsedButton.IconID = IconID.ActionsAdd16x16;
+    settings.Images.ExpandedButton.IconID = IconID.ActionsRemove16x16;
+    
     settings.Columns.Add(column =>
     {
         column.FieldName = "ClassName";

@@ -41,14 +41,14 @@ namespace IWSProject.Controllers
             return PartialView("CallbackPanelPartialView", IWSLookUp.GetBillOfDelivery());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult MasterGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Models.BillOfDelivery item)
+        public ActionResult MasterGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] BillOfDelivery item)
         {
             if (ModelState.IsValid)
             {
                 var model = db.BillOfDeliveries;
                 item.IsValidated = false;
                 item.CompanyId = (string)Session["CompanyID"];
-                int itemOID = (int)item.oid;
+                int itemOID = item.oid;
                 ViewData["item"] = item;
                 bool result = false;
                 try
@@ -63,6 +63,7 @@ namespace IWSProject.Controllers
                         if (result)
                             db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                     }
+                    ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)
                 {
@@ -127,15 +128,18 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetBillOfDelivery());
         }
         [ValidateInput(false)]
-        public ActionResult DetailGridViewPartial(int transid)
+        public ActionResult DetailGridViewPartial(int transid, object newKeyValue)
         {
+            if (newKeyValue != null)
+            {
+                ViewData["IsNewDetailRow"] = true;
+            }
             return PartialView("DetailGridViewPartial", db.LineBillOfDeliveries.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] LineBillOfDelivery line, int transId)
         {
             var model = db.LineBillOfDeliveries;
-
             line.transid = transId;
             ViewData["line"] = line;
             if (ModelState.IsValid)
@@ -161,9 +165,7 @@ namespace IWSProject.Controllers
         public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineBillOfDelivery line, int transId)
         {
             var model = db.LineBillOfDeliveries;
-
             line.transid = transId;
-
             ViewData["line"] = line;
             if (ModelState.IsValid)
             {

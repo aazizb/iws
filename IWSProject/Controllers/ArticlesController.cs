@@ -1,10 +1,8 @@
-﻿using System;
+﻿using DevExpress.Web.Mvc;
+using IWSProject.Models;
+using System;
 using System.Linq;
 using System.Web.Mvc;
-using DevExpress.Web.Mvc;
-using IWSProject.Models;
-using IWSProject.Content;
-using System.Diagnostics;
 
 namespace IWSProject.Controllers
 {
@@ -25,7 +23,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult ArticlesGridViewPartial()
         {
-            return PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
+            return PartialView( IWSLookUp.GetArticles());
         }
 
         [HttpPost, ValidateInput(false)]
@@ -99,7 +97,7 @@ namespace IWSProject.Controllers
                         model.DeleteOnSubmit(item);
 
                     db.SubmitChanges();
-                    
+
                 }
                 catch (Exception e)
                 {

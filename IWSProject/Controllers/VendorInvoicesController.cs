@@ -1,9 +1,8 @@
-﻿using System;
+﻿using DevExpress.Web.Mvc;
+using IWSProject.Models;
+using System;
 using System.Linq;
 using System.Web.Mvc;
-using DevExpress.Web.Mvc;
-using IWSProject.Models;
-using IWSProject.Content;
 
 namespace IWSProject.Controllers
 {
@@ -64,6 +63,7 @@ namespace IWSProject.Controllers
                         if (result)
                             db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                     }
+                    ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)
                 {
@@ -127,15 +127,18 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetVendorInvoice());
         }
         [ValidateInput(false)]
-        public ActionResult DetailGridViewPartial(int transid)
+        public ActionResult DetailGridViewPartial(int transid, object newKeyValue)
         {
+            if (newKeyValue != null)
+            {
+                ViewData["IsNewDetailRow"] = true;
+            }
             return PartialView("DetailGridViewPartial", db.LineVendorInvoices.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] LineVendorInvoice line, int transId)
         {
             var model = db.LineVendorInvoices;
-
             line.transid = transId;
             ViewData["line"] = line;
             if (ModelState.IsValid)
@@ -160,7 +163,7 @@ namespace IWSProject.Controllers
         public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineVendorInvoice line, int transId)
         {
             var model = db.LineVendorInvoices;
-
+            line.transid = transId;
             ViewData["line"] = line;
             if (ModelState.IsValid)
             {

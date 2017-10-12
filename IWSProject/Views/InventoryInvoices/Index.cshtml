@@ -1,6 +1,52 @@
 ﻿@using IWSProject.Content
 <script type="text/javascript">
-        function OnOIDSelectedIndexChanged(s, e) {
+    function OnSelectedIndexChanged(s, e) {
+        $.ajax({
+            url: '@Url.Action("PackUnit", "InventoryInvoices")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                unit.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("VatCode", "InventoryInvoices")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                Vat.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("Price", "InventoryInvoices")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                price.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("Currency", "InventoryInvoices")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                Currency.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+    }
+    function OnOIDSelectedIndexChanged(s, e) {
         $.ajax({
             url: '@Url.Action("Store", "InventoryInvoices")',
             type: "POST",
@@ -36,11 +82,36 @@
         });
     }
     var selectedIDs = null;
-    function OnBeginCallback(s, e) {
+    var expanded = false;
+    var ndxMaster = 0;
+    var ndxDetail = 0;
+    function OnMRowClick(s, e) {
+        expanded = true;
+        ndxMaster = e.visibleIndex;
+        s.StartEditRow(ndxMaster);
+    }
+    function OnDRowClick(s, e) {
+        ndxDetail = e.visibleIndex
+        s.SetFocusedRowIndex(ndxDetail);
+        s.StartEditRow(ndxDetail);
+    }
+    function OnMEndCallback(s, e) {
+        if (expanded == true) {
+            expanded = false;
+            s.ExpandDetailRow(ndxMaster);
+        }
+    }
+    function OnDEndCallback(s, e) {
+        s.SetFocusedRowIndex(e.visibleIndex);
+    }
+    function OnMBeginCallback(s, e) {
         e.customArgs["selectedIDs"] = selectedIDs;
     }
-    function OnSelectionChanged(s, e) {
+    function OnMSelectionChanged(s, e) {
         s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
+    }
+    function OnDetailRowExpanding(s, e) {
+        grid.SetFocusedRowIndex(e.visibleIndex);
     }
     function GetSelectedFieldValuesCallback(values) {
         selectedIDs = values.join(';');
@@ -48,12 +119,50 @@
     function OnSubmitClick(s, e) {
         callbackPanelPartialView.PerformCallback();
     }
+    function OnMInit(s, e) {
 
-    function OnRowClick(s, e) {
-        if (!s.IsValidated[e.visibleIndex])
-            return;
-        e.cancel = true;
-        s.SetFocusedRowIndex(e.visibleIndex);
+        ASPxClientUtils.AttachEventToElement(
+            s.GetMainElement(),
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    case 13://ENTER
+                        if (s.IsEditing()) {
+                            s.UpdateEdit();
+                        }
+                        break;
+                    case 27://ESC
+                        if (s.IsEditing()) {
+                            s.CancelEdit();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+    }
+    function OnDInit(s, e) {
+
+        ASPxClientUtils.AttachEventToElement(
+            s.GetMainElement(),
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    case 13://ENTER
+                        if (s.IsEditing()) {
+                            s.UpdateEdit();
+                            s.AddNewRow();
+                        }
+                        break;
+                    case 27://ESC
+                        if (s.IsEditing()) {
+                            s.CancelEdit();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
     }
 
 

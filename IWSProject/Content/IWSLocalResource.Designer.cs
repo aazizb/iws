@@ -601,6 +601,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delivery terms.
+        /// </summary>
+        public static string DeliveryTerms {
+            get {
+                return ResourceManager.GetString("DeliveryTerms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         public static string description {

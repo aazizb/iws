@@ -52,7 +52,7 @@
         settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         settings.SettingsPager.Visible = true;
         settings.SettingsPager.Position = PagerPosition.Bottom;
@@ -63,6 +63,10 @@
 
         settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
         settings.SettingsDetail.ShowDetailRow = true;
+
+        settings.Images.DetailCollapsedButton.IconID = IconID.ActionsAdd16x16;
+        settings.Images.DetailExpandedButton.IconID = IconID.ActionsRemove16x16;
+
 
         settings.Columns.Add(column =>
         {
@@ -369,9 +373,7 @@
                 });
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
-
                 formLayoutSettings.Items.AddEmptyItem();
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "BIC";
@@ -385,10 +387,8 @@
                     });
                     i.Visible = false;
                 });
-
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
-
                 formLayoutSettings.Items.AddEmptyItem();
 
                 formLayoutSettings.Items.Add(i =>
@@ -426,11 +426,13 @@
             .Bind(ViewData["customer"] ?? c.DataItem)
             .Render();
         });
+
         #endregion
+
         settings.SetDetailRowTemplateContent(c =>
         {
             Session["owner"] = DataBinder.Eval(c.DataItem, "id");
-            Html.RenderAction("DetailGridViewPartial", new { owner = Session["owner"]});
+            Html.RenderAction("DetailGridViewPartial", new { owner = Session["owner"] });
         });
 
     });

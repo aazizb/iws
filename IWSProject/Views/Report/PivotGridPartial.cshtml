@@ -1,7 +1,4 @@
-﻿@using IWSProject.Controllers
-@using IWSProject.Content
-
-@*@Html.DevExpress().PivotGrid(PivotGridHelper.Settings).Bind(Model).GetHtml()*@
+﻿@using IWSProject.Content
 
 @Html.DevExpress().PivotGrid(settings =>
 {
@@ -10,6 +7,7 @@
     settings.Width = new System.Web.UI.WebControls.Unit(99, System.Web.UI.WebControls.UnitType.Percentage);
     settings.Height = new System.Web.UI.WebControls.Unit(99, System.Web.UI.WebControls.UnitType.Percentage);
     settings.OptionsPager.RowsPerPage = 21;
+
     settings.Fields.Add(field =>
     {
         field.Area = PivotArea.RowArea;

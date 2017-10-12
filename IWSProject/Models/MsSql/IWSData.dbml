@@ -12,12 +12,16 @@
       <Column Name="ParentId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="IsUsed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="IsBalanceSheetAccount" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="Account_Article" Member="Articles" ThisKey="id" OtherKey="StockAccount" Type="Article" />
+      <Association Name="Account_Article1" Member="Articles1" ThisKey="id" OtherKey="StockAccount" Type="Article" />
+      <Association Name="Account_Article2" Member="Articles2" ThisKey="id" OtherKey="ExpenseAccount" Type="Article" />
       <Association Name="Account_ClassSetup" Member="ClassSetups" ThisKey="id" OtherKey="ClassID" Type="ClassSetup" />
       <Association Name="Account_CostCenter" Member="CostCenters" ThisKey="id" OtherKey="accountid" Type="CostCenter" />
       <Association Name="Account_Journal" Member="Journals" ThisKey="id" OtherKey="Account" Type="Journal" />
       <Association Name="Account_Journal1" Member="Journals1" ThisKey="id" OtherKey="OAccount" Type="Journal" />
       <Association Name="Account_PeriodicAccountBalance" Member="PeriodicAccountBalances" ThisKey="id" OtherKey="AccountId" Type="PeriodicAccountBalance" />
       <Association Name="Account_Store" Member="Stores" ThisKey="id" OtherKey="accountid" Type="Store" />
+      <Association Name="Account_Article3" Member="Articles3" ThisKey="id" OtherKey="RevenuAccountId" Type="Article" />
     </Type>
   </Table>
   <Table Name="dbo.VendorInvoice" Member="VendorInvoices">
@@ -49,9 +53,9 @@
       <Column Name="price" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
       <Column Name="avgprice" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
       <Column Name="salesprice" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
-      <Column Name="qttyunit" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
-      <Column Name="packunit" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
-      <Column Name="VatCode" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="qttyunit" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="packunit" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="VatCode" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="IsService" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="CompanyID" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="StockAccount" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
@@ -66,7 +70,11 @@
       <Association Name="Article_LineSalesInvoice" Member="LineSalesInvoices" ThisKey="id" OtherKey="item" Type="LineSalesInvoice" />
       <Association Name="Article_LineSalesOrder" Member="LineSalesOrders" ThisKey="id" OtherKey="item" Type="LineSalesOrder" />
       <Association Name="Article_Stock" Member="Stocks" ThisKey="id" OtherKey="itemid" Type="Stock" />
+      <Association Name="Account_Article" Member="Account" ThisKey="StockAccount" OtherKey="id" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_Article1" Member="Account1" ThisKey="StockAccount" OtherKey="id" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_Article2" Member="Account2" ThisKey="ExpenseAccount" OtherKey="id" Type="Account" IsForeignKey="true" />
       <Association Name="Vat_Article" Member="Vat" ThisKey="VatCode" OtherKey="id" Type="Vat" IsForeignKey="true" />
+      <Association Name="Account_Article3" Member="Account3" ThisKey="RevenuAccountId" OtherKey="id" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.AspNetRoles" Member="AspNetRoles">
@@ -150,60 +158,6 @@
   <Table Name="dbo.BankStatement" Member="BankStatements">
     <Type Name="BankStatement">
       <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Auftragskonto" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Buchungstag" Type="System.DateTime" DbType="Date" CanBeNull="true" />
-      <Column Name="Valutadatum" Type="System.DateTime" DbType="Date" CanBeNull="true" />
-      <Column Name="Buchungstext" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-      <Column Name="Verwendungszweck" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
-      <Column Name="BeguenstigterZahlungspflichtiger" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
-      <Column Name="Kontonummer" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="BLZ" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Betrag" Type="System.Decimal" DbType="Money" CanBeNull="true" />
-      <Column Name="Waehrung" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-      <Column Name="Info" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
-      <Column Name="CompanyID" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="CompanyIBAN" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="IsValidated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.bckBankStatement" Member="bckBankStatements">
-    <Type Name="bckBankStatement">
-      <Column Name="Auftragskonto" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Buchungstag" Type="System.DateTime" DbType="Date" CanBeNull="true" />
-      <Column Name="Valutadatum" Type="System.DateTime" DbType="Date" CanBeNull="true" />
-      <Column Name="Buchungstext" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-      <Column Name="Verwendungszweck" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
-      <Column Name="BeguenstigterZahlungspflichtiger" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
-      <Column Name="Kontonummer" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="BLZ" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Betrag" Type="System.Decimal" DbType="Money" CanBeNull="true" />
-      <Column Name="Waehrung" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-      <Column Name="Info" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
-      <Column Name="CompanyID" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="IsValidated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.bckBankStatement0812" Member="bckBankStatement0812s">
-    <Type Name="bckBankStatement0812">
-      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Auftragskonto" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Buchungstag" Type="System.DateTime" DbType="Date" CanBeNull="true" />
-      <Column Name="Valutadatum" Type="System.DateTime" DbType="Date" CanBeNull="true" />
-      <Column Name="Buchungstext" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-      <Column Name="Verwendungszweck" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
-      <Column Name="BeguenstigterZahlungspflichtiger" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
-      <Column Name="Kontonummer" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="BLZ" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Betrag" Type="System.Decimal" DbType="Money" CanBeNull="true" />
-      <Column Name="Waehrung" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
-      <Column Name="Info" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
-      <Column Name="CompanyID" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="CompanyIBAN" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="IsValidated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.bckStatement" Member="bckStatements">
-    <Type Name="bckStatement">
       <Column Name="Auftragskonto" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="Buchungstag" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="Valutadatum" Type="System.DateTime" DbType="Date" CanBeNull="true" />
@@ -1025,16 +979,6 @@
       <Column Name="ParentName" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
     </ElementType>
   </Function>
-  <Function Name="dbo.LogException" Method="LogException">
-    <Parameter Name="Message" Parameter="message" Type="System.String" DbType="NVarChar(256)" />
-    <Parameter Name="Type" Parameter="type" Type="System.String" DbType="NVarChar(256)" />
-    <Parameter Name="Source" Parameter="source" Type="System.String" DbType="NVarChar(256)" />
-    <Parameter Name="URL" Parameter="uRL" Type="System.String" DbType="NVarChar(256)" />
-    <Parameter Name="Target" Parameter="target" Type="System.String" DbType="NVarChar(256)" />
-    <Parameter Name="ComapnyId" Parameter="comapnyId" Type="System.String" DbType="NVarChar(6)" />
-    <Parameter Name="UserName" Parameter="userName" Type="System.String" DbType="NVarChar(6)" />
-    <Return Type="System.Int32" />
-  </Function>
   <Function Name="dbo.GetAccountBalance" Method="GetAccountBalance" IsComposable="true">
     <Parameter Name="id" Type="System.String" DbType="NVarChar(50)" />
     <Parameter Name="start" Type="System.String" DbType="NVarChar(6)" />
@@ -1046,15 +990,6 @@
       <Column Name="Debit" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="Credit" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="Currency" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
-    </ElementType>
-  </Function>
-  <Function Name="dbo.GetBalanceSheetChildren" Method="GetBalanceSheetChildren" IsComposable="true">
-    <Parameter Name="id" Type="System.String" DbType="NVarChar(50)" />
-    <Parameter Name="companyid" Type="System.String" DbType="NVarChar(50)" />
-    <Parameter Name="isBalanceSheetAccount" Type="System.Boolean" DbType="Bit" />
-    <ElementType Name="GetBalanceSheetChildrenResult">
-      <Column Name="id" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="name" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
     </ElementType>
   </Function>
   <Function Name="dbo.GetAccountBalances" Method="GetAccountBalances" IsComposable="true">
@@ -1070,6 +1005,15 @@
       <Column Name="SDebit" Type="System.Decimal" DbType="Decimal(38,2)" CanBeNull="true" />
       <Column Name="SCredit" Type="System.Decimal" DbType="Decimal(38,2)" CanBeNull="true" />
       <Column Name="Currency" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.GetBalanceSheetChildren" Method="GetBalanceSheetChildren" IsComposable="true">
+    <Parameter Name="id" Type="System.String" DbType="NVarChar(50)" />
+    <Parameter Name="companyid" Type="System.String" DbType="NVarChar(50)" />
+    <Parameter Name="isBalanceSheetAccount" Type="System.Boolean" DbType="Bit" />
+    <ElementType Name="GetBalanceSheetChildrenResult">
+      <Column Name="id" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
     </ElementType>
   </Function>
   <Function Name="dbo.GetChild" Method="GetChild" IsComposable="true">
@@ -1141,5 +1085,15 @@
       <Column Name="id" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="name" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
     </ElementType>
+  </Function>
+  <Function Name="dbo.LogException" Method="LogException">
+    <Parameter Name="Message" Parameter="message" Type="System.String" DbType="NVarChar(256)" />
+    <Parameter Name="Type" Parameter="type" Type="System.String" DbType="NVarChar(256)" />
+    <Parameter Name="Source" Parameter="source" Type="System.String" DbType="NVarChar(256)" />
+    <Parameter Name="URL" Parameter="uRL" Type="System.String" DbType="NVarChar(256)" />
+    <Parameter Name="Target" Parameter="target" Type="System.String" DbType="NVarChar(256)" />
+    <Parameter Name="ComapnyId" Parameter="comapnyId" Type="System.String" DbType="NVarChar(6)" />
+    <Parameter Name="UserName" Parameter="userName" Type="System.String" DbType="NVarChar(6)" />
+    <Return Type="System.Int32" />
   </Function>
 </Database>

@@ -771,4 +771,7 @@
   <data name="BillPeriod" xml:space="preserve">
     <value>Bill Period</value>
   </data>
+  <data name="DeliveryTerms" xml:space="preserve">
+    <value>Delivery terms</value>
+  </data>
 </root>

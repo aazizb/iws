@@ -777,4 +777,7 @@
   <data name="BillPeriod" xml:space="preserve">
     <value>Periodo de factura</value>
   </data>
+  <data name="DeliveryTerms" xml:space="preserve">
+    <value>Condiciones de entrega</value>
+  </data>
 </root>

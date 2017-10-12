@@ -20,7 +20,7 @@
 
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         //when an end-user double-clicks a grid row, the edit form appears, allowing an end-user to edit the row.  
         //settings.SettingsBehavior.AllowSelectByRowClick = true;
@@ -78,7 +78,7 @@
         settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         settings.SettingsPager.Visible = true;
         settings.SettingsPager.Position = PagerPosition.Bottom;
@@ -184,7 +184,28 @@
 
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 2;
-
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "id";
+                    i.Caption = IWSLocalResource.id;
+                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Width = Unit.Percentage(95);
+                        s.ReadOnly = true;
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "IsValidated";
+                    i.Caption = IWSLocalResource.IsValidated;
+                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.CheckBox;
+                    i.NestedExtension().CheckBox(s =>
+                    {
+                        s.Width = Unit.Percentage(20);
+                        s.ReadOnly = true;
+                    });
+                });
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "oid";
@@ -286,7 +307,6 @@
                         s.ReadOnly = true;
                     });
                 });
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "HeaderText";
@@ -321,7 +341,6 @@
                     i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
                 }).SetNestedContent(() =>
                 {
-
                     Html.DevExpress().Button(
                 btnSettings =>
                 {
@@ -333,7 +352,6 @@
                     btnSettings.Width = Unit.Pixel(80);
                     btnSettings.ClientSideEvents.Click = "function(s, e){ GeneralLedgerIn.UpdateEdit(); }";
                 }).Render();
-
                     Html.DevExpress().Button(
                 btnSettings =>
                 {
@@ -351,6 +369,7 @@
             .Bind(ViewData["item"] ?? c.DataItem)
             .Render();
         });
+
         #endregion
 
         settings.SetDetailRowTemplateContent(c =>

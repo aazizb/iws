@@ -5,6 +5,7 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "DetailGridView";
+        settings.Width = Unit.Percentage(100);
         settings.Caption = IWSLocalResource.LineSalesInvoice;
         settings.SettingsDetail.MasterGridName = "MasterGridViewPartial";
         settings.CallbackRouteValues = new { Controller = "SalesInvoices", Action = "DetailGridViewPartial", transid = Session["transid"] };
@@ -14,66 +15,69 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "SalesInvoices", Action = "DetailGridViewPartialDelete", transid = Session["transid"] };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
-      
+
+        settings.ClientSideEvents.RowClick = "OnDRowClick";
+        settings.ClientSideEvents.RowDblClick = "OnDRowClick";
+        settings.ClientSideEvents.Init = "OnDInit";
 
         settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsBehavior.AllowFocusedRow = true;
+        settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
 
-        settings.CommandColumn.Visible = true;
-        settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.Styles.RowHotTrack.Cursor = "pointer";
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
-        settings.CommandColumn.ShowNewButtonInHeader = true;
-
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-        settings.CommandColumn.ShowEditButton = true;
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
-        settings.CommandColumn.ShowDeleteButton = true;
-
-        settings.CommandButtonInitialize = (s, e) =>
-        {
-            var value = Session["IsValidated"];
-            if (e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.Delete
-                                                    || e.ButtonType == ColumnCommandButtonType.New)
-            {
-                e.Enabled = false.Equals(value);
-            }
-        };
-        settings.InitNewRow = (s, e) =>
-        {
-            e.NewValues["duedate"] = DateTime.Today;
-        };
-
-        settings.KeyFieldName = "id";
-
-        settings.Width = Unit.Percentage(100);
         settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
         settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
 
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
-        settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowDeleteButton = true;
 
-        settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.Beige;
+        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
+        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
+        settings.SettingsCommandButton.NewButton.Text = " ";
 
-        settings.SettingsPager.Visible = true;
-        settings.Settings.ShowGroupPanel = true;
-        settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowFilterRowMenu = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
+        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
+        settings.SettingsCommandButton.EditButton.Text = " ";
+
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
+        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
+        settings.SettingsCommandButton.DeleteButton.Text = " ";
+
+        settings.SettingsDataSecurity.AllowDelete = !(bool)Session["IsValidated"];
+        settings.SettingsDataSecurity.AllowEdit = !(bool)Session["IsValidated"];
+        settings.SettingsDataSecurity.AllowInsert = !(bool)Session["IsValidated"];
+
+        settings.InitNewRow = (s, e) =>
+        {
+            e.NewValues["duedate"] = DateTime.Today;
+        };
+        settings.PreRender = (sender, e) =>
+        {
+            if (ViewData["IsNewDetailRow"] != null)
+            {
+                MVCxGridView g = (MVCxGridView)sender;
+                g.AddNewRow();
+            }
+        };
+        settings.KeyFieldName = "id";
 
         settings.Columns.Add(column =>
         {
             column.FieldName = "item";
             column.Caption = IWSLocalResource.item;
-            column.Width = Unit.Percentage(18);
+            column.Width = Unit.Percentage(20);
             column.EditorProperties().ComboBox(combo =>
             {
                 combo.TextField = "Name";
@@ -87,14 +91,12 @@
             });
 
         });
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "unit";
             column.Caption = IWSLocalResource.unit;
-            column.Width = Unit.Percentage(6);
+            column.Width = Unit.Percentage(5);
         });
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "price";
@@ -141,14 +143,12 @@
                 p.Width = Unit.Percentage(100);
             });
         });
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "Vat";
-            column.Caption = IWSLocalResource.vat;
+            column.Caption = IWSLocalResource.vatcode;
             column.Width = Unit.Percentage(5);
         });
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "duedate";
@@ -165,26 +165,24 @@
                 d.DisplayFormatInEditMode = true;
                 d.AllowUserInput = true;
                 d.AllowMouseWheel = true;
-
             });
         });
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "text";
             column.Caption = IWSLocalResource.text;
             column.Width = Unit.Percentage(20);
         });
+
         #region Template
+
         settings.SetEditFormTemplateContent(templateContent =>
         {
-
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
                 formLayoutSettings.Name = "DetailGridViewEdit";
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 3;
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "item";
@@ -208,13 +206,33 @@
                             a.Width = Unit.Percentage(85);
                         });
                         s.Properties.TextFormatString = "{0}-{1}";
+                        s.Properties.CallbackPageSize = 15;
+                        s.Properties.FilterMinLength = 2;
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);
                         s.Properties.ClientSideEvents.SelectedIndexChanged = "OnSelectedIndexChanged";
+                        s.TabIndex = 1;
+                        s.Properties.ClientSideEvents.Init = "function(s, e) { s.Focus(); }";
                     });
                 });
-
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "duedate";
+                    i.Caption = IWSLocalResource.duedate;
+                    i.NestedExtension().DateEdit(d =>
+                    {
+                        d.Properties.EditFormatString = "MM/dd/yyyy";
+                        d.Properties.NullDisplayText = "MM/dd/yyyy";
+                        d.Properties.EditFormat = EditFormat.Custom;
+                        d.Width = Unit.Percentage(90);
+                        d.Properties.DisplayFormatString = "yyyy-MM-dd";
+                        d.Properties.DisplayFormatInEditMode = true;
+                        d.Properties.AllowUserInput = true;
+                        d.Properties.AllowMouseWheel = true;
+                        d.TabIndex = 3;
+                    });
+                });
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "unit";
@@ -224,21 +242,37 @@
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);
+                        s.TabIndex = 6;
                     });
                 });
-
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "price";
-                    i.Caption = IWSLocalResource.price;
+                    i.FieldName = "quantity";
+                    i.Caption = IWSLocalResource.quantity;
                     i.NestedExtension().SpinEdit(s =>
                     {
-                        s.Properties.DisplayFormatString = "N";
                         s.Properties.MinValue = 0;
                         s.Properties.MaxValue = UInt32.MaxValue;
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.Properties.SpinButtons.ShowLargeIncrementButtons = true;
-                        s.Width = Unit.Percentage(92);
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                        s.TabIndex = 2;
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Vat";
+                    i.Caption = IWSLocalResource.vat;
+                    i.NestedExtension().SpinEdit(s =>
+                    {
+                        s.Properties.MinValue = 0;
+                        s.Properties.MaxValue = UInt32.MaxValue;
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.Properties.SpinButtons.ShowLargeIncrementButtons = true;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                        s.TabIndex = 4;
                     });
                 });
                 formLayoutSettings.Items.Add(i =>
@@ -267,64 +301,37 @@
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);
+                        s.TabIndex = 7;
                     });
                 });
+                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "quantity";
-                    i.Caption = IWSLocalResource.quantity;
+                    i.FieldName = "price";
+                    i.Caption = IWSLocalResource.price;
                     i.NestedExtension().SpinEdit(s =>
                     {
+                        s.Properties.DisplayFormatString = "N";
                         s.Properties.MinValue = 0;
                         s.Properties.MaxValue = UInt32.MaxValue;
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.Properties.SpinButtons.ShowLargeIncrementButtons = true;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);
+                        s.TabIndex = 5;
                     });
                 });
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.FieldName = "Vat";
-                    i.Caption = IWSLocalResource.vat;
-                    i.NestedExtension().SpinEdit(s =>
-                    {
-                        s.Properties.MinValue = 0;
-                        s.Properties.MaxValue = UInt32.MaxValue;
-                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.Properties.SpinButtons.ShowLargeIncrementButtons = true;
-                        s.ShowModelErrors = true;
-                        s.Width = Unit.Percentage(100);
-                    });
-                });
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.FieldName = "duedate";
-                    i.Caption = IWSLocalResource.duedate;
-                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
-                    i.NestedExtension().DateEdit(d =>
-                    {
-                        d.Properties.EditFormatString = "MM/dd/yyyy";
-                        d.Properties.NullDisplayText = "MM/dd/yyyy";
-                        d.Properties.EditFormat = EditFormat.Custom;
-                        d.Width = Unit.Percentage(92);
-                        d.Properties.DisplayFormatString = "yyyy-MM-dd";
-                        d.Properties.DisplayFormatInEditMode = true;
-                        d.Properties.AllowUserInput = true;
-                        d.Properties.AllowMouseWheel = true;
-                    });
-                });
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "text";
                     i.Caption = IWSLocalResource.text;
-                    i.ColSpan = 2;
+                    i.ColSpan = 3;
                     i.NestedExtension().Memo(s =>
                     {
                         s.ShowModelErrors = true;
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.Width = Unit.Percentage(100);
+                        s.TabIndex = 8;
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
@@ -335,36 +342,37 @@
                     i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
                 }).SetNestedContent(() =>
                 {
-
                     Html.DevExpress().Button(
                 btnSettings =>
                 {
-                    btnSettings.Name = "btnUpdate";
+                    btnSettings.Name = "btnDUpdate";
                     btnSettings.Text = "";
                     btnSettings.ToolTip = IWSLocalResource.btnUpdate;
                     btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
                     btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
                     btnSettings.Width = Unit.Pixel(80);
+                    btnSettings.ClientEnabled = !(bool)Session["IsValidated"];
                     btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.UpdateEdit(); }";
+                    btnSettings.TabIndex = 9;
                 }).Render();
-
                     Html.DevExpress().Button(
                 btnSettings =>
                 {
-                    btnSettings.Name = "btnCancel";
+                    btnSettings.Name = "btnDCancel";
                     btnSettings.Text = "";
                     btnSettings.ToolTip = IWSLocalResource.btnCancel;
                     btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
                     btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
                     btnSettings.Width = Unit.Pixel(80);
                     btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.CancelEdit(); }";
+                    btnSettings.TabIndex = 10;
                 }).Render();
-
                 });
             })
             .Bind(ViewData["line"] ?? templateContent.DataItem)
             .Render();
         });
+
         #endregion
 
         settings.DataBinding = (sender, e) =>

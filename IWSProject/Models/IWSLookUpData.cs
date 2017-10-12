@@ -8,7 +8,7 @@
     using System.Linq;
     using System.Threading;
     using System.Web;
-
+    
     public static class IWSLookUp
     {
 
@@ -64,7 +64,7 @@
             })
             .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"] 
                             && c.IsUsed.Equals(true))
-            .OrderBy(o => o.Id);
+            .OrderBy(o => o.Name);
             return account;
         }
         public static IEnumerable GetPackUnits()
@@ -91,21 +91,23 @@
                 Vat = item.VatCode,
                 CompanyID = item.CompanyID
             }).
-            Where(c=>c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).
+            Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).
             OrderBy(o => o.Name);
             return article;
         }
         public static IEnumerable GetBillOfDelivery()
         {
             var b = from o in IWSEntities.BillOfDeliveries
-                                 where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
-                                 select o;
+                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    orderby o.id descending
+                    select o;
             return b;
         }
         public static IEnumerable GetCustomerInvoice()
         {
             var b = from o in IWSEntities.CustomerInvoices
                     where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    orderby o.id descending
                     select o;
             return b;
         }
@@ -120,6 +122,7 @@
         {
             var b = from o in IWSEntities.GoodReceivings
                     where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    orderby o.id descending
                     select o;
             return b;
         }
@@ -127,6 +130,7 @@
         {
             var b = from o in IWSEntities.InventoryInvoices
                     where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    orderby o.id descending
                     select o;
             return b;
         }
@@ -134,6 +138,7 @@
         {
             var b = from o in IWSEntities.Payments
                     where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    orderby o.id descending
                     select o;
             return b;
         }
@@ -149,6 +154,7 @@
         {
             var b = from o in IWSEntities.SalesInvoices
                     where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    orderby o.id descending
                     select o;
             return b;
         }
@@ -156,6 +162,7 @@
         {
             var b = from o in IWSEntities.SalesOrders
                     where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    orderby o.id descending
                     select o;
             return b;
         }
@@ -163,6 +170,7 @@
         {
             var b = from o in IWSEntities.Settlements
                     where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    orderby o.id descending
                     select o;
             return b;
         }
@@ -170,6 +178,7 @@
         {
             var b = from o in IWSEntities.VendorInvoices
                     where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    orderby o.id descending
                     select o;
             return b;
         }
@@ -244,10 +253,8 @@
         {
             return IWSEntities.CostCenters.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
         }
-        public static IEnumerable GetCurrencies()
-        {
-            return IWSEntities.Currencies.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
-        }
+        public static List<Currency> GetCurrencies() => IWSEntities.Currencies.Where(c =>
+                    c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).ToList<Currency>();
         public static IEnumerable GetBanks()
         {
             return IWSEntities.Banks.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
@@ -424,6 +431,18 @@
             .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
             .OrderBy(o => o.Name);
             return currency;
+        }
+        public static IEnumerable GetUnit()
+        {
+            var unit = IWSEntities.QuantityUnits.AsEnumerable().Select(item => new
+            {
+                Id = item.id,
+                Name = item.name,
+                CompanyID = item.CompanyID
+            })
+            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .OrderBy(o => o.Name);
+            return unit;
         }
         public static InvoiceViewModel GetInvoiceDetail(int itemId, string itemType, string companyId)
         {
@@ -2062,19 +2081,17 @@
             };
             return query;
         }
-
-
         public static void LogException(Exception ex)
         {
             HttpContext context = HttpContext.Current;
             string msg = ex.Message.ToString();
             string type = ex.GetType().Name.ToString();
-            string source = ex.Source;
+            string source = ex.Source.ToString();
             string url = context.Request.Url.ToString();
             string target = ex.TargetSite.Name.ToString();
             string company = (string)HttpContext.Current.Session["CompanyID"];
             string userName = (string)HttpContext.Current.Session["UserName"];
-            IWSEntities.LogException(msg, type, source, url, target, company, userName);
+            int result = IWSEntities.LogException(msg, type, source, url, target, company, userName);
         }
         public static string GetModelSateErrors(System.Web.Mvc.ModelStateDictionary modelState)
         {

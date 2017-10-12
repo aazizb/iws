@@ -4,7 +4,6 @@
     }
     function SelectedIndexChanged(s) {
         ASPxClientUtils.SetCookie("Culture", s.GetValue());
-        //alert(s.GetValue());
         $("#form").submit();
     }
 </script>

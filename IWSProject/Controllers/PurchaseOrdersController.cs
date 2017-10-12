@@ -99,7 +99,7 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetPurchaseOrder());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult MasterGridViewPartialDelete(Int32 id)
+        public ActionResult MasterGridViewPartialDelete(int id)
         {
             var model = db.PurchaseOrders;
 
@@ -124,7 +124,9 @@ namespace IWSProject.Controllers
         public ActionResult DetailGridViewPartial(int transId, object newKeyValue)
         {
             if (newKeyValue != null)
+            {
                 ViewData["IsNewDetailRow"] = true;
+            }
             return PartialView("DetailGridViewPartial", db.LinePurchaseOrders.Where(p => p.transid == transId).ToList());
         }
         [HttpPost, ValidateInput(false)]
@@ -132,7 +134,7 @@ namespace IWSProject.Controllers
         {
             var model = db.LinePurchaseOrders;
             line.transid = transId;
-            ViewData["linePurchase"] = line;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try
@@ -158,7 +160,7 @@ namespace IWSProject.Controllers
             var model = db.LinePurchaseOrders;
             line.transid = transId;
 
-            ViewData["linePurchase"] = line;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try

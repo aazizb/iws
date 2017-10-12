@@ -1,9 +1,8 @@
-﻿using System;
+﻿using DevExpress.Web.Mvc;
+using IWSProject.Models;
+using System;
 using System.Linq;
 using System.Web.Mvc;
-using DevExpress.Web.Mvc;
-using IWSProject.Models;
-using IWSProject.Content;
 
 namespace IWSProject.Controllers
 {
@@ -47,7 +46,7 @@ namespace IWSProject.Controllers
             var model = db.Settlements;
             item.IsValidated = false;
             item.CompanyId = (string)Session["CompanyID"];
-            int itemOID = (int)item.oid;
+            int itemOID = item.oid;
             ViewData["item"] = item;
             bool result;
             if (ModelState.IsValid)
@@ -64,6 +63,7 @@ namespace IWSProject.Controllers
                         if (result)
                             db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                     }
+                    ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)
                 {
@@ -105,7 +105,7 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetSettlement());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult MasterGridViewPartialDelete(Int32 id)
+        public ActionResult MasterGridViewPartialDelete(int id)
         {
             var model = db.Settlements;
 
@@ -127,8 +127,12 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetSettlement());
         }
         [ValidateInput(false)]
-        public ActionResult DetailGridViewPartial(int transid)
+        public ActionResult DetailGridViewPartial(int transid, object newKeyValue)
         {
+            if (newKeyValue != null)
+            {
+                ViewData["IsNewDetailRow"] = true;
+            }
             return PartialView("DetailGridViewPartial", db.LineSettlements.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
@@ -136,7 +140,7 @@ namespace IWSProject.Controllers
         {
             var model = db.LineSettlements;
             line.transid = transId;
-            ViewData["lineSettlement"] = line;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try
@@ -156,15 +160,16 @@ namespace IWSProject.Controllers
             return PartialView("DetailGridViewPartial", model.Where(p => p.transid == transId).ToList());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineSettlement linegood, int transId)
+        public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LineSettlement line, int transId)
         {
             var model = db.LineSettlements;
-            ViewData["lineSettlement"] = linegood;
+            line.transid = transId;
+            ViewData["line"] = line;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var modelItem = model.FirstOrDefault(p => p.id == linegood.id);
+                    var modelItem = model.FirstOrDefault(p => p.id == line.id);
 
                     if (modelItem != null)
                     {

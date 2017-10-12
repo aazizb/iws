@@ -2334,12 +2334,11 @@ namespace IWSProject.Controllers
                 }
                 catch (Exception ex)
                 {
+                    tx.Dispose();
                     ViewData["GenericError"] = ex.Message;
                     IWSLookUp.LogException(ex);
-                    tx.Dispose();
                 }
             }
-
         }
 
         public string SetDocType(string selectedItems, string docType)
