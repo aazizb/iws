@@ -25,7 +25,6 @@ namespace IWSProject.Controllers
         {
             return PartialView( IWSLookUp.GetArticles());
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult ArticlesGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Article item)
         {

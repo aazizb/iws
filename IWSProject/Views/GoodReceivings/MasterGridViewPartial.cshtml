@@ -21,10 +21,12 @@
         settings.ClientSideEvents.SelectionChanged = "OnMSelectionChanged";
         settings.ClientSideEvents.BeginCallback = "OnMBeginCallback";
         settings.ClientSideEvents.EndCallback = "OnMEndCallback";
+        settings.ClientSideEvents.DetailRowCollapsing = "OnDetailRowCollapsing";
+        settings.ClientSideEvents.DetailRowExpanding = "OnDetailRowExpanding";
 
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
@@ -79,11 +81,7 @@
             if (e.VisibleIndex == -1) return;
             MVCxGridView g = (MVCxGridView)s;
             bool isValidated = Convert.ToBoolean(g.GetRowValues(e.VisibleIndex, "IsValidated"));
-            if (e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.Delete)
-            {
-                e.Visible = false.Equals(isValidated);
-            }
-            if (e.ButtonType == ColumnCommandButtonType.SelectCheckbox)
+            if (e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.SelectCheckbox)
             {
                 e.Visible = false.Equals(isValidated);
             }
@@ -243,15 +241,59 @@
 
             ViewBag.IsValidated = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
 
+            ViewBag.IsNewRow = c.Grid.IsNewRowEditing;
+
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
+
+                #region Button
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                    i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
+                }).SetNestedContent(() =>
+                {
+                    Html.DevExpress().Button(
+                btnSettings =>
+                {
+                    btnSettings.Name = "btnMUpdate";
+                    btnSettings.Text = "";
+                    btnSettings.ToolTip = IWSLocalResource.btnUpdate;
+                    btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+                    btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
+                    btnSettings.Width = Unit.Pixel(80);
+                    btnSettings.ClientSideEvents.Click = "function(s, e){ GoodReceiving.UpdateEdit(); }";
+                    btnSettings.ClientVisible = !ViewBag.IsValidated;
+                    btnSettings.TabIndex = 8;
+                }).Render();
+                    Html.DevExpress().Button(
+                btnSettings =>
+                {
+                    btnSettings.Name = "btnMCancel";
+                    btnSettings.Text = "";
+                    btnSettings.ToolTip = IWSLocalResource.btnCancel;
+                    btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+                    btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
+                    btnSettings.Width = Unit.Pixel(80);
+                    btnSettings.ClientSideEvents.Click = "function(s, e){ GoodReceiving.CancelEdit(); }";
+                    btnSettings.TabIndex = 9;
+                }).Render();
+
+                });//
+
+                #endregion
+
                 formLayoutSettings.Name = "GoodReceivingEdit";
 
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 2;
+                if (ViewBag.IsNewRow)
+                    formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "id";
+                    i.Visible = !ViewBag.IsNewRow;
                     i.Caption = IWSLocalResource.id;
                     i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
                     i.NestedExtension().TextBox(s =>
@@ -262,6 +304,7 @@
                 });
                 formLayoutSettings.Items.Add(i =>
                 {
+                    i.Name = "IsValidated";
                     i.FieldName = "IsValidated";
                     i.Caption = IWSLocalResource.IsValidated;
                     i.NestedExtensionType = FormLayoutNestedExtensionItemType.CheckBox;
@@ -435,44 +478,15 @@
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.ShowCaption = DefaultBoolean.False;
-                    i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
-                }).SetNestedContent(() =>
-                {
-                    Html.DevExpress().Button(
-                btnSettings =>
-                {
-                    btnSettings.Name = "btnMUpdate";
-                    btnSettings.Text = "";
-                    btnSettings.ToolTip = IWSLocalResource.btnUpdate;
-                    btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-                    btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
-                    btnSettings.Width = Unit.Pixel(80);
-                    btnSettings.ClientSideEvents.Click = "function(s, e){ GoodReceiving.UpdateEdit(); }";
-                    btnSettings.ClientVisible = !ViewBag.IsValidated;
-                    btnSettings.TabIndex = 8;
-                }).Render();
-                    Html.DevExpress().Button(
-                btnSettings =>
-                {
-                    btnSettings.Name = "btnMCancel";
-                    btnSettings.Text = "";
-                    btnSettings.ToolTip = IWSLocalResource.btnCancel;
-                    btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
-                    btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
-                    btnSettings.Width = Unit.Pixel(80);
-                    btnSettings.ClientSideEvents.Click = "function(s, e){ GoodReceiving.CancelEdit(); }";
-                    btnSettings.TabIndex = 9;
-                }).Render();
-                });
+
             })
             .Bind(ViewData["item"] ?? c.DataItem)
             .Render();
         });
 
         #endregion
+
+
 
         settings.SetDetailRowTemplateContent(c =>
         {

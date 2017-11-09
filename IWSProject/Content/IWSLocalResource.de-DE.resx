@@ -448,7 +448,7 @@
     <value>Validate</value>
   </data>
   <data name="IsValidated" xml:space="preserve">
-    <value>IsValidated de-DE?</value>
+    <value>Validated de-DE</value>
   </data>
   <data name="AccountBalance" xml:space="preserve">
     <value>Account Balance de-DE</value>
@@ -634,7 +634,7 @@
     <value>Valutadatum</value>
   </data>
   <data name="ImportBankStatement" xml:space="preserve">
-    <value>Import Bank Statement de-DE</value>
+    <value>Import bank statement de-DE</value>
   </data>
   <data name="DropFiles" xml:space="preserve">
     <value>Drop File(s) here de-DE</value>
@@ -770,5 +770,56 @@
   </data>
   <data name="DeliveryTerms" xml:space="preserve">
     <value>Delivery Terms</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Bestand</value>
+  </data>
+  <data name="Expenses" xml:space="preserve">
+    <value>Ausgaben</value>
+  </data>
+  <data name="Revenue" xml:space="preserve">
+    <value>Einnahmen</value>
+  </data>
+  <data name="Cash" xml:space="preserve">
+    <value>Cash</value>
+  </data>
+  <data name="LineCash" xml:space="preserve">
+    <value>Line Cash</value>
+  </data>
+  <data name="ImportCash" xml:space="preserve">
+    <value>Import Cash de-DE</value>
+  </data>
+  <data name="ImportData" xml:space="preserve">
+    <value>Import Data de-DE</value>
+  </data>
+  <data name="LogException" xml:space="preserve">
+    <value>Exceptions Log de-DE</value>
+  </data>
+  <data name="ExDate" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="ExMessage" xml:space="preserve">
+    <value>Message de-DE</value>
+  </data>
+  <data name="ExSource" xml:space="preserve">
+    <value>Source de-DE</value>
+  </data>
+  <data name="ExTarget" xml:space="preserve">
+    <value>Target de-DE</value>
+  </data>
+  <data name="ExType" xml:space="preserve">
+    <value>Type de-DE</value>
+  </data>
+  <data name="ExURL" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="ExUser" xml:space="preserve">
+    <value>Benutzer</value>
+  </data>
+  <data name="BalanceReport" xml:space="preserve">
+    <value>Balance Report de-DE</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>Draft de-DE</value>
   </data>
 </root>

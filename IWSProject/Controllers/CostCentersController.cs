@@ -15,7 +15,6 @@ namespace IWSProject.Controllers
         {
             db = new IWSDataContext();
         }
-
         // GET: costcenters
         public ActionResult Index()
         {
@@ -26,7 +25,6 @@ namespace IWSProject.Controllers
         {
             return PartialView("CostCentersGridViewPartial", IWSLookUp.GetCostCenter());
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult CostCentersGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))]CostCenter item)
         {

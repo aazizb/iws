@@ -178,6 +178,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Available.
+        /// </summary>
+        public static string Available {
+            get {
+                return ResourceManager.GetString("Available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Average Price.
         /// </summary>
         public static string AveragePrice {
@@ -192,6 +201,15 @@ namespace IWSProject.Content {
         public static string balance {
             get {
                 return ResourceManager.GetString("balance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Balance Report.
+        /// </summary>
+        public static string BalanceReport {
+            get {
+                return ResourceManager.GetString("BalanceReport", resourceCulture);
             }
         }
         
@@ -345,6 +363,15 @@ namespace IWSProject.Content {
         public static string btnUpdate {
             get {
                 return ResourceManager.GetString("btnUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cash.
+        /// </summary>
+        public static string Cash {
+            get {
+                return ResourceManager.GetString("Cash", resourceCulture);
             }
         }
         
@@ -646,6 +673,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Draft.
+        /// </summary>
+        public static string Draft {
+            get {
+                return ResourceManager.GetString("Draft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Drop File(s) here.
         /// </summary>
         public static string DropFiles {
@@ -682,6 +718,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Date.
+        /// </summary>
+        public static string ExDate {
+            get {
+                return ResourceManager.GetString("ExDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message.
+        /// </summary>
+        public static string ExMessage {
+            get {
+                return ResourceManager.GetString("ExMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expense Account.
         /// </summary>
         public static string expenseaccountid {
@@ -691,11 +745,65 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expenses.
+        /// </summary>
+        public static string Expenses {
+            get {
+                return ResourceManager.GetString("Expenses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Export.
         /// </summary>
         public static string Export {
             get {
                 return ResourceManager.GetString("Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source.
+        /// </summary>
+        public static string ExSource {
+            get {
+                return ResourceManager.GetString("ExSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target.
+        /// </summary>
+        public static string ExTarget {
+            get {
+                return ResourceManager.GetString("ExTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        public static string ExType {
+            get {
+                return ResourceManager.GetString("ExType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URL.
+        /// </summary>
+        public static string ExURL {
+            get {
+                return ResourceManager.GetString("ExURL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Name.
+        /// </summary>
+        public static string ExUser {
+            get {
+                return ResourceManager.GetString("ExUser", resourceCulture);
             }
         }
         
@@ -799,11 +907,29 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Import Bank Statement.
+        ///   Looks up a localized string similar to Import bank statement.
         /// </summary>
         public static string ImportBankStatement {
             get {
                 return ResourceManager.GetString("ImportBankStatement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Cash.
+        /// </summary>
+        public static string ImportCash {
+            get {
+                return ResourceManager.GetString("ImportCash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Data.
+        /// </summary>
+        public static string ImportData {
+            get {
+                return ResourceManager.GetString("ImportData", resourceCulture);
             }
         }
         
@@ -916,7 +1042,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Is Validated?.
+        ///   Looks up a localized string similar to Validated.
         /// </summary>
         public static string IsValidated {
             get {
@@ -984,6 +1110,15 @@ namespace IWSProject.Content {
         public static string lineBillOfDelivery {
             get {
                 return ResourceManager.GetString("lineBillOfDelivery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Line Cash.
+        /// </summary>
+        public static string LineCash {
+            get {
+                return ResourceManager.GetString("LineCash", resourceCulture);
             }
         }
         
@@ -1092,6 +1227,15 @@ namespace IWSProject.Content {
         public static string linevendorinvoice {
             get {
                 return ResourceManager.GetString("linevendorinvoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exceptions Log.
+        /// </summary>
+        public static string LogException {
+            get {
+                return ResourceManager.GetString("LogException", resourceCulture);
             }
         }
         
@@ -1497,6 +1641,15 @@ namespace IWSProject.Content {
         public static string Report {
             get {
                 return ResourceManager.GetString("Report", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Revenue.
+        /// </summary>
+        public static string Revenue {
+            get {
+                return ResourceManager.GetString("Revenue", resourceCulture);
             }
         }
         

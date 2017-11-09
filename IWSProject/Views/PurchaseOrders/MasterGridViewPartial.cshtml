@@ -21,10 +21,12 @@
         settings.ClientSideEvents.SelectionChanged = "OnMSelectionChanged";
         settings.ClientSideEvents.BeginCallback = "OnMBeginCallback";
         settings.ClientSideEvents.EndCallback = "OnMEndCallback";
+        settings.ClientSideEvents.DetailRowCollapsing = "OnDetailRowCollapsing";
+        settings.ClientSideEvents.DetailRowExpanding = "OnDetailRowExpanding";
 
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
@@ -79,11 +81,7 @@
             if (e.VisibleIndex == -1) return;
             MVCxGridView g = (MVCxGridView)s;
             bool isValidated = Convert.ToBoolean(g.GetRowValues(e.VisibleIndex, "IsValidated"));
-            if (e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.Delete)
-            {
-                e.Visible = false.Equals(isValidated);
-            }
-            if (e.ButtonType == ColumnCommandButtonType.SelectCheckbox)
+            if (e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.Delete || e.ButtonType == ColumnCommandButtonType.SelectCheckbox)
             {
                 e.Visible = false.Equals(isValidated);
             }
@@ -105,6 +103,8 @@
                 g.DetailRows.ExpandRowByKey((int)ViewData["NewKeyValue"]);
             }
         };
+
+        #region Column
 
         settings.KeyFieldName = "id";
 
@@ -207,6 +207,7 @@
         });
         settings.Columns.Add(column =>
         {
+            column.EditFormSettings.Visible = DefaultBoolean.False;
             column.FieldName = "IsValidated";
             column.Caption = IWSLocalResource.IsValidated;
             column.Width = Unit.Percentage(5);
@@ -235,22 +236,67 @@
         settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oNet").DisplayFormat = "N";
         settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oVat").DisplayFormat = "N";
 
-        #region Template
+
+        #endregion
+
+        #region FormTemplate
 
         settings.SetEditFormTemplateContent(c =>
         {
 
-            ViewBag.IsValidated= (bool)DataBinder.Eval(c.DataItem, "IsValidated");
+            ViewBag.IsValidated = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
+
+            ViewBag.IsNewRow = c.Grid.IsNewRowEditing;
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
+                #region Button
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                    i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
+                }).SetNestedContent(() =>
+                {
+                    Html.DevExpress().Button(
+                btnSettings =>
+                {
+                    btnSettings.Name = "btnMUpdate";
+                    btnSettings.Text = "";
+                    btnSettings.ToolTip = IWSLocalResource.btnUpdate;
+                    btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+                    btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
+                    btnSettings.Width = Unit.Pixel(80);
+                    btnSettings.ClientSideEvents.Click = "function(s, e){ PurchaseOrder.UpdateEdit(); }";
+                    btnSettings.ClientVisible = !ViewBag.IsValidated;
+                    btnSettings.TabIndex = 8;
+                }).Render();
+                    Html.DevExpress().Button(
+                btnSettings =>
+                {
+                    btnSettings.Name = "btnMCancel";
+                    btnSettings.Text = "";
+                    btnSettings.ToolTip = IWSLocalResource.btnCancel;
+                    btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+                    btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
+                    btnSettings.Width = Unit.Pixel(80);
+                    btnSettings.ClientSideEvents.Click = "function(s, e){ PurchaseOrder.CancelEdit(); }";
+                    btnSettings.TabIndex = 9;
+                }).Render();
+                });
+
+                #endregion
+
                 formLayoutSettings.Name = "PurchaseOrderEdit";
 
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 2;
+                if (ViewBag.IsNewRow)
+                    formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "id";
+                    i.Visible = !ViewBag.IsNewRow;
                     i.Caption = IWSLocalResource.id;
                     i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
                     i.NestedExtension().TextBox(s =>
@@ -261,6 +307,7 @@
                 });
                 formLayoutSettings.Items.Add(i =>
                 {
+                    i.Name = "IsValidated";
                     i.FieldName = "IsValidated";
                     i.Caption = IWSLocalResource.IsValidated;
                     i.NestedExtensionType = FormLayoutNestedExtensionItemType.CheckBox;
@@ -296,7 +343,7 @@
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);
-                        s.TabIndex = 1;
+                        s.TabIndex = 2;
                         s.Properties.ClientSideEvents.Init = "function(s, e) { s.Focus(); }";
                     });
                 });
@@ -341,7 +388,7 @@
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);
-                        s.TabIndex = 2;
+                        s.TabIndex = 3;
                     });
                 });
                 formLayoutSettings.Items.Add(i =>
@@ -379,20 +426,6 @@
                 });
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "ShippingTerms";
-                    i.Caption = IWSLocalResource.ShippingTerms;
-                    i.ColSpan = 2;
-                    i.NestedExtension().Memo(s =>
-                    {
-                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
-                        s.Width = Unit.Percentage(100);
-                        s.TabIndex = 3;
-                    });
-
-                });
-                formLayoutSettings.Items.Add(i =>
-                {
                     i.FieldName = "HeaderText";
                     i.Caption = IWSLocalResource.text;
                     i.ColSpan = 2;
@@ -405,45 +438,14 @@
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.ShowCaption = DefaultBoolean.False;
-                    i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
-                }).SetNestedContent(() =>
-                {
-                    Html.DevExpress().Button(
-                btnSettings =>
-                {
-                    btnSettings.Name = "btnMUpdate";
-                    btnSettings.Text = "";
-                    btnSettings.ToolTip = IWSLocalResource.btnUpdate;
-                    btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-                    btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
-                    btnSettings.Width = Unit.Pixel(80);
-                    btnSettings.ClientSideEvents.Click = "function(s, e){ PurchaseOrder.UpdateEdit(); }";
-                    btnSettings.ClientVisible = !ViewBag.IsValidated;
-                    btnSettings.TabIndex = 8;
-                }).Render();
-                    Html.DevExpress().Button(
-                btnSettings =>
-                {
-                    btnSettings.Name = "btnMCancel";
-                    btnSettings.Text = "";
-                    btnSettings.ToolTip = IWSLocalResource.btnCancel;
-                    btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
-                    btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
-                    btnSettings.Width = Unit.Pixel(80);
-                    btnSettings.ClientSideEvents.Click = "function(s, e){ PurchaseOrder.CancelEdit(); }";
-                    btnSettings.TabIndex = 9;
-                }).Render();
-
-                });
             })
             .Bind(ViewData["item"] ?? c.DataItem)
             .Render();
         });
 
         #endregion
+
+        #region DetailTemplate
 
         settings.SetDetailRowTemplateContent(c =>
         {
@@ -456,6 +458,8 @@
                 newKeyValue = ViewData["NewKeyValue"]
             });
         });
+
+        #endregion
     });
 
     if (ViewData["GenericError"] != null)

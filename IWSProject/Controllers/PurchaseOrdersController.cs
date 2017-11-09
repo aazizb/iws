@@ -1,9 +1,8 @@
-﻿using System;
+﻿using DevExpress.Web.Mvc;
+using IWSProject.Models;
+using System;
 using System.Linq;
 using System.Web.Mvc;
-using DevExpress.Web.Mvc;
-using IWSProject.Models;
-using IWSProject.Content;
 namespace IWSProject.Controllers
 {
     [Authorize]
@@ -19,13 +18,12 @@ namespace IWSProject.Controllers
         {
             return View(IWSLookUp.GetPurchaseOrder());
         }
-        [ValidateInput(false)]
+        [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartial()
         {
             return PartialView("MasterGridViewPartial", IWSLookUp.GetPurchaseOrder());
         }
         [HttpPost, ValidateInput(false)]
-
         public ActionResult CallbackPanelPartialView(string selectedIDs)
         {
             if (!string.IsNullOrEmpty(selectedIDs) && selectedIDs != null)
@@ -39,7 +37,6 @@ namespace IWSProject.Controllers
             }
             return PartialView("CallbackPanelPartialView", IWSLookUp.GetPurchaseOrder());
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] PurchaseOrder item)
         {
@@ -49,7 +46,7 @@ namespace IWSProject.Controllers
             item.ShippingTerms = item.ShippingTerms ?? "N/A";
             item.HeaderText = item.HeaderText ?? "N/A";
             ViewData["item"] = item;
-            
+            ViewBag.IsNewRow = true;
             if (ModelState.IsValid)
             {
                 try
@@ -74,6 +71,7 @@ namespace IWSProject.Controllers
         {
             var model = db.PurchaseOrders;
             ViewData["item"] = item;
+            ViewBag.IsNewRow = false;
             if (ModelState.IsValid)
             {
                 try
@@ -127,7 +125,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["IsNewDetailRow"] = true;
             }
-            return PartialView("DetailGridViewPartial", db.LinePurchaseOrders.Where(p => p.transid == transId).ToList());
+            return PartialView("DetailGridViewPartial", IWSLookUp.GetLinePurchaseOrders(transId));// db.LinePurchaseOrders.Where(p => p.transid == transId).ToList());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] LinePurchaseOrder line, int transId)

@@ -34,14 +34,14 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(string selectedIDs)
         {
-            string selectedItems = selectedIDs;
+            //string selectedItems = selectedIDs;
             try
             {
                 //check if items were selected previously
-                if (!String.IsNullOrEmpty(selectedItems) && selectedItems!=null)
+                if (!String.IsNullOrEmpty(selectedIDs) && selectedIDs != null)
                 {
                     string companyId = (string)Session["CompanyID"];
-                    ProcessData(selectedItems, companyId, true);
+                    ProcessData(selectedIDs, companyId, true);
                 }
             }
             catch (Exception ex)
@@ -452,6 +452,8 @@ namespace IWSProject.Controllers
 
         private bool StockOut(List<ValidateStockViewModel> items, string CompanyId)
         {
+            bool results = false;
+            string msg = String.Empty;
             try
             {
                 foreach (var item in items.Where(i => i.IsService == false))
@@ -464,28 +466,31 @@ namespace IWSProject.Controllers
                         if (AvailableQuantity >= RequestedQuantity)
                         {
                             stock.quantity -= (float)item.Quantity;
+                            results = true;
                         }
                         else
                         {
-                            string msg = IWSLocalResource.InsufficientStock + ": " + item.ItemID + "-" + item.ItemName;
+                            msg = IWSLocalResource.InsufficientStock + ": " + item.ItemID + "-" + item.ItemName;
                             ViewData["GenericError"] = msg;
-                            return false;
+                            results= false;
                         }
                     }
                     else
                     {
-                        string msg = IWSLocalResource.InsufficientStock + ": " + item.ItemID + "-" + item.ItemName;
+                        msg = IWSLocalResource.InsufficientStock + ": " + item.ItemID + "-" + item.ItemName;
                         ViewData["GenericError"] = msg;
-                        return false;
+                        results = false;
                     }
+                    if (!results)
+                        throw new Exception(msg);
                 }
-                return true;
             }
             catch (Exception ex)
             {
                 IWSLookUp.LogException(ex);
-                return false;
+                results = false;
             }
+            return results;
         }
 
         private bool ValidateGoodReceiving(int ItemID, string companyId)
@@ -1427,7 +1432,7 @@ namespace IWSProject.Controllers
                             return results;
                     }
 
-                    var item = (from doc in docs
+                    var items = (from doc in docs
                                 group new { doc } by new
                                 {
                                     doc.Periode,
@@ -1440,17 +1445,20 @@ namespace IWSProject.Controllers
                                     accountID = g.Key.OAccount,
                                     amount = g.Sum(p => p.doc.Amount),
                                     currency = g.Key.Currency
-                                }).Single();
+                                });
+                    foreach (var item in items)
+                    {
 
-                    results = UpdateAccountBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+                        results = UpdateAccountBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
 
-                    if (!results)
-                        return results;
+                        if (!results)
+                            return results;
 
-                    results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
+                        results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
 
-                    if (!results)
-                        return results;
+                        if (!results)
+                            return results;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -2283,62 +2291,65 @@ namespace IWSProject.Controllers
 
         public void ProcessData(string selectedItems, string companyId, bool convertType)
         {
-            using (TransactionScope tx = new TransactionScope(TransactionScopeOption.RequiresNew))
+            //using (TransactionScope tx = new TransactionScope(TransactionScopeOption.RequiresNew))
+            //{
+            string msg;
+            try
             {
-                string msg;
-                try
+                IList<string> items = new List<string>(selectedItems.Split(new string[] { ";" }, StringSplitOptions.None));
+                foreach (string item in items)
                 {
-                    IList<string> items = new List<string>(selectedItems.Split(new string[] { ";" }, StringSplitOptions.None));
-                    foreach (string item in items)
+                    bool results = false;
+                    int ItemID;
+                    string ItemType;
+                    var list = item.Split(new string[] { "," }, StringSplitOptions.None);
+
+                    ItemID = Convert.ToInt32(list[0]);
+
+                    ItemType = list[1];
+
+                    if(convertType)
                     {
-                        bool results = false;
-                        int ItemID;
-                        string ItemType;
-                        var list = item.Split(new string[] { "," }, StringSplitOptions.None);
-
-                        ItemID = Convert.ToInt32(list[0]);
-
-                        ItemType = list[1];
-
-                        if(convertType)
-                        {
-                            ItemType = GetItemType(ItemType);
-                        }
-                        results = UpdateEntryDate(ItemID, ItemType);
-                        if (!results)
-                        {
-                            msg = IWSLocalResource.GenericError;
-                            throw new Exception(msg);
-                        }
-                        results = UpdateStock(ItemID, ItemType, companyId);
-                        if (!results)
-                        {
-                            msg = IWSLocalResource.GenericError;
-                            throw new Exception(msg);
-                        }
-                        results = Account(ItemID, ItemType, companyId);
-                        if (!results)
-                        {
-                            msg = IWSLocalResource.GenericError;
-                            throw new Exception(msg);
-                        }
-                        results = Validate(ItemID, ItemType);
-                        if (!results)
-                        {
-                            msg = IWSLocalResource.GenericError;
-                            throw new Exception(msg);
-                        }
-                        db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                        ItemType = GetItemType(ItemType);
                     }
-                    tx.Complete();
+                    results = UpdateEntryDate(ItemID, ItemType);
+                    if (!results)
+                    {
+                        msg = IWSLocalResource.GenericError;
+                        throw new Exception(msg);
+                    }
+                    results = UpdateStock(ItemID, ItemType, companyId);
+                    if (!results)
+                    {
+                        msg = (string)ViewData["GenericError"];
+
+                        throw new Exception(msg);
+                    }
+                    results = Account(ItemID, ItemType, companyId);
+                    if (!results)
+                    {
+                        msg = (string)ViewData["GenericError"];
+
+                        throw new Exception(msg);
+                    }
+                    results = Validate(ItemID, ItemType);
+                    if (!results)
+                    {
+                        msg = (string)ViewData["GenericError"];
+
+                        throw new Exception(msg);
+                    }
+                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                 }
-                catch (Exception ex)
-                {
-                    tx.Dispose();
-                    ViewData["GenericError"] = ex.Message;
-                    IWSLookUp.LogException(ex);
-                }
+                //tx.Complete();
             }
+            catch (Exception ex)
+            {
+                //tx.Dispose();
+                ViewData["GenericError"] = ex.Message;
+                IWSLookUp.LogException(ex);
+            }
+            //}
         }
 
         public string SetDocType(string selectedItems, string docType)

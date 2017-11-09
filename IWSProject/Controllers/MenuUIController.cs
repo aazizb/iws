@@ -32,6 +32,8 @@ namespace IWSProject.Controllers
         {
             var model = db.Menus;
             item.CompanyID = (string)Session["CompanyID"];
+            item.HasAccess = false;
+            item.Disable = false;
             ViewData["menus"] = item;
             if (ModelState.IsValid)
             {

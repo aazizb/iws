@@ -49,6 +49,7 @@
         settings.InitNewRow = (s, e) =>
         {
             e.NewValues["duedate"] = DateTime.Today;
+            e.NewValues["side"] = false;
         };
 
         settings.KeyFieldName = "id";
@@ -62,9 +63,8 @@
         settings.Settings.ShowGroupPanel = true;
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowFilterRowMenu = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
 
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";

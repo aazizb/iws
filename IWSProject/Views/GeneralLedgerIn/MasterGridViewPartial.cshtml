@@ -23,7 +23,7 @@
         settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         //when an end-user double-clicks a grid row, the edit form appears, allowing an end-user to edit the row.  
-        //settings.SettingsBehavior.AllowSelectByRowClick = true;
+        //settings.SettingsBehavior.AllowSelectByRowClick = false;
         //settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
         settings.CommandColumn.ShowNewButtonInHeader = true;
@@ -66,7 +66,7 @@
         settings.Settings.ShowGroupPanel = true;
         settings.Settings.ShowFilterRowMenu = true;
         settings.SettingsBehavior.ConfirmDelete = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
 
         settings.Width = Unit.Percentage(100);
 
@@ -74,7 +74,6 @@
         settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
 
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
@@ -197,6 +196,7 @@
                 });
                 formLayoutSettings.Items.Add(i =>
                 {
+                    i.Name = "IsValidated";
                     i.FieldName = "IsValidated";
                     i.Caption = IWSLocalResource.IsValidated;
                     i.NestedExtensionType = FormLayoutNestedExtensionItemType.CheckBox;

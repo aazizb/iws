@@ -215,13 +215,18 @@
 
             const string articles = "id;name;description;price";
 
-            const string accounts = "AccountId;AccountName;Balance";
+            const string accounts = "id;name;balance;description";
 
-            const string providerXLS = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=";
-            const string extensionXLS= ";Extended Properties=\"Excel 8.0;HDR=Yes;IMEX=2\"";
+            //const string providerXLS = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=";
+            //const string extensionXLS= ";Extended Properties=\"Excel 8.0;HDR=Yes;IMEX=2\"";
+            //const string providerXLSX = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=";
+            //const string extensionXLSX= ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
+
+            const string providerXLS = "Provider=Microsoft.ACE.OLEDB.12.0.;Data Source=";
+            const string extensionXLS = ";Extended Properties=\"Excel 8.0;HDR=YES;IMEX=2\"";
             const string providerXLSX = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=";
-            const string extensionXLSX= ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
-            
+            const string extensionXLSX = ";Extended Properties=\"Excel 12.0 Xml;HDR=YES;IMEX=2\"";
+
             string companyId = (string)Session["CompanyID"];
 
             //foreach (var item in files)
@@ -344,7 +349,7 @@
                                 {
                                     id = Fields[0],
                                     name = Fields[1],
-                                    description = string.Empty,
+                                    description = Fields[3],
                                     dateofopen = DateTime.Now,
                                     dateofclose = DateTime.Now,
                                     balance = Convert.ToDecimal(Fields[2]),
@@ -355,13 +360,13 @@
 
                             }
 
-                            foreach (var n in Account)
+                            foreach (var item in Account)
                             {
-                                var u = db.Accounts.Where(o => o.id.Equals(n.id)
-                                           && o.CompanyID.Equals(n.CompanyID)).FirstOrDefault();
+                                var u = db.Accounts.Where(o => o.id.Equals(item.id)
+                                           && o.CompanyID.Equals(item.CompanyID)).FirstOrDefault();
                                 if (u == null)
                                 {
-                                    db.Accounts.InsertOnSubmit(n);
+                                    db.Accounts.InsertOnSubmit(item);
                                     count += 1;
                                 }
                             }
@@ -380,19 +385,20 @@
                                 {
                                     id = Fields[0],
                                     name = Fields[1],
-                                    description = string.Empty,
+                                    description = Fields[2],
+                                    price= Convert.ToDecimal(Fields[3]),
                                     CompanyID = companyId,
                                 });
 
                             }
 
-                            foreach (var n in Article)
+                            foreach (var item in Article)
                             {
-                                var u = db.Articles.Where(o => o.id.Equals(n.id)
-                                           && o.CompanyID.Equals(n.CompanyID)).FirstOrDefault();
+                                var u = db.Articles.Where(o => o.id.Equals(item.id)
+                                           && o.CompanyID.Equals(item.CompanyID)).FirstOrDefault();
                                 if (u == null)
                                 {
-                                    db.Articles.InsertOnSubmit(n);
+                                    db.Articles.InsertOnSubmit(item);
                                     count += 1;
                                 }
                             }
@@ -447,9 +453,11 @@
 
                         string[] account = { "id", "name", "balance", "description" };
 
-                        string[] owner = { "id", "name", "street", "city", "state", "zip", "phone", "email", "accountid", "IBAN", "CIF" };
+                        string[] customer = { "customerid", "name", "street", "city", "state", "zip", "phone", "email", "accountid", "IBAN" };
 
-                        if (!account.SequenceEqual(columnNames) && !owner.SequenceEqual(columnNames))
+                        string[] supplier = { "supplierid", "name", "street", "city", "state", "zip", "phone", "email", "accountid", "IBAN" };
+
+                        if (!account.SequenceEqual(columnNames) && !customer.SequenceEqual(columnNames) && !supplier.SequenceEqual(columnNames))
                         {
                             string x = $"{IWSLocalResource.GenericError}{Environment.NewLine}{IWSLocalResource.DataFormat}";
 
@@ -465,6 +473,7 @@
 
                             return Json(s);
                         }
+
                         if (account.SequenceEqual(columnNames))
                         {
 
@@ -501,7 +510,7 @@
 
                         }
 
-                        if (owner.SequenceEqual(columnNames))
+                        if (customer.SequenceEqual(columnNames))
                         {
 
                             List<Customer> Customers = new List<Customer>();
@@ -511,25 +520,37 @@
                                 {
                                     id = dataSet.Tables[0].Rows[i][0].ToString(),
                                     name = dataSet.Tables[0].Rows[i][1].ToString(),
-
+                                    street = dataSet.Tables[0].Rows[i][2].ToString(),
+                                    city = dataSet.Tables[0].Rows[i][3].ToString(),
+                                    state = dataSet.Tables[0].Rows[i][4].ToString(),
+                                    zip = dataSet.Tables[0].Rows[i][5].ToString(),
+                                    Phone = dataSet.Tables[0].Rows[i][6].ToString(),
+                                    Email = dataSet.Tables[0].Rows[i][7].ToString(),
+                                    accountid = dataSet.Tables[0].Rows[i][8].ToString(),
                                     CompanyID = companyId.ToString(),
-
+                                    IBAN = dataSet.Tables[0].Rows[i][9].ToString()
                                 };
                                 Customers.Add(Customer);
                             }
 
                             count = 0;
 
-                            foreach (var n in Customers)
+                            foreach (var item in Customers)
                             {
-                                var u = db.Customers.Where(o => o.id.Equals(n.id)
-                                           && o.CompanyID.Equals(n.CompanyID)).FirstOrDefault();
+                                var u = db.Customers.Where(o => o.id.Equals(item.id)
+                                           && o.CompanyID.Equals(item.CompanyID)).FirstOrDefault();
                                 if (u == null)
                                 {
-                                    db.Customers.InsertOnSubmit(n);
+                                    db.Customers.InsertOnSubmit(item);
                                     count += 1;
                                 }
                             }
+
+                        }
+
+                        if (supplier.SequenceEqual(columnNames))
+                        {
+
                             List<Supplier> Suppliers = new List<Supplier>();
                             for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                             {
@@ -537,26 +558,34 @@
                                 {
                                     id = dataSet.Tables[0].Rows[i][0].ToString(),
                                     name = dataSet.Tables[0].Rows[i][1].ToString(),
-
+                                    street = dataSet.Tables[0].Rows[i][2].ToString(),
+                                    city = dataSet.Tables[0].Rows[i][3].ToString(),
+                                    state = dataSet.Tables[0].Rows[i][4].ToString(),
+                                    zip = dataSet.Tables[0].Rows[i][5].ToString(),
+                                    Phone = dataSet.Tables[0].Rows[i][6].ToString(),
+                                    Email = dataSet.Tables[0].Rows[i][7].ToString(),
+                                    accountid = dataSet.Tables[0].Rows[i][8].ToString(),
                                     CompanyID = companyId.ToString(),
-
+                                    IBAN = dataSet.Tables[0].Rows[i][9].ToString()
                                 };
                                 Suppliers.Add(Supplier);
                             }
 
                             count = 0;
 
-                            foreach (var n in Suppliers)
+                            foreach (var item in Suppliers)
                             {
-                                var u = db.Suppliers.Where(o => o.id.Equals(n.id)
-                                           && o.CompanyID.Equals(n.CompanyID)).FirstOrDefault();
+                                var u = db.Suppliers.Where(o => o.id.Equals(item.id)
+                                           && o.CompanyID.Equals(item.CompanyID)).FirstOrDefault();
                                 if (u == null)
                                 {
-                                    db.Suppliers.InsertOnSubmit(n);
+                                    db.Suppliers.InsertOnSubmit(item);
                                     count += 1;
                                 }
                             }
+
                         }
+
                         break;
                 }
 
@@ -905,80 +934,6 @@
             }
             return false;
         }
-
-        //public List<Account> GetAccounts(DataTable dataTable)
-        //{
-        //    List<Account> accounts = new List<Account>();
-
-        //    int count = 0;
-
-        //    String[] sheets = new String[dataTable.Rows.Count];
-
-        //    foreach (DataRow row in dataTable.Rows)
-        //    {
-        //        sheets[count] = row["TABLE_NAME"].ToString();
-        //        count++;
-        //    }
-
-        //    string query = string.Format("Select * from [{0}]", sheets[0]);
-
-        //    return accounts;
-        //}
-        //public Account GetAccount(DataRow row)
-        //{
-        //    string companyId = (string)Session["CompanyID"];
-        //    Account account = new Account
-        //    {
-        //        id = row[2].ToString(),
-        //        name = "NAAN",// row[1].ToString(),
-        //        description = string.Empty,
-        //        dateofopen = DateTime.Now,
-        //        dateofclose = DateTime.Now,
-        //        balance = 0,//Convert.ToDecimal(row[3] ),
-        //        CompanyID = companyId.ToString(),
-        //        ParentId = string.Empty,
-        //        IsUsed = true
-        //    };
-  
-        //    return account;
-        //}
-
-        //public DataTable ReadExcel(string path)
-        //{
-
-        //    string connectionString = String.Empty; ;
-
-        //    DataTable dataTable = new DataTable();
-
-        //    try
-        //    {
-        //        string extension = Path.GetExtension(path).ToLower();
-                
-        //        if (extension == ".xls")
-        //        {
-        //            connectionString = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" +
-        //            path + ";Extended Properties=\"Excel 8.0;HDR=Yes;IMEX=2\"";
-        //        }
-        //        else if (extension == ".xlsx")
-        //        {
-        //            connectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" +
-        //            path + ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
-        //        }
-
-        //        OleDbConnection oleDBConnection = new OleDbConnection(connectionString);
-
-        //        oleDBConnection.Open();
-        //        dataTable = oleDBConnection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-        //        oleDBConnection.Close();
-
-        //        return dataTable;
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        IWSLookUp.LogException(ex);
-        //        throw;
-        //    }
-        //}
 
         public class Helper
         {

@@ -219,6 +219,7 @@
     <Content Include="Scripts\globalize.js" />
     <Content Include="Scripts\globalize.message.js" />
     <Content Include="Scripts\globalize.number.js" />
+    <Content Include="Scripts\IWSProject.js" />
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.js" />
@@ -399,6 +400,19 @@
     <Content Include="Views\Account\SendCode.cshtml" />
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Home\GridViewPartialView.cshtml" />
+    <Content Include="Views\Cash\CashPartial.cshtml" />
+    <Content Include="Views\Cash\Cash.cshtml" />
+    <Content Include="Views\Cash\Index.cshtml" />
+    <Content Include="Views\Cash\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\Cash\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\Cash\DetailGridViewPartial.cshtml" />
+    <Content Include="Views\ExceptionLog\Index.cshtml" />
+    <Content Include="Views\ExceptionLog\ExceptionsGridViewPartial.cshtml" />
+    <Content Include="Views\Brouillard\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\Brouillard\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\Brouillard\Index.cshtml" />
+    <Content Include="Views\Brouillard\BrouillardPartial.cshtml" />
+    <Content Include="Views\Brouillard\Brouillard.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -438,6 +452,9 @@
       <DependentUpon>IWSLocalResource.fr-FR.resx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BrouillardController.cs" />
+    <Compile Include="Controllers\CashController.cs" />
+    <Compile Include="Controllers\ExceptionLogController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\AccountingController.cs" />
@@ -558,6 +575,17 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

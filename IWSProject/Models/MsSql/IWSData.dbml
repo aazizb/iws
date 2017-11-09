@@ -12,16 +12,15 @@
       <Column Name="ParentId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="IsUsed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="IsBalanceSheetAccount" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Association Name="Account_Article" Member="Articles" ThisKey="id" OtherKey="StockAccount" Type="Article" />
-      <Association Name="Account_Article1" Member="Articles1" ThisKey="id" OtherKey="StockAccount" Type="Article" />
-      <Association Name="Account_Article2" Member="Articles2" ThisKey="id" OtherKey="ExpenseAccount" Type="Article" />
+      <Association Name="Account_Article" Member="Articles" ThisKey="id" OtherKey="ExpenseAccount" Type="Article" />
+      <Association Name="Account_Article1" Member="Articles1" ThisKey="id" OtherKey="RevenuAccountId" Type="Article" />
+      <Association Name="Account_Article2" Member="Articles2" ThisKey="id" OtherKey="StockAccount" Type="Article" />
       <Association Name="Account_ClassSetup" Member="ClassSetups" ThisKey="id" OtherKey="ClassID" Type="ClassSetup" />
       <Association Name="Account_CostCenter" Member="CostCenters" ThisKey="id" OtherKey="accountid" Type="CostCenter" />
       <Association Name="Account_Journal" Member="Journals" ThisKey="id" OtherKey="Account" Type="Journal" />
       <Association Name="Account_Journal1" Member="Journals1" ThisKey="id" OtherKey="OAccount" Type="Journal" />
       <Association Name="Account_PeriodicAccountBalance" Member="PeriodicAccountBalances" ThisKey="id" OtherKey="AccountId" Type="PeriodicAccountBalance" />
       <Association Name="Account_Store" Member="Stores" ThisKey="id" OtherKey="accountid" Type="Store" />
-      <Association Name="Account_Article3" Member="Articles3" ThisKey="id" OtherKey="RevenuAccountId" Type="Article" />
     </Type>
   </Table>
   <Table Name="dbo.VendorInvoice" Member="VendorInvoices">
@@ -70,11 +69,10 @@
       <Association Name="Article_LineSalesInvoice" Member="LineSalesInvoices" ThisKey="id" OtherKey="item" Type="LineSalesInvoice" />
       <Association Name="Article_LineSalesOrder" Member="LineSalesOrders" ThisKey="id" OtherKey="item" Type="LineSalesOrder" />
       <Association Name="Article_Stock" Member="Stocks" ThisKey="id" OtherKey="itemid" Type="Stock" />
-      <Association Name="Account_Article" Member="Account" ThisKey="StockAccount" OtherKey="id" Type="Account" IsForeignKey="true" />
-      <Association Name="Account_Article1" Member="Account1" ThisKey="StockAccount" OtherKey="id" Type="Account" IsForeignKey="true" />
-      <Association Name="Account_Article2" Member="Account2" ThisKey="ExpenseAccount" OtherKey="id" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_Article" Member="Account" ThisKey="ExpenseAccount" OtherKey="id" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_Article1" Member="Account1" ThisKey="RevenuAccountId" OtherKey="id" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_Article2" Member="Account2" ThisKey="StockAccount" OtherKey="id" Type="Account" IsForeignKey="true" />
       <Association Name="Vat_Article" Member="Vat" ThisKey="VatCode" OtherKey="id" Type="Vat" IsForeignKey="true" />
-      <Association Name="Account_Article3" Member="Account3" ThisKey="RevenuAccountId" OtherKey="id" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.AspNetRoles" Member="AspNetRoles">
@@ -197,6 +195,52 @@
       <Association Name="Store_BillOfDelivery" Member="Store1" ThisKey="store" OtherKey="id" Type="Store" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.Brouillard" Member="Brouillards">
+    <Type Name="Brouillard">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Date" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="NumPiece" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="Owner" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="Text" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Debit" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Credit" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="TypeDoc" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IsValidated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Cash" Member="Cashes">
+    <Type Name="Cash">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Account" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="SYear" Type="System.String" DbType="NChar(4) NOT NULL" CanBeNull="false" />
+      <Column Name="SMonth" Type="System.String" DbType="NChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Report" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="IsValidated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="Cash_CashLine" Member="CashLines" ThisKey="Id" OtherKey="TransId" Type="CashLine" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CashLine" Member="CashLines">
+    <Type Name="CashLine">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TransId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Einnahmen" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Ausgaben" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Bestand" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Currency" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="konto" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Side" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Gegenkonto" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="BelegNr" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Datum" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="SteuerSatz" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Beschreibung" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
+      <Column Name="CostCenter" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Association Name="Cash_CashLine" Member="Cash" ThisKey="TransId" OtherKey="Id" Type="Cash" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.Category" Member="Categories">
     <Type Name="Category">
       <Column Name="id" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -234,6 +278,7 @@
       <Column Name="CIF" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="BalanceSheet" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="IncomesStatement" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="CashAccountId" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Association Name="Company_VendorInvoice" Member="VendorInvoices" ThisKey="id" OtherKey="CompanyId" Type="VendorInvoice" />
       <Association Name="Company_BillOfDelivery" Member="BillOfDeliveries" ThisKey="id" OtherKey="CompanyId" Type="BillOfDelivery" />
       <Association Name="Company_CustomerInvoice" Member="CustomerInvoices" ThisKey="id" OtherKey="CompanyId" Type="CustomerInvoice" />
@@ -318,6 +363,26 @@
       <Association Name="Company_CustomerInvoice" Member="Company" ThisKey="CompanyId" OtherKey="id" Type="Company" IsForeignKey="true" />
       <Association Name="CostCenter_CustomerInvoice" Member="CostCenter1" ThisKey="CostCenter" OtherKey="id" Type="CostCenter" IsForeignKey="true" />
       <Association Name="Customer_CustomerInvoice" Member="Customer" ThisKey="account" OtherKey="id" Type="Customer" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.FiscalYear" Member="FiscalYears">
+    <Type Name="FiscalYear">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CompanyId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="[Current]" Member="Current" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="[Open]" Member="Open" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="Jan" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Feb" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Mar" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Apr" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="May" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Jun" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Jul" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Aug" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Sep" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Oct" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Nov" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Dec" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
   <Table Name="dbo.GeneralLedger" Member="GeneralLedgers">
@@ -675,6 +740,8 @@
       <Column Name="Credit" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="CompanyID" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Currency" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="InitialBalance" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="FinalBalance" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Association Name="Account_PeriodicAccountBalance" Member="Account" ThisKey="AccountId" OtherKey="id" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>

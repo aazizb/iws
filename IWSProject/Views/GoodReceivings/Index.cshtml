@@ -85,10 +85,13 @@
     var expanded = false;
     var ndxMaster = 0;
     var ndxDetail = 0;
+    var command;                            //====
+    var isDetailRowExpanded = new Array();  //====
     function OnMRowClick(s, e) {
         expanded = true;
         ndxMaster = e.visibleIndex;
         s.StartEditRow(ndxMaster);
+        isDetailRowExpanded[ndxMaster] = true;//====
     }
     function OnDRowClick(s, e) {
         ndxDetail = e.visibleIndex
@@ -100,12 +103,28 @@
             expanded = false;
             s.ExpandDetailRow(ndxMaster);
         }
+        if (command == "HIDEDETAILROW") {   //====
+            if (s.IsEditing || s.IsNewRowEditing)
+                s.CancelEdit();
+        }
+        if (command == 'CANCELEDIT') {      //====
+            if (isDetailRowExpanded[ndxMaster] == true) {
+                s.CollapseDetailRow(ndxMaster);
+            }
+        }
+    }
+    function OnDetailRowExpanding(s, e) {   //====
+        isDetailRowExpanded[e.visibleIndex] = true;
+    }
+    function OnDetailRowCollapsing(s, e) {  //====
+        isDetailRowExpanded[e.visibleIndex] = false;
     }
     function OnDEndCallback(s, e) {
         s.SetFocusedRowIndex(e.visibleIndex);
     }
     function OnMBeginCallback(s, e) {
         e.customArgs["selectedIDs"] = selectedIDs;
+        command = e.command;                //====
     }
     function OnMSelectionChanged(s, e) {
         s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
@@ -124,8 +143,14 @@
             function (e) {
                 switch (e.keyCode) {
                     case 13://ENTER
+                        var isValidated = IsValidated.GetValue();
                         if (s.IsEditing()) {
-                            s.UpdateEdit();
+                            if (isValidated == false) {
+                                s.UpdateEdit();
+                            }
+                            else {
+                                s.CancelEdit();
+                            }
                         }
                         break;
                     case 27://ESC

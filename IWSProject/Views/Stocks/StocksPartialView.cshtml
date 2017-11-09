@@ -1,6 +1,5 @@
-﻿
-@using IWSProject.Content
-
+﻿@using IWSProject.Content
+@using IWSProject.Models
 @Html.DevExpress().GridView(
     settings =>
     {
@@ -23,7 +22,7 @@
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
 
 
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
         settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
@@ -62,9 +61,18 @@
         {
             column.FieldName = "ItemUnit";
             column.Caption = IWSLocalResource.unit;
-            column.Width = Unit.Percentage(8);
+            column.Width = Unit.Percentage(4);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetPackUnits();
+                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+                combo.TextFormatString = "{1}";
+            });
         });
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "AveragePrice";

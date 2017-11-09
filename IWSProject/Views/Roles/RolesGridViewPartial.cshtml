@@ -20,7 +20,6 @@
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
         settings.CommandColumn.ShowNewButtonInHeader = true;
@@ -40,7 +39,6 @@
 
         settings.KeyFieldName = "Id";
 
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
@@ -48,7 +46,7 @@
 
         settings.Settings.ShowFilterRow = true;
         settings.SettingsBehavior.ConfirmDelete = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
 
         settings.Width = Unit.Percentage(100);
 

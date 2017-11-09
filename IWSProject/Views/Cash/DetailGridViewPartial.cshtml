@@ -1,0 +1,468 @@
+﻿@using IWSProject.Content
+@using IWSProject.Models
+
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "DetailGridView";
+        settings.Width = Unit.Percentage(100);
+        settings.Caption = IWSLocalResource.LineCash;
+        settings.SettingsDetail.MasterGridName = "MasterGridViewPartial";
+        settings.CallbackRouteValues = new { Controller = "Cash", Action = "DetailGridViewPartial", transid = Session["transid"] };
+
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Cash", Action = "DetailGridViewPartialAddNew", transid = Session["transid"] };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Cash", Action = "DetailGridViewPartialUpdate", transid = Session["transid"] };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Cash", Action = "DetailGridViewPartialDelete", transid = Session["transid"] };
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+
+        settings.ClientSideEvents.RowClick = "OnDRowClick";
+        settings.ClientSideEvents.RowDblClick = "OnDRowClick";
+        settings.ClientSideEvents.Init = "OnDInit";
+
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsBehavior.AllowFocusedRow = true;
+        settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+
+        settings.Styles.RowHotTrack.Cursor = "pointer";
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(1);
+        settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+        settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowUpdateButton = false;
+        settings.CommandColumn.ShowCancelButton = false;
+
+        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
+        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
+        settings.SettingsCommandButton.NewButton.Text = " ";
+
+        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
+        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
+        settings.SettingsCommandButton.EditButton.Text = " ";
+
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
+        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
+        settings.SettingsCommandButton.DeleteButton.Text = " ";
+
+        settings.SettingsDataSecurity.AllowDelete = !(bool)Session["IsValidated"];
+        settings.SettingsDataSecurity.AllowEdit = !(bool)Session["IsValidated"];
+        settings.SettingsDataSecurity.AllowInsert = !(bool)Session["IsValidated"];
+
+        settings.SettingsCommandButton.UpdateButton.Image.IconID = IconID.ActionsApply16x16;
+        settings.SettingsCommandButton.UpdateButton.Image.ToolTip = IWSLocalResource.btnUpdate;
+        settings.SettingsCommandButton.UpdateButton.Text = " ";
+
+        settings.SettingsCommandButton.CancelButton.Image.IconID = IconID.ActionsCancel16x16;
+        settings.SettingsCommandButton.CancelButton.Image.ToolTip = IWSLocalResource.btnCancel;
+        settings.SettingsCommandButton.CancelButton.Text = " ";
+
+        settings.InitNewRow = (s, e) =>
+        {
+            e.NewValues["Datum"] = DateTime.Today;
+        };
+        settings.CellEditorInitialize = (s, e) =>
+        {
+            ASPxEdit editor = (ASPxEdit)e.Editor;
+            editor.ValidationSettings.Display = Display.Dynamic;
+            //    editor.SetClientSideEventHandler("KeyDown", "function(s, e){ if(e.htmlEvent.keyCode==13) DetailGridView.UpdateEdit(); }");
+        };
+        settings.PreRender = (sender, e) =>
+        {
+            if (ViewData["IsNewDetailRow"] != null)
+            {
+                MVCxGridView g = (MVCxGridView)sender;
+                g.AddNewRow();
+            }
+        };
+        settings.KeyFieldName = "Id";
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Einnahmen";
+            column.Caption = IWSLocalResource.Revenue;
+            column.Width = Unit.Percentage(8);
+            column.EditorProperties().TextBox(p =>
+            {
+                p.DisplayFormatString = "N";
+                p.DisplayFormatInEditMode = true;
+                p.Width = Unit.Percentage(100);
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Ausgaben";
+            column.Caption = IWSLocalResource.Expenses;
+            column.Width = Unit.Percentage(8);
+            column.EditorProperties().TextBox(p =>
+            {
+                p.DisplayFormatString = "N";
+                p.DisplayFormatInEditMode = true;
+                p.Width = Unit.Percentage(100);
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Bestand";
+            column.Caption = IWSLocalResource.Available;
+            column.Width = Unit.Percentage(8);
+            column.ReadOnly = true;
+            column.EditorProperties().TextBox(p =>
+            {
+                p.DisplayFormatString = "N";
+                p.DisplayFormatInEditMode = true;
+                p.Width = Unit.Percentage(100);
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Currency";
+            column.Caption = IWSLocalResource.Currency;
+            column.Width = Unit.Percentage(5);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "Id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetCurrency();
+                combo.Columns.Add("Id").Caption = IWSLocalResource.id;
+                combo.Columns.Add("Name").Caption = IWSLocalResource.item;
+                combo.Width = Unit.Percentage(100);
+                combo.TextFormatString = "{0}-{1}";
+                combo.FilterMinLength = 2;
+                combo.CallbackPageSize = 15;
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Side";
+            column.Caption = IWSLocalResource.side;
+            column.Width = Unit.Percentage(5);
+            column.EditorProperties().CheckBox(checkBox =>
+            {
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Gegenkonto";
+            column.Caption = IWSLocalResource.oaccount;
+            column.Width = Unit.Percentage(20);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.Columns.Add("id").Caption = IWSLocalResource.id;
+                combo.Columns.Add("name").Caption = IWSLocalResource.item;
+                combo.Width = Unit.Percentage(100);
+                combo.TextFormatString = "{0}-{1}";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CostCenter";
+            column.Caption = IWSLocalResource.costcenters;
+            column.Width = Unit.Percentage(20);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "Id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetCostCenters();
+                combo.Columns.Add("Id").Caption = IWSLocalResource.id;
+                combo.Columns.Add("Name").Caption = IWSLocalResource.name;
+                combo.Width = Unit.Percentage(100);
+                combo.TextFormatString = "{0}-{1}";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "BelegNr";
+            column.Caption = IWSLocalResource.item;
+            column.Width = Unit.Percentage(5);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Datum";
+            column.Caption = IWSLocalResource.TransDate;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(8);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormat = EditFormat.Custom;
+                d.Width = Unit.Percentage(100);
+                d.DisplayFormatString = "yyyy-MM-dd";
+                d.DisplayFormatInEditMode = true;
+                d.AllowUserInput = true;
+                d.AllowMouseWheel = true;
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "SteuerSatz";
+            column.Caption = IWSLocalResource.vat;
+            column.Width = Unit.Percentage(6);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Beschreibung";
+            column.Caption = IWSLocalResource.description;
+            column.Width = Unit.Percentage(30);
+        });
+
+
+        #region Template
+
+        //settings.SetEditFormTemplateContent(templateContent =>
+        //{
+        //    Html.DevExpress().FormLayout(formLayoutSettings =>
+        //    {
+        //        formLayoutSettings.Name = "DetailGridViewEdit";
+        //        formLayoutSettings.Width = Unit.Percentage(100);
+        //        formLayoutSettings.ColCount = 3;
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "Id";
+        //            i.Caption = IWSLocalResource.id;
+        //            i.NestedExtension().TextBox(s =>
+        //            {
+        //                s.ShowModelErrors = true;
+        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //                s.Width = Unit.Percentage(100);
+        //                s.TabIndex = 8;
+        //            });
+        //        });
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "Einnahmen";
+        //            i.Caption = IWSLocalResource.Revenue;
+        //            i.NestedExtension().TextBox(s =>
+        //            {
+        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //                s.ShowModelErrors = true;
+        //                s.Width = Unit.Percentage(100);
+        //                s.TabIndex = 2;
+        //            });
+        //        });
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "Ausgaben";
+        //            i.Caption = IWSLocalResource.Expenses;
+        //            i.NestedExtension().TextBox(s =>
+        //            {
+        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //                s.ShowModelErrors = true;
+        //                s.Width = Unit.Percentage(100);
+        //                s.TabIndex = 3;
+        //            });
+        //        });
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "Bestand";
+        //            i.Caption = IWSLocalResource.Available;
+        //            i.NestedExtension().TextBox(s =>
+        //            {
+        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //                s.ShowModelErrors = true;
+        //                s.Width = Unit.Percentage(100);
+        //                s.TabIndex = 4;
+        //            });
+        //        });
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "Konto";
+        //            i.Visible = false;
+        //            i.Caption = IWSLocalResource.account;
+        //            i.NestedExtension().ComboBox(s =>
+        //            {
+        //                s.Properties.TextField = "name";
+        //                s.Properties.ValueField = "id";
+        //                s.Properties.ValueType = typeof(string);
+        //                s.Properties.DataSource = IWSLookUp.GetAccounts();
+        //                s.Properties.Columns.Add(a =>
+        //                {
+        //                    a.FieldName = "id";
+        //                    a.Caption = IWSLocalResource.id;
+        //                    a.Width = Unit.Percentage(35);
+        //                });
+        //                s.Properties.Columns.Add(a =>
+        //                {
+        //                    a.FieldName = "name";
+        //                    a.Caption = IWSLocalResource.name;
+        //                    a.Width = Unit.Percentage(65);
+        //                });
+        //                s.Properties.TextFormatString = "{0}-{1}";
+        //                s.Properties.CallbackPageSize = 15;
+        //                s.Properties.FilterMinLength = 2;
+        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //                s.ShowModelErrors = true;
+        //                s.Width = Unit.Percentage(100);
+        //                s.TabIndex = 1;
+        //            });
+        //        });
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "side";
+        //            i.Caption = IWSLocalResource.side;
+        //            i.NestedExtension().CheckBox(e =>
+        //            {
+        //                e.TabIndex = 5;
+        //            });
+        //        });
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "GegenKonto";
+        //            i.Caption = IWSLocalResource.oaccount;
+        //            i.NestedExtension().ComboBox(s =>
+        //            {
+        //                s.Properties.TextField = "name";
+        //                s.Properties.ValueField = "id";
+        //                s.Properties.ValueType = typeof(string);
+        //                s.Properties.DataSource = IWSLookUp.GetAccounts();
+        //                s.Properties.Columns.Add(a =>
+        //                {
+        //                    a.FieldName = "id";
+        //                    a.Caption = IWSLocalResource.id;
+        //                    a.Width = Unit.Percentage(35);
+        //                });
+        //                s.Properties.Columns.Add(a =>
+        //                {
+        //                    a.FieldName = "name";
+        //                    a.Caption = IWSLocalResource.name;
+        //                    a.Width = Unit.Percentage(65);
+        //                });
+        //                s.Properties.TextFormatString = "{0}-{1}";
+        //                s.Properties.CallbackPageSize = 15;
+        //                s.Properties.FilterMinLength = 2;
+        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //                s.ShowModelErrors = true;
+        //                s.Width = Unit.Percentage(100);
+        //                s.TabIndex = 1;
+        //                s.Properties.ClientSideEvents.Init = "function(s, e) { s.Focus(); }";
+        //            });
+        //        });
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "BelegNr";
+        //            i.Caption = IWSLocalResource.item;
+        //            i.NestedExtension().TextBox(s =>
+        //            {
+        //                s.ShowModelErrors = true;
+        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //                s.Width = Unit.Percentage(100);
+        //                s.TabIndex = 6;
+        //            });
+        //        });
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "Datum";
+        //            i.Caption = IWSLocalResource.TransDate;
+        //            i.NestedExtension().DateEdit(d =>
+        //            {
+        //                d.Properties.EditFormatString = "MM/dd/yyyy";
+        //                d.Properties.NullDisplayText = "MM/dd/yyyy";
+        //                d.Properties.EditFormat = EditFormat.Custom;
+        //                d.Width = Unit.Percentage(90);
+        //                d.Properties.DisplayFormatString = "yyyy-MM-dd";
+        //                d.Properties.DisplayFormatInEditMode = true;
+        //                d.Properties.AllowUserInput = true;
+        //                d.Properties.AllowMouseWheel = true;
+        //                d.TabIndex = 7;
+        //            });
+        //        });
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "SteuerSatz";
+        //            i.Caption = IWSLocalResource.vat;
+        //            i.Width = Unit.Percentage(50);
+        //            i.NestedExtension().SpinEdit(s =>
+        //            {
+        //                s.Properties.MinValue = 0;
+        //                s.Properties.MaxValue = 0.55M;
+        //                s.Properties.NumberType = SpinEditNumberType.Float;
+        //                s.Properties.Increment = 0.01M;
+        //                s.Properties.LargeIncrement = 0.1M;
+        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //                s.Properties.SpinButtons.ShowLargeIncrementButtons = true;
+        //                s.Width = Unit.Percentage(69);
+        //                s.TabIndex = 8;
+        //            });
+        //        });
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.FieldName = "Beschreibung";
+        //            i.Caption = IWSLocalResource.text;
+        //            i.ColSpan = 3;
+        //            i.NestedExtension().Memo(s =>
+        //            {
+        //                s.ShowModelErrors = true;
+        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //                s.Width = Unit.Percentage(100);
+        //                s.TabIndex = 9;
+        //            });
+        //        });
+        //        formLayoutSettings.Items.AddEmptyItem();
+        //        formLayoutSettings.Items.Add(i =>
+        //        {
+        //            i.ShowCaption = DefaultBoolean.False;
+        //            i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
+        //        }).SetNestedContent(() =>
+        //        {
+        //            Html.DevExpress().Button(
+        //        btnSettings =>
+        //        {
+        //            btnSettings.Name = "btnDUpdate";
+        //            btnSettings.Text = "";
+        //            btnSettings.ToolTip = IWSLocalResource.btnUpdate;
+        //            btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+        //            btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
+        //            btnSettings.Width = Unit.Pixel(80);
+        //            btnSettings.ClientEnabled = !(bool)Session["IsValidated"];
+        //            btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.UpdateEdit(); }";
+        //            btnSettings.TabIndex = 9;
+        //        }).Render();
+        //            Html.DevExpress().Button(
+        //        btnSettings =>
+        //        {
+        //            btnSettings.Name = "btnDCancel";
+        //            btnSettings.Text = "";
+        //            btnSettings.ToolTip = IWSLocalResource.btnCancel;
+        //            btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+        //            btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
+        //            btnSettings.Width = Unit.Pixel(80);
+        //            btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.CancelEdit(); }";
+        //            btnSettings.TabIndex = 10;
+        //        }).Render();
+        //        });
+        //    })
+        //    .Bind(ViewData["line"] ?? templateContent.DataItem)
+        //    .Render();
+        //});
+
+        #endregion
+
+        settings.DataBinding = (sender, e) =>
+        {
+            ((MVCxGridView)sender).ForceDataRowType(typeof(CashLine));
+        };
+    });
+
+    if (ViewData["GenericError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GenericError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()
+

@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 <script type="text/javascript">
+
     var selectedIDs=null;
 
     function OnButtonClick() {
@@ -14,10 +15,8 @@
     }
     function UpdateButtonText() {
         var text = BankStatementsGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
-        //text += " Customization";
         btShowCustomizationWindow.SetText(text);
     }
-
     function OnBeginCallback(s, e) {
         e.customArgs["selectedIDs"] = selectedIDs;
         selectedIDs = null;

@@ -23,7 +23,7 @@
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.AllowFocusedRow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
         settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
@@ -94,8 +94,18 @@
         settings.Columns.Add(column =>
         {
             column.FieldName = "unit";
-            column.Caption = IWSLocalResource.unit;
-            column.Width = Unit.Percentage(5);
+            column.Caption = IWSLocalResource.qttyunit;
+            column.Width = Unit.Percentage(4);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetQuantityUnits();
+                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+                combo.TextFormatString = "{1}";
+            });
         });
         settings.Columns.Add(column =>
         {
@@ -173,12 +183,53 @@
             column.Caption = IWSLocalResource.text;
             column.Width = Unit.Percentage(20);
         });
+
         #region Template
 
         settings.SetEditFormTemplateContent(templateContent =>
         {
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
+
+                #region Button
+
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                    i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
+                }).SetNestedContent(() =>
+                {
+                    Html.DevExpress().Button(
+                btnSettings =>
+                {
+                    btnSettings.Name = "btnDUpdate";
+                    btnSettings.Text = "";
+                    btnSettings.ToolTip = IWSLocalResource.btnUpdate;
+                    btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+                    btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
+                    btnSettings.Width = Unit.Pixel(80);
+                    btnSettings.ClientEnabled = !(bool)Session["IsValidated"];
+                    btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.UpdateEdit(); }";
+                    btnSettings.TabIndex = 9;
+                }).Render();
+                    Html.DevExpress().Button(
+                btnSettings =>
+                {
+                    btnSettings.Name = "btnDCancel";
+                    btnSettings.Text = "";
+                    btnSettings.ToolTip = IWSLocalResource.btnCancel;
+                    btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+                    btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
+                    btnSettings.Width = Unit.Pixel(80);
+                    btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.CancelEdit(); }";
+                    btnSettings.TabIndex = 10;
+                }).Render();
+                });
+
+                #endregion
+
                 formLayoutSettings.Name = "DetailGridViewEdit";
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 3;
@@ -236,12 +287,28 @@
                 {
                     i.FieldName = "unit";
                     i.Caption = IWSLocalResource.unit;
-                    i.NestedExtension().TextBox(s =>
+                    i.NestedExtension().ComboBox(s =>
                     {
+                        s.Properties.TextField = "name";
+                        s.Properties.ValueField = "id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = IWSLookUp.GetQuantityUnits();
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "id";
+                            column.Caption = IWSLocalResource.id;
+                            column.Width = Unit.Percentage(15);
+                        });
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "name";
+                            column.Caption = IWSLocalResource.name;
+                            column.Width = Unit.Percentage(85);
+                        });
+                        s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);
-                        s.TabIndex = 6;
                     });
                 });
                 formLayoutSettings.Items.Add(i =>
@@ -332,40 +399,6 @@
                         s.Width = Unit.Percentage(100);
                         s.TabIndex = 8;
                     });
-                });
-                formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.ShowCaption = DefaultBoolean.False;
-                    i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
-                }).SetNestedContent(() =>
-                {
-                    Html.DevExpress().Button(
-                btnSettings =>
-                {
-                    btnSettings.Name = "btnDUpdate";
-                    btnSettings.Text = "";
-                    btnSettings.ToolTip = IWSLocalResource.btnUpdate;
-                    btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-                    btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
-                    btnSettings.Width = Unit.Pixel(80);
-                    btnSettings.ClientEnabled = !(bool)Session["IsValidated"];
-                    btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.UpdateEdit(); }";
-                    btnSettings.TabIndex = 9;
-                }).Render();
-                    Html.DevExpress().Button(
-                btnSettings =>
-                {
-                    btnSettings.Name = "btnDCancel";
-                    btnSettings.Text = "";
-                    btnSettings.ToolTip = IWSLocalResource.btnCancel;
-                    btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
-                    btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
-                    btnSettings.Width = Unit.Pixel(80);
-                    btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.CancelEdit(); }";
-                    btnSettings.TabIndex = 10;
-                }).Render();
                 });
             })
             .Bind(ViewData["line"] ?? templateContent.DataItem)

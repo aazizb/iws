@@ -1,6 +1,5 @@
 ﻿@using IWSProject.Content
 <script type="text/javascript">
-
     function OnSelectedIndexChanged(s, e) {
         $.ajax({
             url: '@Url.Action("PackUnit", "PurchaseOrders")',
@@ -51,27 +50,46 @@
     var expanded = false;
     var ndxMaster = 0;
     var ndxDetail = 0;
+    var command;                            //====
+    var isDetailRowExpanded = new Array();  //====
     function OnMRowClick(s, e) {
         expanded = true;
         ndxMaster = e.visibleIndex;
         s.StartEditRow(ndxMaster);
+        isDetailRowExpanded[ndxMaster] = true;//====
     }
     function OnDRowClick(s, e) {
         ndxDetail = e.visibleIndex
         s.SetFocusedRowIndex(ndxDetail);
         s.StartEditRow(ndxDetail);
-    } 
+    }
     function OnMEndCallback(s, e) {
         if (expanded == true) {
             expanded = false;
             s.ExpandDetailRow(ndxMaster);
         }
+        if (command == "HIDEDETAILROW") {   //====
+            if (s.IsEditing || s.IsNewRowEditing)
+                s.CancelEdit();
+        }
+        if (command == 'CANCELEDIT') {      //====
+            if (isDetailRowExpanded[ndxMaster] == true) {
+                s.CollapseDetailRow(ndxMaster);
+            }
+        }
+    }
+    function OnDetailRowExpanding(s, e) {   //====
+        isDetailRowExpanded[e.visibleIndex] = true;
+    }
+    function OnDetailRowCollapsing(s, e) {  //====
+        isDetailRowExpanded[e.visibleIndex] = false;
     }
     function OnDEndCallback(s, e) {
         s.SetFocusedRowIndex(e.visibleIndex);
     }
     function OnMBeginCallback(s, e) {
         e.customArgs["selectedIDs"] = selectedIDs;
+        command = e.command;                //====
     }
     function OnMSelectionChanged(s, e) {
         s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
@@ -90,10 +108,15 @@
             function (e) {
                 switch (e.keyCode) {
                     case 13://ENTER
+                        var isValidated = IsValidated.GetValue();
                         if (s.IsEditing()) {
-                            s.UpdateEdit();
-                        }
-                        break;
+                            if (isValidated == false) {
+                                s.UpdateEdit();
+                            }
+                            else {
+                                s.CancelEdit();
+                            }
+                        } k;
                     case 27://ESC
                         if (s.IsEditing()) {
                             s.CancelEdit();
@@ -109,12 +132,12 @@
         ASPxClientUtils.AttachEventToElement(
             s.GetMainElement(),
             "keydown",
-            function ( e) {
+            function (e) {
                 switch (e.keyCode) {
                     case 13://ENTER
                         if (s.IsEditing()) {
-                                s.UpdateEdit();
-                                s.AddNewRow();
+                            s.UpdateEdit();
+                            s.AddNewRow();
                         }
                         break;
                     case 27://ESC
@@ -132,7 +155,6 @@
 
 @using (Html.BeginForm("Index", "PurchaseOrders"))
 {
-
     @Html.DevExpress().Button(
     settings =>
     {

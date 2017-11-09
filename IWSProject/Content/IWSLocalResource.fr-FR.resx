@@ -454,7 +454,7 @@
     <value>Valider</value>
   </data>
   <data name="IsValidated" xml:space="preserve">
-    <value>Est Validé?</value>
+    <value>Validé</value>
   </data>
   <data name="AccountBalance" xml:space="preserve">
     <value>Solde des Comptes</value>
@@ -640,7 +640,7 @@
     <value>Date Valeur</value>
   </data>
   <data name="ImportBankStatement" xml:space="preserve">
-    <value>Importer Relevé Bancaire</value>
+    <value>Importer relevé banque</value>
   </data>
   <data name="DropFiles" xml:space="preserve">
     <value>Choisir fichier(s) ici</value>
@@ -779,5 +779,56 @@
   </data>
   <data name="DeliveryTerms" xml:space="preserve">
     <value>Conditions de livraison</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Solde</value>
+  </data>
+  <data name="Expenses" xml:space="preserve">
+    <value>Sortie</value>
+  </data>
+  <data name="Revenue" xml:space="preserve">
+    <value>Entrée</value>
+  </data>
+  <data name="Cash" xml:space="preserve">
+    <value>Caisse</value>
+  </data>
+  <data name="LineCash" xml:space="preserve">
+    <value>Ligne Caisse</value>
+  </data>
+  <data name="ImportCash" xml:space="preserve">
+    <value>Importer Caisse</value>
+  </data>
+  <data name="ImportData" xml:space="preserve">
+    <value>Importer Donnée</value>
+  </data>
+  <data name="LogException" xml:space="preserve">
+    <value>Journal des Exceptions</value>
+  </data>
+  <data name="ExDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="ExMessage" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="ExSource" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="ExTarget" xml:space="preserve">
+    <value>Cible</value>
+  </data>
+  <data name="ExType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ExURL" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="ExUser" xml:space="preserve">
+    <value>Utilisateur</value>
+  </data>
+  <data name="BalanceReport" xml:space="preserve">
+    <value>Report de Solde</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>Brouillard</value>
   </data>
 </root>

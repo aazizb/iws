@@ -31,7 +31,7 @@ namespace IWSProject.Controllers
         {
             var model = db.Accounts;
             item.CompanyID = (string)Session["CompanyID"];
-
+            item.IsUsed = true;
             ViewData["accounts"] = item;
             if (ModelState.IsValid)
             {

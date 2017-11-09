@@ -9,11 +9,15 @@
 
     settings.KeyFieldName = "AccountId";
 
-    settings.SettingsBehavior.AllowSelectByRowClick = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
     settings.SettingsBehavior.EnableRowHotTrack = true;
 
     settings.Styles.RowHotTrack.Cursor = "pointer";
-    settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
+    settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+    settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+    settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+    settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+    settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
     settings.Settings.ShowFilterRow = true;
     settings.Settings.ShowFilterRowMenu = true;
@@ -35,7 +39,14 @@
 
     settings.Images.CollapsedButton.IconID = IconID.ActionsAdd16x16;
     settings.Images.ExpandedButton.IconID = IconID.ActionsRemove16x16;
-    
+
+    settings.PreRender = (s, e) =>
+    {
+        MVCxGridView g = (MVCxGridView)s;
+        if (g != null)
+            g.ExpandAll();
+    };
+
     settings.Columns.Add(column =>
     {
         column.FieldName = "ClassName";
