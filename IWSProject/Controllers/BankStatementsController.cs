@@ -465,6 +465,7 @@
 
                             return Json(s);
                         }
+
                         if(!(dataSet.Tables[0].Rows.Count > 0))
                         {
                             string x = $"{IWSLocalResource.GenericError}{Environment.NewLine}{IWSLocalResource.DataFormat} ";
@@ -935,7 +936,7 @@
             return false;
         }
 
-        public class Helper
+        private class Helper
         {
             public const string RootFolder = "~/Content/Uploads";
             public static string Model { get { return RootFolder; } }

@@ -9,8 +9,13 @@
 
     settings.KeyFieldName = "AccountID";
 
-    settings.SettingsBehavior.AllowSelectByRowClick = false;
     settings.SettingsBehavior.EnableRowHotTrack = true;
+    settings.SettingsBehavior.AllowFocusedRow = true;
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.AllowEllipsisInText = true;
+    settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+    settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+    settings.SettingsResizing.Visualization = ResizingMode.Live;
 
     settings.Styles.RowHotTrack.Cursor = "pointer";
     settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
@@ -22,7 +27,6 @@
     settings.Settings.ShowFilterRow = true;
     settings.Settings.ShowGroupPanel = true;
     settings.Settings.ShowFilterRowMenu = true;
-    settings.SettingsBehavior.AllowFocusedRow = true;
 
     settings.Width = Unit.Percentage(100);
 

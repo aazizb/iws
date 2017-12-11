@@ -1,5 +1,6 @@
 ﻿using DevExpress.Web.Mvc;
 using IWSProject.Models;
+using IWSProject.Content;
 using System;
 using System.Linq;
 using System.Web.Mvc;
@@ -47,12 +48,22 @@ namespace IWSProject.Controllers
             item.HeaderText = item.HeaderText ?? "N/A";
             ViewData["item"] = item;
             ViewBag.IsNewRow = true;
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     model.InsertOnSubmit(item);
-                    db.SubmitChanges();
+                    bool result = IWSLookUp.CheckPeriod(item.TransDate, item.CompanyId, true, true);
+                    if (result)
+                    {
+                        db.SubmitChanges();
+                    }
+                    else
+                    {
+                        ViewBag.NoEval = true;
+                        ViewData["GenericError"] = $"{IWSLocalResource.GenericError}! {IWSLocalResource.CheckPeriodKeyIn}";
+                    }
                     ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)
@@ -64,6 +75,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
+
             return PartialView("MasterGridViewPartial", IWSLookUp.GetPurchaseOrder());
         }
         [HttpPost, ValidateInput(false)]

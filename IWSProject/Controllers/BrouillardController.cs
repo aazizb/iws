@@ -22,6 +22,7 @@ namespace IWSProject.Controllers
         private object RootFolder = "~/Content/Uploads";
         public ActionResult Brouillard()
         {
+            ViewData["Brouillard"] = IWSLookUp.GetBrouillardType();
             return View("Brouillard", RootFolder);
         }
         // GET: Brouillard
@@ -37,104 +38,346 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(string selectedIDs)
         {
-
+            
             try
             {
+                string companyId = (string)Session["CompanyID"];
+
                 if (!string.IsNullOrEmpty(selectedIDs))
                 {
-
-                    string[] stringIDs = selectedIDs.Split(new string[] { ";" },
-                                                StringSplitOptions.RemoveEmptyEntries);
-
-                    int[] intIDs = stringIDs.Select(int.Parse).ToArray();
-
-                    int itemId = 0;
-                    //int transId = 0;
-                    string itemType = String.Empty;
-                    string outputVataccountId = String.Empty;
-                    //decimal vat;
-
-                    //bool withdrawal = true;
-
-                    string companyId = (string)Session["CompanyID"];
-
-                    selectedIDs = SetDocType(selectedIDs, IWSLookUp.DocsType.Brouillard.ToString());
-
-                    IList<string> items = new List<string>(selectedIDs.Split(new string[] { ";" },
-                                                                StringSplitOptions.None));
+                    IList<string> items = new List<string>(selectedIDs.Split(new string[] { ";" }, StringSplitOptions.None));
                     foreach (string item in items)
                     {
-
+                        int ItemID;
+                        string TypeDoc;
+                        string NumPiece;
+                        string oid;
+                        int transId = 0;
                         var list = item.Split(new string[] { "," }, StringSplitOptions.None);
 
-                        itemId = Convert.ToInt32(list[0]);
+                        ItemID = Convert.ToInt32(list[0]);
 
-                        itemType = list[1];
+                        NumPiece = list[1];
 
-                        //List<Brouillard> Brouillard = IWSLookUp.GetBrouillardLines(itemId);
+                        TypeDoc = list[2];
+                        BrouillardHeaderViewModel header = new BrouillardHeaderViewModel();
+                        BrouillardLineViewModel line = new BrouillardLineViewModel();
+                        List<BrouillardViewModel> Brouillard = IWSLookUp.GetBrouillard(TypeDoc, NumPiece, companyId,ItemID);
+                        if (TypeDoc == "VP" || TypeDoc == "VT" )
+                        {
+                            foreach (BrouillardViewModel b in Brouillard)
+                            {
+                                if (!b.IsValidated)
+                                {
+                                oid = Convert.ToString(b.OID);
+                                Settlement invoiceHeader = new Settlement
+                                {
+                                    oid = b.OID,
+                                    CostCenter = "20",
+                                    account = b.Account,
+                                    HeaderText = b.Text,
+                                    TransDate = b.TransDate,
+                                    ItemDate = b.ItemDate,
+                                    EntryDate = b.EntryDate,
+                                    CompanyId = b.CompanyId,
+                                    IsValidated = b.IsValidated
+                                };
+                                db.Settlements.InsertOnSubmit(invoiceHeader);
+                                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                if (transId == 0)
+                                    transId = db.Settlements.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                LineSettlement invoiceLine = new LineSettlement
+                                {
+                                    transid = transId,
+                                    account = b.AccountID,
+                                    side = b.Side,
+                                    oaccount = b.OAccountID,
+                                    amount = b.Amount,
+                                    duedate = b.DueDate,
+                                    text = b.Text,
+                                    Currency = b.Currency
+                                };
+                                db.LineSettlements.InsertOnSubmit(invoiceLine);
+                                db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
+                                                    ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                            }
+                        }
+                        if (TypeDoc == "AC" || TypeDoc == "AI")
+                        {
+                            foreach (BrouillardViewModel b in Brouillard)
+                            {
+                                if (!b.IsValidated)
+                                {
+                                    oid = Convert.ToString(b.OID);
+                                    Payment invoiceHeader = new Payment
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "10",
+                                        account = b.Account,
+                                        HeaderText = b.Text,
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.Payments.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    if (transId == 0)
+                                        transId = db.Payments.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LinePayment invoiceLine = new LinePayment
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.Text,
+                                        Currency = b.Currency
+                                    };
+                                    db.LinePayments.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                        db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                            }
+                        }
+                        if (TypeDoc == "BQ" || TypeDoc == "BK")
+                        {
+                            foreach (BrouillardViewModel b in Brouillard)
+                            {
+                                string owner = b.Account;
+                                if (string.IsNullOrWhiteSpace(owner))
+                                    owner = "G";
+                                owner = owner.Substring(0,1).ToUpper();
+                                if (owner == "F" && !b.IsValidated)
+                                {
 
-                        //foreach (BrouillardLine BrouillardLine in Brouillard)
-                        //{
+                                    oid = Convert.ToString(b.OID);
+                                    Payment invoiceHeader = new Payment
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "10",
+                                        account = b.Account,
+                                        HeaderText = b.Text,
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.Payments.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    if (transId == 0)
+                                        transId = db.Payments.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LinePayment invoiceLine = new LinePayment
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.Text,
+                                        Currency = b.Currency
+                                    };
+                                    db.LinePayments.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                                if (owner == "C" && !b.IsValidated)
+                                {
+                                    oid = Convert.ToString(b.OID);
+                                    Settlement invoiceHeader = new Settlement
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "20",
+                                        account = b.Account,
+                                        HeaderText = b.Text,
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.Settlements.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    if (transId == 0)
+                                        transId = db.Settlements.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LineSettlement invoiceLine = new LineSettlement
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.Text,
+                                        Currency = b.Currency
+                                    };
+                                    db.LineSettlements.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                                if (owner == "G" && !b.IsValidated)
+                                {
+                                    oid = Convert.ToString(b.OID);
+                                    GeneralLedger invoiceHeader = new GeneralLedger
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "40",
+                                        HeaderText = b.Text,
+                                        Area="Bank",
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.GeneralLedgers.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    if (transId == 0)
+                                        transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LineGeneralLedger invoiceLine = new LineGeneralLedger
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.Text,
+                                        Currency = b.Currency
+                                    };
+                                    db.LineGeneralLedgers.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                            }
+                        }
+                        if (TypeDoc == "CS" )
+                        {
+                            foreach (BrouillardViewModel b in Brouillard)
+                            {
+                                string owner = b.Account;
+                                if (string.IsNullOrWhiteSpace(owner))
+                                    owner = "G";
+                                owner = owner.Substring(0, 1).ToUpper();
+                                if (owner == "F" && !b.IsValidated)
+                                {
 
-                        //    GeneralLedger generalLedger = new GeneralLedger
-                        //    {
-                        //        oid = itemId,
-                        //        CostCenter = BrouillardLine.CostCenter,
-                        //        Area = itemType,
-                        //        HeaderText = BrouillardLine.Beschreibung,
-                        //        TransDate = BrouillardLine.Datum,
-                        //        ItemDate = BrouillardLine.Datum,
-                        //        EntryDate = DateTime.Now,
-                        //        CompanyId = companyId,
-                        //        IsValidated = false
-                        //    };
-
-                        //    vat = (String.IsNullOrEmpty(BrouillardLine.SteuerSatz)) ? 0 : Convert.ToDecimal(BrouillardLine.SteuerSatz) / 100;
-
-                        //    db.GeneralLedgers.InsertOnSubmit(generalLedger);
-                        //    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                        //    transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
-
-                        //    BrouillardLine.TransId = transId;
-
-                        //    withdrawal = BrouillardLine.Ausgaben > BrouillardLine.Einnahmen;
-
-                        //    LineGeneralLedger lineGeneralLedger = new LineGeneralLedger
-                        //    {
-                        //        transid = BrouillardLine.TransId,
-                        //        account = BrouillardLine.Gegenkonto,
-                        //        side = BrouillardLine.Side ?? false,
-                        //        oaccount = BrouillardLine.konto,
-                        //        amount = (withdrawal == true) ? (vat == 0) ? BrouillardLine.Ausgaben : BrouillardLine.Ausgaben * (1 - vat) : BrouillardLine.Einnahmen,
-                        //        duedate = BrouillardLine.Datum,
-                        //        text = BrouillardLine.Beschreibung,
-                        //        Currency = BrouillardLine.Currency
-                        //    };
-                        //    db.LineGeneralLedgers.InsertOnSubmit(lineGeneralLedger);
-                        //    if (vat != 0)
-                        //    {
-                        //        outputVataccountId = IWSLookUp.GetVatAccountId(vat);
-                        //        lineGeneralLedger = new LineGeneralLedger
-                        //        {
-                        //            transid = BrouillardLine.TransId,
-                        //            account = outputVataccountId,
-                        //            side = BrouillardLine.Side ?? false,
-                        //            oaccount = BrouillardLine.konto,
-                        //            amount = BrouillardLine.Ausgaben * vat,
-                        //            duedate = BrouillardLine.Datum,
-                        //            text = BrouillardLine.Beschreibung,
-                        //            Currency = BrouillardLine.Currency
-                        //        };
-                        //    }
-
-                        //    db.LineGeneralLedgers.InsertOnSubmit(lineGeneralLedger);
-
-                        //    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                        //}
-
+                                    oid = Convert.ToString(b.OID);
+                                    Payment invoiceHeader = new Payment
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "1200",
+                                        account = b.Account,
+                                        HeaderText = b.Text,
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.Payments.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    if (transId == 0)
+                                        transId = db.Payments.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LinePayment invoiceLine = new LinePayment
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.Text,
+                                        Currency = b.Currency
+                                    };
+                                    db.LinePayments.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => ItemID.Equals(c.Id) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                                if (owner == "C" && !b.IsValidated)
+                                {
+                                    oid = Convert.ToString(b.OID);
+                                    Settlement invoiceHeader = new Settlement
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "20",
+                                        account = b.Account,
+                                        HeaderText = b.Text,
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.Settlements.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    if (transId == 0)
+                                        transId = db.Settlements.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LineSettlement invoiceLine = new LineSettlement
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.Text,
+                                        Currency = b.Currency
+                                    };
+                                    db.LineSettlements.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => ItemID.Equals(c.Id) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                                if (owner == "G" && !b.IsValidated)
+                                {
+                                    oid = Convert.ToString(b.OID);
+                                    GeneralLedger invoiceHeader = new GeneralLedger
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "40",
+                                        HeaderText = b.Text,
+                                        Area = "Bank",
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.GeneralLedgers.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    if (transId == 0)
+                                        transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LineGeneralLedger invoiceLine = new LineGeneralLedger
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.Text,
+                                        Currency = b.Currency
+                                    };
+                                    db.LineGeneralLedgers.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => ItemID.Equals(c.Id) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                            }
+                        }
                     }
-                    //db.Brouillardes.Where(c => intIDs.Contains(c.Id)).ToList().ForEach(d => d.IsValidated = true);
-                    db.SubmitChanges();
                 }
             }
             catch (Exception ex)
@@ -142,7 +385,8 @@ namespace IWSProject.Controllers
                 ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
             }
-            return PartialView("CallbackPanelPartialView", IWSLookUp.GetBrouillard());
+            var model = IWSLookUp.GetBrouillard();
+            return PartialView("CallbackPanelPartialView", model);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Brouillard item)
@@ -241,6 +485,7 @@ namespace IWSProject.Controllers
 
             public static string[] AllowedFileExtensions = new string[] { ".xls", ".xlsx" };
         }
+
         private string SetDocType(string selectedItems, string docType)
         {
 
@@ -252,23 +497,53 @@ namespace IWSProject.Controllers
             return String.Join(";", items);
         }
 
+        private DateTime? StringToDate(string stringDate)
+        {
+            if (stringDate.Length != 6)
+                return null;
+            string y = "20" + stringDate.Substring(4, 2);
+            string m = stringDate.Substring(2, 2);
+            string d = stringDate.Substring(0, 2);
+            string s = $"{m}/{d}/{y}";
+            if(DateTime.TryParse(s, out DateTime p))
+            {
+                return p;
+            }
+            return null;
+        }
+
+        private Decimal? StringToDecimal(string amount)
+        {
+            if (string.IsNullOrEmpty(amount))
+                return null;
+            int index = amount.LastIndexOf('.');
+            if (index > 0)
+                amount = amount.Substring(0, index);
+            if(Decimal.TryParse(amount, out decimal a))
+            {
+                return a;
+            }
+            return null;
+        }
+
         #endregion
 
         [HttpPost, ValidateInput(false)]
-        public ActionResult UploadBrouillardToDb(string[] files)
+        public ActionResult UploadBrouillardToDb(string[] files, string brouillard)
         {
             const string providerXLS = "Provider=Microsoft.ACE.OLEDB.12.0.;Data Source=";
-            const string extensionXLS = ";Extended Properties=\"Excel 8.0;HDR=YES;IMEX=1\"";
+            const string extensionXLS = ";Extended Properties=\"Excel 8.0;HDR=YES;IMEX=20\"";
             const string providerXLSX = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=";
-            const string extensionXLSX = ";Extended Properties=\"Excel 12.0 Xml;HDR=YES;IMEX=1\"";
+            const string extensionXLSX = ";Extended Properties=\"Excel 12.0 Xml;HDR=YES;IMEX=20\"";
             string companyId = (string)Session["CompanyID"];
-            string typeDoc = String.Empty;
+            string typeDoc = brouillard;
             //foreach (var item in files)
             //{
             string fullPath = files[0].ToString();
             string msg = string.Empty;
             string option = string.Empty;
             string fileName = fullPath.Substring(fullPath.IndexOf(@"\") + 1);
+
             if (fileName.Equals(null))
             {
                 return View("Brouillard");
@@ -339,33 +614,53 @@ namespace IWSProject.Controllers
                             return Json(s);
                         }
 
-                        Brouillards = dataSet.Tables[0].AsEnumerable().
+                        string currency = dataSet.Tables[0].AsEnumerable().Skip(2).Take(1).
+                                                    FirstOrDefault().Field<string>(14);
+                        currency = currency.Substring(currency.LastIndexOf(":")+1).ToString();
+                        string oaccount = dataSet.Tables[0].AsEnumerable().Skip(2).Take(1).
+                                                    FirstOrDefault().Field<string>(7);
+
+                        Brouillards = dataSet.Tables[0].AsEnumerable().Skip(9).Where(x=>x.Field<string>(0)!=null).
                             Select(b => new Brouillard
                             {
-                                Date = b.Field<Double>("Date").ToString(),
-                                NumPiece = b.Field<Double>("NumPiece").ToString(),
-                                AccountID = b.Field<Double>("AccountID").ToString(),
-                                Owner = b.Field<String>("Owner"),
-                                Text = b.Field<String>("Text"),
-                                Debit = b.Field<Double?>("Debit").ToString(),
-                                Credit = b.Field<Double?>("Credit").ToString(),
+                                Date = b.Field<string>(0),
+                                NumPiece = b.Field<string>(1),
+                                AccountID = b.Field<string>(4),
+                                OAccountID=oaccount,
+                                Owner = b.Field<string>(6),
+                                Text = b.Field<string>(9),
+                                Debit = b.Field<string>(14),
+                                Credit = b.Field<string>(17),
+                                Currency=currency,
                                 TypeDoc = typeDoc,
                                 CompanyId = companyId,
                                 IsValidated = false
-                            }).ToList<Brouillard>();
-
+                            }).ToList();
+                        
                         count += 1;
                     }
                     db.Brouillards.InsertAllOnSubmit(Brouillards);
+
                     db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
+                }
+                if (count > 0)
+                {
+                    msg = $"{IWSLocalResource.ImportedSage} ";
+                }
+                else
+                {
+                    msg = $"{IWSLocalResource.ImportedNone}";
                 }
             }
             catch (Exception ex)
             {
                 IWSLookUp.LogException(ex);
+                msg = ex.Message;
             }
             //}
-            return View("Brouillard");
+            var Message = new { Description = msg };
+
+            return Json(Message);
         }
 
     }

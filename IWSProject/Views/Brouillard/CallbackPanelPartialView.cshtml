@@ -1,5 +1,4 @@
-﻿
-@Html.DevExpress().CallbackPanel(settings =>
+﻿@Html.DevExpress().CallbackPanel(settings =>
 {
     settings.Name = "callbackPanelPartialView";
     settings.CallbackRouteValues = new { Controller = "Brouillard", Action = "CallbackPanelPartialView" };
@@ -10,5 +9,3 @@
     settings.ClientSideEvents.BeginCallback = "OnMBeginCallback";
 
 }).GetHtml()
-
-

@@ -355,7 +355,7 @@
     <value>Master Files es-ES</value>
   </data>
   <data name="GenericError" xml:space="preserve">
-    <value>Disculpa, ocurrió un error al procesar su petición.</value>
+    <value>Disculpa, ocurrió un error al procesar su petición</value>
   </data>
   <data name="action" xml:space="preserve">
     <value>Action Methodo</value>
@@ -830,5 +830,47 @@
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Borrador</value>
+  </data>
+  <data name="ImportedSage" xml:space="preserve">
+    <value>La importación fue exitosa</value>
+  </data>
+  <data name="DraftList" xml:space="preserve">
+    <value>Seleccione el tipo de borrador para importar</value>
+  </data>
+  <data name="CheckPeriod" xml:space="preserve">
+    <value>Solo se puede validar los documentos contables pertenecientes al año fiscal actual.</value>
+  </data>
+  <data name="DraftImport" xml:space="preserve">
+    <value>Importar datos de Sage</value>
+  </data>
+  <data name="FinalBalance" xml:space="preserve">
+    <value>Saldo Final</value>
+  </data>
+  <data name="FiscalYear" xml:space="preserve">
+    <value>Año Fiscal</value>
+  </data>
+  <data name="InitialBalance" xml:space="preserve">
+    <value>Saldo Initial</value>
+  </data>
+  <data name="CloseCurrentFiscalYear" xml:space="preserve">
+    <value>Cierre el año fiscal actual</value>
+  </data>
+  <data name="CheckPeriodKeyIn" xml:space="preserve">
+    <value>La fecha de la transacción no corresponde a ningún período de un año fiscal válido.</value>
+  </data>
+  <data name="FiscalYearCurrent" xml:space="preserve">
+    <value>Ajustes para el año fiscal actual</value>
+  </data>
+  <data name="FiscalYearNext" xml:space="preserve">
+    <value>Ajustes para el proximo año fiscal</value>
+  </data>
+  <data name="FiscalYearOpen" xml:space="preserve">
+    <value>Ajustes para el año fiscal abierto</value>
+  </data>
+  <data name="FiscalYearEnd" xml:space="preserve">
+    <value>Fin de año</value>
+  </data>
+  <data name="FiscalYearStart" xml:space="preserve">
+    <value>Inicio de año</value>
   </data>
 </root>

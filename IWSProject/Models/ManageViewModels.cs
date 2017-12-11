@@ -99,6 +99,14 @@ namespace IWSProject.Models
         [NotMapped]
         public byte[] Logo { get; set; }
     }
+    public class FiscalYearViewModel
+    {
+        public string CompanyId { get; set; }
+        public string CStart { get; set; }
+        public string CEnd { get; set; }
+        public string OStart { get; set; }
+        public string OEnd { get; set; }
+    }
     public class ValidateDocsViewModel
     {
         [Key]
@@ -224,6 +232,47 @@ namespace IWSProject.Models
         public string Info { get; set; }
         public string CompanyID { get; set; }
         public bool? IsValidated { get; set; }
+    }
+    public class BrouillardViewModel
+    {
+        public int OID { get; set; }
+        public string Account { get; set; }
+        public string AccountID { get; set; }
+        public bool Side { get; set; }
+        public DateTime TransDate { get; set; }
+        public DateTime ItemDate { get; set; }
+        public DateTime EntryDate { get; set; }
+        public DateTime DueDate { get; set; }
+        public string OAccountID { get; set; }
+        public decimal Amount { get; set; }
+        public string Text { get; set; }
+        public string Currency { get; set; }
+        public string TypeDoc { get; set; }
+        public string CompanyId { get; set; }
+        public bool IsValidated { get; set; }
+    }
+    public class BrouillardHeaderViewModel
+    {
+        public string Oid { get; set; }
+        public string CostCenter { get; set; }
+        public string Account { get; set; }
+        public string HeadeText { get; set; }
+        public DateTime TransDate { get; set; }
+        public DateTime ItemDate { get; set; }
+        public DateTime EntryDate { get; set; }
+        public string CompanyId { get; set; }
+        public bool IsValidated { get; set; }
+    }
+    public class BrouillardLineViewModel
+    {
+        public int TransId { get; set; }
+        public string Account { get; set; }
+        public bool Side { get; set; }
+        public string OAccount { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime DueDate { get; set; }
+        public string Text { get; set; }
+        public string Currency { get; set; }
     }
     public class StatementDetailViewModel
     {

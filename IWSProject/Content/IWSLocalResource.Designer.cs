@@ -385,6 +385,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only accounting documents belonging to the current fiscal year are validable..
+        /// </summary>
+        public static string CheckPeriod {
+            get {
+                return ResourceManager.GetString("CheckPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The transaction date does not correspond to any period of a valid fiscal year..
+        /// </summary>
+        public static string CheckPeriodKeyIn {
+            get {
+                return ResourceManager.GetString("CheckPeriodKeyIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose company&apos;s Logo.
         /// </summary>
         public static string ChooseLogo {
@@ -426,6 +444,15 @@ namespace IWSProject.Content {
         public static string close {
             get {
                 return ResourceManager.GetString("close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close Current Fiscal Year.
+        /// </summary>
+        public static string CloseCurrentFiscalYear {
+            get {
+                return ResourceManager.GetString("CloseCurrentFiscalYear", resourceCulture);
             }
         }
         
@@ -682,6 +709,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import Sage.
+        /// </summary>
+        public static string DraftImport {
+            get {
+                return ResourceManager.GetString("DraftImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select draft type to import.
+        /// </summary>
+        public static string DraftList {
+            get {
+                return ResourceManager.GetString("DraftList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Drop File(s) here.
         /// </summary>
         public static string DropFiles {
@@ -808,11 +853,74 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Final Balance.
+        /// </summary>
+        public static string FinalBalance {
+            get {
+                return ResourceManager.GetString("FinalBalance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First Name.
         /// </summary>
         public static string FirstName {
             get {
                 return ResourceManager.GetString("FirstName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fiscal Year.
+        /// </summary>
+        public static string FiscalYear {
+            get {
+                return ResourceManager.GetString("FiscalYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current Fiscal Year Settings.
+        /// </summary>
+        public static string FiscalYearCurrent {
+            get {
+                return ResourceManager.GetString("FiscalYearCurrent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End of the year.
+        /// </summary>
+        public static string FiscalYearEnd {
+            get {
+                return ResourceManager.GetString("FiscalYearEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next Fiscal Year Settings.
+        /// </summary>
+        public static string FiscalYearNext {
+            get {
+                return ResourceManager.GetString("FiscalYearNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open Fiscal Year Settings.
+        /// </summary>
+        public static string FiscalYearOpen {
+            get {
+                return ResourceManager.GetString("FiscalYearOpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Beginning of the year.
+        /// </summary>
+        public static string FiscalYearStart {
+            get {
+                return ResourceManager.GetString("FiscalYearStart", resourceCulture);
             }
         }
         
@@ -826,7 +934,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sorry, an error occurred while processing your request!.
+        ///   Looks up a localized string similar to Sorry, an error occurred while processing your request.
         /// </summary>
         public static string GenericError {
             get {
@@ -952,6 +1060,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The import was successful.
+        /// </summary>
+        public static string ImportedSage {
+            get {
+                return ResourceManager.GetString("ImportedSage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incomes Statement.
         /// </summary>
         public static string IncomesStatement {
@@ -966,6 +1083,15 @@ namespace IWSProject.Content {
         public static string Info {
             get {
                 return ResourceManager.GetString("Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initial Balance.
+        /// </summary>
+        public static string InitialBalance {
+            get {
+                return ResourceManager.GetString("InitialBalance", resourceCulture);
             }
         }
         

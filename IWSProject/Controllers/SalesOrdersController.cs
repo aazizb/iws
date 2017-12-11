@@ -52,7 +52,16 @@ namespace IWSProject.Controllers
                 try
                 {
                     model.InsertOnSubmit(item);
-                    db.SubmitChanges();
+                    bool result = IWSLookUp.CheckPeriod(item.TransDate, item.CompanyId, true, true);
+                    if (result)
+                    {
+                        db.SubmitChanges();
+                    }
+                    else
+                    {
+                        ViewBag.NoEval = true;
+                        ViewData["GenericError"] = $"{IWSLocalResource.GenericError}! {IWSLocalResource.CheckPeriodKeyIn}";
+                    }
                     ViewData["NewKeyValue"] = item.id;
                 }
                 catch (Exception e)

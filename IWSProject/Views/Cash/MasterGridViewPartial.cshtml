@@ -26,6 +26,10 @@
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
@@ -48,7 +52,7 @@
         settings.SettingsPager.FirstPageButton.Visible = true;
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
-        settings.SettingsPager.PageSize = 24;
+        settings.SettingsPager.PageSize = 19;
 
         settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
         settings.SettingsDetail.ShowDetailRow = true;
@@ -57,7 +61,7 @@
         settings.Images.DetailExpandedButton.IconID = IconID.ActionsRemove16x16;
 
         settings.CommandColumn.Visible = true;
-        settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.CommandColumn.Width = Unit.Percentage(6);
         settings.CommandColumn.ShowEditButton = true;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowSelectCheckbox = true;
@@ -130,7 +134,7 @@
         {
             column.FieldName = "Account";
             column.Caption = IWSLocalResource.account;
-            column.Width = Unit.Percentage(20);
+            column.Width = Unit.Percentage(40);
             column.EditorProperties().ComboBox(combo =>
             {
                 combo.TextField = "Name";
@@ -149,27 +153,27 @@
         {
             column.FieldName = "SYear";
             column.Caption = IWSLocalResource.Year;
-            column.Width = Unit.Percentage(5);
+            column.Width = Unit.Percentage(12);
         });
         settings.Columns.Add(column =>
         {
             column.FieldName = "SMonth";
             column.Caption = IWSLocalResource.Month;
-            column.Width = Unit.Percentage(8);
+            column.Width = Unit.Percentage(12);
         });
         settings.Columns.Add(column =>
         {
             column.FieldName = "Report";
             column.Caption = IWSLocalResource.BalanceReport;
             column.PropertiesEdit.DisplayFormatString = "N";
-            column.Width = Unit.Percentage(10);
+            column.Width = Unit.Percentage(12);
         });
         settings.Columns.Add(column =>
         {
             column.EditFormSettings.Visible = DefaultBoolean.False;
             column.FieldName = "IsValidated";
             column.Caption = IWSLocalResource.IsValidated;
-            column.Width = Unit.Percentage(5);
+            column.Width = Unit.Percentage(7);
             column.ReadOnly = true;
             column.ColumnType = MVCxGridViewColumnType.CheckBox;
         });

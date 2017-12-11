@@ -53,6 +53,68 @@
             return IWSEntities.Companies.Any(c =>
             c.BalanceSheet == accountId && c.id == (string)HttpContext.Current.Session["CompanyID"]);
         }
+        public static bool CheckPeriod(int DocumentID, DocsType DocumentType, string CompanyId, bool Current, bool Open)
+        {
+            string periode = String.Empty;
+
+            switch (DocumentType)
+            {
+                case DocsType.PurchaseOrder:
+                    periode= IWSEntities.PurchaseOrders.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                case DocsType.GoodReceiving:
+                    periode = IWSEntities.GoodReceivings.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                case DocsType.InventoryInvoice:
+                    periode = IWSEntities.InventoryInvoices.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                case DocsType.SalesOrder:
+                    periode = IWSEntities.SalesOrders.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                case DocsType.BillOfDelivery:
+                    periode = IWSEntities.BillOfDeliveries.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                case DocsType.SalesInvoice:
+                    periode = IWSEntities.InventoryInvoices.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                case DocsType.VendorInvoice:
+                    periode = IWSEntities.VendorInvoices.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                case DocsType.CustomerInvoice:
+                    periode = IWSEntities.CustomerInvoices.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                case DocsType.Payment:
+                    periode = IWSEntities.Payments.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                case DocsType.Settlement:
+                    periode = IWSEntities.Settlements.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                case DocsType.GeneralLedgerOut:
+                case DocsType.GeneralLedgerIn:
+                case DocsType.GeneralLedger:
+                    periode = IWSEntities.GeneralLedgers.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
+                    break;
+                default:
+                    break;
+            }
+
+            //return IWSEntities.FiscalYears.Where(x => (x.Jan +' '+ x.Feb + ' ' + x.Mar + ' ' + x.Apr + ' ' + x.May + ' ' + x.Jun
+            //                                        + ' ' + x.Jul + ' ' + x.Aug + ' ' + x.Sep + ' ' + x.Oct + ' ' + x.Nov + ' ' + x.Dec
+            //                                        ).Contains(periode) && x.Current==Current && x.Open==Open &&
+            //                                        x.CompanyId==CompanyId).Any();
+            return IWSEntities.FiscalYears.Where(x => x.Period
+                                        .Contains(periode) && x.Current == Current && x.Open == Open &&
+                                        x.CompanyId == CompanyId).Any();
+        }
+        public static bool CheckPeriod(DateTime TransDate, string CompanyId, bool Current, bool Open)
+        {
+            string periode = TransDate.Month < 10? '0' + Convert.ToString(TransDate.Month) : Convert.ToString(TransDate.Month);
+            periode = Convert.ToString(TransDate.Year) + periode;
+
+            return IWSEntities.FiscalYears.Where(x => x.Period
+                            .Contains(periode) && x.Current == Current && x.Open == Open &&
+                            x.CompanyId == CompanyId).Any();
+        }
         public static IEnumerable GetAccounts()
         {
             var account = IWSEntities.Accounts.AsEnumerable().Select(i => new
@@ -105,19 +167,114 @@
             return b;
         }
 
-        public static IEnumerable GetCash() => IWSEntities.Cashes.Where(c =>
-                c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
-                OrderByDescending(o => o.Id).AsEnumerable();
+        public static IEnumerable CloseCurrentFiscalYear(string companyId)=> 
+                            IWSEntities.CloseFiscalYear(companyId).Where(c=>
+                                c.CompanyID == companyId).AsEnumerable();
 
-        public static Cash GetCash(int cashId) => IWSEntities.Cashes.Where(c => c.Id == cashId).Single<Cash>();
+        public static void OpenNewFiscalYear(string startMonth, string endMonth,
+                            string companyId, bool isCurrent, bool isOpen) =>
+            IWSEntities.OpenFiscalYear(startMonth, endMonth, companyId, isCurrent, isOpen);
+
+        public static IEnumerable GetBrouillardType() => IWSEntities.TypeBrouillards.
+                Where(c => c.UICulture == Thread.CurrentThread.CurrentUICulture.Name).
+                 Select(s => new { s.ItemID, s.Name });
+
+        public static IEnumerable GetCurrentFiscalYear(string companyId)
+        {
+
+            var b = from f in IWSEntities.PeriodicAccountBalances
+                    where
+                      f.CompanyID == companyId &&
+                        (from FiscalYears in IWSEntities.FiscalYears
+                         where
+                            FiscalYears.CompanyId == companyId &&
+                            FiscalYears.Current == true &&
+                            FiscalYears.Open == true
+                         select new
+                         {
+                             FiscalYears.Period
+                         }).Contains(new { Period = f.Periode })
+                    select new
+                    {
+                        f.Id,
+                        f.AccountId,
+                        f.Name,
+                        f.Periode,
+                        f.oYear,
+                        f.oMonth,
+                        f.Debit,
+                        f.Credit,
+                        f.InitialBalance,
+                        f.FinalBalance,
+                        f.Currency,
+                        f.CompanyID
+                    };
+                   return b;
+        }
+
+        public static IEnumerable GetFiscalYears(string companyId) => IWSEntities.GetFiscalYears(companyId).
+                    Where(c => c.CompanyId == companyId).
+                    Select(f => new
+                    {
+                        f.CompanyId,f.CStart,f.CEnd, f.OStart, f.OEnd
+                    }).ToList();
+
+        //public static IEnumerable GetTempBrouillard(string typeDoc,string companyId) => IWSEntities.UpdateBrouillard(typeDoc,companyId);
+
+        //public static List<FiscalYearViewModel> GetFiscalYears(string companyId)
+        //{
+        //    List<FiscalYearViewModel> f = new List<FiscalYearViewModel>();
+        //    f = IWSEntities.GetFiscalYears(companyId).Where(c =>
+        //                c.CompanyId == companyId).Select(i =>
+        //                new FiscalYearViewModel()
+        //                {
+        //                    CompanyId = i.CompanyId,
+        //                    CStart = i.cStart,
+        //                    CEnd = i.cEnd,
+        //                    OStart = i.oStart,
+        //                    OEnd = i.oEnd
+        //                }).ToList();
+        //    return f;
+        //}
+
+        public static IEnumerable GetCash() => IWSEntities.Cashes.Where(c =>
+                        c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
+                        OrderByDescending(o => o.Id).AsEnumerable();
+
+        public static Cash GetCash(int cashId) => IWSEntities.Cashes.Where(c => c.Id == cashId).SingleOrDefault();
 
         public static List<CashLine> GetCashLines(int transId) => IWSEntities.CashLines.Where(c =>
-                        c.TransId == transId).ToList<CashLine>();
+                        c.TransId == transId).ToList();
 
-        public static IEnumerable<Brouillard> GetBrouillard() => IWSEntities.Brouillards.Where(b =>
-                b.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
-                OrderByDescending(o => o.Id).AsEnumerable<Brouillard>();
+        public static IEnumerable GetBrouillard() => IWSEntities.Brouillards.Where(b =>
+                        b.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
+                        OrderByDescending(o => o.Id).AsEnumerable();
 
+        public static Brouillard GetBrouillard(int brouillardId) => IWSEntities.Brouillards.Where(b =>
+                                        b.Id == brouillardId).SingleOrDefault();
+
+        public static List<BrouillardViewModel> GetBrouillard(string TypeDoc, string NumPiece, string CompanyId, int ItemId)
+        {
+            List<BrouillardViewModel> d = (from b in IWSEntities.GetBrouillard(TypeDoc, NumPiece, CompanyId, ItemId)
+                                             select new BrouillardViewModel()
+                                             {
+                                                 OID=Convert.ToInt16(b.Oid),
+                                                 Account = b.Account,
+                                                 TransDate = StringToDate(b.TransDate),
+                                                 ItemDate=StringToDate(b.ItemDate),
+                                                 DueDate=StringToDate(b.DueDate),
+                                                 EntryDate=DateTime.Now,
+                                                 AccountID = b.AccountID,
+                                                 Side= Convert.ToBoolean(b.Side),
+                                                 OAccountID = b.OAccountID,
+                                                 Text = b.Text,
+                                                 Amount= StringToDecimal(b.Amount),
+                                                 Currency = b.Currency,
+                                                 CompanyId = b.CompanyId,
+                                             }).ToList();
+            return d;
+        }
+            
         public static IEnumerable GetCustomerInvoice()
         {
             var b = from o in IWSEntities.CustomerInvoices
@@ -1250,7 +1407,6 @@
 
         }
 
-
         public static IEnumerable GetNewLineGoodReceiving(int  itemID, int oid)
         {
             List<LinePurchaseOrder> items = new List<LinePurchaseOrder>();
@@ -1565,7 +1721,6 @@
                                                    }).ToList();
             return items;
         }
-
         public static IEnumerable GetJournal(string start, string end, string accountId, string CompanyID)
         {
             string uiCulture = Thread.CurrentThread.CurrentUICulture.Name;
@@ -1635,7 +1790,6 @@
                       }).ToList();
             return report;
         }
-
  
         public static IEnumerable GetResultat(string classId, string start, string end, string company, bool isBalance)
         {
@@ -2157,7 +2311,8 @@
             GeneralLedgerOut,
             BankStatement,
             Cash,
-            Brouillard
+            Brouillard,
+            Default
         }
         public enum Side
         {
@@ -2176,5 +2331,37 @@
             Customer,
             Supplier
         }
+
+        private static DateTime StringToDate(string stringDate)
+        {
+            //if (stringDate.Length != 6)
+            //    return null;
+            string y = "20" + stringDate.Substring(4, 2);
+            string m = stringDate.Substring(2, 2);
+            string d = stringDate.Substring(0, 2);
+            string s = $"{m}/{d}/{y}";
+            DateTime.TryParse(s, out DateTime p);
+            return p;
+            //if (DateTime.TryParse(s, out DateTime p))
+            //{
+            //    return p;
+            //}
+            //return null;
+        }
+
+        private static Decimal StringToDecimal(string amount)
+        {
+            if (string.IsNullOrEmpty(amount))
+                return 0;
+            int index = amount.LastIndexOf('.');
+            if (index > 0)
+                amount = amount.Substring(0, index);
+            if (Decimal.TryParse(amount, out decimal a))
+            {
+                return a;
+            }
+            return 0;
+        }
+
     }
 }

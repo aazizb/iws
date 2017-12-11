@@ -1,5 +1,4 @@
-﻿
-@using IWSProject.Content
+﻿@using IWSProject.Content
 @using IWSProject.Models
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -26,6 +25,10 @@
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
@@ -48,10 +51,10 @@
         settings.SettingsPager.FirstPageButton.Visible = true;
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
-        settings.SettingsPager.PageSize = 24;
+        settings.SettingsPager.PageSize = 19;
 
         settings.CommandColumn.Visible = true;
-        settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.CommandColumn.Width = Unit.Percentage(6);
         settings.CommandColumn.ShowEditButton = true;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowSelectCheckbox = true;
@@ -153,6 +156,25 @@
         });
         settings.Columns.Add(column =>
         {
+            column.FieldName = "OAccountID";
+            column.Caption = IWSLocalResource.oaccount;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.Columns.Add("id").Caption = IWSLocalResource.id;
+                combo.Columns.Add("name").Caption = IWSLocalResource.item;
+                combo.Width = Unit.Percentage(100);
+                combo.TextFormatString = "{0}-{1}";
+                combo.FilterMinLength = 2;
+                combo.CallbackPageSize = 15;
+            });
+        });
+        settings.Columns.Add(column =>
+        {
             column.FieldName = "Owner";
             column.Caption = IWSLocalResource.Owner;
             column.Width = Unit.Percentage(5);
@@ -162,14 +184,20 @@
             column.FieldName = "Debit";
             column.Caption = IWSLocalResource.debit;
             column.PropertiesEdit.DisplayFormatString = "N";
-            column.Width = Unit.Percentage(10);
+            column.Width = Unit.Percentage(6);
         });
         settings.Columns.Add(column =>
         {
             column.FieldName = "Credit";
             column.Caption = IWSLocalResource.credit;
             column.PropertiesEdit.DisplayFormatString = "N";
-            column.Width = Unit.Percentage(10);
+            column.Width = Unit.Percentage(6);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Currency";
+            column.Caption = IWSLocalResource.Currency;
+            column.Width = Unit.Percentage(5);
         });
         settings.Columns.Add(column =>
         {
@@ -177,6 +205,7 @@
             column.Caption = IWSLocalResource.ItemType;
             column.Width = Unit.Percentage(8);
             column.ColumnType = MVCxGridViewColumnType.TextBox;
+            column.Visible = true;
         });
         settings.Columns.Add(column =>
         {

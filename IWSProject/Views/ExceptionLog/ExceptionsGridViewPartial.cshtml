@@ -8,21 +8,25 @@
 
         settings.CallbackRouteValues = new { Controller = "ExceptionLog", Action = "ExceptionsGridViewPartial" };
 
-        settings.SettingsBehavior.EnableCustomizationWindow = true;
 
         var showCustomizationWindow = ViewData["ShowCustomizationWindow"] ?? false;
 
         settings.ClientSideEvents.Init = string.Format("function(s, e) {{ OnGridInit(s, e, {0}); }}", showCustomizationWindow.ToString().ToLower());
         settings.ClientSideEvents.EndCallback = string.Format("function(s, e) {{ OnGridInit(s, e, {0}); }}", showCustomizationWindow.ToString().ToLower());
-        
+
         settings.KeyFieldName = "LogId";
 
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = true;
         settings.Settings.ShowFilterRowMenu = true;
 
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
         settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
 
         settings.Width = Unit.Percentage(100);
         settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
@@ -41,7 +45,7 @@
         settings.SettingsPager.FirstPageButton.Visible = true;
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
-        settings.SettingsPager.PageSize = 24;
+        settings.SettingsPager.PageSize = 19;
 
         settings.Columns.Add(column =>
         {

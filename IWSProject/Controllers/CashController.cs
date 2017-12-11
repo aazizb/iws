@@ -92,9 +92,11 @@ namespace IWSProject.Controllers
 
                             vat= (String.IsNullOrEmpty(cashLine.SteuerSatz))?0: Convert.ToDecimal(cashLine.SteuerSatz)/100;
 
+                            if(transId==0)
+                                transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                            transId += 1;
+
                             db.GeneralLedgers.InsertOnSubmit(generalLedger);
-                            db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                            transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
 
                             cashLine.TransId = transId;
 
@@ -111,7 +113,9 @@ namespace IWSProject.Controllers
                                 text=cashLine.Beschreibung,
                                 Currency=cashLine.Currency
                             };
+
                             db.LineGeneralLedgers.InsertOnSubmit(lineGeneralLedger);
+
                             if (vat != 0)
                             {
                                 outputVataccountId = IWSLookUp.GetVatAccountId(vat);
@@ -126,16 +130,12 @@ namespace IWSProject.Controllers
                                     text = cashLine.Beschreibung,
                                     Currency = cashLine.Currency
                                 };
+                                db.LineGeneralLedgers.InsertOnSubmit(lineGeneralLedger);
                             }
-
-                            db.LineGeneralLedgers.InsertOnSubmit(lineGeneralLedger);
-                            
-                            db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                            db.Cashes.Single(c => itemId.Equals(c.Id)).IsValidated = true;
                         }
-
                     }
-                    db.Cashes.Where(c => intIDs.Contains(c.Id)).ToList().ForEach(d => d.IsValidated = true);
-                    db.SubmitChanges();
+                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                 }
             }
             catch (Exception ex)
@@ -342,14 +342,6 @@ namespace IWSProject.Controllers
             items = items.Select(x => x + "," + docType).ToArray();
 
             return String.Join(";", items);
-        }
-
-        private string MakeGeneralLedger(int ItemId, string ItemType)
-        {
-
-
-
-            return null;
         }
 
         #endregion

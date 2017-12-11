@@ -27,6 +27,10 @@
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
@@ -49,7 +53,7 @@
         settings.SettingsPager.FirstPageButton.Visible = true;
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
-        settings.SettingsPager.PageSize = 24;
+        settings.SettingsPager.PageSize = 19;
 
         settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
         settings.SettingsDetail.ShowDetailRow = true;
@@ -62,7 +66,7 @@
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowSelectCheckbox = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
-        settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.CommandColumn.Width = Unit.Percentage(6);
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
@@ -168,6 +172,20 @@
         });
         settings.Columns.Add(column =>
         {
+            column.FieldName = "oYear";
+            column.Caption = IWSLocalResource.Year;
+            column.Width = Unit.Percentage(4);
+            column.UnboundType = DevExpress.Data.UnboundColumnType.String;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "oMonth";
+            column.Caption = IWSLocalResource.Month;
+            column.Width = Unit.Percentage(4);
+            column.UnboundType = DevExpress.Data.UnboundColumnType.String;
+        });
+        settings.Columns.Add(column =>
+        {
             column.FieldName = "oTotal";
             column.Caption = IWSLocalResource.Total;
             column.UnboundType = DevExpress.Data.UnboundColumnType.Decimal;
@@ -205,8 +223,15 @@
 
         settings.SetEditFormTemplateContent(c =>
         {
-            ViewBag.IsValidated = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
-
+            if (ViewBag.NoEval == false || ViewBag.NoEval == null)
+            {
+                ViewBag.IsValidated = false;
+            }
+            else
+            {
+                var data = DataBinder.Eval(c.DataItem, "IsValidated") ?? false;
+                ViewBag.IsValidated = (bool)data;
+            }
             ViewBag.IsNewRow = c.Grid.IsNewRowEditing;
 
             Html.DevExpress().FormLayout(formLayoutSettings =>

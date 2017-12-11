@@ -1,5 +1,6 @@
 ﻿using DevExpress.Web.Mvc;
 using IWSProject.Models;
+using IWSProject.Content;
 using System;
 using System.Linq;
 using System.Web.Mvc;
@@ -54,15 +55,25 @@ namespace IWSProject.Controllers
                 try
                 {
                     model.InsertOnSubmit(item);
-                    db.SubmitChanges();
-
-                    if (itemOID != 0)
+                    result = IWSLookUp.CheckPeriod(item.TransDate, item.CompanyId, true, true);
+                    if (result)
                     {
-                        int itemID = db.CustomerInvoices.Max(i => i.id);
+                        db.SubmitChanges();
+                        if (itemOID != 0)
+                        {
+                            int itemID = db.GoodReceivings.Max(i => i.id);
 
-                        result = InsertLines(itemID, itemOID, IWSLookUp.DocsType.CustomerInvoice.ToString());
-                        if (result)
-                            db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                            result = InsertLines(itemID, itemOID, IWSLookUp.DocsType.GoodReceiving.ToString());
+                            if (result)
+                            {
+                                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ViewBag.NoEval = true;
+                        ViewData["GenericError"] = $"{IWSLocalResource.GenericError}! {IWSLocalResource.CheckPeriodKeyIn}";
                     }
                     ViewData["NewKeyValue"] = item.id;
                 }

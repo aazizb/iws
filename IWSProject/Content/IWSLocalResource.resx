@@ -355,7 +355,7 @@
     <value>Master Files</value>
   </data>
   <data name="GenericError" xml:space="preserve">
-    <value>Sorry, an error occurred while processing your request!</value>
+    <value>Sorry, an error occurred while processing your request</value>
   </data>
   <data name="action" xml:space="preserve">
     <value>Action Method</value>
@@ -824,5 +824,47 @@
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Draft</value>
+  </data>
+  <data name="ImportedSage" xml:space="preserve">
+    <value>The import was successful</value>
+  </data>
+  <data name="DraftList" xml:space="preserve">
+    <value>Select draft type to import</value>
+  </data>
+  <data name="CheckPeriod" xml:space="preserve">
+    <value>Only accounting documents belonging to the current fiscal year are validable.</value>
+  </data>
+  <data name="DraftImport" xml:space="preserve">
+    <value>Import Sage</value>
+  </data>
+  <data name="FinalBalance" xml:space="preserve">
+    <value>Final Balance</value>
+  </data>
+  <data name="FiscalYear" xml:space="preserve">
+    <value>Fiscal Year</value>
+  </data>
+  <data name="InitialBalance" xml:space="preserve">
+    <value>Initial Balance</value>
+  </data>
+  <data name="CloseCurrentFiscalYear" xml:space="preserve">
+    <value>Close Current Fiscal Year</value>
+  </data>
+  <data name="CheckPeriodKeyIn" xml:space="preserve">
+    <value>The transaction date does not correspond to any period of a valid fiscal year.</value>
+  </data>
+  <data name="FiscalYearCurrent" xml:space="preserve">
+    <value>Current Fiscal Year Settings</value>
+  </data>
+  <data name="FiscalYearNext" xml:space="preserve">
+    <value>Next Fiscal Year Settings</value>
+  </data>
+  <data name="FiscalYearOpen" xml:space="preserve">
+    <value>Open Fiscal Year Settings</value>
+  </data>
+  <data name="FiscalYearEnd" xml:space="preserve">
+    <value>End of the year</value>
+  </data>
+  <data name="FiscalYearStart" xml:space="preserve">
+    <value>Beginning of the year</value>
   </data>
 </root>

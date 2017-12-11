@@ -413,6 +413,14 @@
     <Content Include="Views\Brouillard\Index.cshtml" />
     <Content Include="Views\Brouillard\BrouillardPartial.cshtml" />
     <Content Include="Views\Brouillard\Brouillard.cshtml" />
+    <Content Include="Views\FiscalYear\Index.cshtml" />
+    <Content Include="Views\FiscalYear\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\Masterfile\Masterfile.cshtml" />
+    <Content Include="Views\Masterfile\MasterfilePartial.cshtml" />
+    <Content Include="Views\Brouillard\PopupControl.cshtml" />
+    <Content Include="Views\FiscalYear\CallbackPanel.cshtml" />
+    <Content Include="Views\FiscalYear\PopupContent.cshtml" />
+    <Content Include="Views\Brouillard\ValidatePartialView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -455,6 +463,7 @@
     <Compile Include="Controllers\BrouillardController.cs" />
     <Compile Include="Controllers\CashController.cs" />
     <Compile Include="Controllers\ExceptionLogController.cs" />
+    <Compile Include="Controllers\FiscalYearController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\AccountingController.cs" />
@@ -475,6 +484,7 @@
     <Compile Include="Controllers\GoodReceivingsController.cs" />
     <Compile Include="Controllers\InventoryInvoicesController.cs" />
     <Compile Include="Controllers\JournalController.cs" />
+    <Compile Include="Controllers\MasterfileController.cs" />
     <Compile Include="Controllers\MenuUIController.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\PurchaseOrdersController.cs" />

@@ -355,7 +355,7 @@
     <value>Master Files fr-FR</value>
   </data>
   <data name="GenericError" xml:space="preserve">
-    <value>Désolé, une erreur est survenue lors du traitement de votre requête.</value>
+    <value>Désolé, une erreur est survenue lors du traitement de votre requête</value>
   </data>
   <data name="action" xml:space="preserve">
     <value>Action Methode</value>
@@ -830,5 +830,47 @@
   </data>
   <data name="Draft" xml:space="preserve">
     <value>Brouillard</value>
+  </data>
+  <data name="ImportedSage" xml:space="preserve">
+    <value>L'importation s'est déroulée avec succès</value>
+  </data>
+  <data name="DraftList" xml:space="preserve">
+    <value>Choisir le type brouillard à importer</value>
+  </data>
+  <data name="CheckPeriod" xml:space="preserve">
+    <value>Seuls les documents comptables appartenant à l'exercice courant sont validables.</value>
+  </data>
+  <data name="DraftImport" xml:space="preserve">
+    <value>Importer  Sage</value>
+  </data>
+  <data name="FinalBalance" xml:space="preserve">
+    <value>Solde Final</value>
+  </data>
+  <data name="FiscalYear" xml:space="preserve">
+    <value>Année Fiscale</value>
+  </data>
+  <data name="InitialBalance" xml:space="preserve">
+    <value>Solde Initial</value>
+  </data>
+  <data name="CloseCurrentFiscalYear" xml:space="preserve">
+    <value>Clôturer l'execice fiscal actuel</value>
+  </data>
+  <data name="CheckPeriodKeyIn" xml:space="preserve">
+    <value>La date de la pièce ne correspond pas à une période d'un excercice comptable valide.</value>
+  </data>
+  <data name="FiscalYearCurrent" xml:space="preserve">
+    <value>Paramètres de l'année fiscale en cours</value>
+  </data>
+  <data name="FiscalYearNext" xml:space="preserve">
+    <value>Paramètres de la prochaine année fiscale</value>
+  </data>
+  <data name="FiscalYearOpen" xml:space="preserve">
+    <value>Paramètres de l'année fiscale ouverte</value>
+  </data>
+  <data name="FiscalYearEnd" xml:space="preserve">
+    <value>Fin d'exercice</value>
+  </data>
+  <data name="FiscalYearStart" xml:space="preserve">
+    <value>Début d'exercice</value>
   </data>
 </root>

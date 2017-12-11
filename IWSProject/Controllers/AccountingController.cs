@@ -63,6 +63,13 @@ namespace IWSProject.Controllers
         /// <returns>bool</returns>
         private bool Account(int ItemID, string ItemType, string companyId)
         {
+            IWSLookUp.DocsType docsType = GetDocType(ItemType);
+            bool results = IWSLookUp.CheckPeriod(ItemID, docsType, companyId, true, true);
+            if (!results)
+            {
+                string msg = IWSLocalResource.CheckPeriod;
+                throw new Exception(msg);
+            }
             //bool results;
             if (ItemType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()))
             {
@@ -106,44 +113,20 @@ namespace IWSProject.Controllers
             }
             return true;
         }
-        private bool UpdateStock(int DocumentID, string DocumentType, string CompanyId)
+        private bool UpdateStock(int DocumentID, IWSLookUp.DocsType DocumentType, string CompanyId)
         {
-
-            if (DocumentType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()))
+            try
             {
-                List<ValidateStockViewModel> validateStock =
-                    (from line in db.LineGoodReceivings
-                     group new { line, line.GoodReceiving } by new
-                     {
-                         DocumentID = line.GoodReceiving.id,
-                         StoreID = line.GoodReceiving.store,
-                         ItemID = line.item,
-                         ItemName = line.Article.name,
-                         Price = line.price,
-                         Currency = line.GoodReceiving.oCurrency,
-                         IsService = line.Article.IsService,
-                         Text = line.GoodReceiving.HeaderText
-                     } into g
-                     where g.Key.DocumentID == DocumentID
-                     select new ValidateStockViewModel
-                     {
-                         StoreID = g.Key.StoreID,
-                         ItemID = g.Key.ItemID,
-                         ItemName = g.Key.ItemName,
-                         Quantity = g.Sum(q => q.line.quantity),
-                         Price = g.Key.Price,
-                         Currency = g.Key.Currency,
-                         IsService = g.Key.IsService,
-                         Text = g.Key.Text
-                     }).ToList();
-                if (validateStock.Any(i => i.IsService.Equals(false)))
+                bool results = IWSLookUp.CheckPeriod(DocumentID, DocumentType, CompanyId, true, true);
+                if (!results)
                 {
-                    return StockIn(validateStock, CompanyId);
+                    string msg = IWSLocalResource.CheckPeriod;
+                    throw new Exception(msg);
                 }
-            }
-            if (DocumentType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()))
-            {
-                List<ValidateStockViewModel> validateStock =
+                if (DocumentType.Equals(IWSLookUp.DocsType.BillOfDelivery))
+                {
+
+                    List<ValidateStockViewModel> validateStock =
                     (from line in db.LineBillOfDeliveries
                      group new { line, line.BillOfDelivery } by new
                      {
@@ -168,17 +151,188 @@ namespace IWSProject.Controllers
                          IsService = g.Key.IsService,
                          Text = g.Key.Text
                      }).ToList();
-                if (validateStock.Any(i => i.IsService == false))
-                {
-                    return StockOut(validateStock, CompanyId);
+                    if (validateStock.Any(i => i.IsService == false))
+                    {
+                        return StockOut(validateStock, CompanyId);
+                    }
                 }
+                if (DocumentType.Equals(IWSLookUp.DocsType.GoodReceiving))
+                {
+                    List<ValidateStockViewModel> validateStock =
+                (from line in db.LineGoodReceivings
+                 group new { line, line.GoodReceiving } by new
+                 {
+                     DocumentID = line.GoodReceiving.id,
+                     StoreID = line.GoodReceiving.store,
+                     ItemID = line.item,
+                     ItemName = line.Article.name,
+                     Price = line.price,
+                     Currency = line.GoodReceiving.oCurrency,
+                     IsService = line.Article.IsService,
+                     Text = line.GoodReceiving.HeaderText
+                 } into g
+                 where g.Key.DocumentID == DocumentID
+                 select new ValidateStockViewModel
+                 {
+                     StoreID = g.Key.StoreID,
+                     ItemID = g.Key.ItemID,
+                     ItemName = g.Key.ItemName,
+                     Quantity = g.Sum(q => q.line.quantity),
+                     Price = g.Key.Price,
+                     Currency = g.Key.Currency,
+                     IsService = g.Key.IsService,
+                     Text = g.Key.Text
+                 }).ToList();
+
+                    if (validateStock.Any(i => i.IsService.Equals(false)))
+                    {
+                        return StockIn(validateStock, CompanyId);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewData["GenericError"] = ex.Message;
+                IWSLookUp.LogException(ex);
+                return false;
             }
             return true;
         }
-        private bool Validate(int ItemID, string ItemType)
+        private bool UpdateEntryDate(int DocumentID, IWSLookUp.DocsType DocumentType, string CompanyId)
+        {
+            bool results = false;
+            try
+            {
+                results = IWSLookUp.CheckPeriod(DocumentID, DocumentType, CompanyId, true, true);
+
+                if (!results)
+                {
+                    string msg = IWSLocalResource.CheckPeriod;
+                    throw new Exception(msg);
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.PurchaseOrder))
+                {
+                    var docs = db.PurchaseOrders.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.SalesOrder))
+                {
+                    var docs = db.SalesOrders.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.GoodReceiving))
+                {
+                    var docs = db.GoodReceivings.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.BillOfDelivery))
+                {
+                    var docs = db.BillOfDeliveries.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.InventoryInvoice))
+                {
+                    var docs = db.InventoryInvoices.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.CustomerInvoice))
+                {
+                    var docs = db.CustomerInvoices.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.VendorInvoice))
+                {
+                    var docs = db.VendorInvoices.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.SalesInvoice))
+                {
+                    var docs = db.SalesInvoices.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.Payment))
+                {
+                    var docs = db.Payments.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.Settlement))
+                {
+                    var docs = db.Settlements.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (DocumentType.Equals(IWSLookUp.DocsType.GeneralLedger))
+                {
+                    var docs = db.GeneralLedgers.Single(item => item.id == DocumentID);
+                    if (!docs.Equals(null))
+                    {
+                        docs.EntryDate = DateTime.Today;
+                        results = true;
+                    }
+                }
+                if (results)
+                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+            }
+            catch (Exception ex)
+            {
+                ViewData["GenericError"] = ex.Message;
+                IWSLookUp.LogException(ex);
+                results = false;
+            }
+            return results;
+        }
+
+        private bool Validate(int ItemID, string ItemType, string companyId)
         {
             try
             {
+                IWSLookUp.DocsType docsType = GetDocType(ItemType);
+                bool results = IWSLookUp.CheckPeriod(ItemID, docsType, companyId, true, true);
+                if (!results)
+                {
+                    string msg = IWSLocalResource.CheckPeriod;
+                    throw new Exception(msg);
+                }
+
                 if (ItemType.Equals(IWSLookUp.DocsType.PurchaseOrder.ToString()))
                 {
                     var docs = db.PurchaseOrders.Single(item => item.id == ItemID);
@@ -390,6 +544,7 @@ namespace IWSProject.Controllers
             {
                 foreach (var item in items)
                 {
+
                     var article = db.Articles
                         .FirstOrDefault(i => i.id == item.ItemID
                         && i.CompanyID == CompanyId);
@@ -2173,122 +2328,6 @@ namespace IWSProject.Controllers
             return results;
         }
 
-        private bool UpdateEntryDate(int ItemID, string ItemType)
-        {
-            bool results = false;
-            try
-            {
-                if (ItemType.Equals(IWSLookUp.DocsType.PurchaseOrder.ToString()))
-                {
-                    var docs = db.PurchaseOrders.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (ItemType.Equals(IWSLookUp.DocsType.SalesOrder.ToString()))
-                {
-                    var docs = db.SalesOrders.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (ItemType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()))
-                {
-                    var docs = db.GoodReceivings.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (ItemType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()))
-                {
-                    var docs = db.BillOfDeliveries.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (ItemType.Equals(IWSLookUp.DocsType.InventoryInvoice.ToString()))
-                {
-                    var docs = db.InventoryInvoices.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
-                {
-                    var docs = db.CustomerInvoices.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (ItemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
-                {
-                    var docs = db.VendorInvoices.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (ItemType.Equals(IWSLookUp.DocsType.SalesInvoice.ToString()))
-                {
-                    var docs = db.SalesInvoices.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
-                {
-                    var docs = db.Payments.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (ItemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
-                {
-                    var docs = db.Settlements.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedger.ToString()))
-                {
-                    var docs = db.GeneralLedgers.Single(item => item.id == ItemID);
-                    if (!docs.Equals(null))
-                    {
-                        docs.EntryDate = DateTime.Today;
-                        results = true;
-                    }
-                }
-                if (results)
-                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-            }
-            catch (Exception ex)
-            {
-                ViewData["GenericError"] = ex.Message;
-                IWSLookUp.LogException(ex);
-                results = false;
-            }
-            return results;
-        }
-
         public void ProcessData(string selectedItems, string companyId, bool convertType)
         {
             //using (TransactionScope tx = new TransactionScope(TransactionScopeOption.RequiresNew))
@@ -2302,6 +2341,7 @@ namespace IWSProject.Controllers
                     bool results = false;
                     int ItemID;
                     string ItemType;
+                    IWSLookUp.DocsType docsType;
                     var list = item.Split(new string[] { "," }, StringSplitOptions.None);
 
                     ItemID = Convert.ToInt32(list[0]);
@@ -2312,13 +2352,14 @@ namespace IWSProject.Controllers
                     {
                         ItemType = GetItemType(ItemType);
                     }
-                    results = UpdateEntryDate(ItemID, ItemType);
+                    docsType = GetDocType(ItemType);
+                    results = UpdateEntryDate(ItemID, docsType, companyId);
                     if (!results)
                     {
                         msg = IWSLocalResource.GenericError;
                         throw new Exception(msg);
                     }
-                    results = UpdateStock(ItemID, ItemType, companyId);
+                    results = UpdateStock(ItemID, docsType, companyId);
                     if (!results)
                     {
                         msg = (string)ViewData["GenericError"];
@@ -2332,7 +2373,7 @@ namespace IWSProject.Controllers
 
                         throw new Exception(msg);
                     }
-                    results = Validate(ItemID, ItemType);
+                    results = Validate(ItemID, ItemType, companyId);
                     if (!results)
                     {
                         msg = (string)ViewData["GenericError"];
@@ -2361,6 +2402,36 @@ namespace IWSProject.Controllers
             items = items.Select(x => x + "," + docType).ToArray();
 
             return String.Join(";", items);
+        }
+        public IWSLookUp.DocsType GetDocType(string ItemType)
+        {
+            if (ItemType.Equals(IWSLookUp.DocsType.PurchaseOrder.ToString()))
+                return IWSLookUp.DocsType.PurchaseOrder;
+            if (ItemType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()))
+                return IWSLookUp.DocsType.GoodReceiving;
+            if (ItemType.Equals(IWSLookUp.DocsType.InventoryInvoice.ToString()))
+                return IWSLookUp.DocsType.InventoryInvoice;
+            if (ItemType.Equals(IWSLookUp.DocsType.SalesOrder.ToString()))
+                return IWSLookUp.DocsType.SalesOrder;
+            if (ItemType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()))
+                return IWSLookUp.DocsType.BillOfDelivery;
+            if (ItemType.Equals(IWSLookUp.DocsType.SalesInvoice.ToString()))
+                return IWSLookUp.DocsType.SalesInvoice;
+            if (ItemType.Equals(IWSLookUp.DocsType.PurchaseOrder.ToString()))
+                return IWSLookUp.DocsType.PurchaseOrder;
+            if (ItemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
+                return IWSLookUp.DocsType.VendorInvoice;
+            if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
+                return IWSLookUp.DocsType.CustomerInvoice;
+            if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
+                return IWSLookUp.DocsType.Payment;
+            if (ItemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
+                return IWSLookUp.DocsType.Settlement;
+            if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedgerOut.ToString()) ||
+                ItemType.Equals(IWSLookUp.DocsType.GeneralLedgerIn.ToString()) ||
+                ItemType.Equals(IWSLookUp.DocsType.GeneralLedger.ToString()))
+                return IWSLookUp.DocsType.GeneralLedgerOut;
+            return IWSLookUp.DocsType.Default;
         }
 
         #endregion

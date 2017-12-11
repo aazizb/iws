@@ -19,6 +19,11 @@
         settings.CommandColumn.Width = Unit.Percentage(5);
 
         settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
+
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
@@ -84,7 +89,7 @@
         settings.SettingsPager.FirstPageButton.Visible = true;
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
-        settings.SettingsPager.PageSize = 24;
+        settings.SettingsPager.PageSize = 19;
 
         settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
         settings.SettingsDetail.ShowDetailRow = true;
@@ -150,6 +155,20 @@
                 e.Value = periode;
             }
         };
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "oYear";
+            column.Caption = IWSLocalResource.Year;
+            column.Width = Unit.Percentage(4);
+            column.UnboundType = DevExpress.Data.UnboundColumnType.String;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "oMonth";
+            column.Caption = IWSLocalResource.Month;
+            column.Width = Unit.Percentage(4);
+            column.UnboundType = DevExpress.Data.UnboundColumnType.String;
+        });
         settings.Columns.Add(column =>
         {
             column.FieldName = "oTotal";

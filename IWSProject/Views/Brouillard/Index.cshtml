@@ -1,5 +1,4 @@
-﻿
-@using IWSProject.Content
+﻿@using IWSProject.Content
 <script type="text/javascript">
 
     var selectedIDs = null;
@@ -21,7 +20,7 @@
         e.customArgs["selectedIDs"] = selectedIDs;
     }
     function OnMSelectionChanged(s, e) {
-        s.GetSelectedFieldValues("Id", GetSelectedFieldValuesCallback);
+        s.GetSelectedFieldValues("Id;NumPiece;TypeDoc", GetSelectedFieldValuesCallback);
     }
     function GetSelectedFieldValuesCallback(values) {
         selectedIDs = values.join(';');
@@ -57,7 +56,6 @@
             });
     }
 
-
 </script>
 
 @using (Html.BeginForm("Index", "Cash"))
@@ -75,6 +73,6 @@
     ).GetHtml()
 
     @Html.Partial("CallbackPanelPartialView")
-}
 
+}
 
