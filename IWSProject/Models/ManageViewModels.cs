@@ -74,6 +74,8 @@ namespace IWSProject.Models
         public DateTime Itemdate { get; set; }
         public DateTime EntryDate { get; set; }
         public string Periode { get; set; }
+        public string oYear { get; set; }
+        public string oMonth { get; set; }
         public string Account { get; set; }
         public string AccountName { get; set; }
         public string OAccount { get; set; }
@@ -187,6 +189,8 @@ namespace IWSProject.Models
         public string AccountID { get; set; }
         public string AccountName { get; set; }
         public string Periode { get; set; }
+        public string OYear { get; set; }
+        public string OMonth { get; set; }
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
         public decimal Balance { get; set; }
@@ -239,13 +243,13 @@ namespace IWSProject.Models
         public string Account { get; set; }
         public string AccountID { get; set; }
         public bool Side { get; set; }
+        public string OAccountID { get; set; }
         public DateTime TransDate { get; set; }
         public DateTime ItemDate { get; set; }
         public DateTime EntryDate { get; set; }
         public DateTime DueDate { get; set; }
-        public string OAccountID { get; set; }
         public decimal Amount { get; set; }
-        public string Text { get; set; }
+        public string HeaderText { get; set; }
         public string Currency { get; set; }
         public string TypeDoc { get; set; }
         public string CompanyId { get; set; }

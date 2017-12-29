@@ -15,6 +15,7 @@
             expanded = false;
             s.ExpandDetailRow(ndxMaster);
         }
+        TrackLayout(s.cpClientLayout);
     }
     function OnMBeginCallback(s, e) {
         e.customArgs["selectedIDs"] = selectedIDs;
@@ -29,7 +30,7 @@
         callbackPanelPartialView.PerformCallback();
     }
     function OnMInit(s, e) {
-
+        TrackLayout(s.cpClientLayout);
         ASPxClientUtils.AttachEventToElement(
             s.GetMainElement(),
             "keydown",
@@ -54,8 +55,11 @@
                         break;
                 }
             });
-    }
 
+    }
+    function TrackLayout(layout) {
+        $("#LastLayout").text(layout)
+    }
 </script>
 
 @using (Html.BeginForm("Index", "Cash"))

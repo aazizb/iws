@@ -51,7 +51,7 @@
                     bool results = false;
 
                     Decimal amount;
-
+                    string IBAN;
                     IList<string> items = new List<string>(
                         selectedItems.Split(new string[] { ";" },
                             StringSplitOptions.None));
@@ -65,6 +65,8 @@
 
                         amount = Convert.ToDecimal(list[1]);
 
+                        IBAN = list[2];
+
                         if (amount == 0)
                         {
                             msg = IWSLocalResource.GenericError;
@@ -75,12 +77,21 @@
                             msg = IWSLocalResource.GenericError;
                             throw new Exception(msg);
                         }
+                        var owner = IWSLookUp.GetOwnerType(IBAN);
 
                         if (amount > 0)
                         {
+                            if (owner.OwnerType == "Customer")
+                            {
                             oid = MakeSettlement(ItemID, 0);
                             if (oid != 0)
                                 results = MakeCustomerInvoice(oid);
+                            }
+                            if (owner.OwnerType == "Supplier")// || owner.OwnerType == "Company")
+                            {
+                                oid = MakeGeneralLedger(ItemID, 0);
+                                results = (oid != 0);
+                            }
                         }
                         if (amount < 0)
                         {
@@ -860,6 +871,55 @@
             {
                 return itemID;
 
+            }
+            return countLineID;
+        }
+
+        private int MakeGeneralLedger(int bankStatementID, int oid)
+        {
+            string companyId = (string)Session["CompanyID"];
+
+            StatementDetailViewModel SD = IWSLookUp.GetStatementDetail(bankStatementID,
+                                                IWSLookUp.DocsType.GeneralLedger.ToString(), companyId);
+            int itemID = 0;
+
+            if (SD.Equals(null))
+                return itemID;
+
+            GeneralLedger generalLedger = new GeneralLedger
+            {
+                oid = oid,
+                CostCenter = "100", // to be confirmed
+                HeaderText = SD.Verwendungszweck,
+                TransDate = SD.Valutadatum,
+                ItemDate = SD.Buchungstag,
+                EntryDate = DateTime.Today,
+                CompanyId = companyId,
+                IsValidated = false
+            };
+            itemID = new AccountingController().MakeGeneralLedgerHeader(generalLedger);
+
+            if (!(itemID > 0))
+                return itemID;
+
+            List<LineGeneralLedger> lineGeneralLedger = new List<LineGeneralLedger>
+                {
+                    new LineGeneralLedger
+                    {
+                        transid = itemID,
+                        account = SD.AccountID,
+                        side = true,
+                        oaccount = SD.OAccountID,
+                        amount = SD.Betrag,
+                        Currency = SD.Waehrung,
+                        duedate = SD.Valutadatum,
+                        text = SD.Buchungstext
+                    }
+                };
+            int countLineID = new AccountingController().MakeGeneralLedgerLine(lineGeneralLedger);
+            if (countLineID > 0)
+            {
+                return itemID;
             }
             return countLineID;
         }

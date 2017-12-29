@@ -5,6 +5,7 @@
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Threading;
     using System.Web;
@@ -55,65 +56,57 @@
         }
         public static bool CheckPeriod(int DocumentID, DocsType DocumentType, string CompanyId, bool Current, bool Open)
         {
-            string periode = String.Empty;
+            return true;
+            #region testing period
 
-            switch (DocumentType)
-            {
-                case DocsType.PurchaseOrder:
-                    periode= IWSEntities.PurchaseOrders.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                case DocsType.GoodReceiving:
-                    periode = IWSEntities.GoodReceivings.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                case DocsType.InventoryInvoice:
-                    periode = IWSEntities.InventoryInvoices.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                case DocsType.SalesOrder:
-                    periode = IWSEntities.SalesOrders.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                case DocsType.BillOfDelivery:
-                    periode = IWSEntities.BillOfDeliveries.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                case DocsType.SalesInvoice:
-                    periode = IWSEntities.InventoryInvoices.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                case DocsType.VendorInvoice:
-                    periode = IWSEntities.VendorInvoices.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                case DocsType.CustomerInvoice:
-                    periode = IWSEntities.CustomerInvoices.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                case DocsType.Payment:
-                    periode = IWSEntities.Payments.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                case DocsType.Settlement:
-                    periode = IWSEntities.Settlements.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                case DocsType.GeneralLedgerOut:
-                case DocsType.GeneralLedgerIn:
-                case DocsType.GeneralLedger:
-                    periode = IWSEntities.GeneralLedgers.Where(i => i.id == DocumentID).Select(p => p.oPeriode).ToString();
-                    break;
-                default:
-                    break;
-            }
-
-            //return IWSEntities.FiscalYears.Where(x => (x.Jan +' '+ x.Feb + ' ' + x.Mar + ' ' + x.Apr + ' ' + x.May + ' ' + x.Jun
-            //                                        + ' ' + x.Jul + ' ' + x.Aug + ' ' + x.Sep + ' ' + x.Oct + ' ' + x.Nov + ' ' + x.Dec
-            //                                        ).Contains(periode) && x.Current==Current && x.Open==Open &&
-            //                                        x.CompanyId==CompanyId).Any();
-            return IWSEntities.FiscalYears.Where(x => x.Period
-                                        .Contains(periode) && x.Current == Current && x.Open == Open &&
-                                        x.CompanyId == CompanyId).Any();
+            //if (DocsType.PurchaseOrder.Equals(DocumentType))
+            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.PurchaseOrders.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //if(DocsType.GoodReceiving.Equals(DocumentType))
+            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.GoodReceivings.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //if(DocsType.InventoryInvoice.Equals(DocumentType))
+            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.InventoryInvoices.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //if(DocsType.SalesOrder.Equals(DocumentType))
+            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.SalesOrders.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //if(DocsType.BillOfDelivery.Equals(DocumentType))
+            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.BillOfDeliveries.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //if(DocsType.SalesInvoice.Equals(DocumentType))
+            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.SalesInvoices.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //if(DocsType.VendorInvoice.Equals(DocumentType))
+            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.VendorInvoices.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if(DocsType.CustomerInvoice.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.CustomerInvoices.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if(DocsType.Payment.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.Payments.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if(DocsType.Settlement.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.Settlements.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if(DocsType.GeneralLedger.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.GeneralLedgers.
+            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //return false;
+            #endregion
         }
         public static bool CheckPeriod(DateTime TransDate, string CompanyId, bool Current, bool Open)
         {
-            string periode = TransDate.Month < 10? '0' + Convert.ToString(TransDate.Month) : Convert.ToString(TransDate.Month);
-            periode = Convert.ToString(TransDate.Year) + periode;
+            return true;
+            #region testing period
 
-            return IWSEntities.FiscalYears.Where(x => x.Period
-                            .Contains(periode) && x.Current == Current && x.Open == Open &&
-                            x.CompanyId == CompanyId).Any();
+            //string periode = TransDate.Month < 10? '0' + Convert.ToString(TransDate.Month) : Convert.ToString(TransDate.Month);
+            //periode = Convert.ToString(TransDate.Year) + periode;
+
+            //return IWSEntities.FiscalYears.Where(x => x.Period
+            //                .Contains(periode) && x.Current == Current && x.Open == Open &&
+            //                x.CompanyId == CompanyId).Any();
+            #endregion
         }
         public static IEnumerable GetAccounts()
         {
@@ -219,24 +212,6 @@
                         f.CompanyId,f.CStart,f.CEnd, f.OStart, f.OEnd
                     }).ToList();
 
-        //public static IEnumerable GetTempBrouillard(string typeDoc,string companyId) => IWSEntities.UpdateBrouillard(typeDoc,companyId);
-
-        //public static List<FiscalYearViewModel> GetFiscalYears(string companyId)
-        //{
-        //    List<FiscalYearViewModel> f = new List<FiscalYearViewModel>();
-        //    f = IWSEntities.GetFiscalYears(companyId).Where(c =>
-        //                c.CompanyId == companyId).Select(i =>
-        //                new FiscalYearViewModel()
-        //                {
-        //                    CompanyId = i.CompanyId,
-        //                    CStart = i.cStart,
-        //                    CEnd = i.cEnd,
-        //                    OStart = i.oStart,
-        //                    OEnd = i.oEnd
-        //                }).ToList();
-        //    return f;
-        //}
-
         public static IEnumerable GetCash() => IWSEntities.Cashes.Where(c =>
                         c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
                         OrderByDescending(o => o.Id).AsEnumerable();
@@ -258,17 +233,17 @@
             List<BrouillardViewModel> d = (from b in IWSEntities.GetBrouillard(TypeDoc, NumPiece, CompanyId, ItemId)
                                              select new BrouillardViewModel()
                                              {
-                                                 OID=Convert.ToInt16(b.Oid),
-                                                 Account = b.Account,
-                                                 TransDate = StringToDate(b.TransDate),
-                                                 ItemDate=StringToDate(b.ItemDate),
-                                                 DueDate=StringToDate(b.DueDate),
+                                                 OID=Convert.ToInt16(b.NumPiece),
+                                                 Account = b.Owner,
+                                                 TransDate = Convert.ToDateTime(b.Period),
+                                                 ItemDate= Convert.ToDateTime(b.Period),
+                                                 DueDate=Convert.ToDateTime(b.Period),
                                                  EntryDate=DateTime.Now,
                                                  AccountID = b.AccountID,
                                                  Side= Convert.ToBoolean(b.Side),
                                                  OAccountID = b.OAccountID,
-                                                 Text = b.Text,
-                                                 Amount= StringToDecimal(b.Amount),
+                                                 HeaderText = b.HeaderText,
+                                                 Amount= Convert.ToDecimal(b.Amount),
                                                  Currency = b.Currency,
                                                  CompanyId = b.CompanyId,
                                              }).ToList();
@@ -295,6 +270,68 @@
                     orderby o.id descending
                     select o;
             return b;
+        }
+        public static OwnerViewModel GetOwnerType(string IBAN)
+        {
+            try
+            {
+                OwnerViewModel customer = (from c in IWSEntities.Customers
+                               where
+                                 c.id ==
+                                   ((from b in IWSEntities.BankAccounts
+                                     where
+                                         b.IBAN == IBAN
+                                     select new
+                                     {
+                                         b.Owner
+                                     }).First().Owner)
+                               select new OwnerViewModel()
+                               {
+                                   ID = c.id,
+                                   OwnerType = "Customer"
+                               }).SingleOrDefault();
+                if (customer != null)
+                    return customer;
+                OwnerViewModel supplier = (from c in IWSEntities.Suppliers
+                                where
+                                    c.id ==
+                                    ((from b in IWSEntities.BankAccounts
+                                        where
+                                            b.IBAN == IBAN
+                                        select new
+                                        {
+                                            b.Owner
+                                        }).First().Owner)
+                                select new OwnerViewModel()
+                                {
+                                    ID = c.id,
+                                    OwnerType = "Supplier"
+                                }).SingleOrDefault();
+                if (supplier != null)
+                    return supplier;
+                OwnerViewModel company = (from c in IWSEntities.Companies
+                                where
+                                c.id ==
+                                    ((from b in IWSEntities.BankAccounts
+                                    where
+                                        b.IBAN == IBAN
+                                    select new
+                                    {
+                                        b.Owner
+                                    }).First().Owner)
+                                select new OwnerViewModel()
+                                {
+                                    ID = c.id,
+                                    OwnerType = "Company"
+                                }).SingleOrDefault();
+                if (company != null)
+                    return company;
+            }
+            catch (Exception ex)
+            {
+                IWSLookUp.LogException(ex);
+            }
+            return null;
         }
         public static IEnumerable GetInventoryInvoice()
         {
@@ -723,101 +760,137 @@
                     return sd;
                 }
 
-                if (itemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
-                {
-                    StatementDetailViewModel sd =
-                        (from c in IWSEntities.Companies
-                         join b in IWSEntities.BankStatements on new { id = c.id } equals new { id = b.CompanyID }
-                         join s in IWSEntities.Customers
-                             on new { c.id, b.Kontonummer }
-                         equals new { id = s.CompanyID, Kontonummer = s.IBAN }
-                         where
-                         b.IsValidated.Equals(false) &&
-                         b.id.Equals(bankStatementId)
-                         select new StatementDetailViewModel()
-                         {
-                             Id = s.id,
-                             AccountID = s.accountid,
-                             BankAccountID = c.settlementclearingaccountid,
-                             Info = b.Info,
-                             Waehrung = b.Waehrung,
-                             Betrag = (decimal)b.Betrag,
-                             Buchungstag = (DateTime)b.Buchungstag,
-                             Valutadatum = (DateTime)b.Valutadatum,
-                             Periode = Convert.ToString((int?)b.Buchungstag.Value.Year) +
-                                         Convert.ToString((int?)b.Buchungstag.Value.Month),
-                             Buchungstext = b.Buchungstext,
-                             Verwendungszweck = b.Verwendungszweck,
-                             BeguenstigterZahlungspflichtiger = b.BeguenstigterZahlungspflichtiger,
-                             IBAN = s.IBAN
-                         }).Single();
-                    return sd;
-                }
-
                 if (itemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
                 {
                     StatementDetailViewModel sd =
                             (from bs in IWSEntities.BankStatements
-                            join bao in IWSEntities.BankAccounts on new { Kontonummer = bs.Kontonummer } equals new { Kontonummer = bao.IBAN }
-                            join su in IWSEntities.Suppliers on new { Owner = bao.Owner } equals new { Owner = su.id }
-                            join baa in IWSEntities.BankAccounts on new { CompanyIBAN = bs.CompanyIBAN } equals new { CompanyIBAN = baa.IBAN }
-                            join co in IWSEntities.Companies on new { Owner = baa.Owner } equals new { Owner = co.id }
-                            where
-                                bs.id == bankStatementId &&
-                                bs.IsValidated == false &&
-                                bs.CompanyID == companyId
-
-                           select new StatementDetailViewModel()
-                           {
-                               Id = su.id,
-                               AccountID = su.accountid,
-                               OAccountID = co.paymentclearingaccountid,
-                               Betrag = Math.Abs((decimal)bs.Betrag),
-                               Waehrung = bs.Waehrung,
-                               Info = bs.Info,
-                               Buchungstag = (DateTime)bs.Buchungstag,
-                               Valutadatum = (DateTime)bs.Valutadatum,
-                               Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
-                                        Convert.ToString((int?)bs.Buchungstag.Value.Month),
-                               Buchungstext = bs.Buchungstext,
-                               Verwendungszweck = bs.Verwendungszweck,
-                               BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger
-                           }).Single();
+                             join bao in IWSEntities.BankAccounts on new { Kontonummer = bs.Kontonummer } equals new { Kontonummer = bao.IBAN }
+                             join su in IWSEntities.Suppliers on new { Owner = bao.Owner } equals new { Owner = su.id }
+                             join baa in IWSEntities.BankAccounts on new { CompanyIBAN = bs.CompanyIBAN } equals new { CompanyIBAN = baa.IBAN }
+                             join co in IWSEntities.Companies on new { Owner = baa.Owner } equals new { Owner = co.id }
+                             where
+                                 bs.id == bankStatementId &&
+                                 bs.IsValidated == false &&
+                                 bs.CompanyID == companyId
+                             select new StatementDetailViewModel()
+                             {
+                                 Id = su.id,
+                                 AccountID = su.accountid,
+                                 OAccountID = co.paymentclearingaccountid,
+                                 Betrag = Math.Abs((decimal)bs.Betrag),
+                                 Waehrung = bs.Waehrung,
+                                 Info = bs.Info,
+                                 Buchungstag = (DateTime)bs.Buchungstag,
+                                 Valutadatum = (DateTime)bs.Valutadatum,
+                                 Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
+                                          Convert.ToString((int?)bs.Buchungstag.Value.Month),
+                                 Buchungstext = bs.Buchungstext,
+                                 Verwendungszweck = bs.Verwendungszweck,
+                                 BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger
+                             }).Single();
                     return sd;
                 }
 
-                if (itemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
+                if (itemType.Equals(IWSLookUp.DocsType.GeneralLedger.ToString()))
                 {
-
-                    StatementDetailViewModel BS =
-                        (from su in IWSEntities.Suppliers
-                         join ba in IWSEntities.BankAccounts on new { id = su.id } equals new { id = ba.Owner }
-                         join co in IWSEntities.Companies on new { CompanyID = ba.CompanyID } equals new { CompanyID = co.id }
-                         join bs in IWSEntities.BankStatements on new { IBAN = ba.IBAN } equals new { IBAN = bs.Kontonummer }
-                         where
-                           bs.IsValidated == false &&
-                           ba.CompanyID == companyId &&
-                           bs.id == bankStatementId
-                         select new StatementDetailViewModel()
-                         {
-                             Id = su.id,
-                             IBAN = ba.IBAN,
-                             BankAccountID = ba.Account,
-                             AccountID = co.purchasingclearingaccountid,
-                             Info = bs.Info,
-                             Waehrung = bs.Waehrung,
-                             Betrag = Math.Abs((decimal)bs.Betrag),
-                             Buchungstag = (DateTime)bs.Buchungstag,
-                             Valutadatum = (DateTime)bs.Valutadatum,
-                             Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
-                                       Convert.ToString((int?)bs.Buchungstag.Value.Month),
-                             Buchungstext = bs.Buchungstext,
-                             Verwendungszweck = bs.Verwendungszweck,
-                             BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger
-                         }).Single();
-
-                    return BS;
+                    StatementDetailViewModel sd =
+                            (from bs in IWSEntities.BankStatements
+                             join bao in IWSEntities.BankAccounts on new { Kontonummer = bs.Kontonummer } equals new { Kontonummer = bao.IBAN }
+                             join su in IWSEntities.Suppliers on new { Owner = bao.Owner } equals new { Owner = su.id }
+                             join baa in IWSEntities.BankAccounts on new { CompanyIBAN = bs.CompanyIBAN } equals new { CompanyIBAN = baa.IBAN }
+                             join co in IWSEntities.Companies on new { Owner = baa.Owner } equals new { Owner = co.id }
+                             where
+                                 bs.id == bankStatementId &&
+                                 bs.IsValidated == false &&
+                                 bs.CompanyID == companyId
+                             select new StatementDetailViewModel()
+                             {
+                                 Id = su.id,
+                                 AccountID = co.paymentclearingaccountid,
+                                 OAccountID = su.accountid,
+                                 Betrag = Math.Abs((decimal)bs.Betrag),
+                                 Waehrung = bs.Waehrung,
+                                 Info = bs.Info,
+                                 Buchungstag = (DateTime)bs.Buchungstag,
+                                 Valutadatum = (DateTime)bs.Valutadatum,
+                                 Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
+                                          Convert.ToString((int?)bs.Buchungstag.Value.Month),
+                                 Buchungstext = bs.Buchungstext,
+                                 Verwendungszweck = bs.Verwendungszweck,
+                                 BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger
+                             }).Single();
+                    return sd;
                 }
+
+                #region keepit
+
+                //if (itemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
+                //{
+                //    StatementDetailViewModel sd =
+                //        (from co in IWSEntities.Companies
+                //         join bs in IWSEntities.BankStatements on new { id = co.id } equals new { id = bs.CompanyID }
+                //         join cu in IWSEntities.Customers
+                //             on new { co.id, bs.Kontonummer }
+                //         equals new { id = cu.CompanyID, Kontonummer = cu.IBAN }
+                //         where
+                //         bs.IsValidated.Equals(false) &&
+                //         bs.id.Equals(bankStatementId) &&
+                //         co.id.Equals(companyId)
+                //         select new StatementDetailViewModel()
+                //         {
+                //             Id = cu.id,
+                //             AccountID = cu.accountid,
+                //             OAccountID = co.settlementclearingaccountid,//BankAccountID = 
+                //             Info = bs.Info,
+                //             Waehrung = bs.Waehrung,
+                //             Betrag = (decimal)bs.Betrag,
+                //             Buchungstag = (DateTime)bs.Buchungstag,
+                //             Valutadatum = (DateTime)bs.Valutadatum,
+                //             Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
+                //                         Convert.ToString((int?)bs.Buchungstag.Value.Month),
+                //             Buchungstext = bs.Buchungstext,
+                //             Verwendungszweck = bs.Verwendungszweck,
+                //             BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger,
+                //             IBAN = cu.IBAN
+                //         }).Single();
+                //    return sd;
+                //}
+
+                //if (itemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
+                //{
+
+                //    StatementDetailViewModel sd =
+                //        (from su in IWSEntities.Suppliers
+                //         join ba in IWSEntities.BankAccounts on new { id = su.id } equals new { id = ba.Owner }
+                //         join co in IWSEntities.Companies on new { CompanyID = ba.CompanyID } equals new { CompanyID = co.id }
+                //         join bs in IWSEntities.BankStatements on new { IBAN = ba.IBAN } equals new { IBAN = bs.Kontonummer }
+                //         where
+                //           bs.IsValidated == false &&
+                //           ba.CompanyID == companyId &&
+                //           bs.id == bankStatementId
+                //         select new StatementDetailViewModel()
+                //         {
+                //             Id = su.id,
+                //             BankAccountID = ba.Account,
+                //             AccountID = co.purchasingclearingaccountid,
+                //             Info = bs.Info,
+                //             Waehrung = bs.Waehrung,
+                //             Betrag = Math.Abs((decimal)bs.Betrag),
+                //             Buchungstag = (DateTime)bs.Buchungstag,
+                //             Valutadatum = (DateTime)bs.Valutadatum,
+                //             Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
+                //                       Convert.ToString((int?)bs.Buchungstag.Value.Month),
+                //             Buchungstext = bs.Buchungstext,
+                //             Verwendungszweck = bs.Verwendungszweck,
+                //             BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger,
+                //             IBAN = ba.IBAN
+                //         }).Single();
+
+                //    return sd;
+                //}
+
+                #endregion
+
             }
             catch (Exception ex)
             {
@@ -842,7 +915,6 @@
                     Kontonummer = b.Kontonummer, BLZ = b.BLZ, Betrag = b.Betrag,
                     Waehrung = b.Waehrung, Info = b.Info, CompanyID = b.CompanyID,
                     IsValidated = b.IsValidated
-
                 }).ToList();
             return doc;
         }
@@ -1712,7 +1784,9 @@
                                                        AccountID=p.AccountId + "-" + p.AccountName,
                                                        AccountName=p.AccountName,
                                                        Periode=p.Periode,
-                                                       Debit=(decimal)p.Debit,
+                                                       OYear = p.OYear,
+                                                       OMonth=p.OMonth,
+                                                       Debit =(decimal)p.Debit,
                                                        Credit=(decimal)p.Credit,
                                                        Balance=(decimal)p.Balance,
                                                        Currency=p.Currency,
@@ -1738,6 +1812,8 @@
                      Owner = j.Owner,
                      TransDate = j.TransDate,
                      Periode = j.Periode,
+                     oYear = j.OYear,
+                     oMonth = j.oMonth,
                      Account = j.Account,
                      AccountName=j.AccountName,
                      OAccount = j.OAccount,
@@ -1817,13 +1893,13 @@
             List<ChildViewModel> r =
                 ((
                 from c in IWSEntities.Companies
-                join Accounts in IWSEntities.Accounts on new { BalanceSheet = c.BalanceSheet } equals new { BalanceSheet = Accounts.id }
+                join a in IWSEntities.Accounts on new { BalanceSheet = c.BalanceSheet } equals new { BalanceSheet = a.id }
                 where
                   c.id == (string)HttpContext.Current.Session["CompanyID"]
                 select new ChildViewModel()
                 {
-                    ParentId = Accounts.id,
-                    ParentName = Accounts.name
+                    ParentId = a.id,
+                    ParentName = a.name
                 }
                 ).Union
                 (
@@ -2334,33 +2410,22 @@
 
         private static DateTime StringToDate(string stringDate)
         {
-            //if (stringDate.Length != 6)
-            //    return null;
             string y = "20" + stringDate.Substring(4, 2);
             string m = stringDate.Substring(2, 2);
             string d = stringDate.Substring(0, 2);
-            string s = $"{m}/{d}/{y}";
-            DateTime.TryParse(s, out DateTime p);
-            return p;
-            //if (DateTime.TryParse(s, out DateTime p))
-            //{
-            //    return p;
-            //}
-            //return null;
-        }
+            string x = y + '-' + m + '-' + d;
+            return Convert.ToDateTime(x);
+         }
 
         private static Decimal StringToDecimal(string amount)
         {
             if (string.IsNullOrEmpty(amount))
                 return 0;
-            int index = amount.LastIndexOf('.');
-            if (index > 0)
-                amount = amount.Substring(0, index);
-            if (Decimal.TryParse(amount, out decimal a))
-            {
-                return a;
-            }
-            return 0;
+            //int index = amount.LastIndexOf('.');
+            //if (index > 0)
+            //    amount = amount.Substring(0, index);
+            decimal b = Convert.ToDecimal(amount, CultureInfo.GetCultureInfo(Thread.CurrentThread.CurrentUICulture.Name).NumberFormat );
+            return b;
         }
 
     }

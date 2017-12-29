@@ -1204,6 +1204,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Item #.
+        /// </summary>
+        public static string ItemNumber {
+            get {
+                return ResourceManager.GetString("ItemNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Item Type.
         /// </summary>
         public static string ItemType {

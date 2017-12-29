@@ -65,6 +65,22 @@
     });
     settings.Columns.Add(column =>
     {
+        column.FieldName = "OYear";
+        column.Caption = IWSLocalResource.Year;
+        column.Width = Unit.Percentage(5);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.NullText = "...";
+        });
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "OMonth";
+        column.Caption = IWSLocalResource.Month;
+        column.Width = Unit.Percentage(5);
+    });
+    settings.Columns.Add(column =>
+    {
         column.FieldName = "Debit";
         column.Caption = IWSLocalResource.debit;
         column.Width = Unit.Percentage(12);

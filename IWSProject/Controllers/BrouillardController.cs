@@ -7,7 +7,6 @@ using System.Data;
 using System.Data.OleDb;
 using System.IO;
 using System.Linq;
-using System.Transactions;
 using System.Web.Mvc;
 namespace IWSProject.Controllers
 {
@@ -38,7 +37,6 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(string selectedIDs)
         {
-            
             try
             {
                 string companyId = (string)Session["CompanyID"];
@@ -62,31 +60,35 @@ namespace IWSProject.Controllers
                         TypeDoc = list[2];
                         BrouillardHeaderViewModel header = new BrouillardHeaderViewModel();
                         BrouillardLineViewModel line = new BrouillardLineViewModel();
-                        List<BrouillardViewModel> Brouillard = IWSLookUp.GetBrouillard(TypeDoc, NumPiece, companyId,ItemID);
+                        List<BrouillardViewModel> Brouillard = IWSLookUp.GetBrouillard(TypeDoc, NumPiece, companyId, ItemID);
                         if (TypeDoc == "VP" || TypeDoc == "VT" )
                         {
                             foreach (BrouillardViewModel b in Brouillard)
                             {
-                                if (!b.IsValidated)
+                                string owner = b.Account;
+                                if (string.IsNullOrWhiteSpace(owner))
+                                    owner = "G";
+                                owner = owner.Substring(0, 1).ToUpper();
+                                if (owner == "C" && !b.IsValidated)
                                 {
                                 oid = Convert.ToString(b.OID);
-                                Settlement invoiceHeader = new Settlement
+                                CustomerInvoice invoiceHeader = new CustomerInvoice
                                 {
                                     oid = b.OID,
                                     CostCenter = "20",
                                     account = b.Account,
-                                    HeaderText = b.Text,
+                                    HeaderText = b.HeaderText,
                                     TransDate = b.TransDate,
                                     ItemDate = b.ItemDate,
                                     EntryDate = b.EntryDate,
                                     CompanyId = b.CompanyId,
                                     IsValidated = b.IsValidated
                                 };
-                                db.Settlements.InsertOnSubmit(invoiceHeader);
+                                db.CustomerInvoices.InsertOnSubmit(invoiceHeader);
                                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                                 if (transId == 0)
-                                    transId = db.Settlements.Where(c => c.CompanyId == companyId).Max(c => c.id);
-                                LineSettlement invoiceLine = new LineSettlement
+                                    transId = db.CustomerInvoices.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                LineCustomerInvoice invoiceLine = new LineCustomerInvoice
                                 {
                                     transid = transId,
                                     account = b.AccountID,
@@ -94,40 +96,34 @@ namespace IWSProject.Controllers
                                     oaccount = b.OAccountID,
                                     amount = b.Amount,
                                     duedate = b.DueDate,
-                                    text = b.Text,
+                                    text = b.HeaderText,
                                     Currency = b.Currency
                                 };
-                                db.LineSettlements.InsertOnSubmit(invoiceLine);
+                                db.LineCustomerInvoices.InsertOnSubmit(invoiceLine);
                                 db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
                                                     ToList().ForEach(x => x.IsValidated = true);
                                     db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                                 }
-                            }
-                        }
-                        if (TypeDoc == "AC" || TypeDoc == "AI")
-                        {
-                            foreach (BrouillardViewModel b in Brouillard)
-                            {
-                                if (!b.IsValidated)
+                                if (owner == "F" && !b.IsValidated)
                                 {
                                     oid = Convert.ToString(b.OID);
-                                    Payment invoiceHeader = new Payment
+                                    VendorInvoice invoiceHeader = new VendorInvoice
                                     {
                                         oid = b.OID,
-                                        CostCenter = "10",
+                                        CostCenter = "20",
                                         account = b.Account,
-                                        HeaderText = b.Text,
+                                        HeaderText = b.HeaderText,
                                         TransDate = b.TransDate,
                                         ItemDate = b.ItemDate,
                                         EntryDate = b.EntryDate,
                                         CompanyId = b.CompanyId,
                                         IsValidated = b.IsValidated
                                     };
-                                    db.Payments.InsertOnSubmit(invoiceHeader);
+                                    db.VendorInvoices.InsertOnSubmit(invoiceHeader);
                                     db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                                     if (transId == 0)
-                                        transId = db.Payments.Where(c => c.CompanyId == companyId).Max(c => c.id);
-                                    LinePayment invoiceLine = new LinePayment
+                                        transId = db.VendorInvoices.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LineVendorInvoice invoiceLine = new LineVendorInvoice
                                     {
                                         transid = transId,
                                         account = b.AccountID,
@@ -135,14 +131,172 @@ namespace IWSProject.Controllers
                                         oaccount = b.OAccountID,
                                         amount = b.Amount,
                                         duedate = b.DueDate,
-                                        text = b.Text,
+                                        text = b.HeaderText,
                                         Currency = b.Currency
                                     };
-                                    db.LinePayments.InsertOnSubmit(invoiceLine);
+                                    db.LineVendorInvoices.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                                #region generalledger
+
+
+                                //if (owner == "G" && !b.IsValidated)
+                                //{
+                                //    oid = Convert.ToString(b.OID);
+                                //    GeneralLedger invoiceHeader = new GeneralLedger
+                                //    {
+                                //        oid = b.OID,
+                                //        CostCenter = "20",
+                                //        HeaderText = b.HeaderText,
+                                //        TransDate = b.TransDate,
+                                //        ItemDate = b.ItemDate,
+                                //        EntryDate = b.EntryDate,
+                                //        CompanyId = b.CompanyId,
+                                //        IsValidated = b.IsValidated
+                                //    };
+                                //    db.GeneralLedgers.InsertOnSubmit(invoiceHeader);
+                                //    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                //    if (transId == 0)
+                                //        transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                //    LineGeneralLedger invoiceLine = new LineGeneralLedger
+                                //    {
+                                //        transid = transId,
+                                //        account = b.AccountID,
+                                //        side = b.Side,
+                                //        oaccount = b.OAccountID,
+                                //        amount = b.Amount,
+                                //        duedate = b.DueDate,
+                                //        text = b.HeaderText,
+                                //        Currency = b.Currency
+                                //    };
+                                //    db.LineGeneralLedgers.InsertOnSubmit(invoiceLine);
+                                //    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
+                                //                        ToList().ForEach(x => x.IsValidated = true);
+                                //    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                //}
+                                #endregion
+                            }
+                        }
+                        if (TypeDoc == "AC" || TypeDoc == "AI")
+                        {
+                            foreach (BrouillardViewModel b in Brouillard)
+                            {
+                                string owner = b.Account;
+                                if (string.IsNullOrWhiteSpace(owner))
+                                    owner = "G";
+                                owner = owner.Substring(0, 1).ToUpper();
+                                if (owner == "F" && !b.IsValidated)
+                                {
+                                    oid = Convert.ToString(b.OID);
+                                    VendorInvoice invoiceHeader = new VendorInvoice
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "10",
+                                        account = b.Account,
+                                        HeaderText = b.HeaderText,
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.VendorInvoices.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    //if (transId == 0)
+                                    transId = db.VendorInvoices.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LineVendorInvoice invoiceLine = new LineVendorInvoice
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.HeaderText,
+                                        Currency = b.Currency
+                                    };
+                                    db.LineVendorInvoices.InsertOnSubmit(invoiceLine);
                                     db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
                                                         ToList().ForEach(x => x.IsValidated = true);
                                         db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                                 }
+                                if (owner == "C" && !b.IsValidated)
+                                {
+                                    oid = Convert.ToString(b.OID);
+                                    CustomerInvoice invoiceHeader = new CustomerInvoice
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "10",
+                                        account = b.Account,
+                                        HeaderText = b.HeaderText,
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.CustomerInvoices.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    if (transId == 0)
+                                        transId = db.CustomerInvoices.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LineCustomerInvoice invoiceLine = new LineCustomerInvoice
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.HeaderText,
+                                        Currency = b.Currency
+                                    };
+                                    db.LineCustomerInvoices.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                                #region generalledger
+
+                                //if (owner == "G" && !b.IsValidated)
+                                //{
+                                //    oid = Convert.ToString(b.OID);
+                                //    GeneralLedger invoiceHeader = new GeneralLedger
+                                //    {
+                                //        oid = b.OID,
+                                //        CostCenter = "10",
+                                //        HeaderText = b.HeaderText,
+                                //        Area = "Achat",
+                                //        TransDate = b.TransDate,
+                                //        ItemDate = b.ItemDate,
+                                //        EntryDate = b.EntryDate,
+                                //        CompanyId = b.CompanyId,
+                                //        IsValidated = b.IsValidated
+                                //    };
+                                //    db.GeneralLedgers.InsertOnSubmit(invoiceHeader);
+                                //    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                //    //if (transId == 0)
+                                //    transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                //    LineGeneralLedger invoiceLine = new LineGeneralLedger
+                                //    {
+                                //        transid = transId,
+                                //        account = b.AccountID,
+                                //        side = b.Side,
+                                //        oaccount = b.OAccountID,
+                                //        amount = b.Amount,
+                                //        duedate = b.DueDate,
+                                //        text = b.HeaderText,
+                                //        Currency = b.Currency
+                                //    };
+                                //    db.LineGeneralLedgers.InsertOnSubmit(invoiceLine);
+                                //    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
+                                //                        ToList().ForEach(x => x.IsValidated = true);
+                                //    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                //}
+
+                                #endregion
+
                             }
                         }
                         if (TypeDoc == "BQ" || TypeDoc == "BK")
@@ -160,9 +314,9 @@ namespace IWSProject.Controllers
                                     Payment invoiceHeader = new Payment
                                     {
                                         oid = b.OID,
-                                        CostCenter = "10",
+                                        CostCenter = "15",
                                         account = b.Account,
-                                        HeaderText = b.Text,
+                                        HeaderText = b.HeaderText,
                                         TransDate = b.TransDate,
                                         ItemDate = b.ItemDate,
                                         EntryDate = b.EntryDate,
@@ -171,8 +325,8 @@ namespace IWSProject.Controllers
                                     };
                                     db.Payments.InsertOnSubmit(invoiceHeader);
                                     db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                                    if (transId == 0)
-                                        transId = db.Payments.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    //if (transId == 0)
+                                    transId = db.Payments.Where(c => c.CompanyId == companyId).Max(c => c.id);
                                     LinePayment invoiceLine = new LinePayment
                                     {
                                         transid = transId,
@@ -181,7 +335,7 @@ namespace IWSProject.Controllers
                                         oaccount = b.OAccountID,
                                         amount = b.Amount,
                                         duedate = b.DueDate,
-                                        text = b.Text,
+                                        text = b.HeaderText,
                                         Currency = b.Currency
                                     };
                                     db.LinePayments.InsertOnSubmit(invoiceLine);
@@ -195,9 +349,9 @@ namespace IWSProject.Controllers
                                     Settlement invoiceHeader = new Settlement
                                     {
                                         oid = b.OID,
-                                        CostCenter = "20",
+                                        CostCenter = "15",
                                         account = b.Account,
-                                        HeaderText = b.Text,
+                                        HeaderText = b.HeaderText,
                                         TransDate = b.TransDate,
                                         ItemDate = b.ItemDate,
                                         EntryDate = b.EntryDate,
@@ -206,8 +360,8 @@ namespace IWSProject.Controllers
                                     };
                                     db.Settlements.InsertOnSubmit(invoiceHeader);
                                     db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                                    if (transId == 0)
-                                        transId = db.Settlements.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    //if (transId == 0)
+                                    transId = db.Settlements.Where(c => c.CompanyId == companyId).Max(c => c.id);
                                     LineSettlement invoiceLine = new LineSettlement
                                     {
                                         transid = transId,
@@ -216,7 +370,7 @@ namespace IWSProject.Controllers
                                         oaccount = b.OAccountID,
                                         amount = b.Amount,
                                         duedate = b.DueDate,
-                                        text = b.Text,
+                                        text = b.HeaderText,
                                         Currency = b.Currency
                                     };
                                     db.LineSettlements.InsertOnSubmit(invoiceLine);
@@ -230,8 +384,8 @@ namespace IWSProject.Controllers
                                     GeneralLedger invoiceHeader = new GeneralLedger
                                     {
                                         oid = b.OID,
-                                        CostCenter = "40",
-                                        HeaderText = b.Text,
+                                        CostCenter = "15",
+                                        HeaderText = b.HeaderText,
                                         Area="Bank",
                                         TransDate = b.TransDate,
                                         ItemDate = b.ItemDate,
@@ -241,8 +395,8 @@ namespace IWSProject.Controllers
                                     };
                                     db.GeneralLedgers.InsertOnSubmit(invoiceHeader);
                                     db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                                    if (transId == 0)
-                                        transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    //if (transId == 0)
+                                    transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
                                     LineGeneralLedger invoiceLine = new LineGeneralLedger
                                     {
                                         transid = transId,
@@ -251,7 +405,7 @@ namespace IWSProject.Controllers
                                         oaccount = b.OAccountID,
                                         amount = b.Amount,
                                         duedate = b.DueDate,
-                                        text = b.Text,
+                                        text = b.HeaderText,
                                         Currency = b.Currency
                                     };
                                     db.LineGeneralLedgers.InsertOnSubmit(invoiceLine);
@@ -276,9 +430,9 @@ namespace IWSProject.Controllers
                                     Payment invoiceHeader = new Payment
                                     {
                                         oid = b.OID,
-                                        CostCenter = "1200",
+                                        CostCenter = "15",
                                         account = b.Account,
-                                        HeaderText = b.Text,
+                                        HeaderText = b.HeaderText,
                                         TransDate = b.TransDate,
                                         ItemDate = b.ItemDate,
                                         EntryDate = b.EntryDate,
@@ -287,8 +441,8 @@ namespace IWSProject.Controllers
                                     };
                                     db.Payments.InsertOnSubmit(invoiceHeader);
                                     db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                                    if (transId == 0)
-                                        transId = db.Payments.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    //if (transId == 0)
+                                    transId = db.Payments.Where(c => c.CompanyId == companyId).Max(c => c.id);
                                     LinePayment invoiceLine = new LinePayment
                                     {
                                         transid = transId,
@@ -297,7 +451,7 @@ namespace IWSProject.Controllers
                                         oaccount = b.OAccountID,
                                         amount = b.Amount,
                                         duedate = b.DueDate,
-                                        text = b.Text,
+                                        text = b.HeaderText,
                                         Currency = b.Currency
                                     };
                                     db.LinePayments.InsertOnSubmit(invoiceLine);
@@ -311,9 +465,9 @@ namespace IWSProject.Controllers
                                     Settlement invoiceHeader = new Settlement
                                     {
                                         oid = b.OID,
-                                        CostCenter = "20",
+                                        CostCenter = "15",
                                         account = b.Account,
-                                        HeaderText = b.Text,
+                                        HeaderText = b.HeaderText,
                                         TransDate = b.TransDate,
                                         ItemDate = b.ItemDate,
                                         EntryDate = b.EntryDate,
@@ -322,8 +476,8 @@ namespace IWSProject.Controllers
                                     };
                                     db.Settlements.InsertOnSubmit(invoiceHeader);
                                     db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                                    if (transId == 0)
-                                        transId = db.Settlements.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    //if (transId == 0)
+                                    transId = db.Settlements.Where(c => c.CompanyId == companyId).Max(c => c.id);
                                     LineSettlement invoiceLine = new LineSettlement
                                     {
                                         transid = transId,
@@ -332,7 +486,7 @@ namespace IWSProject.Controllers
                                         oaccount = b.OAccountID,
                                         amount = b.Amount,
                                         duedate = b.DueDate,
-                                        text = b.Text,
+                                        text = b.HeaderText,
                                         Currency = b.Currency
                                     };
                                     db.LineSettlements.InsertOnSubmit(invoiceLine);
@@ -346,9 +500,9 @@ namespace IWSProject.Controllers
                                     GeneralLedger invoiceHeader = new GeneralLedger
                                     {
                                         oid = b.OID,
-                                        CostCenter = "40",
-                                        HeaderText = b.Text,
-                                        Area = "Bank",
+                                        CostCenter = "15",
+                                        HeaderText = b.HeaderText,
+                                        Area = "Caisse",
                                         TransDate = b.TransDate,
                                         ItemDate = b.ItemDate,
                                         EntryDate = b.EntryDate,
@@ -357,8 +511,8 @@ namespace IWSProject.Controllers
                                     };
                                     db.GeneralLedgers.InsertOnSubmit(invoiceHeader);
                                     db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                                    if (transId == 0)
-                                        transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    //if (transId == 0)
+                                    transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
                                     LineGeneralLedger invoiceLine = new LineGeneralLedger
                                     {
                                         transid = transId,
@@ -367,7 +521,7 @@ namespace IWSProject.Controllers
                                         oaccount = b.OAccountID,
                                         amount = b.Amount,
                                         duedate = b.DueDate,
-                                        text = b.Text,
+                                        text = b.HeaderText,
                                         Currency = b.Currency
                                     };
                                     db.LineGeneralLedgers.InsertOnSubmit(invoiceLine);

@@ -27,7 +27,6 @@ namespace IWSProject.Controllers
         {
             if (string.IsNullOrWhiteSpace(start) || string.IsNullOrWhiteSpace(end))
                 return PartialView("_CallbackPartialView");
-
             Session["Start"] = start;
             Session["End"] = end;
             Session["Detail"] = detail;

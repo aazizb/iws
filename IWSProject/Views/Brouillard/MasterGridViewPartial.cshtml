@@ -14,6 +14,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Brouillard", Action = "MasterGridViewPartialDelete" };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+        settings.SettingsContextMenu.Enabled = true;
 
         settings.ClientSideEvents.RowClick = "OnMRowClick";
         settings.ClientSideEvents.RowDblClick = "OnMRowClick";
@@ -24,8 +25,8 @@
 
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = false;
         settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
         settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
@@ -54,13 +55,14 @@
         settings.SettingsPager.PageSize = 19;
 
         settings.CommandColumn.Visible = true;
-        settings.CommandColumn.Width = Unit.Percentage(6);
+        settings.CommandColumn.Width = Unit.Percentage(8);
         settings.CommandColumn.ShowEditButton = true;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowSelectCheckbox = true;
-        settings.CommandColumn.ShowNewButtonInHeader = true;
-        settings.CommandColumn.ShowUpdateButton = false;
-        settings.CommandColumn.ShowCancelButton = false;
+        //settings.CommandColumn.ShowNewButtonInHeader = true;
+        //settings.CommandColumn.ShowUpdateButton = false;
+        //settings.CommandColumn.ShowCancelButton = false;
+        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
@@ -103,15 +105,34 @@
             ASPxEdit editor = (ASPxEdit)e.Editor;
             editor.ValidationSettings.Display = Display.Dynamic;
         };
-        settings.BeforeGetCallbackResult = (sender, e) =>
+        settings.BeforeGetCallbackResult = (s, e) =>
         {
-            MVCxGridView g = (MVCxGridView)sender;
+            MVCxGridView g = (MVCxGridView)s;
             if (ViewData["NewKeyValue"] != null)
             {
                 g.DetailRows.ExpandRowByKey((int)ViewData["NewKeyValue"]);
             }
         };
-
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["Layout"] != null)
+                    {
+                        e.LayoutData = Session["Layout"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["Layout"] = e.LayoutData;
+                    break;
+            }
+        };
         #region Column
 
         settings.KeyFieldName = "Id";
@@ -132,7 +153,7 @@
         settings.Columns.Add(column =>
         {
             column.FieldName = "NumPiece";
-            column.Caption = IWSLocalResource.item;
+            column.Caption = IWSLocalResource.ItemNumber;
             column.Width = Unit.Percentage(5);
         });
         settings.Columns.Add(column =>
@@ -158,7 +179,7 @@
         {
             column.FieldName = "OAccountID";
             column.Caption = IWSLocalResource.oaccount;
-            column.Width = Unit.Percentage(10);
+            column.Width = Unit.Percentage(20);
             column.EditorProperties().ComboBox(combo =>
             {
                 combo.TextField = "Name";
@@ -203,9 +224,17 @@
         {
             column.FieldName = "TypeDoc";
             column.Caption = IWSLocalResource.ItemType;
-            column.Width = Unit.Percentage(8);
-            column.ColumnType = MVCxGridViewColumnType.TextBox;
-            column.Visible = true;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "ItemID";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetBrouillardType();
+                combo.Columns.Add("Name").Caption = IWSLocalResource.item;
+                combo.Width = Unit.Percentage(100);
+                combo.TextFormatString = "{0}";
+            });
         });
         settings.Columns.Add(column =>
         {
@@ -220,7 +249,7 @@
         {
             column.FieldName = "Text";
             column.Caption = IWSLocalResource.text;
-            column.Width = Unit.Percentage(25);
+            column.Width = Unit.Percentage(22);
             column.ColumnType = MVCxGridViewColumnType.Memo;
         });
 

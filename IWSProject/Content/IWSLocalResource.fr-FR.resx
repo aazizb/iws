@@ -873,4 +873,7 @@
   <data name="FiscalYearStart" xml:space="preserve">
     <value>Début d'exercice</value>
   </data>
+  <data name="ItemNumber" xml:space="preserve">
+    <value>N°Pièce</value>
+  </data>
 </root>

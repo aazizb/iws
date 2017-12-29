@@ -21,8 +21,14 @@
         e.customArgs["selectedIDs"] = selectedIDs;
         selectedIDs = null;
     }
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayout").text(layout)
+    }
     function OnSelectionChanged(s, e) {
-        s.GetSelectedFieldValues("id;Betrag", GetSelectedFieldValuesCallback);
+        s.GetSelectedFieldValues("id;Betrag;Kontonummer", GetSelectedFieldValuesCallback);
     }
     function GetSelectedFieldValuesCallback(values) {
         selectedIDs = values.join(';');

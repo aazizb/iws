@@ -60,9 +60,9 @@ namespace IWSProject.Controllers
                         db.SubmitChanges();
                         if (itemOID != 0)
                         {
-                            int itemID = db.GoodReceivings.Max(i => i.id);
+                            int itemID = db.Settlements.Max(i => i.id);
 
-                            result = InsertLines(itemID, itemOID, IWSLookUp.DocsType.GoodReceiving.ToString());
+                            result = InsertLines(itemID, itemOID, IWSLookUp.DocsType.Settlement.ToString());
                             if (result)
                             {
                                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);

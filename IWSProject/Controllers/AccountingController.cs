@@ -3,7 +3,6 @@ using IWSProject.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Transactions;
 using System.Web.Mvc;
 
 namespace IWSProject.Controllers
@@ -2293,6 +2292,43 @@ namespace IWSProject.Controllers
                 foreach (var item in lineSettlement)
                 {
                     db.LineSettlements.InsertOnSubmit(item);
+                    id++;
+                }
+                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                return id;
+            }
+            catch (Exception ex)
+            {
+                ViewData["GenericError"] = ex.Message;
+                IWSLookUp.LogException(ex);
+                return 0;
+            }
+        }
+        public int MakeGeneralLedgerHeader(GeneralLedger generalLedger)
+        {
+            int id = 0;
+            try
+            {
+                db.GeneralLedgers.InsertOnSubmit(generalLedger);
+                db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
+                id = db.GeneralLedgers.Max(i => i.id);
+                return id;
+            }
+            catch (Exception ex)
+            {
+                ViewData["GenericError"] = ex.Message;
+                IWSLookUp.LogException(ex);
+                return id;
+            }
+        }
+        public int MakeGeneralLedgerLine(List<LineGeneralLedger> lineGeneralLedger)
+        {
+            int id = 0;
+            try
+            {
+                foreach (var item in lineGeneralLedger)
+                {
+                    db.LineGeneralLedgers.InsertOnSubmit(item);
                     id++;
                 }
                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);

@@ -37,6 +37,7 @@
         settings.Columns.Add(column =>
         {
             column.FieldName = "Id";
+            column.Width= Unit.Pixel(160);
             column.Caption = IWSLocalResource.accountid;
             column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
         });

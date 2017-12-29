@@ -102,9 +102,21 @@
     });
     settings.Columns.Add(column =>
     {
+        column.FieldName = "oYear";
+        column.Caption = IWSLocalResource.Year;
+        column.Width = Unit.Percentage(5);
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "oMonth";
+        column.Caption = IWSLocalResource.Month;
+        column.Width = Unit.Percentage(5);
+    });
+    settings.Columns.Add(column =>
+    {
         column.FieldName = "Account";
         column.Caption = IWSLocalResource.account;
-        column.Width = Unit.Percentage(19);
+        column.Width = Unit.Percentage(15);
         column.EditorProperties().ComboBox(combo =>
         {
             combo.TextField = "Name";
@@ -127,7 +139,7 @@
     {
         column.FieldName = "OAccount";
         column.Caption = IWSLocalResource.oaccount;
-        column.Width = Unit.Percentage(19);
+        column.Width = Unit.Percentage(15);
         column.EditorProperties().ComboBox(combo =>
         {
             combo.TextField = "Name";

@@ -60,7 +60,26 @@
             e.NewValues["Valutadatum"] = DateTime.Today;
         };
 
-        //settings.ClientSideEvents.Init = "OnInitGrid";
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["Layout"] != null)
+                    {
+                        e.LayoutData = Session["Layout"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["Layout"] = e.LayoutData;
+                    break;
+            }
+        };
 
         settings.KeyFieldName = "id";
 
