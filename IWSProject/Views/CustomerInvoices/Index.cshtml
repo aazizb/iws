@@ -130,6 +130,9 @@
     }
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.CustomerInvoice;
+}
 @using (Html.BeginForm("Index", "CustomerInvoices"))
 {
     @Html.Hidden("cbxOID");

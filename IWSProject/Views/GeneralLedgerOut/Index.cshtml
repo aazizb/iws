@@ -131,6 +131,10 @@
 
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.GeneralLedger;
+}
+
 @using (Html.BeginForm("Index", "GeneralLedgerOut"))
 {
     @Html.Hidden("cbxOID");

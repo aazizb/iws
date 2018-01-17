@@ -46,6 +46,10 @@
     //}
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.BankStatement;
+}
+
 @using (Html.BeginForm("Index", "BankStatements"))
 {
     @Html.Hidden("selectedIDs");

@@ -87,6 +87,7 @@ namespace IWSProject.Models
         public string IBAN { get; set; }
         public string Currency { get; set; }
         public string Info { get; set; }
+        public string TypeJournal { get; set; }
     }
     public class ConfigureTwoFactorViewModel
     {
@@ -194,6 +195,10 @@ namespace IWSProject.Models
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
         public decimal Balance { get; set; }
+        public decimal InitialBalance { get; set; }
+        public decimal FinalBalance { get; set; }
+        public decimal SDebit { get; set; }
+        public decimal SCredit { get; set; }
         public string Currency { get; set; }
         public bool IsBalance { get; set; }
         public string CompanyID { get; set; }

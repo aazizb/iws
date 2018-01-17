@@ -1,1 +1,5 @@
-﻿@Html.Action("CurrenciesGridViewPartial")
+﻿@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.Currency; 
+}
+@Html.Action("CurrenciesGridViewPartial")

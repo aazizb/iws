@@ -3,22 +3,28 @@
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
-        settings.Name = "QuantityUnitsGridView";
+        settings.Name = "TypeJournalGridView";
+        
+        settings.CallbackRouteValues = new { Controller = "TypeJournal", Action = "TypeJournalsGridViewPartial" };
 
-
-        settings.CallbackRouteValues = new { Controller = "QuantityUnits", Action = "QuantityUnitsGridViewPartial" };
-
-        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "QuantityUnits", Action = "QuantityUnitsGridViewPartialAddNew" };
-        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "QuantityUnits", Action = "QuantityUnitsGridViewPartialUpdate" };
-        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "QuantityUnits", Action = "QuantityUnitsGridViewPartialDelete" };
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "TypeJournal", Action = "TypeJournalsGridViewPartialAddNew" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "TypeJournal", Action = "TypeJournalsGridViewPartialUpdate" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "TypeJournal", Action = "TypeJournalsGridViewPartialDelete" };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
         settings.SettingsContextMenu.Enabled = true;
 
         settings.CommandColumn.Visible = true;
-        settings.CommandColumn.Width = Unit.Percentage(6);
+        settings.CommandColumn.Width = Unit.Percentage(5);
 
         settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
+
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
@@ -39,16 +45,11 @@
         settings.SettingsCommandButton.DeleteButton.Text = " ";
         settings.CommandColumn.ShowDeleteButton = true;
 
-        settings.KeyFieldName = "id";
-        settings.SettingsBehavior.EnableRowHotTrack = true;
-
-        settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
+        settings.KeyFieldName = "Id";
 
         settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowGroupPanel = true;
         settings.Settings.ShowFilterRowMenu = true;
-        settings.SettingsBehavior.ConfirmDelete = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = false;
 
         settings.Width = Unit.Percentage(100);
 
@@ -63,18 +64,15 @@
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
 
         settings.SettingsPager.PageSize = 19;
-
         settings.Columns.Add(column =>
         {
-            column.FieldName = "id";
+            column.FieldName = "Id";
             column.Caption = IWSLocalResource.id;
             column.Width = Unit.Percentage(6);
         });
-
-
         settings.Columns.Add(column =>
         {
-            column.FieldName = "name";
+            column.FieldName = "Name";
             column.Caption = IWSLocalResource.name;
             column.Width = Unit.Percentage(30);
         });
@@ -107,11 +105,10 @@
         });
         settings.Columns.Add(column =>
         {
-            column.FieldName = "description";
+            column.FieldName = "Description";
             column.Caption = IWSLocalResource.description;
-            column.Width = Unit.Percentage(70);
+            column.Width = Unit.Percentage(50);
         });
-
 
         #region Template Edit
         settings.SetEditFormTemplateContent(templateContent =>
@@ -119,27 +116,30 @@
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
-                formLayoutSettings.Name = "QuantityUnitViewEdit";
+                formLayoutSettings.Name = "TypeJournalViewEdit";
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 3;
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "id";
+                    i.FieldName = "Id";
                     i.Caption = IWSLocalResource.id;
                     i.Width = Unit.Percentage(50);
+
                     i.NestedExtension().TextBox(s =>
                     {
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(75);
+                        s.Properties.ClientSideEvents.KeyUp = "function(s, e) { var txt = s.GetText(); s.SetText(txt.toUpperCase()); }";
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
+
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "name";
+                    i.FieldName = "Name";
                     i.Caption = IWSLocalResource.name;
                     i.Width = Unit.Percentage(50);
                     i.NestedExtension().TextBox(s =>
@@ -153,7 +153,7 @@
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "description";
+                    i.FieldName = "Description";
                     i.Caption = IWSLocalResource.description;
                     i.Width = Unit.Percentage(50);
                     i.NestedExtension().Memo(s =>
@@ -166,6 +166,7 @@
                 });
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
+
 
                 formLayoutSettings.Items.Add(i =>
                 {
@@ -182,7 +183,7 @@
                     b.Style[HtmlTextWriterStyle.MarginRight] = "5px";
                     b.Images.Image.IconID = IconID.ActionsApply16x16;
                     b.Width = Unit.Pixel(80);
-                    b.ClientSideEvents.Click = "function(s, e){ QuantityUnitsGridView.UpdateEdit(); }";
+                    b.ClientSideEvents.Click = "function(s, e){ TypeJournalGridView.UpdateEdit(); }";
                 }).Render();
 
                     Html.DevExpress().Button(
@@ -194,18 +195,18 @@
                     b.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
                     b.Images.Image.IconID = IconID.ActionsCancel16x16;
                     b.Width = Unit.Pixel(80);
-                    b.ClientSideEvents.Click = "function(s, e){ QuantityUnitsGridView.CancelEdit(); }";
+                    b.ClientSideEvents.Click = "function(s, e){ TypeJournalGridView.CancelEdit(); }";
                 }).Render();
                 });
             })
-            .Bind(ViewData["quantityunit"] ?? templateContent.DataItem)
+            .Bind(ViewData["typeJournal"] ?? templateContent.DataItem)
             .Render();
         });
         #endregion
 
         settings.DataBinding = (sender, e) =>
         {
-            ((MVCxGridView)sender).ForceDataRowType(typeof(QuantityUnit));
+            ((MVCxGridView)sender).ForceDataRowType(typeof(TypeJournal));
         };
     });
     if (ViewData["GenericError"] != null)
@@ -214,4 +215,5 @@
     }
 }
 @grid.Bind(Model).GetHtml()
+
 

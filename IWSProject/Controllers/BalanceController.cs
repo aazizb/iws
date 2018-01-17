@@ -15,23 +15,24 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult AccountBalancePartialView()
         {
-            string start = (string)Session["Start"];
-            string end = (string)Session["End"];
-            bool detail = (bool)Session["Detail"];
+            string selectedIDs = (string)Session["selectedIDs"];
             string company = (string)Session["CompanyID"];
-            List<AccountBalanceViewModel> model = (List<AccountBalanceViewModel>)IWSLookUp.GetAccountBalance(start, end, detail, company);
-            return PartialView("AccountBalancePartialView",model);
+            List<AccountBalanceViewModel> model = (List<AccountBalanceViewModel>)IWSLookUp.GetAccountBalance(selectedIDs, company);
+            return PartialView("AccountBalancePartialView", model);
+        }
+        [ValidateInput(false)]
+        public ActionResult GridLookupPartial()
+        {
+            if (ViewData["accounts"] == null)
+                ViewData["accounts"] = IWSLookUp.GetAccounts();
+            return PartialView("GridLookupPartial", ViewData["accounts"]);
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult CallbackPanelPartial(string start, string end, bool detail)
+        public ActionResult CallbackPanelPartial(string selectedIDs)
         {
-            if (string.IsNullOrWhiteSpace(start) || string.IsNullOrWhiteSpace(end))
-                return PartialView("_CallbackPartialView");
-            Session["Start"] = start;
-            Session["End"] = end;
-            Session["Detail"] = detail;
+            Session["selectedIDs"] = selectedIDs;
             string company = (string)Session["CompanyID"];
-            List<AccountBalanceViewModel> model = (List<AccountBalanceViewModel>)IWSLookUp.GetAccountBalance(start, end, detail, company);
+            List<AccountBalanceViewModel> model = (List<AccountBalanceViewModel>)IWSLookUp.GetAccountBalance(selectedIDs, company);
             return PartialView("_CallbackPartialView", model);
         }
     }

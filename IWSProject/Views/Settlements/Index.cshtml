@@ -141,7 +141,9 @@
     }
 
 </script>
-
+@{
+    ViewBag.Title = IWSLocalResource.Settlement;
+}
 @using (Html.BeginForm("Index", "Settlements"))
 {
     @Html.Hidden("cbxOID");

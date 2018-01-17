@@ -14,6 +14,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Customers", Action = "DetailGridViewPartialDelete", owner = Session["owner"] };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
+        settings.SettingsContextMenu.Enabled = true;
 
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;

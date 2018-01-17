@@ -2351,6 +2351,9 @@ namespace IWSProject.Controllers
                     foreach (Journal item in journal)
                     {
                         db.Journals.InsertOnSubmit(item);
+
+                        UpdateMetaFiles(item);
+
                     }
                     results = true;
                 }
@@ -2363,7 +2366,39 @@ namespace IWSProject.Controllers
             }
             return results;
         }
-
+        public void UpdateMetaFiles(Journal journal)
+        {
+            var account = db.Accounts.Single(a => a.id == journal.Account);
+            if (account != null)
+            {
+                account.Posted = DateTime.Today;
+            }
+            var oaccount = db.Accounts.Single(a => a.id == journal.OAccount);
+            if (oaccount != null)
+            {
+                oaccount.Posted = DateTime.Today;
+            }
+            var customer = db.Customers.SingleOrDefault(a => a.id == journal.CustSupplierID);
+            if (customer != null)
+            {
+                customer.Posted = DateTime.Today;
+            }
+            var supplier = db.Suppliers.SingleOrDefault(a => a.id == journal.CustSupplierID);
+            if (supplier != null)
+            {
+                supplier.Posted = DateTime.Today;
+            }
+            var currency = db.Currencies.SingleOrDefault(a => a.Id == journal.Currency);
+            if (currency != null)
+            {
+                currency.Posted = DateTime.Today;
+            }
+            //var costCentter = db.CostCenters.SingleOrDefault(a => a.id == journal.);
+            //if (store != null)
+            //{
+            //    store.Posted = DateTime.Today;
+            //}
+        }
         public void ProcessData(string selectedItems, string companyId, bool convertType)
         {
             //using (TransactionScope tx = new TransactionScope(TransactionScopeOption.RequiresNew))

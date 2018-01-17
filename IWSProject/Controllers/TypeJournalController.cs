@@ -6,89 +6,90 @@ using System.Web.Mvc;
 namespace IWSProject.Controllers
 {
     [Authorize]
-    public class BanksController : Controller
+    [HandleError()]
+    public class TypeJournalController : Controller
     {
         IWSDataContext db;
-        public BanksController()
+        public TypeJournalController()
         {
             db = new IWSDataContext();
         }
-        // GET: Banks
+        // GET: bankaccounts
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetBanks());
+            return View(IWSLookUp.GetTypeJournals());
         }
 
         [ValidateInput(false)]
-        public ActionResult BanksGridViewPartial()
+        public ActionResult TypeJournalsGridViewPartial()
         {
-            return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
+            return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
         }
 
         [HttpPost, ValidateInput(false)]
-        public ActionResult BanksGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Bank item)
+        public ActionResult TypeJournalsGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] TypeJournal item)
         {
-            var model = db.Banks;
-            ViewData["bank"] = item;
-            item.CompanyID = (string)Session["CompanyID"];
+            var model = db.TypeJournals;
+            item.CompanyId = (string)Session["CompanyID"];
+            ViewData["typeDraft"] = item;
             if (ModelState.IsValid)
             {
                 try
                 {
+                    item.Posted = DateTime.Now;
+                    item.Updated = DateTime.Now;
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
-                    return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
                 }
                 catch (Exception e)
                 {
                     ViewData["GenericError"] = e.Message;
-                    IWSLookUp.LogException(e);
                 }
             }
             else
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("BanksGridViewPartial", item);
+            return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult BanksGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Bank item)
+        public ActionResult TypeJournalsGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] TypeJournal item)
         {
-            var model = db.Banks;
-            ViewData["bank"] = item;
+            var model = db.TypeJournals;
+            ViewData["typeJournal"] = item;
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var modelItem = model.FirstOrDefault(it => it.id == item.id);
+                    var modelItem = model.FirstOrDefault(it => it.Id == item.Id);
                     if (modelItem != null)
                     {
+                        modelItem.Updated = DateTime.Now;
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
-                        return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
                     }
                 }
                 catch (Exception e)
                 {
                     ViewData["GenericError"] = e.Message;
-                    IWSLookUp.LogException(e);
                 }
             }
             else
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("BanksGridViewPartial", item);
+            return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult BanksGridViewPartialDelete(string id)
+        public ActionResult TypeJournalsGridViewPartialDelete(string id)
         {
-            var model = db.Banks;
+            var model = db.TypeJournals;
             if (id != null)
             {
                 try
                 {
-                    var item = model.FirstOrDefault(it => it.id == id);
+                    var item = model.FirstOrDefault(it => it.Id == id);
                     if (item != null)
                         model.DeleteOnSubmit(item);
 
@@ -97,10 +98,9 @@ namespace IWSProject.Controllers
                 catch (Exception e)
                 {
                     ViewData["GenericError"] = e.Message;
-                    IWSLookUp.LogException(e);
                 }
             }
-            return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
+            return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
         }
     }
 }

@@ -421,6 +421,9 @@
     <Content Include="Views\FiscalYear\CallbackPanel.cshtml" />
     <Content Include="Views\FiscalYear\PopupContent.cshtml" />
     <Content Include="Views\Brouillard\ValidatePartialView.cshtml" />
+    <Content Include="Views\Balance\GridLookupPartial.cshtml" />
+    <Content Include="Views\TypeJournal\Index.cshtml" />
+    <Content Include="Views\TypeJournal\TypeJournalsGridViewPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -498,6 +501,7 @@
     <Compile Include="Controllers\StocksController.cs" />
     <Compile Include="Controllers\StoresController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
+    <Compile Include="Controllers\TypeJournalController.cs" />
     <Compile Include="Controllers\VatsController.cs" />
     <Compile Include="Controllers\VendorInvoicesController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />

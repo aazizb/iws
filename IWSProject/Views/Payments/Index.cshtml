@@ -141,7 +141,10 @@
     }
 
 </script>
-
+@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.payment;
+}
 @using (Html.BeginForm("Index", "Payments"))
 {
     @Html.Hidden("cbxOID");

@@ -4,7 +4,7 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "BankAccountsGridView";
-        settings.Caption = IWSLocalResource.bankaccount;
+
 
         settings.CallbackRouteValues = new { Controller = "bankaccounts", Action = "BankAccountsGridViewPartial" };
 
@@ -13,6 +13,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "bankaccounts", Action = "BankAccountsGridViewPartialDelete" };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsContextMenu.Enabled = true;
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);

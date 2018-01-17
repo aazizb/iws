@@ -448,7 +448,7 @@
     <value>Remember me</value>
   </data>
   <data name="Accounting" xml:space="preserve">
-    <value>Comptabilisation</value>
+    <value>Comptabilité</value>
   </data>
   <data name="Validate" xml:space="preserve">
     <value>Valider</value>
@@ -875,5 +875,17 @@
   </data>
   <data name="ItemNumber" xml:space="preserve">
     <value>N°Pièce</value>
+  </data>
+  <data name="Posted" xml:space="preserve">
+    <value>Posting Date fr-FR</value>
+  </data>
+  <data name="Updated" xml:space="preserve">
+    <value>Update Date fr-FR</value>
+  </data>
+  <data name="TypeJournal" xml:space="preserve">
+    <value>Type Journal</value>
+  </data>
+  <data name="IWS" xml:space="preserve">
+    <value>IWS</value>
   </data>
 </root>

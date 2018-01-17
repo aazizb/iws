@@ -4,7 +4,7 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "CurrenciesGridView";
-        settings.Caption = IWSLocalResource.Currency;
+
 
         settings.CallbackRouteValues = new { Controller = "Currencies", Action = "CurrenciesGridViewPartial" };
 
@@ -13,6 +13,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Currencies", Action = "CurrenciesGridViewPartialDelete" };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsContextMenu.Enabled = true;
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Pixel(80);
@@ -67,6 +68,33 @@
 
         settings.Columns.Add("Id").Caption = IWSLocalResource.id;
         settings.Columns.Add("Name").Caption = IWSLocalResource.name;
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Updated";
+            column.Caption = IWSLocalResource.Updated;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(6);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormatString = "MM/dd/yyyy";
+                d.EditFormat = EditFormat.Custom;
+                d.Width = Unit.Percentage(100);
+                d.DisplayFormatString = "yyyy-MM-dd";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Posted";
+            column.Caption = IWSLocalResource.Posted;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(6);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormat = EditFormat.Custom;
+                d.Width = Unit.Percentage(100);
+                d.DisplayFormatString = "yyyy-MM-dd";
+            });
+        });
 
         #region Template Edit
         settings.SetEditFormTemplateContent(templateContent =>
@@ -128,7 +156,7 @@
                 });
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
-            
+
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.ShowCaption = DefaultBoolean.False;

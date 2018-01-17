@@ -864,4 +864,16 @@
   <data name="ItemNumber" xml:space="preserve">
     <value>Item #</value>
   </data>
+  <data name="Posted" xml:space="preserve">
+    <value>Posting Date de-DE</value>
+  </data>
+  <data name="Updated" xml:space="preserve">
+    <value>Update Date de-DE</value>
+  </data>
+  <data name="TypeJournal" xml:space="preserve">
+    <value>Type Journal</value>
+  </data>
+  <data name="IWS" xml:space="preserve">
+    <value>IWS</value>
+  </data>
 </root>

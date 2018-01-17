@@ -1,1 +1,7 @@
-﻿@Html.Action("ArticlesGridViewPartial")
+﻿
+@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.articles;
+}
+
+@Html.Action("ArticlesGridViewPartial")

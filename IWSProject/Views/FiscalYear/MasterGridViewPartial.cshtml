@@ -4,12 +4,11 @@
     {
         settings.Name = "FiscalYear";
         settings.Width = Unit.Percentage(100);
-        settings.Caption = IWSLocalResource.FiscalYear;
 
         settings.CallbackRouteValues = new { Controller = "FiscalYear", Action = "MasterGridViewPartial" };
         settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
         settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
-
+        settings.SettingsContextMenu.Enabled = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
         settings.SettingsBehavior.AllowEllipsisInText = true;

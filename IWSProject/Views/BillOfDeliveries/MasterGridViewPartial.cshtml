@@ -5,7 +5,7 @@
     {
         settings.Name = "BillOfDelivery";
         settings.Width = Unit.Percentage(100);
-        settings.Caption = IWSLocalResource.BillOfDelivery;
+
 
         settings.CallbackRouteValues = new { Controller = "BillOfDeliveries", Action = "MasterGridViewPartial" };
 
@@ -14,6 +14,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "BillOfDeliveries", Action = "MasterGridViewPartialDelete" };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsContextMenu.Enabled = true;
 
         settings.ClientSideEvents.RowClick = "OnMRowClick";
         settings.ClientSideEvents.RowDblClick = "OnMRowClick";
@@ -261,15 +262,10 @@
         settings.SetEditFormTemplateContent(c =>
         {
 
-            if (ViewBag.NoEval == false || ViewBag.NoEval == null)
-            {
-                ViewBag.IsValidated = false;
-            }
-            else
-            {
-                var data = DataBinder.Eval(c.DataItem, "IsValidated") ?? false;
-                ViewBag.IsValidated = (bool)data;
-            }
+            var isValidated = DataBinder.Eval(c.DataItem, "IsValidated");
+
+            ViewBag.Visible = ((bool)isValidated == true) ? false : true;
+
             ViewBag.IsNewRow = c.Grid.IsNewRowEditing;
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -294,7 +290,7 @@
                     btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
                     btnSettings.Width = Unit.Pixel(80);
                     btnSettings.ClientSideEvents.Click = "function(s, e){ BillOfDelivery.UpdateEdit(); }";
-                    btnSettings.ClientVisible = !ViewBag.IsValidated;
+                    btnSettings.ClientVisible = ViewBag.Visible;
                     btnSettings.TabIndex = 8;
                 }).Render();
                     Html.DevExpress().Button(

@@ -1,4 +1,6 @@
-﻿<script type="text/javascript">
+﻿@using IWSProject.Content
+
+<script type="text/javascript">
     var selectedBrouillard=null;
     function OnSelectionChanged(s, e) {
         selectedBrouillard = s.GetValue();
@@ -44,7 +46,9 @@
         FileManager.GetContextMenuItemByCommandName("UploadBrouillardToDb").SetEnabled(enabled);
     }
 </script>
-
+@{
+    ViewBag.Title = IWSLocalResource.Draft;
+}
 @using (Html.BeginForm())
 {
     @Html.Action("BrouillardPartial");

@@ -1,1 +1,5 @@
-﻿@Html.Action("VatsGridViewPartial")
+﻿@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.vat;
+}
+@Html.Action("VatsGridViewPartial")

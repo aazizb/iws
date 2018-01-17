@@ -6,7 +6,7 @@
     {
         settings.Name = "Settlement";
         settings.Width = Unit.Percentage(100);
-        settings.Caption = IWSLocalResource.Settlement;
+
 
         settings.CallbackRouteValues = new { Controller = "Settlements", Action = "MasterGridViewPartial" };
 
@@ -15,6 +15,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Settlements", Action = "MasterGridViewPartialDelete" };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsContextMenu.Enabled = true;
 
         settings.ClientSideEvents.RowClick = "OnMRowClick";
         settings.ClientSideEvents.RowDblClick = "OnMRowClick";
@@ -68,6 +69,7 @@
         settings.CommandColumn.ShowSelectCheckbox = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
         settings.CommandColumn.Width = Unit.Percentage(8);
+        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
@@ -241,15 +243,10 @@
 
         settings.SetEditFormTemplateContent(c =>
         {
-            if (ViewBag.NoEval == false || ViewBag.NoEval == null)
-            {
-                ViewBag.IsValidated = false;
-            }
-            else
-            {
-                var data = DataBinder.Eval(c.DataItem, "IsValidated") ?? false;
-                ViewBag.IsValidated = (bool)data;
-            }
+            var isValidated = DataBinder.Eval(c.DataItem, "IsValidated");
+
+            ViewBag.Visible = ((bool)isValidated == true) ? false : true;
+
             ViewBag.IsNewRow = c.Grid.IsNewRowEditing;
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -273,7 +270,7 @@
                     btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
                     btnSettings.Width = Unit.Pixel(80);
                     btnSettings.ClientSideEvents.Click = "function(s, e){ Settlement.UpdateEdit(); }";
-                    btnSettings.ClientVisible = !ViewBag.IsValidated;
+                    btnSettings.ClientVisible = ViewBag.Visible;
                     btnSettings.TabIndex = 8;
                 }).Render();
                     Html.DevExpress().Button(

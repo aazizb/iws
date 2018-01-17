@@ -1,4 +1,5 @@
-﻿<script type="text/javascript">
+﻿@using IWSProject.Content
+<script type="text/javascript">
     function OnCustomCommand(s, e) {
         if (e.commandName == "CashToDb") {
             var items = FileManager.GetSelectedItems();
@@ -25,7 +26,9 @@
             FileManager.GetContextMenuItemByCommandName("CashToDb").SetEnabled(enabled);
         }
 </script>
-
+@{
+    ViewBag.Title = IWSLocalResource.Cash;
+}
 @using (Html.BeginForm())
 {
     @Html.Action("CashPartial")

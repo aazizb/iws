@@ -3,11 +3,12 @@
 @Html.DevExpress().GridView(settings =>
 {
     settings.Name = "AccountBlanacePartialView";
-    settings.Caption = IWSLocalResource.AccountBalance;
+    //settings.Caption = IWSLocalResource.AccountBalance;
 
     settings.CallbackRouteValues = new { Controller = "Balance", Action = "AccountBalancePartialView" };
 
     settings.KeyFieldName = "AccountID";
+    settings.SettingsContextMenu.Enabled = true;
 
     settings.SettingsBehavior.EnableRowHotTrack = true;
     settings.SettingsBehavior.AllowFocusedRow = true;
@@ -45,6 +46,12 @@
     settings.Columns.Add(column =>
     {
         column.FieldName = "AccountID";
+        column.Caption = IWSLocalResource.accountid;
+        column.Width = Unit.Percentage(8);
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "AccountName";
         column.Caption = IWSLocalResource.account;
         column.Width = Unit.Percentage(40);
     });
@@ -53,6 +60,7 @@
         column.FieldName = "IsBalance";
         column.Caption = IWSLocalResource.IsBalanceSheetAccount;
         column.Width = Unit.Percentage(8);
+        column.Visible = false;
         column.EditorProperties().CheckBox (checkBox =>
         {
         });
@@ -62,6 +70,7 @@
         column.FieldName = "Periode";
         column.Caption = IWSLocalResource.periode;
         column.Width = Unit.Percentage(6);
+        column.Visible = false;
     });
     settings.Columns.Add(column =>
     {
@@ -81,9 +90,19 @@
     });
     settings.Columns.Add(column =>
     {
+        column.FieldName = "InitialBalance";
+        column.Caption = IWSLocalResource.InitialBalance;
+        column.Width = Unit.Percentage(14);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+    settings.Columns.Add(column =>
+    {
         column.FieldName = "Debit";
         column.Caption = IWSLocalResource.debit;
-        column.Width = Unit.Percentage(12);
+        column.Width = Unit.Percentage(14);
         column.EditorProperties().TextBox(textBox =>
         {
             textBox.DisplayFormatString = "N";
@@ -93,7 +112,27 @@
     {
         column.FieldName = "Credit";
         column.Caption = IWSLocalResource.credit;
-        column.Width = Unit.Percentage(12);
+        column.Width = Unit.Percentage(14);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "SDebit";
+        column.Caption = IWSLocalResource.sdebit;
+        column.Width = Unit.Percentage(14);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "SCredit";
+        column.Caption = IWSLocalResource.scredit;
+        column.Width = Unit.Percentage(14);
         column.EditorProperties().TextBox(textBox =>
         {
             textBox.DisplayFormatString = "N";
@@ -103,25 +142,51 @@
     {
         column.FieldName = "Balance";
         column.Caption = IWSLocalResource.balance;
-        column.Width = Unit.Percentage(12);
+        column.Width = Unit.Percentage(14);
+        column.Visible = false;
         column.EditorProperties().TextBox(textBox =>
         {
             textBox.DisplayFormatString = "N";
         });
     });
-    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").DisplayFormat = "N";
-    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").DisplayFormat = "N";
-    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").DisplayFormat = "N";
-    settings.Settings.ShowFooter = true;
-    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").DisplayFormat = "N";
-    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").DisplayFormat = "N";
-    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").DisplayFormat = "N";
-    settings.Settings.ShowGroupPanel = true;
     settings.Columns.Add(column =>
     {
         column.FieldName = "Currency";
         column.Caption = IWSLocalResource.Currency;
         column.Width = Unit.Percentage(10);
     });
+    settings.CustomSummaryCalculate = (s, e) =>
+    {
+        ASPxSummaryItem item = ((ASPxSummaryItem)e.Item);
+
+        if (item.FieldName != "Currency")
+            return;
+
+        if (e.IsGroupSummary)
+        {
+            e.TotalValue = e.GetValue("Currency");
+        }
+    };
+    settings.SummaryDisplayText = (sender, e) =>
+    {
+        if (e.IsGroupSummary && e.Item.FieldName != "Currency")
+        {
+            e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
+        }
+    };
+    settings.Settings.ShowFooter = true;
+    settings.Settings.ShowGroupPanel = true;
+    settings.SettingsBehavior.AutoExpandAllGroups = true;
+    settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
+
+    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").ShowInGroupFooterColumn = "Debit";
+    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").ShowInGroupFooterColumn = "Credit";
+    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").ShowInGroupFooterColumn = "Balance";
+    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
+
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").ShowInGroupFooterColumn = "Debit";
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").ShowInGroupFooterColumn = "Credit";
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").ShowInGroupFooterColumn = "Balance";
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
 
 }).Bind(Model).GetHtml()

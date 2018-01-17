@@ -1,1 +1,5 @@
-﻿@Html.Action("QuantityUnitsGridViewPartial")
+﻿@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.quantityunit; 
+}
+@Html.Action("QuantityUnitsGridViewPartial")

@@ -4,10 +4,11 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "ExceptionsGridView";
-        settings.Caption = IWSLocalResource.LogException;
+
 
         settings.CallbackRouteValues = new { Controller = "ExceptionLog", Action = "ExceptionsGridViewPartial" };
 
+        settings.SettingsContextMenu.Enabled = true;
 
         var showCustomizationWindow = ViewData["ShowCustomizationWindow"] ?? false;
 

@@ -1,4 +1,5 @@
-﻿<script type="text/javascript">
+﻿@using IWSProject.Content
+<script type="text/javascript">
 
     function OnCustomCommand(s, e) {
         if (e.commandName == "UploadToDB") {
@@ -27,7 +28,9 @@
             FileManager.GetContextMenuItemByCommandName("UploadToDB").SetEnabled(enabled);
         }                
 </script>
-
+@{
+    ViewBag.Title = IWSLocalResource.ImportBankStatement;
+}
 @using (Html.BeginForm())
 {
     @Html.Action("ImportCSVPartial")

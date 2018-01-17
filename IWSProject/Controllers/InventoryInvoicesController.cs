@@ -71,7 +71,6 @@ namespace IWSProject.Controllers
                     }
                     else
                     {
-                        ViewBag.NoEval = true;
                         ViewData["GenericError"] = $"{IWSLocalResource.GenericError}! {IWSLocalResource.CheckPeriodKeyIn}";
                     }
                     ViewData["NewKeyValue"] = item.id;

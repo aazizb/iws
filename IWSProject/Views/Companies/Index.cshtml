@@ -1,1 +1,5 @@
-﻿@Html.Action("CompaniesGridViewPartial")
+﻿@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.company;
+}
+@Html.Action("CompaniesGridViewPartial")

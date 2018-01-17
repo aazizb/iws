@@ -14,6 +14,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "GeneralLedgerOut", Action = "DetailGridViewPartialDelete", transid = Session["transid"] };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsContextMenu.Enabled = true;
 
         settings.ClientSideEvents.RowClick = "OnDRowClick";
         settings.ClientSideEvents.RowDblClick = "OnDRowClick";

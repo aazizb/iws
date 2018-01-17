@@ -1222,6 +1222,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IWS.
+        /// </summary>
+        public static string IWS {
+            get {
+                return ResourceManager.GetString("IWS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Journal.
         /// </summary>
         public static string journal {
@@ -1659,6 +1668,15 @@ namespace IWSProject.Content {
         public static string PhoneNumber {
             get {
                 return ResourceManager.GetString("PhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Posting Date.
+        /// </summary>
+        public static string Posted {
+            get {
+                return ResourceManager.GetString("Posted", resourceCulture);
             }
         }
         
@@ -2185,11 +2203,29 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Type Journal.
+        /// </summary>
+        public static string TypeJournal {
+            get {
+                return ResourceManager.GetString("TypeJournal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unit.
         /// </summary>
         public static string unit {
             get {
                 return ResourceManager.GetString("unit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Date.
+        /// </summary>
+        public static string Updated {
+            get {
+                return ResourceManager.GetString("Updated", resourceCulture);
             }
         }
         

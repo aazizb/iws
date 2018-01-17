@@ -3,11 +3,11 @@
 @Html.DevExpress().GridView(settings =>
 {
     settings.Name = "ResultatPartialView";
-    settings.Caption = IWSLocalResource.BalanceSheet;
 
     settings.CallbackRouteValues = new { Controller = "Resultat", Action = "ResultatPartial" };
 
     settings.KeyFieldName = "AccountId";
+    settings.SettingsContextMenu.Enabled = true;
 
     settings.SettingsBehavior.AllowSelectByRowClick = false;
     settings.SettingsBehavior.EnableRowHotTrack = true;
@@ -137,29 +137,13 @@
 
     settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleIfExpanded;
 
-    ASPxSummaryItem tdebit = new ASPxSummaryItem();
-    tdebit.ShowInGroupFooterColumn = "TDebit";
-    tdebit.SummaryType = DevExpress.Data.SummaryItemType.Sum;
-    tdebit.FieldName = "TDebit";
-    settings.GroupSummary.Add(tdebit);
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TDebit").ShowInGroupFooterColumn = "TDebit";
 
-    ASPxSummaryItem tcredit = new ASPxSummaryItem();
-    tcredit.ShowInGroupFooterColumn = "TCredit";
-    tcredit.SummaryType = DevExpress.Data.SummaryItemType.Sum;
-    tcredit.FieldName = "TCredit";
-    settings.GroupSummary.Add(tcredit);
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TCredit").ShowInGroupFooterColumn = "TCredit";
 
-    ASPxSummaryItem sbalance = new ASPxSummaryItem();
-    sbalance.ShowInGroupFooterColumn = "Balance";
-    sbalance.SummaryType = DevExpress.Data.SummaryItemType.Sum;
-    sbalance.FieldName = "Balance";
-    settings.GroupSummary.Add(sbalance);
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").ShowInGroupFooterColumn = "Balance";
 
-    ASPxSummaryItem currency = new ASPxSummaryItem();
-    currency.ShowInGroupFooterColumn = "Currency";
-    currency.SummaryType = DevExpress.Data.SummaryItemType.Custom;
-    currency.FieldName = "Currency";
-    settings.GroupSummary.Add(currency);
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
 
 }).Bind(Model).GetHtml()
 

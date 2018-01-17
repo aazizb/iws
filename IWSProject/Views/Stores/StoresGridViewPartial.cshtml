@@ -4,7 +4,7 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "StoresGridView";
-        settings.Caption = IWSLocalResource.store;
+
 
         settings.CallbackRouteValues = new { Controller = "Stores", Action = "StoresGridViewPartial" };
 
@@ -13,6 +13,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Stores", Action = "StoresGridViewPartialDelete" };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
+        settings.SettingsContextMenu.Enabled = true;
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
@@ -75,6 +76,33 @@
             column.FieldName = "name";
             column.Caption = IWSLocalResource.name;
             column.Width = Unit.Percentage(25);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Updated";
+            column.Caption = IWSLocalResource.Updated;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(6);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormatString = "MM/dd/yyyy";
+                d.EditFormat = EditFormat.Custom;
+                d.Width = Unit.Percentage(100);
+                d.DisplayFormatString = "yyyy-MM-dd";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Posted";
+            column.Caption = IWSLocalResource.Posted;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(6);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormat = EditFormat.Custom;
+                d.Width = Unit.Percentage(100);
+                d.DisplayFormatString = "yyyy-MM-dd";
+            });
         });
         settings.Columns.Add(column =>
         {

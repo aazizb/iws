@@ -188,6 +188,9 @@
     }
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.BillOfDelivery;
+}
 @using (Html.BeginForm("Index", "BillOfDeliveries"))
 {
     @Html.Hidden("cbxOID");

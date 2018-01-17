@@ -34,6 +34,9 @@
 
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.journal;
+}
 @using (Html.BeginForm("Index", "Journal"))
 {
     @Html.DevExpress().TextBox(

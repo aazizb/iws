@@ -4,7 +4,7 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "MenuUIGridView";
-        settings.Caption = IWSLocalResource.menus;
+        
 
         settings.CallbackRouteValues = new { Controller = "MenuUI", Action = "MenuUIGridViewPartial" };
 
@@ -13,7 +13,8 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "MenuUI", Action = "MenuUIGridViewPartialDelete" };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
-       
+        settings.SettingsContextMenu.Enabled = true;
+
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
 

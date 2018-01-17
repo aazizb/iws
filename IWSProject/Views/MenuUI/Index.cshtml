@@ -1,1 +1,5 @@
-﻿@Html.Action("MenuUIGridViewPartial")
+﻿@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.menus;
+}
+@Html.Action("MenuUIGridViewPartial")

@@ -153,6 +153,9 @@
 
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.PurchaseOrder;
+}
 @using (Html.BeginForm("Index", "PurchaseOrders"))
 {
     @Html.DevExpress().Button(settings =>

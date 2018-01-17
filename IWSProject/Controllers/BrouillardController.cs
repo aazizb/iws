@@ -66,7 +66,7 @@ namespace IWSProject.Controllers
                             foreach (BrouillardViewModel b in Brouillard)
                             {
                                 string owner = b.Account;
-                                if (string.IsNullOrWhiteSpace(owner))
+                                if (string.IsNullOrWhiteSpace(owner) || string.IsNullOrEmpty(owner))
                                     owner = "G";
                                 owner = owner.Substring(0, 1).ToUpper();
                                 if (owner == "C" && !b.IsValidated)
@@ -184,7 +184,7 @@ namespace IWSProject.Controllers
                             foreach (BrouillardViewModel b in Brouillard)
                             {
                                 string owner = b.Account;
-                                if (string.IsNullOrWhiteSpace(owner))
+                                if (string.IsNullOrWhiteSpace(owner) || string.IsNullOrEmpty(owner))
                                     owner = "G";
                                 owner = owner.Substring(0, 1).ToUpper();
                                 if (owner == "F" && !b.IsValidated)
@@ -259,52 +259,52 @@ namespace IWSProject.Controllers
                                 }
                                 #region generalledger
 
-                                //if (owner == "G" && !b.IsValidated)
-                                //{
-                                //    oid = Convert.ToString(b.OID);
-                                //    GeneralLedger invoiceHeader = new GeneralLedger
-                                //    {
-                                //        oid = b.OID,
-                                //        CostCenter = "10",
-                                //        HeaderText = b.HeaderText,
-                                //        Area = "Achat",
-                                //        TransDate = b.TransDate,
-                                //        ItemDate = b.ItemDate,
-                                //        EntryDate = b.EntryDate,
-                                //        CompanyId = b.CompanyId,
-                                //        IsValidated = b.IsValidated
-                                //    };
-                                //    db.GeneralLedgers.InsertOnSubmit(invoiceHeader);
-                                //    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                                //    //if (transId == 0)
-                                //    transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
-                                //    LineGeneralLedger invoiceLine = new LineGeneralLedger
-                                //    {
-                                //        transid = transId,
-                                //        account = b.AccountID,
-                                //        side = b.Side,
-                                //        oaccount = b.OAccountID,
-                                //        amount = b.Amount,
-                                //        duedate = b.DueDate,
-                                //        text = b.HeaderText,
-                                //        Currency = b.Currency
-                                //    };
-                                //    db.LineGeneralLedgers.InsertOnSubmit(invoiceLine);
-                                //    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
-                                //                        ToList().ForEach(x => x.IsValidated = true);
-                                //    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                                //}
+                                if (owner == "G" && !b.IsValidated)
+                                {
+                                    oid = Convert.ToString(b.OID);
+                                    GeneralLedger invoiceHeader = new GeneralLedger
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "10",
+                                        HeaderText = b.HeaderText,
+                                        Area = "Achat",
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.GeneralLedgers.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    //if (transId == 0)
+                                    transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LineGeneralLedger invoiceLine = new LineGeneralLedger
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.HeaderText,
+                                        Currency = b.Currency
+                                    };
+                                    db.LineGeneralLedgers.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
 
                                 #endregion
 
                             }
                         }
-                        if (TypeDoc == "BQ" || TypeDoc == "BK")
+                        if (TypeDoc == "BQ" || TypeDoc == "BK" || TypeDoc == "IM")
                         {
                             foreach (BrouillardViewModel b in Brouillard)
                             {
                                 string owner = b.Account;
-                                if (string.IsNullOrWhiteSpace(owner))
+                                if (string.IsNullOrWhiteSpace(owner) || string.IsNullOrEmpty(owner))
                                     owner = "G";
                                 owner = owner.Substring(0,1).ToUpper();
                                 if (owner == "F" && !b.IsValidated)
@@ -420,7 +420,7 @@ namespace IWSProject.Controllers
                             foreach (BrouillardViewModel b in Brouillard)
                             {
                                 string owner = b.Account;
-                                if (string.IsNullOrWhiteSpace(owner))
+                                if (string.IsNullOrWhiteSpace(owner) || string.IsNullOrEmpty(owner))
                                     owner = "G";
                                 owner = owner.Substring(0, 1).ToUpper();
                                 if (owner == "F" && !b.IsValidated)
@@ -526,6 +526,51 @@ namespace IWSProject.Controllers
                                     };
                                     db.LineGeneralLedgers.InsertOnSubmit(invoiceLine);
                                     db.Brouillards.Where(c => ItemID.Equals(c.Id) && TypeDoc.Equals(c.TypeDoc)).
+                                                        ToList().ForEach(x => x.IsValidated = true);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                }
+                            }
+                        }
+                        if (TypeDoc == "OB")
+                        {
+                            foreach (BrouillardViewModel b in Brouillard)
+                            {
+                                string owner = b.Account;
+                                if (string.IsNullOrWhiteSpace(owner) || string.IsNullOrEmpty(owner))
+                                    owner = "G";
+                                owner = owner.Substring(0, 1).ToUpper();
+                                if (owner == "G" && !b.IsValidated)
+                                {
+                                    oid = Convert.ToString(b.OID);
+                                    GeneralLedger invoiceHeader = new GeneralLedger
+                                    {
+                                        oid = b.OID,
+                                        CostCenter = "15",
+                                        HeaderText = b.HeaderText,
+                                        Area = "Bilan",
+                                        TransDate = b.TransDate,
+                                        ItemDate = b.ItemDate,
+                                        EntryDate = b.EntryDate,
+                                        CompanyId = b.CompanyId,
+                                        IsValidated = b.IsValidated
+                                    };
+                                    db.GeneralLedgers.InsertOnSubmit(invoiceHeader);
+                                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                    //if (transId == 0)
+                                    transId = db.GeneralLedgers.Where(c => c.CompanyId == companyId).Max(c => c.id);
+                                    LineGeneralLedger invoiceLine = new LineGeneralLedger
+                                    {
+                                        transid = transId,
+                                        account = b.AccountID,
+                                        side = b.Side,
+                                        oaccount = b.OAccountID,
+                                        amount = b.Amount,
+                                        duedate = b.DueDate,
+                                        text = b.HeaderText,
+                                        Currency = b.Currency
+                                    };
+                                    db.LineGeneralLedgers.InsertOnSubmit(invoiceLine);
+                                    db.Brouillards.Where(c => NumPiece.Equals(c.NumPiece) && TypeDoc.Equals(c.TypeDoc)).
                                                         ToList().ForEach(x => x.IsValidated = true);
                                     db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
                                 }

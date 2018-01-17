@@ -1,1 +1,6 @@
-﻿@Html.Action("AccountsGridViewPartial")
+﻿
+@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.account;
+}
+@Html.Action("AccountsGridViewPartial")

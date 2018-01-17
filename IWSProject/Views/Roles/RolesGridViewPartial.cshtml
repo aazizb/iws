@@ -3,7 +3,7 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "RolesGridView";
-        settings.Caption = IWSLocalResource.Roles;
+
 
         settings.CallbackRouteValues = new { Controller = "Roles", Action = "RolesGridViewPartial" };
 
@@ -12,6 +12,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Roles", Action = "RolesGridViewPartialDelete" };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsContextMenu.Enabled = true;
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);

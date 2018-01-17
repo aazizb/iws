@@ -5,7 +5,7 @@
     {
         settings.Name = "Brouillard";
         settings.Width = Unit.Percentage(100);
-        settings.Caption = IWSLocalResource.Draft;
+
 
         settings.CallbackRouteValues = new { Controller = "Brouillard", Action = "MasterGridViewPartial" };
 
@@ -180,6 +180,7 @@
             column.FieldName = "OAccountID";
             column.Caption = IWSLocalResource.oaccount;
             column.Width = Unit.Percentage(20);
+            column.Visible = false;
             column.EditorProperties().ComboBox(combo =>
             {
                 combo.TextField = "Name";

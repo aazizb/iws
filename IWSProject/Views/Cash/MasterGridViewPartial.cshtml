@@ -6,7 +6,7 @@
     {
         settings.Name = "Cash";
         settings.Width = Unit.Percentage(100);
-        settings.Caption = IWSLocalResource.Cash;
+
 
         settings.CallbackRouteValues = new { Controller = "Cash", Action = "MasterGridViewPartial" };
 
@@ -15,6 +15,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Cash", Action = "MasterGridViewPartialDelete" };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+        settings.SettingsContextMenu.Enabled = true;
 
         settings.ClientSideEvents.RowClick = "OnMRowClick";
         settings.ClientSideEvents.RowDblClick = "OnMRowClick";
@@ -68,6 +69,7 @@
         settings.CommandColumn.ShowNewButtonInHeader = true;
         settings.CommandColumn.ShowUpdateButton = false;
         settings.CommandColumn.ShowCancelButton = false;
+        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
@@ -118,7 +120,26 @@
                 g.DetailRows.ExpandRowByKey((int)ViewData["NewKeyValue"]);
             }
         };
-
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["Layout"] != null)
+                    {
+                        e.LayoutData = Session["Layout"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["Layout"] = e.LayoutData;
+                    break;
+            }
+        };
         #region Column
 
         settings.KeyFieldName = "Id";
