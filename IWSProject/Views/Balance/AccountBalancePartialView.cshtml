@@ -1,9 +1,9 @@
 ﻿@using IWSProject.Content
+@using IWSProject.Controllers
 
 @Html.DevExpress().GridView(settings =>
 {
     settings.Name = "AccountBlanacePartialView";
-    //settings.Caption = IWSLocalResource.AccountBalance;
 
     settings.CallbackRouteValues = new { Controller = "Balance", Action = "AccountBalancePartialView" };
 
@@ -42,6 +42,12 @@
     settings.SettingsPager.PageSizeItemSettings.Visible = true;
 
     settings.SettingsPager.PageSize = 24;
+
+    settings.PreRender = settings.BeforeGetCallbackResult = (s, e) =>
+    {
+        MVCxGridView g = (MVCxGridView)s;
+        Session["gridViewState"] = new MVCxGridViewState(g);
+    };
 
     settings.Columns.Add(column =>
     {
@@ -151,6 +157,7 @@
     });
     settings.Columns.Add(column =>
     {
+        column.Visible = false;
         column.FieldName = "Currency";
         column.Caption = IWSLocalResource.Currency;
         column.Width = Unit.Percentage(10);

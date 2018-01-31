@@ -15,8 +15,9 @@ namespace IWSProject.Controllers
             db = new IWSDataContext();
         }
         // GET: CashInflow
-        public ActionResult Index()
+        public ActionResult Index(string MenuID)
         {
+            Session["MenuID"] = MenuID;
             return View(IWSLookUp.GetSettlement());
         }
         [ValidateInput(false)]
@@ -143,6 +144,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["IsNewDetailRow"] = true;
             }
+            ViewBag.DefaultCurrency = IWSLookUp.GetCurrencyDefault();
             return PartialView("DetailGridViewPartial", db.LineSettlements.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
@@ -157,6 +159,7 @@ namespace IWSProject.Controllers
                 {
                     model.InsertOnSubmit(line);
                     db.SubmitChanges();
+                    bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Settlement.ToString(), transId);
                 }
                 catch (Exception e)
                 {
@@ -236,6 +239,10 @@ namespace IWSProject.Controllers
         public ActionResult CostCenter(int selectedOIDIndex)
         {
             return Json(IWSLookUp.GetCostCenter(selectedOIDIndex, IWSLookUp.DocsType.Settlement.ToString()));
+        }
+        public ActionResult TypeJournal(int selectedItemIndex)
+        {
+            return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.Settlement.ToString()));
         }
         public bool InsertLines(int itemID, int OID, string ItemType)
         {

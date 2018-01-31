@@ -44,7 +44,7 @@
     {
         settings.Properties.Native = true;
         settings.Name = "Start";
-        settings.Width = Unit.Pixel(101);
+        settings.Width = Unit.Pixel(100);
         settings.Height = Unit.Pixel(23);
         settings.Properties.NullText = IWSLocalResource.PeriodFrom;
     }
@@ -55,7 +55,7 @@
     {
         settings.Name = "End";
         settings.Properties.Native = true;
-        settings.Width = Unit.Pixel(101);
+        settings.Width = Unit.Pixel(100);
         settings.Height = Unit.Pixel(23);
         settings.Properties.NullText = IWSLocalResource.PeriodTo;
     }
@@ -69,9 +69,20 @@
         settings.Name = "btnSubmit";
         settings.ControlStyle.CssClass = "button";
         settings.Text = IWSLocalResource.Validate;
-        settings.Width = Unit.Pixel(210);
+        settings.Width = Unit.Pixel(105);
         settings.UseSubmitBehavior = false;
         settings.ClientSideEvents.Click = "OnButtonClick";
+    }
+    ).GetHtml()
+    @Html.DevExpress().Button(
+    settings =>
+    {
+        settings.Name = "btnExport";
+        settings.ControlStyle.CssClass = "button";
+        settings.Text = IWSLocalResource.Export;
+        settings.Width = Unit.Pixel(105);
+        settings.UseSubmitBehavior = false;
+        settings.RouteValues = new { Controller = "Journal", Action = "Export" };
     }
     ).GetHtml()
     @Html.Partial("_CallbackPartialView")

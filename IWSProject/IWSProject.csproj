@@ -424,6 +424,8 @@
     <Content Include="Views\Balance\GridLookupPartial.cshtml" />
     <Content Include="Views\TypeJournal\Index.cshtml" />
     <Content Include="Views\TypeJournal\TypeJournalsGridViewPartial.cshtml" />
+    <Content Include="Views\AffectationJournal\Index.cshtml" />
+    <Content Include="Views\AffectationJournal\AffectationJournalGridViewPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -463,6 +465,7 @@
       <DependentUpon>IWSLocalResource.fr-FR.resx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AffectationJournalController.cs" />
     <Compile Include="Controllers\BrouillardController.cs" />
     <Compile Include="Controllers\CashController.cs" />
     <Compile Include="Controllers\ExceptionLogController.cs" />
@@ -489,10 +492,12 @@
     <Compile Include="Controllers\JournalController.cs" />
     <Compile Include="Controllers\MasterfileController.cs" />
     <Compile Include="Controllers\MenuUIController.cs" />
+    <Compile Include="Controllers\MVCxGridViewState.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
     <Compile Include="Controllers\PurchaseOrdersController.cs" />
     <Compile Include="Controllers\QuantityUnitsController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\ReportHelperMVC.cs" />
     <Compile Include="Controllers\ResultatController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\SalesInvoicesController.cs" />

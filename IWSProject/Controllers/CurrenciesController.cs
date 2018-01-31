@@ -15,18 +15,16 @@ namespace IWSProject.Controllers
             db = new IWSDataContext();
         }
         // GET: Currencies
-        [OutputCache(VaryByParam = "none", Duration = 3600)]
+        //[OutputCache(VaryByParam = "none", Duration = 3600)]
         public ActionResult Index()
         {
-            return View();// IWSLookUp.GetCurrencies());
+            return View();
         }
-
         [ValidateInput(false)]
         public ActionResult CurrenciesGridViewPartial()
         {
             return PartialView("CurrenciesGridViewPartial", IWSLookUp.GetCurrencies());
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult CurrenciesGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Currency item)
         {

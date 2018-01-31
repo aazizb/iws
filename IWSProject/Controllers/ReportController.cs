@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using IWSProject.Models;
-using IWSProject.Content;
+﻿using DevExpress.Web.ASPxPivotGrid;
 using DevExpress.Web.Mvc;
 using DevExpress.XtraPivotGrid;
-using DevExpress.Web.ASPxPivotGrid;
+using IWSProject.Content;
+using IWSProject.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace IWSProject.Controllers
 {
@@ -64,10 +62,12 @@ namespace IWSProject.Controllers
         }
         private static PivotGridSettings CreatePivotGridSettings()
         {
-            PivotGridSettings settings = new PivotGridSettings();
-            settings.Name = "pivotGrid";
-            settings.CallbackRouteValues = new { Controller = "Report", Action = "PivotGridPartial" };
-            settings.Width = new System.Web.UI.WebControls.Unit(99, System.Web.UI.WebControls.UnitType.Percentage);
+            PivotGridSettings settings = new PivotGridSettings
+            {
+                Name = "pivotGrid",
+                CallbackRouteValues = new { Controller = "Report", Action = "PivotGridPartial" },
+                Width = new System.Web.UI.WebControls.Unit(99, System.Web.UI.WebControls.UnitType.Percentage)
+            };
             settings.Fields.Add(field =>
             {
                 field.Area = PivotArea.RowArea;
@@ -85,18 +85,18 @@ namespace IWSProject.Controllers
             settings.Fields.Add(field =>
             {
                 field.Area = PivotArea.ColumnArea;
-                field.AreaIndex = 0;
-                field.Caption = IWSLocalResource.Year;
                 field.FieldName = "TransDate";
+                field.Caption = IWSLocalResource.Year;
                 field.GroupInterval = PivotGroupInterval.DateYear;
+                field.AreaIndex = 0;
             });
             settings.Fields.Add(field =>
             {
                 field.Area = PivotArea.FilterArea;
-                field.AreaIndex = 1;
-                field.Caption = IWSLocalResource.Quarter;
                 field.FieldName = "TransDate";
+                field.Caption = IWSLocalResource.Quarter;
                 field.GroupInterval = PivotGroupInterval.DateQuarter;
+                field.AreaIndex = 1;
             });
             settings.Fields.Add(field =>
             {

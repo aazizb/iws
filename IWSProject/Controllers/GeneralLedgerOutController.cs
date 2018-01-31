@@ -16,8 +16,9 @@ namespace IWSProject.Controllers
             db = new IWSDataContext();
         }
         // GET: GeneralLedgers
-        public ActionResult Index()
+        public ActionResult Index(string MenuID)
         {
+            Session["MenuID"] = MenuID;
             return View(IWSLookUp.GetGeneralLedger());
         }
         [ValidateInput(false)]
@@ -25,6 +26,7 @@ namespace IWSProject.Controllers
         {
             return PartialView("MasterGridViewPartial", IWSLookUp.GetGeneralLedger());
         }
+        [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(string selectedIDs)
         {
             string selectedItems = selectedIDs;
@@ -144,6 +146,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["IsNewDetailRow"] = true;
             }
+            ViewBag.DefaultCurrency = IWSLookUp.GetCurrencyDefault();
             return PartialView("DetailGridViewPartial", db.LineGeneralLedgers.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]

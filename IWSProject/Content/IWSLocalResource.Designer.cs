@@ -160,6 +160,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Affectation Journal en-US.
+        /// </summary>
+        public static string AffectationJournal {
+            get {
+                return ResourceManager.GetString("AffectationJournal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Amount.
         /// </summary>
         public static string amount {
@@ -430,6 +439,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Class Bank.
+        /// </summary>
+        public static string ClassBank {
+            get {
+                return ResourceManager.GetString("ClassBank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class Cash.
+        /// </summary>
+        public static string ClassCash {
+            get {
+                return ResourceManager.GetString("ClassCash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Class.
         /// </summary>
         public static string classx {
@@ -588,6 +615,15 @@ namespace IWSProject.Content {
         public static string CustSupplier {
             get {
                 return ResourceManager.GetString("CustSupplier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Daily Routine.
+        /// </summary>
+        public static string DailyRoutine {
+            get {
+                return ResourceManager.GetString("DailyRoutine", resourceCulture);
             }
         }
         
@@ -1609,6 +1645,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Payment Bank.
+        /// </summary>
+        public static string PaymentBank {
+            get {
+                return ResourceManager.GetString("PaymentBank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Payment Cash.
+        /// </summary>
+        public static string PaymentCash {
+            get {
+                return ResourceManager.GetString("PaymentCash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Payment Clearing Account.
         /// </summary>
         public static string paymentclearingaccountid {
@@ -1929,6 +1983,24 @@ namespace IWSProject.Content {
         public static string Settlement {
             get {
                 return ResourceManager.GetString("Settlement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settlement Bank.
+        /// </summary>
+        public static string SettlementBank {
+            get {
+                return ResourceManager.GetString("SettlementBank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settlement Cash.
+        /// </summary>
+        public static string SettlementCash {
+            get {
+                return ResourceManager.GetString("SettlementCash", resourceCulture);
             }
         }
         

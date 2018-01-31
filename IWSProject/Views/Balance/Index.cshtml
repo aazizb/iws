@@ -37,10 +37,20 @@
         settings.Name = "btnSubmit";
         settings.ControlStyle.CssClass = "button";
         settings.Text = IWSLocalResource.Validate;
-        settings.Width = Unit.Pixel(210);
+        settings.Width = Unit.Pixel(105);
         settings.UseSubmitBehavior = false;
         settings.ClientSideEvents.Click = "OnButtonClick";
     }
     ).GetHtml()
+    @Html.DevExpress().Button(
+    settings =>
+    {
+        settings.Name = "btnExport";
+        settings.ControlStyle.CssClass = "button";
+        settings.Text = IWSLocalResource.Export;
+        settings.Width = Unit.Pixel(105);
+        settings.UseSubmitBehavior = false;
+        settings.RouteValues = new { Controller = "Balance", Action = "Export" };
+    }).GetHtml()
     @Html.Partial("_CallbackPartialView")
 }

@@ -879,4 +879,28 @@
   <data name="IWS" xml:space="preserve">
     <value>IWS</value>
   </data>
+  <data name="DailyRoutine" xml:space="preserve">
+    <value>Daily Routine</value>
+  </data>
+  <data name="AffectationJournal" xml:space="preserve">
+    <value>Affectation Journaux</value>
+  </data>
+  <data name="PaymentBank" xml:space="preserve">
+    <value>Payment Bank</value>
+  </data>
+  <data name="PaymentCash" xml:space="preserve">
+    <value>Payment Cash</value>
+  </data>
+  <data name="SettlementBank" xml:space="preserve">
+    <value>Settlement Bank</value>
+  </data>
+  <data name="SettlementCash" xml:space="preserve">
+    <value>Settlement Cash</value>
+  </data>
+  <data name="ClassBank" xml:space="preserve">
+    <value>Class Bank</value>
+  </data>
+  <data name="ClassCash" xml:space="preserve">
+    <value>Class Cash</value>
+  </data>
 </root>

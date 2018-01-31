@@ -1,6 +1,6 @@
-﻿@using IWSProject.Content
-@using IWSProject.Models
-
+﻿@using IWSProject.Models
+@using IWSProject.Content
+@using IWSProject.Controllers
 @Html.DevExpress().GridView(settings =>
 {
     settings.Name = "JournalPartialView";
@@ -45,6 +45,12 @@
     settings.SettingsPager.PageSizeItemSettings.Visible = true;
 
     settings.SettingsPager.PageSize = 24;
+
+    settings.PreRender = settings.BeforeGetCallbackResult = (s, e) =>
+    {
+        MVCxGridView g = (MVCxGridView)s;
+        Session["gridViewJournal"] = new MVCxGridViewState(g);
+    };
 
     settings.Columns.Add(column =>
     {

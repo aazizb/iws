@@ -20,13 +20,11 @@ namespace IWSProject.Controllers
         {
             return View(IWSLookUp.GetMenus());
         }
-
         [ValidateInput(false)]
         public ActionResult MenuUIGridViewPartial()
         {
             return PartialView("MenuUIGridViewPartial", IWSLookUp.GetMenus());
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult MenuUIGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Menu item)
         {

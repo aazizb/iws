@@ -65,8 +65,9 @@
 
         settings.InitNewRow = (s, e) =>
         {
+            e.NewValues["Currency"] = ViewBag.DefaultCurrency;
             e.NewValues["duedate"] = DateTime.Today;
-            e.NewValues["side"] = false;
+            e.NewValues["side"] = true;
         };
         settings.PreRender = (sender, e) =>
         {
@@ -232,19 +233,19 @@
                     i.Caption = IWSLocalResource.account;
                     i.NestedExtension().ComboBox(s =>
                     {
-                        s.Properties.TextField = "name";
-                        s.Properties.ValueField = "id";
+                        s.Properties.TextField = "Name";
+                        s.Properties.ValueField = "Id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = IWSLookUp.GetAccount((string)Session["supplierid"], (string)Session["MenuID"]);
                         s.Properties.Columns.Add(a =>
                         {
-                            a.FieldName = "id";
+                            a.FieldName = "Id";
                             a.Caption = IWSLocalResource.id;
                             a.Width = Unit.Percentage(35);
                         });
                         s.Properties.Columns.Add(a =>
                         {
-                            a.FieldName = "name";
+                            a.FieldName = "Name";
                             a.Caption = IWSLocalResource.name;
                             a.Width = Unit.Percentage(65);
                         });
@@ -258,6 +259,25 @@
                         s.Properties.ClientSideEvents.Init = "function(s, e) { s.Focus(); }";
                     });
                 });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "duedate";
+                    i.Caption = IWSLocalResource.duedate;
+                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
+                    i.NestedExtension().DateEdit(d =>
+                    {
+                        d.Properties.EditFormatString = "MM/dd/yyyy";
+                        d.Properties.NullDisplayText = "MM/dd/yyyy";
+                        d.Properties.EditFormat = EditFormat.Custom;
+                        d.Width = Unit.Percentage(92);
+                        d.Properties.DisplayFormatString = "yyyy-MM-dd";
+                        d.Properties.DisplayFormatInEditMode = true;
+                        d.Properties.AllowUserInput = true;
+                        d.Properties.AllowMouseWheel = true;
+                        d.TabIndex = 6;
+                    });
+                });
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "side";
@@ -267,6 +287,8 @@
                         e.TabIndex = 2;
                     });
                 });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "oaccount";
@@ -276,7 +298,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = IWSLookUp.GetAccount((string)Session["MenuID"]);
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -298,6 +320,8 @@
                         s.TabIndex = 3;
                     });
                 });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "amount";
@@ -312,6 +336,7 @@
                         s.TabIndex = 4;
                     });
                 });
+                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "Currency";
@@ -337,28 +362,11 @@
                         s.Properties.TextFormatString = "{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
-                        s.Width = Unit.Percentage(100);
-                        s.TabIndex = 5;
+                        s.Width = Unit.Percentage(98);
+                        s.TabIndex = 7;
                     });
                 });
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.FieldName = "duedate";
-                    i.Caption = IWSLocalResource.duedate;
-                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
-                    i.NestedExtension().DateEdit(d =>
-                    {
-                        d.Properties.EditFormatString = "MM/dd/yyyy";
-                        d.Properties.NullDisplayText = "MM/dd/yyyy";
-                        d.Properties.EditFormat = EditFormat.Custom;
-                        d.Width = Unit.Percentage(92);
-                        d.Properties.DisplayFormatString = "yyyy-MM-dd";
-                        d.Properties.DisplayFormatInEditMode = true;
-                        d.Properties.AllowUserInput = true;
-                        d.Properties.AllowMouseWheel = true;
-                        d.TabIndex = 6;
-                    });
-                });
+
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "text";
@@ -368,8 +376,8 @@
                     {
                         s.ShowModelErrors = true;
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.Width = Unit.Percentage(100);
-                        s.TabIndex = 7;
+                        s.Width = Unit.Percentage(99);
+                        s.TabIndex = 5;
                     });
                 });
             })

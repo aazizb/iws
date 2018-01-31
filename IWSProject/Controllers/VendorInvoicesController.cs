@@ -4,7 +4,6 @@ using IWSProject.Models;
 using System;
 using System.Linq;
 using System.Web.Mvc;
-
 namespace IWSProject.Controllers
 {
     [Authorize]
@@ -16,8 +15,9 @@ namespace IWSProject.Controllers
             db = new IWSDataContext();
         }
         // GET: VendorInvoices
-        public ActionResult Index()
+        public ActionResult Index(string MenuID)
         {
+            Session["MenuID"] = MenuID;
             return View(IWSLookUp.GetVendorInvoice());
         }
         [ValidateInput(false)]
@@ -144,6 +144,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["IsNewDetailRow"] = true;
             }
+            ViewBag.DefaultCurrency = IWSLookUp.GetCurrencyDefault();
             return PartialView("DetailGridViewPartial", db.LineVendorInvoices.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
@@ -158,6 +159,7 @@ namespace IWSProject.Controllers
                 {
                     model.InsertOnSubmit(line);
                     db.SubmitChanges();
+                    bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.VendorInvoice.ToString(), transId);
                 }
                 catch (Exception e)
                 {
@@ -226,37 +228,17 @@ namespace IWSProject.Controllers
         }
 
         #region Helper
-        public ActionResult PackUnit(string selectedItemIndex)
-        {
-            return Json(IWSLookUp.GetPackUnit(selectedItemIndex));
-        }
-        public ActionResult QttyUnit(string selectedItemIndex)
-        {
-            return Json(IWSLookUp.GetQttyUnit(selectedItemIndex));
-        }
-        public ActionResult Vat(string selectedItemIndex)
-        {
-            return Json(IWSLookUp.GetVatCode(selectedItemIndex));
-        }
-        public ActionResult Price(string selectedItemIndex)
-        {
-            return Json(IWSLookUp.GetPrice(selectedItemIndex));
-        }
-        public ActionResult Text(string selectedItemIndex)
-        {
-            return Json(IWSLookUp.GetLineText(selectedItemIndex));
-        }
         public ActionResult HeaderText(int selectedItemIndex)
         {
             return Json(IWSLookUp.GetHeaderText(selectedItemIndex, IWSLookUp.DocsType.VendorInvoice.ToString()));
         }
-        public ActionResult Store(int selectedOIDIndex)
-        {
-            return Json(IWSLookUp.GetStore(selectedOIDIndex, IWSLookUp.DocsType.VendorInvoice.ToString()));
-        }
         public ActionResult Supplier(int selectedOIDIndex)
         {
             return Json(IWSLookUp.GetSupplier(selectedOIDIndex, IWSLookUp.DocsType.VendorInvoice.ToString()));
+        }
+        public ActionResult TypeJournal(int selectedItemIndex)
+        {
+            return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.VendorInvoice.ToString()));
         }
         public bool InsertLines(int itemID, int OID, string ItemType)
         {

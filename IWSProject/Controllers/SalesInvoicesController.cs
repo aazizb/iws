@@ -16,8 +16,9 @@ namespace IWSProject.Controllers
             db = new IWSDataContext();
         }
         // GET: BuyerInvoices
-        public ActionResult Index()
+        public ActionResult Index(string MenuID)
         {
+            Session["MenuID"] = MenuID;
             return View(IWSLookUp.GetSalesInvoice());
         }
         [ValidateInput(false)]

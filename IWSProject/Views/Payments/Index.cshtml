@@ -34,13 +34,24 @@
                 alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
             }
         });
+        $.ajax({
+            url: '@Url.Action("TypeJournal", "Payments")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                TypeJournal.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
      }
     var selectedIDs = null;
     var expanded = false;
     var ndxMaster = 0;
     var ndxDetail = 0;
-    var command;                            
-    var isDetailRowExpanded = new Array();  
+    var command;
+    var isDetailRowExpanded = new Array();
     function OnMRowClick(s, e) {
         expanded = true;
         ndxMaster = e.visibleIndex;
@@ -57,20 +68,20 @@
             expanded = false;
             s.ExpandDetailRow(ndxMaster);
         }
-        if (command == "HIDEDETAILROW") {   
+        if (command == "HIDEDETAILROW") {
             if (s.IsEditing || s.IsNewRowEditing)
                 s.CancelEdit();
         }
-        if (command == 'CANCELEDIT') {      
+        if (command == 'CANCELEDIT') {
             if (isDetailRowExpanded[ndxMaster] == true) {
                 s.CollapseDetailRow(ndxMaster);
             }
         }
     }
-    function OnDetailRowExpanding(s, e) {   
+    function OnDetailRowExpanding(s, e) {
         isDetailRowExpanded[e.visibleIndex] = true;
     }
-    function OnDetailRowCollapsing(s, e) {  
+    function OnDetailRowCollapsing(s, e) {
         isDetailRowExpanded[e.visibleIndex] = false;
     }
     function OnDEndCallback(s, e) {
@@ -78,7 +89,7 @@
     }
     function OnMBeginCallback(s, e) {
         e.customArgs["selectedIDs"] = selectedIDs;
-        command = e.command;                
+        command = e.command;
     }
     function OnMSelectionChanged(s, e) {
         s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
