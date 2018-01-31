@@ -65,7 +65,6 @@ namespace IWSProject.Models
         public int pk { get; set; }
         public int ItemID { get; set; }
         public int OID { get; set; }
-        //public int ModelID { get; set; }
         public string ItemType { get; set; }
         public string CustSupplierID { get; set; }
         public string Owner { get; set; }
@@ -88,6 +87,7 @@ namespace IWSProject.Models
         public string Currency { get; set; }
         public string Info { get; set; }
         public string TypeJournal { get; set; }
+        public string CostCenterId { get; set; }
     }
     public class ConfigureTwoFactorViewModel
     {

@@ -16,8 +16,9 @@ namespace IWSProject.Controllers
             db = new IWSDataContext();
         }
         // GET: CustomerInvoices
-        public ActionResult Index()
+        public ActionResult Index(string MenuID)
         {
+            Session["MenuID"] = MenuID;
             return View(IWSLookUp.GetCustomerInvoice());
         }
         [ValidateInput(false)]
@@ -144,6 +145,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["IsNewDetailRow"] = true;
             }
+            ViewBag.DefaultCurrency = IWSLookUp.GetCurrencyDefault();
             return PartialView("DetailGridViewPartial", db.LineCustomerInvoices.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]
@@ -158,6 +160,7 @@ namespace IWSProject.Controllers
                 {
                     model.InsertOnSubmit(line);
                     db.SubmitChanges();
+                    bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.CustomerInvoice.ToString(), transId);
                 }
                 catch (Exception e)
                 {
@@ -226,14 +229,17 @@ namespace IWSProject.Controllers
         }
 
         #region Helper
-         public ActionResult HeaderText(int selectedItemIndex)
+        public ActionResult HeaderText(int selectedItemIndex)
         {
             return Json(IWSLookUp.GetHeaderText(selectedItemIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
         }
- 
         public ActionResult Supplier(int selectedOIDIndex)
         {
             return Json(IWSLookUp.GetSupplier(selectedOIDIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
+        }
+        public ActionResult TypeJournal(int selectedItemIndex)
+        {
+            return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
         }
         public bool InsertLines(int itemID, int OID, string ItemType)
         {

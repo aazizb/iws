@@ -44,7 +44,7 @@
                     {
                         item.Name = mc.Name;
                         item.Text = rm.GetString(mc.Name);
-                        item.NavigateUrl = DevExpressHelper.GetUrl(new { Controller = mc.Controller, Action = mc.Action });
+                        item.NavigateUrl = DevExpressHelper.GetUrl(new { Controller = mc.Controller, Action = mc.Action, MenuID=mc.Name });
                     });
                 }
             });

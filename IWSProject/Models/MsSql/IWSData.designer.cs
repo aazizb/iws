@@ -36,6 +36,9 @@ namespace IWSProject.Models.MsSql
     partial void InsertVendorInvoice(VendorInvoice instance);
     partial void UpdateVendorInvoice(VendorInvoice instance);
     partial void DeleteVendorInvoice(VendorInvoice instance);
+    partial void InsertAffectationJournal(AffectationJournal instance);
+    partial void UpdateAffectationJournal(AffectationJournal instance);
+    partial void DeleteAffectationJournal(AffectationJournal instance);
     partial void InsertArticle(Article instance);
     partial void UpdateArticle(Article instance);
     partial void DeleteArticle(Article instance);
@@ -243,6 +246,14 @@ namespace IWSProject.Models.MsSql
 			get
 			{
 				return this.GetTable<VendorInvoice>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AffectationJournal> AffectationJournals
+		{
+			get
+			{
+				return this.GetTable<AffectationJournal>();
 			}
 		}
 		
@@ -706,13 +717,6 @@ namespace IWSProject.Models.MsSql
 			return ((ISingleResult<ClassAccountBalancesResult>)(result.ReturnValue));
 		}
 		
-		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.ClassChild")]
-		public ISingleResult<ClassChildResult> ClassChild([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string classId, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string company)
-		{
-			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), classId, company);
-			return ((ISingleResult<ClassChildResult>)(result.ReturnValue));
-		}
-		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.GetAccountBalance", IsComposable=true)]
 		public IQueryable<GetAccountBalanceResult> GetAccountBalance([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string id, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(6)")] string start, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(6)")] string end, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(6)")] string companyid)
 		{
@@ -729,12 +733,6 @@ namespace IWSProject.Models.MsSql
 		public IQueryable<GetBalanceSheetChildrenResult> GetBalanceSheetChildren([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string id, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string companyid, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="Bit")] System.Nullable<bool> isBalanceSheetAccount)
 		{
 			return this.CreateMethodCallQuery<GetBalanceSheetChildrenResult>(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), id, companyid, isBalanceSheetAccount);
-		}
-		
-		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.GetChild", IsComposable=true)]
-		public IQueryable<GetChildResult> GetChild([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string classId, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string companyid)
-		{
-			return this.CreateMethodCallQuery<GetChildResult>(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), classId, companyid);
 		}
 		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.GetChildren", IsComposable=true)]
@@ -797,6 +795,33 @@ namespace IWSProject.Models.MsSql
 			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), start, end, uiculture, companyid);
 			return ((ISingleResult<GetJournalResult>)(result.ReturnValue));
 		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SetTypeJournal")]
+		public int SetTypeJournal([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="VarChar(100)")] string typedoc, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="Int")] System.Nullable<int> transid, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string companyid)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), typedoc, transid, companyid);
+			return ((int)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.GetChild", IsComposable=true)]
+		public IQueryable<GetChildResult> GetChild([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string classId, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string companyid)
+		{
+			return this.CreateMethodCallQuery<GetChildResult>(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), classId, companyid);
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.ClassChildren")]
+		public ISingleResult<ClassChildrenResult> ClassChildren([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string classId, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string company)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), classId, company);
+			return ((ISingleResult<ClassChildrenResult>)(result.ReturnValue));
+		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.ClassChild")]
+		public ISingleResult<ClassChildResult> ClassChild([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string classId, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string company)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), classId, company);
+			return ((ISingleResult<ClassChildResult>)(result.ReturnValue));
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Account")]
@@ -830,6 +855,10 @@ namespace IWSProject.Models.MsSql
 		private System.DateTime _Updated;
 		
 		private string _TypeJournal;
+		
+		private EntitySet<AffectationJournal> _AffectationJournals;
+		
+		private EntitySet<AffectationJournal> _AffectationJournals1;
 		
 		private EntitySet<ClassSetup> _ClassSetups;
 		
@@ -879,6 +908,8 @@ namespace IWSProject.Models.MsSql
 		
 		public Account()
 		{
+			this._AffectationJournals = new EntitySet<AffectationJournal>(new Action<AffectationJournal>(this.attach_AffectationJournals), new Action<AffectationJournal>(this.detach_AffectationJournals));
+			this._AffectationJournals1 = new EntitySet<AffectationJournal>(new Action<AffectationJournal>(this.attach_AffectationJournals1), new Action<AffectationJournal>(this.detach_AffectationJournals1));
 			this._ClassSetups = new EntitySet<ClassSetup>(new Action<ClassSetup>(this.attach_ClassSetups), new Action<ClassSetup>(this.detach_ClassSetups));
 			this._CostCenters = new EntitySet<CostCenter>(new Action<CostCenter>(this.attach_CostCenters), new Action<CostCenter>(this.detach_CostCenters));
 			this._Journals = new EntitySet<Journal>(new Action<Journal>(this.attach_Journals), new Action<Journal>(this.detach_Journals));
@@ -1153,6 +1184,32 @@ namespace IWSProject.Models.MsSql
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AffectationJournal", Storage="_AffectationJournals", ThisKey="id", OtherKey="AccountID")]
+		public EntitySet<AffectationJournal> AffectationJournals
+		{
+			get
+			{
+				return this._AffectationJournals;
+			}
+			set
+			{
+				this._AffectationJournals.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AffectationJournal1", Storage="_AffectationJournals1", ThisKey="id", OtherKey="OAccountID")]
+		public EntitySet<AffectationJournal> AffectationJournals1
+		{
+			get
+			{
+				return this._AffectationJournals1;
+			}
+			set
+			{
+				this._AffectationJournals1.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ClassSetup", Storage="_ClassSetups", ThisKey="id", OtherKey="ClassID")]
 		public EntitySet<ClassSetup> ClassSetups
 		{
@@ -1285,6 +1342,30 @@ namespace IWSProject.Models.MsSql
 			}
 		}
 		
+		private void attach_AffectationJournals(AffectationJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AffectationJournals(AffectationJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
+		private void attach_AffectationJournals1(AffectationJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account1 = this;
+		}
+		
+		private void detach_AffectationJournals1(AffectationJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account1 = null;
+		}
+		
 		private void attach_ClassSetups(ClassSetup entity)
 		{
 			this.SendPropertyChanging();
@@ -1394,6 +1475,8 @@ namespace IWSProject.Models.MsSql
 		
 		private string _oMonth;
 		
+		private string _TypeJournal;
+		
 		private EntitySet<LineVendorInvoice> _LineVendorInvoices;
 		
 		private EntityRef<Company> _Company;
@@ -1401,6 +1484,8 @@ namespace IWSProject.Models.MsSql
 		private EntityRef<CostCenter> _CostCenter1;
 		
 		private EntityRef<Supplier> _Supplier;
+		
+		private EntityRef<TypeJournal> _TypeJournal1;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1436,6 +1521,8 @@ namespace IWSProject.Models.MsSql
     partial void OnoYearChanged();
     partial void OnoMonthChanging(string value);
     partial void OnoMonthChanged();
+    partial void OnTypeJournalChanging(string value);
+    partial void OnTypeJournalChanged();
     #endregion
 		
 		public VendorInvoice()
@@ -1444,6 +1531,7 @@ namespace IWSProject.Models.MsSql
 			this._Company = default(EntityRef<Company>);
 			this._CostCenter1 = default(EntityRef<CostCenter>);
 			this._Supplier = default(EntityRef<Supplier>);
+			this._TypeJournal1 = default(EntityRef<TypeJournal>);
 			OnCreated();
 		}
 		
@@ -1759,6 +1847,30 @@ namespace IWSProject.Models.MsSql
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeJournal", DbType="VarChar(50)")]
+		public string TypeJournal
+		{
+			get
+			{
+				return this._TypeJournal;
+			}
+			set
+			{
+				if ((this._TypeJournal != value))
+				{
+					if (this._TypeJournal1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnTypeJournalChanging(value);
+					this.SendPropertyChanging();
+					this._TypeJournal = value;
+					this.SendPropertyChanged("TypeJournal");
+					this.OnTypeJournalChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="VendorInvoice_LineVendorInvoice", Storage="_LineVendorInvoices", ThisKey="id", OtherKey="transid")]
 		public EntitySet<LineVendorInvoice> LineVendorInvoices
 		{
@@ -1874,6 +1986,40 @@ namespace IWSProject.Models.MsSql
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TypeJournal_VendorInvoice", Storage="_TypeJournal1", ThisKey="TypeJournal", OtherKey="Id", IsForeignKey=true)]
+		public TypeJournal TypeJournal1
+		{
+			get
+			{
+				return this._TypeJournal1.Entity;
+			}
+			set
+			{
+				TypeJournal previousValue = this._TypeJournal1.Entity;
+				if (((previousValue != value) 
+							|| (this._TypeJournal1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TypeJournal1.Entity = null;
+						previousValue.VendorInvoices.Remove(this);
+					}
+					this._TypeJournal1.Entity = value;
+					if ((value != null))
+					{
+						value.VendorInvoices.Add(this);
+						this._TypeJournal = value.Id;
+					}
+					else
+					{
+						this._TypeJournal = default(string);
+					}
+					this.SendPropertyChanged("TypeJournal1");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -1904,6 +2050,352 @@ namespace IWSProject.Models.MsSql
 		{
 			this.SendPropertyChanging();
 			entity.VendorInvoice = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AffectationJournal")]
+	public partial class AffectationJournal : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _AccountID;
+		
+		private bool _Side;
+		
+		private string _OAccountID;
+		
+		private string _TypeJournalID;
+		
+		private string _Description;
+		
+		private string _CompanyID;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<Account> _Account1;
+		
+		private EntityRef<Company> _Company;
+		
+		private EntityRef<TypeJournal> _TypeJournal;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(string value);
+    partial void OnAccountIDChanged();
+    partial void OnSideChanging(bool value);
+    partial void OnSideChanged();
+    partial void OnOAccountIDChanging(string value);
+    partial void OnOAccountIDChanged();
+    partial void OnTypeJournalIDChanging(string value);
+    partial void OnTypeJournalIDChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnCompanyIDChanging(string value);
+    partial void OnCompanyIDChanged();
+    #endregion
+		
+		public AffectationJournal()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._Account1 = default(EntityRef<Account>);
+			this._Company = default(EntityRef<Company>);
+			this._TypeJournal = default(EntityRef<TypeJournal>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="NVarChar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Side", DbType="Bit NOT NULL", IsPrimaryKey=true)]
+		public bool Side
+		{
+			get
+			{
+				return this._Side;
+			}
+			set
+			{
+				if ((this._Side != value))
+				{
+					this.OnSideChanging(value);
+					this.SendPropertyChanging();
+					this._Side = value;
+					this.SendPropertyChanged("Side");
+					this.OnSideChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OAccountID", DbType="NVarChar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string OAccountID
+		{
+			get
+			{
+				return this._OAccountID;
+			}
+			set
+			{
+				if ((this._OAccountID != value))
+				{
+					if (this._Account1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnOAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._OAccountID = value;
+					this.SendPropertyChanged("OAccountID");
+					this.OnOAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeJournalID", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string TypeJournalID
+		{
+			get
+			{
+				return this._TypeJournalID;
+			}
+			set
+			{
+				if ((this._TypeJournalID != value))
+				{
+					if (this._TypeJournal.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnTypeJournalIDChanging(value);
+					this.SendPropertyChanging();
+					this._TypeJournalID = value;
+					this.SendPropertyChanged("TypeJournalID");
+					this.OnTypeJournalIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(255)")]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyID", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string CompanyID
+		{
+			get
+			{
+				return this._CompanyID;
+			}
+			set
+			{
+				if ((this._CompanyID != value))
+				{
+					if (this._Company.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCompanyIDChanging(value);
+					this.SendPropertyChanging();
+					this._CompanyID = value;
+					this.SendPropertyChanged("CompanyID");
+					this.OnCompanyIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AffectationJournal", Storage="_Account", ThisKey="AccountID", OtherKey="id", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AffectationJournals.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AffectationJournals.Add(this);
+						this._AccountID = value.id;
+					}
+					else
+					{
+						this._AccountID = default(string);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AffectationJournal1", Storage="_Account1", ThisKey="OAccountID", OtherKey="id", IsForeignKey=true)]
+		public Account Account1
+		{
+			get
+			{
+				return this._Account1.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account1.Entity;
+				if (((previousValue != value) 
+							|| (this._Account1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account1.Entity = null;
+						previousValue.AffectationJournals1.Remove(this);
+					}
+					this._Account1.Entity = value;
+					if ((value != null))
+					{
+						value.AffectationJournals1.Add(this);
+						this._OAccountID = value.id;
+					}
+					else
+					{
+						this._OAccountID = default(string);
+					}
+					this.SendPropertyChanged("Account1");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Company_AffectationJournal", Storage="_Company", ThisKey="CompanyID", OtherKey="id", IsForeignKey=true)]
+		public Company Company
+		{
+			get
+			{
+				return this._Company.Entity;
+			}
+			set
+			{
+				Company previousValue = this._Company.Entity;
+				if (((previousValue != value) 
+							|| (this._Company.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Company.Entity = null;
+						previousValue.AffectationJournals.Remove(this);
+					}
+					this._Company.Entity = value;
+					if ((value != null))
+					{
+						value.AffectationJournals.Add(this);
+						this._CompanyID = value.id;
+					}
+					else
+					{
+						this._CompanyID = default(string);
+					}
+					this.SendPropertyChanged("Company");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TypeJournal_AffectationJournal", Storage="_TypeJournal", ThisKey="TypeJournalID", OtherKey="Id", IsForeignKey=true)]
+		public TypeJournal TypeJournal
+		{
+			get
+			{
+				return this._TypeJournal.Entity;
+			}
+			set
+			{
+				TypeJournal previousValue = this._TypeJournal.Entity;
+				if (((previousValue != value) 
+							|| (this._TypeJournal.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._TypeJournal.Entity = null;
+						previousValue.AffectationJournals.Remove(this);
+					}
+					this._TypeJournal.Entity = value;
+					if ((value != null))
+					{
+						value.AffectationJournals.Add(this);
+						this._TypeJournalID = value.Id;
+					}
+					else
+					{
+						this._TypeJournalID = default(string);
+					}
+					this.SendPropertyChanged("TypeJournal");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -6584,7 +7076,13 @@ namespace IWSProject.Models.MsSql
 		
 		private System.DateTime _Updated;
 		
+		private string _ClassCash;
+		
+		private string _ClassBank;
+		
 		private EntitySet<VendorInvoice> _VendorInvoices;
+		
+		private EntitySet<AffectationJournal> _AffectationJournals;
 		
 		private EntitySet<BillOfDelivery> _BillOfDeliveries;
 		
@@ -6652,11 +7150,16 @@ namespace IWSProject.Models.MsSql
     partial void OnPostedChanged();
     partial void OnUpdatedChanging(System.DateTime value);
     partial void OnUpdatedChanged();
+    partial void OnClassCashChanging(string value);
+    partial void OnClassCashChanged();
+    partial void OnClassBankChanging(string value);
+    partial void OnClassBankChanged();
     #endregion
 		
 		public Company()
 		{
 			this._VendorInvoices = new EntitySet<VendorInvoice>(new Action<VendorInvoice>(this.attach_VendorInvoices), new Action<VendorInvoice>(this.detach_VendorInvoices));
+			this._AffectationJournals = new EntitySet<AffectationJournal>(new Action<AffectationJournal>(this.attach_AffectationJournals), new Action<AffectationJournal>(this.detach_AffectationJournals));
 			this._BillOfDeliveries = new EntitySet<BillOfDelivery>(new Action<BillOfDelivery>(this.attach_BillOfDeliveries), new Action<BillOfDelivery>(this.detach_BillOfDeliveries));
 			this._CustomerInvoices = new EntitySet<CustomerInvoice>(new Action<CustomerInvoice>(this.attach_CustomerInvoices), new Action<CustomerInvoice>(this.detach_CustomerInvoices));
 			this._GeneralLedgers = new EntitySet<GeneralLedger>(new Action<GeneralLedger>(this.attach_GeneralLedgers), new Action<GeneralLedger>(this.detach_GeneralLedgers));
@@ -7090,6 +7593,46 @@ namespace IWSProject.Models.MsSql
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassCash", DbType="VarChar(50)")]
+		public string ClassCash
+		{
+			get
+			{
+				return this._ClassCash;
+			}
+			set
+			{
+				if ((this._ClassCash != value))
+				{
+					this.OnClassCashChanging(value);
+					this.SendPropertyChanging();
+					this._ClassCash = value;
+					this.SendPropertyChanged("ClassCash");
+					this.OnClassCashChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClassBank", DbType="VarChar(50)")]
+		public string ClassBank
+		{
+			get
+			{
+				return this._ClassBank;
+			}
+			set
+			{
+				if ((this._ClassBank != value))
+				{
+					this.OnClassBankChanging(value);
+					this.SendPropertyChanging();
+					this._ClassBank = value;
+					this.SendPropertyChanged("ClassBank");
+					this.OnClassBankChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Company_VendorInvoice", Storage="_VendorInvoices", ThisKey="id", OtherKey="CompanyId")]
 		public EntitySet<VendorInvoice> VendorInvoices
 		{
@@ -7100,6 +7643,19 @@ namespace IWSProject.Models.MsSql
 			set
 			{
 				this._VendorInvoices.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Company_AffectationJournal", Storage="_AffectationJournals", ThisKey="id", OtherKey="CompanyID")]
+		public EntitySet<AffectationJournal> AffectationJournals
+		{
+			get
+			{
+				return this._AffectationJournals;
+			}
+			set
+			{
+				this._AffectationJournals.Assign(value);
 			}
 		}
 		
@@ -7260,6 +7816,18 @@ namespace IWSProject.Models.MsSql
 		}
 		
 		private void detach_VendorInvoices(VendorInvoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.Company = null;
+		}
+		
+		private void attach_AffectationJournals(AffectationJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.Company = this;
+		}
+		
+		private void detach_AffectationJournals(AffectationJournal entity)
 		{
 			this.SendPropertyChanging();
 			entity.Company = null;
@@ -8623,6 +9191,8 @@ namespace IWSProject.Models.MsSql
 		
 		private string _oMonth;
 		
+		private string _TypeJournal;
+		
 		private EntitySet<LineCustomerInvoice> _LineCustomerInvoices;
 		
 		private EntityRef<Company> _Company;
@@ -8665,6 +9235,8 @@ namespace IWSProject.Models.MsSql
     partial void OnoYearChanged();
     partial void OnoMonthChanging(string value);
     partial void OnoMonthChanged();
+    partial void OnTypeJournalChanging(string value);
+    partial void OnTypeJournalChanged();
     #endregion
 		
 		public CustomerInvoice()
@@ -8984,6 +9556,26 @@ namespace IWSProject.Models.MsSql
 					this._oMonth = value;
 					this.SendPropertyChanged("oMonth");
 					this.OnoMonthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeJournal", DbType="VarChar(50)")]
+		public string TypeJournal
+		{
+			get
+			{
+				return this._TypeJournal;
+			}
+			set
+			{
+				if ((this._TypeJournal != value))
+				{
+					this.OnTypeJournalChanging(value);
+					this.SendPropertyChanging();
+					this._TypeJournal = value;
+					this.SendPropertyChanged("TypeJournal");
+					this.OnTypeJournalChanged();
 				}
 			}
 		}
@@ -9330,6 +9922,8 @@ namespace IWSProject.Models.MsSql
 		
 		private string _oMonth;
 		
+		private string _TypeJournal;
+		
 		private EntitySet<LineGeneralLedger> _LineGeneralLedgers;
 		
 		private EntityRef<Company> _Company;
@@ -9368,6 +9962,8 @@ namespace IWSProject.Models.MsSql
     partial void OnoYearChanged();
     partial void OnoMonthChanging(string value);
     partial void OnoMonthChanged();
+    partial void OnTypeJournalChanging(string value);
+    partial void OnTypeJournalChanged();
     #endregion
 		
 		public GeneralLedger()
@@ -9677,6 +10273,26 @@ namespace IWSProject.Models.MsSql
 					this._oMonth = value;
 					this.SendPropertyChanged("oMonth");
 					this.OnoMonthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeJournal", DbType="VarChar(50)")]
+		public string TypeJournal
+		{
+			get
+			{
+				return this._TypeJournal;
+			}
+			set
+			{
+				if ((this._TypeJournal != value))
+				{
+					this.OnTypeJournalChanging(value);
+					this.SendPropertyChanging();
+					this._TypeJournal = value;
+					this.SendPropertyChanged("TypeJournal");
+					this.OnTypeJournalChanged();
 				}
 			}
 		}
@@ -11015,6 +11631,12 @@ namespace IWSProject.Models.MsSql
 		
 		private string _TypeJournal;
 		
+		private string _CostCenterId;
+		
+		private string _CostCenterName;
+		
+		private string _TypeJournalName;
+		
 		private EntityRef<Account> _Account1;
 		
 		private EntityRef<Account> _Account2;
@@ -11077,6 +11699,12 @@ namespace IWSProject.Models.MsSql
     partial void OnCompanyNameChanged();
     partial void OnTypeJournalChanging(string value);
     partial void OnTypeJournalChanged();
+    partial void OnCostCenterIdChanging(string value);
+    partial void OnCostCenterIdChanged();
+    partial void OnCostCenterNameChanging(string value);
+    partial void OnCostCenterNameChanged();
+    partial void OnTypeJournalNameChanging(string value);
+    partial void OnTypeJournalNameChanged();
     #endregion
 		
 		public Journal()
@@ -11630,6 +12258,66 @@ namespace IWSProject.Models.MsSql
 					this._TypeJournal = value;
 					this.SendPropertyChanged("TypeJournal");
 					this.OnTypeJournalChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostCenterId", DbType="NVarChar(50)")]
+		public string CostCenterId
+		{
+			get
+			{
+				return this._CostCenterId;
+			}
+			set
+			{
+				if ((this._CostCenterId != value))
+				{
+					this.OnCostCenterIdChanging(value);
+					this.SendPropertyChanging();
+					this._CostCenterId = value;
+					this.SendPropertyChanged("CostCenterId");
+					this.OnCostCenterIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostCenterName", DbType="NVarChar(150)")]
+		public string CostCenterName
+		{
+			get
+			{
+				return this._CostCenterName;
+			}
+			set
+			{
+				if ((this._CostCenterName != value))
+				{
+					this.OnCostCenterNameChanging(value);
+					this.SendPropertyChanging();
+					this._CostCenterName = value;
+					this.SendPropertyChanged("CostCenterName");
+					this.OnCostCenterNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeJournalName", DbType="NVarChar(150)")]
+		public string TypeJournalName
+		{
+			get
+			{
+				return this._TypeJournalName;
+			}
+			set
+			{
+				if ((this._TypeJournalName != value))
+				{
+					this.OnTypeJournalNameChanging(value);
+					this.SendPropertyChanging();
+					this._TypeJournalName = value;
+					this.SendPropertyChanged("TypeJournalName");
+					this.OnTypeJournalNameChanged();
 				}
 			}
 		}
@@ -16794,6 +17482,8 @@ namespace IWSProject.Models.MsSql
 		
 		private string _oMonth;
 		
+		private string _TypeJournal;
+		
 		private EntitySet<LinePayment> _LinePayments;
 		
 		private EntityRef<Company> _Company;
@@ -16834,6 +17524,8 @@ namespace IWSProject.Models.MsSql
     partial void OnoYearChanged();
     partial void OnoMonthChanging(string value);
     partial void OnoMonthChanged();
+    partial void OnTypeJournalChanging(string value);
+    partial void OnTypeJournalChanged();
     #endregion
 		
 		public Payment()
@@ -17148,6 +17840,26 @@ namespace IWSProject.Models.MsSql
 					this._oMonth = value;
 					this.SendPropertyChanged("oMonth");
 					this.OnoMonthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeJournal", DbType="VarChar(50)")]
+		public string TypeJournal
+		{
+			get
+			{
+				return this._TypeJournal;
+			}
+			set
+			{
+				if ((this._TypeJournal != value))
+				{
+					this.OnTypeJournalChanging(value);
+					this.SendPropertyChanging();
+					this._TypeJournal = value;
+					this.SendPropertyChanged("TypeJournal");
+					this.OnTypeJournalChanged();
 				}
 			}
 		}
@@ -19478,6 +20190,8 @@ namespace IWSProject.Models.MsSql
 		
 		private string _oMonth;
 		
+		private string _TypeJournal;
+		
 		private EntitySet<LineSettlement> _LineSettlements;
 		
 		private EntityRef<Company> _Company;
@@ -19518,6 +20232,8 @@ namespace IWSProject.Models.MsSql
     partial void OnoYearChanged();
     partial void OnoMonthChanging(string value);
     partial void OnoMonthChanged();
+    partial void OnTypeJournalChanging(string value);
+    partial void OnTypeJournalChanged();
     #endregion
 		
 		public Settlement()
@@ -19832,6 +20548,26 @@ namespace IWSProject.Models.MsSql
 					this._oMonth = value;
 					this.SendPropertyChanged("oMonth");
 					this.OnoMonthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeJournal", DbType="VarChar(50)")]
+		public string TypeJournal
+		{
+			get
+			{
+				return this._TypeJournal;
+			}
+			set
+			{
+				if ((this._TypeJournal != value))
+				{
+					this.OnTypeJournalChanging(value);
+					this.SendPropertyChanging();
+					this._TypeJournal = value;
+					this.SendPropertyChanged("TypeJournal");
+					this.OnTypeJournalChanged();
 				}
 			}
 		}
@@ -21433,6 +22169,10 @@ namespace IWSProject.Models.MsSql
 		
 		private EntitySet<Account> _Accounts;
 		
+		private EntitySet<VendorInvoice> _VendorInvoices;
+		
+		private EntitySet<AffectationJournal> _AffectationJournals;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -21454,6 +22194,8 @@ namespace IWSProject.Models.MsSql
 		public TypeJournal()
 		{
 			this._Accounts = new EntitySet<Account>(new Action<Account>(this.attach_Accounts), new Action<Account>(this.detach_Accounts));
+			this._VendorInvoices = new EntitySet<VendorInvoice>(new Action<VendorInvoice>(this.attach_VendorInvoices), new Action<VendorInvoice>(this.detach_VendorInvoices));
+			this._AffectationJournals = new EntitySet<AffectationJournal>(new Action<AffectationJournal>(this.attach_AffectationJournals), new Action<AffectationJournal>(this.detach_AffectationJournals));
 			OnCreated();
 		}
 		
@@ -21590,6 +22332,32 @@ namespace IWSProject.Models.MsSql
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TypeJournal_VendorInvoice", Storage="_VendorInvoices", ThisKey="Id", OtherKey="TypeJournal")]
+		public EntitySet<VendorInvoice> VendorInvoices
+		{
+			get
+			{
+				return this._VendorInvoices;
+			}
+			set
+			{
+				this._VendorInvoices.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TypeJournal_AffectationJournal", Storage="_AffectationJournals", ThisKey="Id", OtherKey="TypeJournalID")]
+		public EntitySet<AffectationJournal> AffectationJournals
+		{
+			get
+			{
+				return this._AffectationJournals;
+			}
+			set
+			{
+				this._AffectationJournals.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -21620,6 +22388,30 @@ namespace IWSProject.Models.MsSql
 		{
 			this.SendPropertyChanging();
 			entity.TypeJournal1 = null;
+		}
+		
+		private void attach_VendorInvoices(VendorInvoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.TypeJournal1 = this;
+		}
+		
+		private void detach_VendorInvoices(VendorInvoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.TypeJournal1 = null;
+		}
+		
+		private void attach_AffectationJournals(AffectationJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.TypeJournal = this;
+		}
+		
+		private void detach_AffectationJournals(AffectationJournal entity)
+		{
+			this.SendPropertyChanging();
+			entity.TypeJournal = null;
 		}
 	}
 	
@@ -22807,86 +23599,6 @@ namespace IWSProject.Models.MsSql
 		}
 	}
 	
-	public partial class ClassChildResult
-	{
-		
-		private string _ChildId;
-		
-		private string _ChildName;
-		
-		private string _ParentId;
-		
-		private string _ParentName;
-		
-		public ClassChildResult()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChildId", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string ChildId
-		{
-			get
-			{
-				return this._ChildId;
-			}
-			set
-			{
-				if ((this._ChildId != value))
-				{
-					this._ChildId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChildName", DbType="NVarChar(255)")]
-		public string ChildName
-		{
-			get
-			{
-				return this._ChildName;
-			}
-			set
-			{
-				if ((this._ChildName != value))
-				{
-					this._ChildName = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentId", DbType="NVarChar(50)")]
-		public string ParentId
-		{
-			get
-			{
-				return this._ParentId;
-			}
-			set
-			{
-				if ((this._ParentId != value))
-				{
-					this._ParentId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentName", DbType="NVarChar(255)")]
-		public string ParentName
-		{
-			get
-			{
-				return this._ParentName;
-			}
-			set
-			{
-				if ((this._ParentName != value))
-				{
-					this._ParentName = value;
-				}
-			}
-		}
-	}
-	
 	public partial class GetAccountBalanceResult
 	{
 		
@@ -23158,86 +23870,6 @@ namespace IWSProject.Models.MsSql
 				if ((this._name != value))
 				{
 					this._name = value;
-				}
-			}
-		}
-	}
-	
-	public partial class GetChildResult
-	{
-		
-		private string _ChildId;
-		
-		private string _ChildName;
-		
-		private string _ParentId;
-		
-		private string _ParentName;
-		
-		public GetChildResult()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChildId", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string ChildId
-		{
-			get
-			{
-				return this._ChildId;
-			}
-			set
-			{
-				if ((this._ChildId != value))
-				{
-					this._ChildId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChildName", DbType="NVarChar(255)")]
-		public string ChildName
-		{
-			get
-			{
-				return this._ChildName;
-			}
-			set
-			{
-				if ((this._ChildName != value))
-				{
-					this._ChildName = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentId", DbType="NVarChar(50)")]
-		public string ParentId
-		{
-			get
-			{
-				return this._ParentId;
-			}
-			set
-			{
-				if ((this._ParentId != value))
-				{
-					this._ParentId = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentName", DbType="NVarChar(255)")]
-		public string ParentName
-		{
-			get
-			{
-				return this._ParentName;
-			}
-			set
-			{
-				if ((this._ParentName != value))
-				{
-					this._ParentName = value;
 				}
 			}
 		}
@@ -24518,6 +25150,210 @@ namespace IWSProject.Models.MsSql
 				if ((this._TypeJournal != value))
 				{
 					this._TypeJournal = value;
+				}
+			}
+		}
+	}
+	
+	public partial class GetChildResult
+	{
+		
+		private string _ChildId;
+		
+		private string _ChildName;
+		
+		private string _ParentId;
+		
+		private string _ParentName;
+		
+		public GetChildResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChildId", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string ChildId
+		{
+			get
+			{
+				return this._ChildId;
+			}
+			set
+			{
+				if ((this._ChildId != value))
+				{
+					this._ChildId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChildName", DbType="NVarChar(255)")]
+		public string ChildName
+		{
+			get
+			{
+				return this._ChildName;
+			}
+			set
+			{
+				if ((this._ChildName != value))
+				{
+					this._ChildName = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentId", DbType="NVarChar(50)")]
+		public string ParentId
+		{
+			get
+			{
+				return this._ParentId;
+			}
+			set
+			{
+				if ((this._ParentId != value))
+				{
+					this._ParentId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentName", DbType="NVarChar(255)")]
+		public string ParentName
+		{
+			get
+			{
+				return this._ParentName;
+			}
+			set
+			{
+				if ((this._ParentName != value))
+				{
+					this._ParentName = value;
+				}
+			}
+		}
+	}
+	
+	public partial class ClassChildrenResult
+	{
+		
+		private string _id;
+		
+		private string _name;
+		
+		public ClassChildrenResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", DbType="NVarChar(50)")]
+		public string id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this._id = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_name", DbType="NVarChar(255)")]
+		public string name
+		{
+			get
+			{
+				return this._name;
+			}
+			set
+			{
+				if ((this._name != value))
+				{
+					this._name = value;
+				}
+			}
+		}
+	}
+	
+	public partial class ClassChildResult
+	{
+		
+		private string _ChildId;
+		
+		private string _ChildName;
+		
+		private string _ParentId;
+		
+		private string _ParentName;
+		
+		public ClassChildResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChildId", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string ChildId
+		{
+			get
+			{
+				return this._ChildId;
+			}
+			set
+			{
+				if ((this._ChildId != value))
+				{
+					this._ChildId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChildName", DbType="NVarChar(255)")]
+		public string ChildName
+		{
+			get
+			{
+				return this._ChildName;
+			}
+			set
+			{
+				if ((this._ChildName != value))
+				{
+					this._ChildName = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentId", DbType="NVarChar(50)")]
+		public string ParentId
+		{
+			get
+			{
+				return this._ParentId;
+			}
+			set
+			{
+				if ((this._ParentId != value))
+				{
+					this._ParentId = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentName", DbType="NVarChar(255)")]
+		public string ParentName
+		{
+			get
+			{
+				return this._ParentName;
+			}
+			set
+			{
+				if ((this._ParentName != value))
+				{
+					this._ParentName = value;
 				}
 			}
 		}

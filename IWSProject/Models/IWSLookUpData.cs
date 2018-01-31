@@ -14,8 +14,10 @@
     {
 
         const string IWSDataContext = "IWSDataContext";
+
         public static IWSDataContext IWSEntities
         {
+
             get
             {
                 if (HttpContext.Current.Items[IWSDataContext] == null)
@@ -26,33 +28,36 @@
         }
         public static IEnumerable GetIBAN()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var account = IWSEntities.BankAccounts.AsEnumerable().Select(i => new
             {
                 Id = i.IBAN,
                 Name = i.Owner,
                 CompanyID = i.CompanyID,
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Id);
             return account;
         }
 
         public static IEnumerable GetBIC()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var account = IWSEntities.Banks.AsEnumerable().Select(i => new
             {
                 Id = i.id,
                 Name = i.name,
                 CompanyID = i.CompanyID,
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Id);
             return account;
         }
         public static bool IsBalance(string accountId)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Companies.Any(c =>
-            c.BalanceSheet == accountId && c.id == (string)HttpContext.Current.Session["CompanyID"]);
+            c.BalanceSheet == accountId && c.id == companyID);
         }
         public static bool CheckPeriod(int DocumentID, DocsType DocumentType, string CompanyId, bool Current, bool Open)
         {
@@ -108,8 +113,29 @@
             //                x.CompanyId == CompanyId).Any();
             #endregion
         }
+        public static IEnumerable GetAccount()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            return IWSEntities.Accounts.Where(c => c.CompanyID == companyID);
+        }
+        public static IEnumerable GetAccount(string TransType)
+        {
+            string accountid = String.Empty;
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            if (TransType.Equals("SettlementBank") || TransType.Equals("PaymentBank"))
+            {
+                accountid = IWSEntities.Companies.SingleOrDefault(i => i.id == companyID).ClassBank;
+            }
+            if (TransType.Equals("SettlementCash") || TransType.Equals("PaymentCash"))
+            {
+                accountid = IWSEntities.Companies.SingleOrDefault(i => i.id == companyID).ClassCash;
+            }
+            return IWSEntities.ClassChild(accountid, companyID).Select(i => 
+                                                new { id = i.ChildId, name = i.ChildName });
+        }
         public static IEnumerable GetAccounts()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var account = IWSEntities.Accounts.AsEnumerable().Select(i => new
             {
                 Id = i.id,
@@ -117,33 +143,112 @@
                 CompanyID = i.CompanyID,
                 IsUsed = i.IsUsed
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]
+            .Where(c => c.CompanyID == companyID
                             && c.IsUsed.Equals(true))
             .OrderBy(o => o.Name);
             return account;
+        }
+        public static IEnumerable GetAccount(string account, string transType)
+        {
+            string accountid = String.Empty;
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            transType = transType.ToLower();
+            if (transType.Equals("paymentcash") || transType.Equals("paymentbank") || transType.Equals("vendorinvoice"))
+            {
+                accountid = IWSEntities.Suppliers.SingleOrDefault(i => i.id == account).accountid;
+            }
+            if (transType.Equals("settlementcash") || transType.Equals("settlementbank") || transType.Equals("customerinvoice"))
+            {
+                accountid = IWSEntities.Customers.SingleOrDefault(i => i.id == account).accountid;
+            }
+            return IWSEntities.ClassChildren(accountid, companyID).Select(i => new { Id = i.id, Name = i.name });
         }
         public static IEnumerable GetTypeJournal() => IWSEntities.TypeJournals.Where(c =>
                 c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
                 Select(s => new { Id = s.Id, Name = s.Name }).
                 OrderBy(o => o.Id).AsEnumerable();
+
+        public static bool SetTypeJournal(string Itemtype, int TransId)
+        {
+            int result = -1;
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+            result = IWSEntities.SetTypeJournal(Itemtype, TransId, companyId);
+            if (result >= 0)
+                return true;
+            return false;
+        }
         public static IEnumerable GetTypeJournals() => IWSEntities.TypeJournals.Where(c =>
                 c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
                AsEnumerable();
 
+        public static string GetTypeJournal(int id, string ItemType)
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            if (ItemType.Equals(DocsType.VendorInvoice.ToString()))
+            {
+                return IWSEntities.GoodReceivings.Join(IWSEntities.Suppliers, v => v.account, s => s.id,
+                                        (v, s) => new
+                                        {
+                                            v,
+                                            s
+                                        }).Join(IWSEntities.Accounts, vs => vs.s.accountid, a => a.id,
+                                        (vs, a) => new
+                                        {
+                                            Id = vs.v.id,
+                                            CompanyID = vs.s.CompanyID,
+                                            TypeJournal = a.TypeJournal
+                                        }).Where(x => x.CompanyID.Equals(companyID) && x.Id.Equals(id)).SingleOrDefault().TypeJournal;
+            }
+            if (ItemType.Equals(DocsType.CustomerInvoice.ToString()))
+            {
+                return IWSEntities.SalesInvoices.Join(IWSEntities.Customers, s => s.account, c => c.id,
+                                        (s, c) => new
+                                        {
+                                            s,
+                                            c
+                                        }).Join(IWSEntities.Accounts, sc => sc.c.accountid, a => a.id,
+                                        (sc, a) => new
+                                        {
+                                            Id = sc.s.id,
+                                            CompanyID = sc.c.CompanyID,
+                                            TypeJournal = a.TypeJournal
+                                        }).Where(x => x.CompanyID.Equals(companyID) && x.Id.Equals(id)).SingleOrDefault().TypeJournal;
+            }
+            if (ItemType.Equals(DocsType.Payment.ToString()) || ItemType.Equals(DocsType.Settlement.ToString()))
+            {
+                return IWSEntities.Companies.Join(IWSEntities.Accounts, c => c.bankaccountid, a => a.id,
+                                        (c, a) => new
+                                        {
+                                            CompanyID = c.id,
+                                            TypeJournal = a.TypeJournal
+                                        }).Where(x => x.CompanyID.Equals(companyID)).SingleOrDefault().TypeJournal;
+            }
+            return null;
+        }
+        public static string GetTypeJournal(string ItemType , int TransId)
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+
+            return null;
+
+        }
+
         public static IEnumerable GetPackUnits()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var account = IWSEntities.QuantityUnits.AsEnumerable().Select(i => new
             {
                 Id = i.id,
                 Name = i.name,
                 CompanyID = i.CompanyID
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Id);
             return account;
         }
         public static IEnumerable GetArticle()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var article = IWSEntities.Articles.AsEnumerable().Select(item => new
             {
                 Id = item.id,
@@ -154,15 +259,16 @@
                 Vat = item.VatCode,
                 CompanyID = item.CompanyID
             }).
-            Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).
+            Where(c => c.CompanyID == companyID).
             OrderBy(o => o.Name);
             return article;
         }
 
         public static IEnumerable GetBillOfDelivery()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.BillOfDeliveries
-                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
@@ -224,6 +330,10 @@
                         c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
                         OrderByDescending(o => o.Id).AsEnumerable();
 
+        public static IEnumerable GetAffectationJournal() => IWSEntities.AffectationJournals.Where(c =>
+                c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).
+                OrderByDescending(o => o.TypeJournalID).AsEnumerable();
+
         public static Cash GetCash(int cashId) => IWSEntities.Cashes.Where(c => c.Id == cashId).SingleOrDefault();
 
         public static List<CashLine> GetCashLines(int transId) => IWSEntities.CashLines.Where(c =>
@@ -260,8 +370,9 @@
             
         public static IEnumerable GetCustomerInvoice()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.CustomerInvoices
-                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
@@ -273,8 +384,9 @@
 
         public static IEnumerable GetGoodReceiving()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.GoodReceivings
-                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
@@ -343,65 +455,77 @@
         }
         public static IEnumerable GetInventoryInvoice()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.InventoryInvoices
-                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
         }
         public static IEnumerable GetPayment()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.Payments
-                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
         }
+        public static List<LinePayment> GetLinePayment(int TransId)
+        {
+            return IWSEntities.LinePayments.Where(i => i.transid == TransId).ToList();
+        }
         public static IEnumerable GetPurchaseOrder()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.PurchaseOrders
-                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
         }
         public static IEnumerable GetSalesInvoice()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.SalesInvoices
-                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
         }
         public static IEnumerable GetSalesOrder()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.SalesOrders
-                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
         }
         public static IEnumerable GetSettlement()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.Settlements
-                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
         }
         public static IEnumerable GetVendorInvoice()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.VendorInvoices
-                    where o.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
         }
         public static IEnumerable GetCustSuppliers()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var owner =     (from co in IWSEntities.Companies
             where
-              (co.id == (string)HttpContext.Current.Session["CompanyID"])
+              (co.id == companyID)
             select new
             {
                 Id = co.id,
@@ -411,7 +535,7 @@
             (
             from cu in IWSEntities.Customers
             where
-              (cu.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+              (cu.CompanyID == companyID)
             select new
             {
                 Id = cu.id,
@@ -421,7 +545,7 @@
             (
             from su in IWSEntities.Suppliers
             where
-              (su.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+              (su.CompanyID == companyID)
             select new
             {
                 Id = su.id,
@@ -433,75 +557,82 @@
         }
         public static IEnumerable GetCustomers()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var customer = IWSEntities.Customers.AsEnumerable().Select(item => new
             {
                 Id = item.id,
                 Name = item.name,
                 CompanyID=item.CompanyID
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Id);
             return customer;
         }
         public static IEnumerable GetCustomer()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.Customers
-                    where o.CompanyID == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyID == companyID
                     select o;
             return b;
         }
         public static IEnumerable GetSupplier()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.Suppliers
-                    where o.CompanyID == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.CompanyID == companyID
                     select o;
             return b;
         }
         public static IEnumerable GetCompany()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var b = from o in IWSEntities.Companies
-                    where o.id == (string)HttpContext.Current.Session["CompanyID"]
+                    where o.id == companyID
                     select o;
             return b;
         }
         public static IEnumerable GetCostCenter()
         {
-            return IWSEntities.CostCenters.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            return IWSEntities.CostCenters.Where(c => c.CompanyID == companyID);
         }
-        public static List<Currency> GetCurrencies() => IWSEntities.Currencies.Where(c =>
-                    c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).ToList<Currency>();
         public static IEnumerable GetBanks()
         {
-            return IWSEntities.Banks.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            return IWSEntities.Banks.Where(c => c.CompanyID == companyID);
         }
-        public static IEnumerable GetAccount()
-        {
-            return IWSEntities.Accounts.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
-        }
+
         public static IEnumerable GetMenus()
         {
-            return IWSEntities.Menus.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            return IWSEntities.Menus.Where(c => c.CompanyID == companyID);
         }
         public static IEnumerable GetQuantityUnits()
         {
-            return IWSEntities.QuantityUnits.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            return IWSEntities.QuantityUnits.Where(c => c.CompanyID == companyID);
         }
         public static IEnumerable GetStores()
         {
-            return IWSEntities.Stores.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            return IWSEntities.Stores.Where(c => c.CompanyID == companyID);
         }
         public static IEnumerable GetArticles()
         {
-            return IWSEntities.Articles.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            return IWSEntities.Articles.Where(c => c.CompanyID == companyID);
         }
         public static IEnumerable GetExceptions()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.LogExceptions.Where(c => 
-            c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).OrderByDescending(o=>o.LogId);
+            c.CompanyId == companyID).OrderByDescending(o=>o.LogId);
         }
         public static IEnumerable GetVats()
         {
-            return IWSEntities.Vats.Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]);
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            return IWSEntities.Vats.Where(c => c.CompanyID == companyID);
         }
         public static IEnumerable GetBankAccount(string Owner)
         {
@@ -520,25 +651,27 @@
         }
         public static IEnumerable GetCostCenters()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var center = IWSEntities.CostCenters.AsEnumerable().Select(item => new
             {
                 Id = item.id,
                 Name = item.name,
                 CompanyID=item.CompanyID
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Name);
             return center;
         }
         public static IEnumerable GetMenuId()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var account = IWSEntities.Menus.AsEnumerable().Select(item => new
             {
                 Id = item.ID,
                 Name = item.Name,
                 CompanyID = item.CompanyID
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Name);
             return account;
         }
@@ -590,13 +723,14 @@
         }
         public static IEnumerable GetStore()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var store = IWSEntities.Stores.AsEnumerable().Select(item => new
             {
                 Id = item.id,
                 Name = item.name,
                 CompanyID=item.CompanyID
             }).
-            Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).
+            Where(c => c.CompanyID == companyID).
             OrderBy(o => o.Name);
             return store;
         }
@@ -614,49 +748,66 @@
         }
         public static IEnumerable GetSuppliers()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var supplier = IWSEntities.Suppliers.AsEnumerable().Select(item => new
             {
                 Id = item.id,
                 Name = item.name,
                 CompanyID =item.CompanyID
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Id);
             return supplier;
         }
         public static IEnumerable GetVAT()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var vat = IWSEntities.Vats.AsEnumerable().Select(item => new
             {
                 Id = item.id,
                 Name = item.PVat,
                 CompanyID=item.CompanyID
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Name);
             return vat;
         }
         public static IEnumerable GetCurrency()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var currency = IWSEntities.Currencies.AsEnumerable().Select(item => new
             {
                 Id = item.Id,
                 Name = item.Name,
                 CompanyID = item.CompanyID
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Name);
             return currency;
         }
+        public static List<Currency> GetCurrencies() => IWSEntities.Currencies.Where(c =>
+            c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).ToList<Currency>();
+        public static string GetCurrency(string id)
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            return IWSEntities.Articles.FirstOrDefault(c =>
+                   c.id == id && c.CompanyID == companyID).Currency;
+        }
+        public static string GetCurrencyDefault()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            return IWSEntities.Companies.SingleOrDefault(i => i.id == companyID).Currency;
+        }
         public static IEnumerable GetUnit()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var unit = IWSEntities.QuantityUnits.AsEnumerable().Select(item => new
             {
                 Id = item.id,
                 Name = item.name,
                 CompanyID = item.CompanyID
             })
-            .Where(c => c.CompanyID == (string)HttpContext.Current.Session["CompanyID"])
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Name);
             return unit;
         }
@@ -1409,7 +1560,7 @@
         {
             // get current thread UICulture
             string uiCulture = Thread.CurrentThread.CurrentUICulture.Name;
-
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             List<ValidateDocsViewModel> document = 
                                             GetPurchaseOrder(uiCulture, IsValidated).
                                             Union(GetGoodReceiving(uiCulture, IsValidated)).
@@ -1423,7 +1574,7 @@
                                             Union(GetSettlement(uiCulture, IsValidated)).
                                             Union(GetGeneralLedgerIn(uiCulture, IsValidated)).
                                             Union(GetGeneralLedgerOut(uiCulture, IsValidated)).
-                                            Where(c=>c.CompanyID==(string)HttpContext.Current.Session["CompanyID"]).
+                                            Where(c=>c.CompanyID==companyID).
                                             ToList();
             List<DocumentsViewModel> documents = (
                                             from doc in document
@@ -1447,10 +1598,10 @@
         public static List<OwnerViewModel> GetOwner()
         {
             string uiCulture = Thread.CurrentThread.CurrentUICulture.Name;
-
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             List<OwnerViewModel> companies = Queryable.OrderBy(
             (from line in IWSEntities.Companies
-             where line.id== (string)HttpContext.Current.Session["CompanyID"]
+             where line.id== companyID
              from Item in IWSEntities.Localizations
              where Item.ItemName == Owner.Company.ToString() && Item.UICulture == uiCulture
              select new OwnerViewModel()
@@ -1462,7 +1613,7 @@
 
             List<OwnerViewModel> customers = Queryable.OrderBy(
             (from line in IWSEntities.Customers
-             where line.id == (string)HttpContext.Current.Session["CompanyID"]
+             where line.id == companyID
              from Item in IWSEntities.Localizations
              where Item.ItemName == Owner.Company.ToString() && Item.UICulture == uiCulture
              select new OwnerViewModel()
@@ -1474,7 +1625,7 @@
 
             List<OwnerViewModel> suppliers = Queryable.OrderBy(
             (from line in IWSEntities.Suppliers
-             where line.id == (string)HttpContext.Current.Session["CompanyID"]
+             where line.id == companyID
              from Item in IWSEntities.Localizations
              where Item.ItemName == Owner.Company.ToString() && Item.UICulture == uiCulture
              select new OwnerViewModel()
@@ -1489,8 +1640,8 @@
 
         public static IEnumerable GetNewLineGoodReceiving(int  itemID, int oid)
         {
-            List<LinePurchaseOrder> items = new List<LinePurchaseOrder>();
-            items = IWSEntities.LinePurchaseOrders
+            List<LineInventoryInvoice> items = new List<LineInventoryInvoice>();
+            items = IWSEntities.LineInventoryInvoices
                     .Where(c => c.transid == oid)
                     .ToList();
             List<LineGoodReceiving> docs = 
@@ -1550,13 +1701,13 @@
         }
         public static IEnumerable GetNewLineCustomerInvoice(int itemID, int oid)
         {
-
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             List<CreditViewModel> c = new List<CreditViewModel>
                 ((from l in IWSEntities.LineSalesInvoices
                     where 
                     l.transid == oid &&
-                    l.Article.CompanyID == (string)HttpContext.Current.Session["CompanyID"] &&
-                    l.Article.Vat.CompanyID == (string)HttpContext.Current.Session["CompanyID"]
+                    l.Article.CompanyID == companyID &&
+                    l.Article.Vat.CompanyID == companyID
                     select new CreditViewModel()
                     {
                         OCreditVAT = l.Article.Vat.outputvataccountid,
@@ -1566,7 +1717,7 @@
             List<DebitViewModel> d = new List<DebitViewModel>
                 (from l in IWSEntities.SalesInvoices
                    where
-                     l.CompanyId == (string)HttpContext.Current.Session["CompanyID"] &&
+                     l.CompanyId == companyID &&
                      l.id == oid
                    select new DebitViewModel()
                    {
@@ -1696,8 +1847,8 @@
         }
         public static IEnumerable GetNewLineInventoryInvoice(int itemID, int oid)
         {
-            List<LineGoodReceiving> items = new List<LineGoodReceiving>();
-            items = IWSEntities.LineGoodReceivings
+            List<LinePurchaseOrder> items = new List<LinePurchaseOrder>();
+            items = IWSEntities.LinePurchaseOrders
                     .Where(c => c.transid == oid)
                     .ToList();
             List<LineInventoryInvoice> docs =
@@ -1713,75 +1864,48 @@
         }
         public static IEnumerable GetNewLineVendorInvoice(int itemID, int oid)
         {
-            var lines=
-            (
-                from LineInventoryInvoices in IWSEntities.LineInventoryInvoices
-                where
-                  LineInventoryInvoices.transid == oid
-                group new { LineInventoryInvoices.Article, LineInventoryInvoices } by new
-                {
-                    LineInventoryInvoices.InventoryInvoice.Company.purchasingclearingaccountid
-                } into g
-                select new
-                {
-                    account = g.Key.purchasingclearingaccountid,
-                    amount = (decimal?)g.Sum(p => p.LineInventoryInvoices.lineNet)
-                }
-            ).Union
-            (
-                from LineInventoryInvoices in IWSEntities.LineInventoryInvoices
-                where
-                  LineInventoryInvoices.transid == oid
-                group new { LineInventoryInvoices.Article.Vat, LineInventoryInvoices } by new
-                {
-                    LineInventoryInvoices.Article.Vat.inputvataccountid
-                } into g
-                select new
-                {
-                    account = g.Key.inputvataccountid,
-                    amount = (decimal?)g.Sum(p => p.LineInventoryInvoices.lineVAT)
-                }
-            );
-
-            var header = from h in IWSEntities.InventoryInvoices
-                         where
-                           h.id == oid
-                         select new
-                         {
-                             h.HeaderText,
-                             h.TransDate,
-                             h.oTotal,
-                             h.oCurrency,
-                             h.Supplier.accountid
-                         };
-
-            List<LineInvoiceViewModel> newLine = (from o in lines
-                                               select new LineInvoiceViewModel()
-                                                {
-                                                    TransID=itemID,
-                                                    Account=o.account,
-                                                    Side = true,
-                                                    OAccount =header.Single().accountid,
-                                                    Amount= (decimal)o.amount,
-                                                    DueDate=header.Single().TransDate,
-                                                    Text=header.Single().HeaderText,
-                                                    Currency=header.Single().oCurrency
-                                                }).ToList();
-            List<LineVendorInvoice> docs =
-             (from item in newLine
-              select new LineVendorInvoice()
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            List<CreditViewModel> c = new List<CreditViewModel>
+            ((from l in IWSEntities.LineGoodReceivings
+              where
+                          l.transid == oid &&
+                          l.Article.CompanyID == companyID &&
+                          l.Article.Vat.CompanyID == companyID
+              select new CreditViewModel()
               {
-                  transid = itemID,
-                  account=item.Account,
-                  side=item.Side,
-                  oaccount=item.OAccount,
-                  amount=item.Amount,
-                  duedate = item.DueDate,
-                  text = item.Text,
-                  Currency = item.Currency
-              }
-             ).ToList();
-            return docs;
+                  OCreditVAT = l.Article.Vat.outputvataccountid,
+                  OCreditTotal = l.Article.Vat.revenueaccountid
+              }).Distinct());
+
+
+            List<DebitViewModel> d = new List<DebitViewModel>
+                (from l in IWSEntities.GoodReceivings
+                 where
+                   l.CompanyId == companyID &&
+                   l.id == oid
+                 select new DebitViewModel()
+                 {
+                     TransID = itemID,
+                     ODebit = l.Supplier.accountid,
+                     OCredit = l.Company.purchasingclearingaccountid,
+                     Side = false,
+                     HeaderText = l.HeaderText,
+                     ItemDate = l.ItemDate,
+                     OVat = l.oVat,
+                     OTotal = l.oTotal,
+                     Currency = l.oCurrency
+                 });
+            IList<LineVendorInvoice> lines = new List<LineVendorInvoice>() {
+                        new LineVendorInvoice(){
+                            transid =itemID, account=d.Single().ODebit, side=d.Single().Side, oaccount=c.Single().OCreditVAT,
+                            amount=(decimal)d.Single().OVat, duedate=d.Single().ItemDate, text=d.Single().HeaderText,
+                            Currency=d.Single().Currency},
+                        new LineVendorInvoice(){
+                            transid =itemID, account=d.Single().ODebit, side=d.Single().Side, oaccount=d.Single().OCredit,
+                            amount=(decimal)d.Single().OTotal, duedate=d.Single().ItemDate, text=d.Single().HeaderText,
+                            Currency=d.Single().Currency}
+                    };
+            return lines;
         }
 
         public static IEnumerable GetAccountBalance(string accountId, string CompanyID)
@@ -1932,12 +2056,13 @@
         }
         public static IEnumerable GetClass()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             List<ChildViewModel> r =
                 ((
                 from c in IWSEntities.Companies
                 join a in IWSEntities.Accounts on new { BalanceSheet = c.BalanceSheet } equals new { BalanceSheet = a.id }
                 where
-                  c.id == (string)HttpContext.Current.Session["CompanyID"]
+                  c.id == companyID
                 select new ChildViewModel()
                 {
                     ParentId = a.id,
@@ -1948,7 +2073,7 @@
                     from c in IWSEntities.Companies
                     join Accounts in IWSEntities.Accounts on new { IncomesStatement = c.IncomesStatement } equals new { IncomesStatement = Accounts.id }
                     where
-                      c.id == (string)HttpContext.Current.Session["CompanyID"]
+                      c.id == companyID
                     select new ChildViewModel()
                     {
                         ParentId = Accounts.id,
@@ -1976,8 +2101,9 @@
         }
         public static string GetPackUnit(string id)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Articles.FirstOrDefault(c => 
-                c.id == id && c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).packunit;
+                c.id == id && c.CompanyID == companyID).packunit;
         }
         public static string GetCompany(string UserName)
         {
@@ -1986,221 +2112,225 @@
         }
         public static string GetQttyUnit(string id)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Articles.FirstOrDefault(c => 
-                c.id == id && c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).qttyunit;
+                c.id == id && c.CompanyID == companyID).qttyunit;
         }
         public static decimal GetVatCode(string id)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Articles.FirstOrDefault(c =>
-                   c.id == id && c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).Vat.PVat;
-        }
-        public static string GetCurrency(string id)
-        {
-            return IWSEntities.Articles.FirstOrDefault(c =>
-                   c.id == id && c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).Currency;
+                   c.id == id && c.CompanyID == companyID).Vat.PVat;
         }
         public static string DefaultCurrency()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Companies.FirstOrDefault(c => 
-                   c.id == (string)HttpContext.Current.Session["CompanyID"]).Currency;
+                   c.id == companyID).Currency;
         }
         public static decimal GetPrice(string id)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Articles.FirstOrDefault(c => 
-                c.id == id && c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).price;
+                c.id == id && c.CompanyID == companyID).price;
         }
         public static decimal GetSalesPrice(string id)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Articles.FirstOrDefault(c => 
-                c.id == id && c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).salesprice;
+                c.id == id && c.CompanyID == companyID).salesprice;
         }
         public static string GetLineText(string id)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Articles.FirstOrDefault(c => 
-                c.id == id && c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).description ?? "N/A";
+                c.id == id && c.CompanyID == companyID).description ?? "N/A";
         }
         public static string GetCashAccountId()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Companies.FirstOrDefault(c => 
-                    c.id == (string)HttpContext.Current.Session["CompanyID"]).CashAccountId;
+                    c.id == companyID).CashAccountId;
         }
         public static string GetVatAccountId(decimal pvat)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Vats.FirstOrDefault(c =>
-                    c.CompanyID == (string)HttpContext.Current.Session["CompanyID"] && c.PVat == pvat)
+                    c.CompanyID == companyID && c.PVat == pvat)
                     .outputvataccountid;
         }
         public static string GetHeaderText(int id, string ItemType)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             if (ItemType.Equals(DocsType.GoodReceiving.ToString()))
             {
-                return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).HeaderText ?? "N/A";
+                return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.BillOfDelivery.ToString()))
             {
                 return IWSEntities.SalesOrders.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).HeaderText ?? "N/A";
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.InventoryInvoice.ToString()))
             {
-                return IWSEntities.GoodReceivings.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).HeaderText ?? "N/A";
+                return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.SalesInvoice.ToString()))
             {
                 return IWSEntities.BillOfDeliveries.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).HeaderText ?? "N/A";
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.VendorInvoice.ToString()))
             {
-                return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).HeaderText ?? "N/A";
+                return IWSEntities.GoodReceivings.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.CustomerInvoice.ToString()))
             {
                 return IWSEntities.SalesInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).HeaderText ?? "N/A";
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.Settlement.ToString()))
             {
                 return IWSEntities.CustomerInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).HeaderText ?? "N/A";
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.Payment.ToString()))
             {
                 return IWSEntities.VendorInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).HeaderText ?? "N/A";
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.GeneralLedgerIn.ToString()))
             {
                 return IWSEntities.Settlements.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).HeaderText ?? "N/A";
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.GeneralLedgerOut.ToString()))
             {
                 return IWSEntities.Payments.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).HeaderText ?? "N/A";
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             return null;
         }
+
         public static string GetStore(int id, string ItemType)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             if (ItemType.Equals(DocsType.GoodReceiving.ToString()))
             {
-                return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).store;
+                return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).store;
             }
             if (ItemType.Equals(DocsType.BillOfDelivery.ToString()))
             {
                 return IWSEntities.SalesOrders.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).store;
+                c.id == id && c.CompanyId == companyID).store;
             }
             if (ItemType.Equals(DocsType.InventoryInvoice.ToString()))
             {
-                return IWSEntities.GoodReceivings.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).store;
+                return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).store;
             }
             if (ItemType.Equals(DocsType.SalesInvoice.ToString()))
             {
                 return IWSEntities.BillOfDeliveries.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).store;
-            }
-            if (ItemType.Equals(DocsType.VendorInvoice.ToString()))
-            {
-                return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).store;
-            }
-            if (ItemType.Equals(DocsType.CustomerInvoice.ToString()))
-            {
-                return IWSEntities.SalesInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).store;
+                c.id == id && c.CompanyId == companyID).store;
             }
             return null;
            
         }
         public static string GetSupplier(int id, string ItemType)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             if (ItemType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()))
             {
-                return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).account;
+                return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()))
             {
                 return IWSEntities.SalesOrders.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).account;
+                c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.InventoryInvoice.ToString()))
             {
-                return IWSEntities.GoodReceivings.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).account;
+                return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.SalesInvoice.ToString()))
             {
                 return IWSEntities.BillOfDeliveries.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).account;
+                c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
             {
-                return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).account;
+                return IWSEntities.GoodReceivings.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
             {
                 return IWSEntities.SalesInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).account;
+                c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
             {
                 return IWSEntities.CustomerInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).account;
+                c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
             {
                 return IWSEntities.VendorInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).account;
+                c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedgerIn.ToString()))
             {
                 return IWSEntities.Settlements.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).account;
+                c.id == id && c.CompanyId == companyID).account;
+            }
+            if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedgerOut.ToString()))
+            {
+                return IWSEntities.Payments.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).account;
             }
             return null;
         }
         public static string GetCostCenter(int id, string ItemType)
         {
-            
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+
             if (ItemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
             {
                 return IWSEntities.CustomerInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).CostCenter;
+                c.id == id && c.CompanyId == companyID).CostCenter;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
             {
                 return IWSEntities.VendorInvoices.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).CostCenter;
+                c.id == id && c.CompanyId == companyID).CostCenter;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedgerIn.ToString()))
             {
                 return IWSEntities.Settlements.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).CostCenter;
+                c.id == id && c.CompanyId == companyID).CostCenter;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedgerOut.ToString()))
             {
                 return IWSEntities.Payments.FirstOrDefault(c =>
-                c.id == id && c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).CostCenter;
+                c.id == id && c.CompanyId == companyID).CostCenter;
             }
             return null;
         }
         public static IEnumerable GetGoodReceivingOID()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.Stores
-            join p in IWSEntities.PurchaseOrders on new { id = s.id } equals new { id = p.store }
+            join p in IWSEntities.InventoryInvoices on new { id = s.id } equals new { id = p.store }
             join r in IWSEntities.Suppliers on new { account = p.account } equals new { account = r.id }
             where
-              p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+              p.CompanyId == companyID
             orderby
               p.id
             select new
@@ -2214,12 +2344,13 @@
         }
         public static IEnumerable GetInventoryInvoiceOID()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.Stores
-            join g in IWSEntities.GoodReceivings on new { id = s.id } equals new { id = g.store }
+            join g in IWSEntities.PurchaseOrders on new { id = s.id } equals new { id = g.store }
             join r in IWSEntities.Suppliers on new { account = g.account } equals new { account = r.id }
             where
-              g.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+              g.CompanyId == companyID
             orderby
               g.id
             select new
@@ -2233,12 +2364,13 @@
         }
         public static IEnumerable GetVendorInvoiceOID()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.Stores
-            join p in IWSEntities.InventoryInvoices on new { id = s.id } equals new { id = p.store }
+            join p in IWSEntities.GoodReceivings on new { id = s.id } equals new { id = p.store }
             join r in IWSEntities.Suppliers on new { account = p.account } equals new { account = r.id }
             where
-              p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+              p.CompanyId == companyID
             orderby
               p.id
             select new
@@ -2252,12 +2384,13 @@
         }
         public static IEnumerable GetPaymentOID()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.CostCenters
             join p in IWSEntities.VendorInvoices on new { id = s.id } equals new { id = p.CostCenter }
             join r in IWSEntities.Suppliers on new { account = p.account } equals new { account = r.id }
             where
-              p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+              p.CompanyId == companyID
             orderby
               p.id
             select new
@@ -2271,12 +2404,13 @@
         }
         public static IEnumerable GetBillOfDeliveryOID()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.Stores
             join p in IWSEntities.SalesOrders on new { id = s.id } equals new { id = p.store }
             join r in IWSEntities.Customers on new { account = p.account } equals new { account = r.id }
             where
-              p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+              p.CompanyId == companyID
             orderby
               p.id
             select new
@@ -2290,12 +2424,13 @@
         }
         public static IEnumerable GetSalesInvoiceOID()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.Stores
             join p in IWSEntities.BillOfDeliveries on new { id = s.id } equals new { id = p.store }
             join r in IWSEntities.Customers on new { account = p.account } equals new { account = r.id }
             where
-              p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+              p.CompanyId == companyID
             orderby
               p.id
             select new
@@ -2309,12 +2444,13 @@
         }
         public static IEnumerable GetCustomerInvoiceOID()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.Stores
             join p in IWSEntities.SalesInvoices on new { id = s.id } equals new { id = p.store }
             join r in IWSEntities.Customers on new { account = p.account } equals new { account = r.id }
             where
-              p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+              p.CompanyId == companyID
             orderby
               p.id
             select new
@@ -2328,12 +2464,13 @@
         }
         public static IEnumerable GetSettlementOID()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.CostCenters
             join p in IWSEntities.CustomerInvoices on new { id = s.id } equals new { id = p.CostCenter }
             join r in IWSEntities.Customers on new { account = p.account } equals new { account = r.id }
             where
-              p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+              p.CompanyId == companyID
             orderby
               p.id
             select new
@@ -2347,12 +2484,13 @@
         }
         public static IEnumerable GetGeneralLedgerInOID()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var q =
             from s in IWSEntities.CostCenters
             join p in IWSEntities.Settlements on new { id = s.id } equals new { id = p.CostCenter }
             join r in IWSEntities.Customers on new { account = p.account } equals new { account = r.id }
             where
-              p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+              p.CompanyId == companyID
             orderby
               p.id
             select new
@@ -2366,12 +2504,13 @@
         }
         public static IEnumerable GetGeneralLedgerOutOID()
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.CostCenters
             join p in IWSEntities.Payments on new { id = s.id } equals new { id = p.CostCenter }
             join r in IWSEntities.Suppliers on new { account = p.account } equals new { account = r.id }
             where
-              p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+              p.CompanyId == companyID
             orderby
               p.id
             select new
@@ -2385,15 +2524,15 @@
         }
         public static void LogException(Exception ex)
         {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
             HttpContext context = HttpContext.Current;
             string msg = ex.Message.ToString();
             string type = ex.GetType().Name.ToString();
             string source = ex.Source.ToString();
             string url = context.Request.Url.ToString();
             string target = ex.TargetSite.Name.ToString();
-            string company = (string)HttpContext.Current.Session["CompanyID"];
             string userName = (string)HttpContext.Current.Session["UserName"];
-            int result = IWSEntities.LogException(msg, type, source, url, target, company, userName);
+            int result = IWSEntities.LogException(msg, type, source, url, target, companyID, userName);
         }
         public static string GetModelSateErrors(System.Web.Mvc.ModelStateDictionary modelState)
         {

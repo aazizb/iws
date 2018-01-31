@@ -15,8 +15,9 @@ namespace IWSProject.Controllers
             db = new IWSDataContext();
         }
         // GET: Payments
-        public ActionResult Index()
+        public ActionResult Index(string MenuID)
         {
+            Session["MenuID"] = MenuID;
             return View(IWSLookUp.GetPayment());
         }
         [ValidateInput(false)]
@@ -62,7 +63,7 @@ namespace IWSProject.Controllers
                         {
                             int itemID = db.Payments.Max(i => i.id);
 
-                            result = InsertLines(itemID, itemOID, IWSLookUp.DocsType.Payment.ToString());
+                            result = InsertLines(itemID, itemOID);
                             if (result)
                             {
                                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
@@ -137,13 +138,15 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetPayment());
         }
         [ValidateInput(false)]
-        public ActionResult DetailGridViewPartial(int transid, object newKeyValue)
+        public ActionResult DetailGridViewPartial(int transId, object newKeyValue)
         {
+
             if (newKeyValue != null)
             {
                 ViewData["IsNewDetailRow"] = true;
             }
-            return PartialView("DetailGridViewPartial", db.LinePayments.Where(p => p.transid == transid).ToList());
+            ViewBag.DefaultCurrency = IWSLookUp.GetCurrencyDefault();
+            return PartialView("DetailGridViewPartial", IWSLookUp.GetLinePayment(transId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] LinePayment line, int transId)
@@ -157,6 +160,7 @@ namespace IWSProject.Controllers
                 {
                     model.InsertOnSubmit(line);
                     db.SubmitChanges();
+                    bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Payment.ToString(), transId);
                 }
                 catch (Exception e)
                 {
@@ -167,7 +171,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("DetailGridViewPartial", model.Where(p => p.transid == transId).ToList());
+            return PartialView("DetailGridViewPartial", IWSLookUp.GetLinePayment(transId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] LinePayment line, int transId)
@@ -177,6 +181,7 @@ namespace IWSProject.Controllers
             ViewData["line"] = line;
             if (ModelState.IsValid)
             {
+                bool result = false;
                 try
                 {
                     var modelItem = model.FirstOrDefault(p => p.id == line.id);
@@ -184,7 +189,7 @@ namespace IWSProject.Controllers
                     if (modelItem != null)
                     {
                         this.UpdateModel(modelItem);
-
+                        result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Payment.ToString(), transId);
                         db.SubmitChanges();
                     }
                 }
@@ -197,7 +202,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("DetailGridViewPartial", db.LinePayments.Where(p => p.transid == transId).ToList());
+            return PartialView("DetailGridViewPartial", IWSLookUp.GetLinePayment(transId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialDelete(int Id, int transId)
@@ -221,7 +226,7 @@ namespace IWSProject.Controllers
                     ViewData["GenericError"] = e.Message;
                 }
             }
-            return PartialView("DetailGridViewPartial", db.LinePayments.Where(p => p.transid == transId).ToList());
+            return PartialView("DetailGridViewPartial", IWSLookUp.GetLinePayment(transId));
         }
 
 
@@ -238,25 +243,25 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetCostCenter(selectedOIDIndex, IWSLookUp.DocsType.Payment.ToString()));
         }
-        public bool InsertLines(int itemID, int OID, string ItemType)
+        public ActionResult TypeJournal(int selectedItemIndex)
+        {
+            return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.Payment.ToString()));
+        }
+        public bool InsertLines(int itemID, int OID)
         {
             bool results = false;
-
-            if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
+            try
             {
-                try
+                var items = IWSLookUp.GetNewLinePayment(itemID, OID);
+                foreach (var item in items)
                 {
-                    var items = IWSLookUp.GetNewLinePayment(itemID, OID);
-                    foreach (var item in items)
-                    {
-                        db.LinePayments.InsertOnSubmit((LinePayment)item);
-                    }
-                    results = true;
+                    db.LinePayments.InsertOnSubmit((LinePayment)item);
                 }
-                catch (Exception e)
-                {
-                    ViewData["GenericError"] = e.Message;
-                }
+                results = true;
+            }
+            catch (Exception e)
+            {
+                ViewData["GenericError"] = e.Message;
             }
             return results;
         }

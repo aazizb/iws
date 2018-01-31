@@ -424,6 +424,8 @@
     <Content Include="Views\Balance\GridLookupPartial.cshtml" />
     <Content Include="Views\TypeJournal\Index.cshtml" />
     <Content Include="Views\TypeJournal\TypeJournalsGridViewPartial.cshtml" />
+    <Content Include="Views\AffectationJournal\Index.cshtml" />
+    <Content Include="Views\AffectationJournal\AffectationJournalGridViewPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -463,6 +465,7 @@
       <DependentUpon>IWSLocalResource.fr-FR.resx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AffectationJournalController.cs" />
     <Compile Include="Controllers\BrouillardController.cs" />
     <Compile Include="Controllers\CashController.cs" />
     <Compile Include="Controllers\ExceptionLogController.cs" />

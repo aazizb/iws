@@ -70,10 +70,9 @@ namespace IWSProject.Controllers
 
                         Session["CompanyID"] = companyID;
 
-                        if (Session["Menus"] != null)
-                            Session["Menus"] = null;
-                        
-                        Session["Menus"] = IWSLookUp.GetMenu(companyID);
+                            //Session["Menus"] = null;
+                        if (Session["Menus"] == null)
+                            Session["Menus"] = IWSLookUp.GetMenu(companyID);
 
                         return RedirectToLocal(returnUrl);
                     case SignInStatus.LockedOut:

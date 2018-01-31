@@ -78,24 +78,12 @@ namespace IWSProject.Controllers
             {
                 return ValidateBillOfDelivery(ItemID, companyId);
             }
-            //if (ItemType.Equals(IWSLookUp.DocsType.InventoryInvoice.ToString()))
-            //{
-            //    return MakeVendorInvoice(ItemID);
-            //}
-            //if (ItemType.Equals(IWSLookUp.DocsType.SalesInvoice.ToString()))
-            //{
-            //    return MakeCustomerInvoice(ItemID);
-            //}
             if (ItemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
             {
-                //results = MakePayment(ItemID);
-                //if(results)
                 return ValidateVendorInvoice(ItemID, companyId);
             }
             if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
             {
-                //results = MakeSettlement(ItemID);
-                //if (results)
                 return ValidateCustmerInvoice(ItemID, companyId);
             }
             if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
@@ -206,8 +194,8 @@ namespace IWSProject.Controllers
 
                 if (!results)
                 {
-                    string msg = IWSLocalResource.CheckPeriod;
-                    throw new Exception(msg);
+
+                    throw new Exception(IWSLocalResource.CheckPeriod);
                 }
                 if (DocumentType.Equals(IWSLookUp.DocsType.PurchaseOrder))
                 {
@@ -1008,7 +996,9 @@ namespace IWSProject.Controllers
                                                OAccount = l.oaccount,
                                                CompanyIBAN = l.VendorInvoice.Company.IBAN ?? "NA",
                                                IBAN = l.VendorInvoice.Supplier.IBAN ?? "NA",
-                                               Info = l.VendorInvoice.HeaderText
+                                               Info = l.VendorInvoice.HeaderText,
+                                               TypeJournal=l.VendorInvoice.TypeJournal,
+                                               CostCenterId=l.VendorInvoice.CostCenter
                                            }).Distinct().ToList();
 
             bool results = false;
@@ -1050,7 +1040,9 @@ namespace IWSProject.Controllers
                                 CompanyIBAN =doc.CompanyIBAN,
                                 IBAN =doc.IBAN,
                                 Currency =doc.Currency,
-                                Info =doc.Info
+                                Info =doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
                             },
                             new Journal {
                                 ItemID =doc.ItemID,
@@ -1070,7 +1062,9 @@ namespace IWSProject.Controllers
                                 CompanyIBAN =doc.CompanyIBAN,
                                 IBAN =doc.IBAN,
                                 Currency=doc.Currency,
-                                Info=doc.Info
+                                Info=doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
                             }
                         };
 
@@ -1084,13 +1078,13 @@ namespace IWSProject.Controllers
                                 group new { doc } by new
                                 {
                                     doc.Periode,
-                                    doc.OAccount,
+                                    doc.Account,        
                                     doc.Currency
                                 } into g
                                 select new
                                 {
                                     Periode = g.Key.Periode,
-                                    accountID = g.Key.OAccount,
+                                    accountID = g.Key.Account,     
                                     amount = g.Sum(p => p.doc.Amount),
                                     currency = g.Key.Currency
                                 }).Single();
@@ -1135,7 +1129,9 @@ namespace IWSProject.Controllers
                                                OAccount = l.oaccount,
                                                CompanyIBAN = l.Payment.Company.IBAN ?? "NA",
                                                IBAN = l.Payment.Supplier.IBAN ??"NA",
-                                               Info = l.Payment.HeaderText
+                                               Info = l.Payment.HeaderText,
+                                               TypeJournal = l.Payment.TypeJournal,
+                                               CostCenterId=l.Payment.CostCenter
                                            }).Distinct().ToList();
 
             bool results = false;
@@ -1177,7 +1173,9 @@ namespace IWSProject.Controllers
                                 CompanyIBAN =doc.CompanyIBAN,
                                 IBAN =doc.IBAN,
                                 Currency =doc.Currency,
-                                Info =doc.Info
+                                Info =doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
                             },
                             new Journal {
                                 ItemID =doc.ItemID,
@@ -1197,7 +1195,9 @@ namespace IWSProject.Controllers
                                 CompanyIBAN =doc.CompanyIBAN,
                                 IBAN =doc.IBAN,
                                 Currency=doc.Currency,
-                                Info=doc.Info
+                                Info=doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
                             }
                         };
 
@@ -1262,7 +1262,9 @@ namespace IWSProject.Controllers
                                                OAccount = l.oaccount,
                                                CompanyIBAN = l.CustomerInvoice.Company.IBAN ?? "NA",
                                                IBAN = l.CustomerInvoice.Customer.IBAN ?? "NA",
-                                               Info = l.CustomerInvoice.HeaderText
+                                               Info = l.CustomerInvoice.HeaderText,
+                                               TypeJournal=l.CustomerInvoice.TypeJournal,
+                                               CostCenterId=l.CustomerInvoice.CostCenter
                                            }).Distinct().ToList();
             bool results = false;
 
@@ -1303,7 +1305,9 @@ namespace IWSProject.Controllers
                                 CompanyIBAN =doc.CompanyIBAN,
                                 IBAN =doc.IBAN,
                                 Currency =doc.Currency,
-                                Info =doc.Info
+                                Info =doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
                             },
                             new Journal {
                                 ItemID =doc.ItemID,
@@ -1323,7 +1327,9 @@ namespace IWSProject.Controllers
                                 CompanyIBAN =doc.CompanyIBAN,
                                 IBAN =doc.IBAN,
                                 Currency=doc.Currency,
-                                Info=doc.Info
+                                Info=doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
                             }
                         };
 
@@ -1388,7 +1394,9 @@ namespace IWSProject.Controllers
                                                OAccount = l.oaccount,
                                                CompanyIBAN = l.Settlement.Company.IBAN ?? "NA",
                                                IBAN = l.Settlement.Customer.IBAN ?? "NA",
-                                               Info = l.Settlement.HeaderText
+                                               Info = l.Settlement.HeaderText,
+                                               TypeJournal=l.Settlement.TypeJournal,
+                                               CostCenterId=l.Settlement.CostCenter
                                            }).Distinct().ToList();
             bool results = false;
 
@@ -1429,7 +1437,9 @@ namespace IWSProject.Controllers
                                 CompanyIBAN =doc.CompanyIBAN,
                                 IBAN =doc.IBAN,
                                 Currency =doc.Currency,
-                                Info =doc.Info
+                                Info =doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
                             },
                             new Journal {
                                 ItemID =doc.ItemID,
@@ -1449,7 +1459,9 @@ namespace IWSProject.Controllers
                                 CompanyIBAN =doc.CompanyIBAN,
                                 IBAN =doc.IBAN,
                                 Currency=doc.Currency,
-                                Info=doc.Info
+                                Info=doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
                             }
                         };
 
@@ -1514,7 +1526,9 @@ namespace IWSProject.Controllers
                                                OAccount = l.oaccount,
                                                CompanyIBAN = l.GeneralLedger.Company.IBAN ?? "NA",
                                                IBAN = l.GeneralLedger.Company.IBAN ?? "NA",
-                                               Info = l.GeneralLedger.HeaderText
+                                               Info = l.GeneralLedger.HeaderText,
+                                               TypeJournal=l.GeneralLedger.TypeJournal,
+                                               CostCenterId=l.GeneralLedger.CostCenter
                                            }).Distinct().ToList();
 
             bool results = false;
@@ -1556,7 +1570,9 @@ namespace IWSProject.Controllers
                                 CompanyIBAN =doc.CompanyIBAN,
                                 IBAN =doc.IBAN,
                                 Currency =doc.Currency,
-                                Info =doc.Info
+                                Info =doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
                             },
                             new Journal {
                                 ItemID =doc.ItemID,
@@ -1576,7 +1592,9 @@ namespace IWSProject.Controllers
                                 CompanyIBAN =doc.CompanyIBAN,
                                 IBAN =doc.IBAN,
                                 Currency=doc.Currency,
-                                Info=doc.Info
+                                Info=doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
                             }
                         };
 
@@ -2352,7 +2370,7 @@ namespace IWSProject.Controllers
                     {
                         db.Journals.InsertOnSubmit(item);
 
-                        UpdateMetaFiles(item);
+                        //UpdateMetaFiles(item);
 
                     }
                     results = true;
@@ -2368,46 +2386,53 @@ namespace IWSProject.Controllers
         }
         public void UpdateMetaFiles(Journal journal)
         {
-            var account = db.Accounts.Single(a => a.id == journal.Account);
+            var account = db.Accounts.SingleOrDefault(a => a.id == journal.Account && a.CompanyID == journal.CompanyID);
             if (account != null)
             {
-                account.Posted = DateTime.Today;
+                account.Posted = DateTime.Now;
             }
-            var oaccount = db.Accounts.Single(a => a.id == journal.OAccount);
+            var oaccount = db.Accounts.SingleOrDefault(a => a.id == journal.OAccount && a.CompanyID == journal.CompanyID);
             if (oaccount != null)
             {
-                oaccount.Posted = DateTime.Today;
+                oaccount.Posted = DateTime.Now;
             }
-            var customer = db.Customers.SingleOrDefault(a => a.id == journal.CustSupplierID);
+            var customer = db.Customers.SingleOrDefault(a => a.id == journal.CustSupplierID && a.CompanyID == journal.CompanyID);
             if (customer != null)
             {
-                customer.Posted = DateTime.Today;
+                customer.Posted = DateTime.Now;
             }
-            var supplier = db.Suppliers.SingleOrDefault(a => a.id == journal.CustSupplierID);
+            var supplier = db.Suppliers.SingleOrDefault(a => a.id == journal.CustSupplierID && a.CompanyID == journal.CompanyID);
             if (supplier != null)
             {
-                supplier.Posted = DateTime.Today;
+                supplier.Posted = DateTime.Now;
             }
-            var currency = db.Currencies.SingleOrDefault(a => a.Id == journal.Currency);
+            var currency = db.Currencies.SingleOrDefault(a => a.Id == journal.Currency && a.CompanyID == journal.CompanyID);
             if (currency != null)
             {
-                currency.Posted = DateTime.Today;
+                currency.Posted = DateTime.Now;
             }
-            //var costCentter = db.CostCenters.SingleOrDefault(a => a.id == journal.);
-            //if (store != null)
-            //{
-            //    store.Posted = DateTime.Today;
-            //}
+            var typeJournal = db.TypeJournals.SingleOrDefault(a => a.Id == journal.TypeJournal && a.CompanyId == journal.CompanyID);
+            if (typeJournal != null)
+            {
+                typeJournal.Posted = DateTime.Now;
+            }
+            var costCentter = db.CostCenters.SingleOrDefault(a => a.id == journal.CostCenterId && a.CompanyID == journal.CompanyID);
+            if (costCentter != null)
+            {
+                costCentter.Posted = DateTime.Now;
+            }
         }
+
         public void ProcessData(string selectedItems, string companyId, bool convertType)
         {
-            //using (TransactionScope tx = new TransactionScope(TransactionScopeOption.RequiresNew))
-            //{
+            IList<string> items = new List<string>(selectedItems.Split(new string[] { ";" }, StringSplitOptions.None));
             string msg;
-            try
+            foreach (string item in items)
             {
-                IList<string> items = new List<string>(selectedItems.Split(new string[] { ";" }, StringSplitOptions.None));
-                foreach (string item in items)
+                //using (System.Transactions.TransactionScope tx = new System.Transactions.TransactionScope(
+                //                            System.Transactions.TransactionScopeOption.RequiresNew))
+                //{
+                try
                 {
                     bool results = false;
                     int ItemID;
@@ -2424,6 +2449,7 @@ namespace IWSProject.Controllers
                         ItemType = GetItemType(ItemType);
                     }
                     docsType = GetDocType(ItemType);
+
                     results = UpdateEntryDate(ItemID, docsType, companyId);
                     if (!results)
                     {
@@ -2451,17 +2477,18 @@ namespace IWSProject.Controllers
 
                         throw new Exception(msg);
                     }
-                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                    db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
+              
+                    //tx.Complete(); 
                 }
-                //tx.Complete();
+                catch (Exception ex)
+                {
+                    //tx.Dispose();
+                    ViewData["GenericError"] = ex.Message;
+                    IWSLookUp.LogException(ex);
+                }
+                //}
             }
-            catch (Exception ex)
-            {
-                //tx.Dispose();
-                ViewData["GenericError"] = ex.Message;
-                IWSLookUp.LogException(ex);
-            }
-            //}
         }
 
         public string SetDocType(string selectedItems, string docType)

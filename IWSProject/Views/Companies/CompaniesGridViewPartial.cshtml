@@ -534,7 +534,6 @@
                         s.Width = Unit.Percentage(80);
                     });
                 });
-                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "Currency";
@@ -555,6 +554,67 @@
                         {
                             column.FieldName = "Name";
                             column.Caption = IWSLocalResource.Currency;
+                            column.Width = Unit.Percentage(85);
+                        });
+                        s.Properties.TextFormatString = "{0}-{1}";
+                        s.Properties.CallbackPageSize = 15;
+                        s.Properties.FilterMinLength = 2;
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "ClassCash";
+                    i.Caption = IWSLocalResource.ClassCash;
+                    i.NestedExtension().ComboBox(s =>
+                    {
+                        s.Properties.TextField = "name";
+                        s.Properties.ValueField = "id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "id";
+                            column.Caption = IWSLocalResource.id;
+                            column.Width = Unit.Percentage(15);
+                        });
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "name";
+                            column.Caption = IWSLocalResource.account;
+                            column.Width = Unit.Percentage(85);
+                        });
+                        s.Properties.TextFormatString = "{0}-{1}";
+                        s.Properties.CallbackPageSize = 15;
+                        s.Properties.FilterMinLength = 2;
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "ClassBank";
+                    i.Caption = IWSLocalResource.ClassBank;
+                    i.NestedExtension().ComboBox(s =>
+                    {
+                        s.Properties.TextField = "name";
+                        s.Properties.ValueField = "id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "id";
+                            column.Caption = IWSLocalResource.id;
+                            column.Width = Unit.Percentage(15);
+                        });
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "name";
+                            column.Caption = IWSLocalResource.account;
                             column.Width = Unit.Percentage(85);
                         });
                         s.Properties.TextFormatString = "{0}-{1}";

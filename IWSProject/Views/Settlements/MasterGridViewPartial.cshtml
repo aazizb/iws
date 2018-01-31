@@ -1,5 +1,4 @@
-﻿
-@using IWSProject.Content
+﻿@using IWSProject.Content
 @using IWSProject.Models
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -149,6 +148,22 @@
         });
         settings.Columns.Add(column =>
         {
+            column.FieldName = "TypeJournal";
+            column.Caption = IWSLocalResource.TypeJournal;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "Id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetTypeJournal();
+                combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(20));
+                combo.Columns.Add("Name", IWSLocalResource.TypeJournal, Unit.Percentage(80));
+                combo.TextFormatString = "{0}-{1}";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
             column.FieldName = "account";
             column.Caption = IWSLocalResource.customer;
             column.Width = Unit.Percentage(18);
@@ -271,7 +286,7 @@
                     btnSettings.Width = Unit.Pixel(80);
                     btnSettings.ClientSideEvents.Click = "function(s, e){ Settlement.UpdateEdit(); }";
                     btnSettings.ClientVisible = ViewBag.Visible;
-                    btnSettings.TabIndex = 8;
+                    btnSettings.TabIndex = 9;
                 }).Render();
                     Html.DevExpress().Button(
                 btnSettings =>
@@ -283,7 +298,7 @@
                     btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
                     btnSettings.Width = Unit.Pixel(80);
                     btnSettings.ClientSideEvents.Click = "function(s, e){ Settlement.CancelEdit(); }";
-                    btnSettings.TabIndex = 9;
+                    btnSettings.TabIndex = 10;
                 }).Render();
                 });
 
@@ -471,6 +486,37 @@
                         s.ReadOnly = true;
                     });
                 });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "TypeJournal";
+                    i.Caption = IWSLocalResource.TypeJournal;
+                    i.NestedExtension().ComboBox(s =>
+                    {
+                        s.Properties.TextField = "Name";
+                        s.Properties.ValueField = "Id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = IWSLookUp.GetTypeJournal();
+                        s.Properties.Columns.Add(a =>
+                        {
+                            a.FieldName = "Id";
+                            a.Caption = IWSLocalResource.id;
+                            a.Width = Unit.Percentage(15);
+                        });
+                        s.Properties.Columns.Add(a =>
+                        {
+                            a.FieldName = "Name";
+                            a.Caption = IWSLocalResource.name;
+                            a.Width = Unit.Percentage(85);
+                        });
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.Properties.TextFormatString = "{0}-{1}";
+                        s.ShowModelErrors = true;
+                        s.TabIndex = 8;
+                        s.Width = Unit.Percentage(98);
+                    });
+                });
+
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "HeaderText";
@@ -480,7 +526,7 @@
                     {
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
-                        s.Width = Unit.Percentage(100);
+                        s.Width = Unit.Percentage(99);
                         s.TabIndex = 4;
                     });
                 });
@@ -494,6 +540,7 @@
         settings.SetDetailRowTemplateContent(c =>
         {
             Session["transid"] = DataBinder.Eval(c.DataItem, "ID");
+            Session["customerId"] = DataBinder.Eval(c.DataItem, "account");
             Session["IsValidated"] = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
             Html.RenderAction("DetailGridViewPartial", new
             {

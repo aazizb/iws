@@ -256,7 +256,7 @@
     <value>Client</value>
   </data>
   <data name="payment" xml:space="preserve">
-    <value>Paiement</value>
+    <value>Journal Banque</value>
   </data>
   <data name="amount" xml:space="preserve">
     <value>Total</value>
@@ -271,7 +271,7 @@
     <value>Ligne Paiement</value>
   </data>
   <data name="vendorinvoice" xml:space="preserve">
-    <value>Facture Fournisseur Compta</value>
+    <value>Journal Achat</value>
   </data>
   <data name="linevendorinvoice" xml:space="preserve">
     <value>Ligne Facture Fournisseur</value>
@@ -496,7 +496,7 @@
     <value>Vente</value>
   </data>
   <data name="Settlement" xml:space="preserve">
-    <value>Encaissement</value>
+    <value>Journal Caisse</value>
   </data>
   <data name="SalesInvoice" xml:space="preserve">
     <value>Facture Client Logistic</value>
@@ -529,7 +529,7 @@
     <value>Stock Insuffisant</value>
   </data>
   <data name="CustomerInvoice" xml:space="preserve">
-    <value>Facture Client Compta</value>
+    <value>Journal Vente</value>
   </data>
   <data name="LineSalesInvoice" xml:space="preserve">
     <value>Lignes Facture Client Compts</value>
@@ -541,7 +541,7 @@
     <value>Stockable?</value>
   </data>
   <data name="GeneralLedger" xml:space="preserve">
-    <value>Comptes Généraux</value>
+    <value>Opérations Divers</value>
   </data>
   <data name="lineGeneralLedger" xml:space="preserve">
     <value>Ligne Comptes Généraux</value>
@@ -887,5 +887,29 @@
   </data>
   <data name="IWS" xml:space="preserve">
     <value>IWS</value>
+  </data>
+  <data name="DailyRoutine" xml:space="preserve">
+    <value>Autres Opérations</value>
+  </data>
+  <data name="AffectationJournal" xml:space="preserve">
+    <value>Affectation Journal</value>
+  </data>
+  <data name="PaymentBank" xml:space="preserve">
+    <value>Payment Bank fr-FR</value>
+  </data>
+  <data name="PaymentCash" xml:space="preserve">
+    <value>Payment Cash fr-FR</value>
+  </data>
+  <data name="SettlementBank" xml:space="preserve">
+    <value>Settlement Bank fr-FR</value>
+  </data>
+  <data name="SettlementCash" xml:space="preserve">
+    <value>Settlement Cash fr-FR</value>
+  </data>
+  <data name="ClassBank" xml:space="preserve">
+    <value>Class Bank fr-FR</value>
+  </data>
+  <data name="ClassCash" xml:space="preserve">
+    <value>Class Cash fr-FR</value>
   </data>
 </root>
