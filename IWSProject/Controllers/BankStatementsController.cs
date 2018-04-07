@@ -709,7 +709,14 @@
             };
             int countLineID = new AccountingController().MakeCustomerInvoiceLine(lineCustomerInvoice);
             if (countLineID != 0)
+            {
+            /*set typejournal and account*/
+            bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.CustomerInvoice.ToString(), itemID);
+                if (result)
+                    IWSLookUp.SetAccount(IWSLookUp.DocsType.CustomerInvoice.ToString(), itemID);
                 return UpdateOid(IWSLookUp.DocsType.Settlement.ToString(), settlementId, itemID);
+
+            }
             return false;
         }
 
@@ -769,7 +776,14 @@
             };
             int countLineID = new AccountingController().MakeVendorInvoiceLine(lineVendorInvoice);
             if (countLineID != 0)
+            {
+                /*set typejournal and account*/
+                bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.VendorInvoice.ToString(), itemID);
+                if (result)
+                    IWSLookUp.SetAccount(IWSLookUp.DocsType.VendorInvoice.ToString(), itemID);
                 return UpdateOid(IWSLookUp.DocsType.Payment.ToString(), paymentId, itemID);
+            }
+
             return false;
         }
 
@@ -818,6 +832,10 @@
             int countLineID = new AccountingController().MakePaymentLine(linePayment);
             if (countLineID > 0)
             {
+                /*set typejournal and account*/
+                bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Payment.ToString(), itemID);
+                if (result)
+                    IWSLookUp.SetAccount(IWSLookUp.DocsType.Payment.ToString(), itemID); 
                 return itemID;
 
             }
@@ -869,6 +887,10 @@
             int countLineID = new AccountingController().MakeSettlementLine(lineSettlement);
             if (countLineID > 0)
             {
+                /*set typejournal*/
+                bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Settlement.ToString(), itemID);
+                if (result)
+                    IWSLookUp.SetAccount(IWSLookUp.DocsType.Settlement.ToString(), itemID);
                 return itemID;
 
             }
@@ -919,6 +941,8 @@
             int countLineID = new AccountingController().MakeGeneralLedgerLine(lineGeneralLedger);
             if (countLineID > 0)
             {
+                /*set typejournal*/
+                bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.GeneralLedger.ToString(), itemID);
                 return itemID;
             }
             return countLineID;

@@ -2450,34 +2450,42 @@ namespace IWSProject.Controllers
                     }
                     docsType = GetDocType(ItemType);
 
-                    results = UpdateEntryDate(ItemID, docsType, companyId);
-                    if (!results)
+                    if (CheckTypeJournal(ItemID, ItemType, companyId))
                     {
-                        msg = IWSLocalResource.GenericError;
-                        throw new Exception(msg);
-                    }
-                    results = UpdateStock(ItemID, docsType, companyId);
-                    if (!results)
-                    {
-                        msg = (string)ViewData["GenericError"];
 
-                        throw new Exception(msg);
-                    }
-                    results = Account(ItemID, ItemType, companyId);
-                    if (!results)
-                    {
-                        msg = (string)ViewData["GenericError"];
+                        results = UpdateEntryDate(ItemID, docsType, companyId);
+                        if (!results)
+                        {
+                            msg = IWSLocalResource.GenericError;
+                            throw new Exception(msg);
+                        }
+                        results = UpdateStock(ItemID, docsType, companyId);
+                        if (!results)
+                        {
+                            msg = (string)ViewData["GenericError"];
 
-                        throw new Exception(msg);
-                    }
-                    results = Validate(ItemID, ItemType, companyId);
-                    if (!results)
-                    {
-                        msg = (string)ViewData["GenericError"];
+                            throw new Exception(msg);
+                        }
+                        results = Account(ItemID, ItemType, companyId);
+                        if (!results)
+                        {
+                            msg = (string)ViewData["GenericError"];
 
-                        throw new Exception(msg);
+                            throw new Exception(msg);
+                        }
+                        results = Validate(ItemID, ItemType, companyId);
+                        if (!results)
+                        {
+                            msg = (string)ViewData["GenericError"];
+
+                            throw new Exception(msg);
+                        }
+                        db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
                     }
-                    db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
+                    else
+                    {
+                        ViewData["GenericError"] = IWSLocalResource.GenericError;
+                    }
               
                     //tx.Complete(); 
                 }
@@ -2530,6 +2538,83 @@ namespace IWSProject.Controllers
                 ItemType.Equals(IWSLookUp.DocsType.GeneralLedger.ToString()))
                 return IWSLookUp.DocsType.GeneralLedgerOut;
             return IWSLookUp.DocsType.Default;
+        }
+        private bool CheckTypeJournal(int ItemID, string ItemType, string companyId)
+        {
+            try
+            {
+                IWSLookUp.DocsType docsType = GetDocType(ItemType);
+
+                if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
+                {
+                    var docs = db.CustomerInvoices.Single(item => item.id.Equals(ItemID) &&
+                                                            item.CompanyId.Equals(companyId)).TypeJournal;
+                    if (docs != null)
+                    {
+                        return true;
+                    }
+                }
+                if (ItemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
+                {
+                    var docs = db.VendorInvoices.Single(item => item.id.Equals(ItemID) &&
+                                                            item.CompanyId.Equals(companyId)).TypeJournal;
+                    if (docs != null)
+                    {
+                        return true;
+                    }
+                }
+                if (ItemType.Equals(IWSLookUp.DocsType.SalesInvoice.ToString()))
+                {
+                    var docs = db.SalesInvoices.Single(item => item.id == ItemID);
+                    if (docs != null)
+                    {
+                        docs.IsValidated = true;
+                        return true;
+                    }
+                }
+                if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
+                {
+                    var docs = db.Payments.Single(item => item.id == ItemID);
+                    if (docs != null)
+                    {
+                        docs.IsValidated = true;
+                        return true;
+                    }
+                }
+                if (ItemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
+                {
+                    var docs = db.Settlements.Single(item => item.id == ItemID);
+                    if (docs != null)
+                    {
+                        docs.IsValidated = true;
+                        return true;
+                    }
+                }
+                if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedger.ToString()))
+                {
+                    var docs = db.GeneralLedgers.Single(item => item.id == ItemID);
+                    if (docs != null)
+                    {
+                        docs.IsValidated = true;
+                        return true;
+                    }
+                }
+                if (ItemType.Equals(IWSLookUp.DocsType.PurchaseOrder.ToString()) ||
+                    ItemType.Equals(IWSLookUp.DocsType.SalesOrder.ToString()) ||
+                    ItemType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()) ||
+                    ItemType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()) ||
+                    ItemType.Equals(IWSLookUp.DocsType.InventoryInvoice.ToString()) )
+                {
+                    return true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ViewData["GenericError"] = ex.Message;
+                IWSLookUp.LogException(ex);
+            }
+            return false;
         }
 
         #endregion

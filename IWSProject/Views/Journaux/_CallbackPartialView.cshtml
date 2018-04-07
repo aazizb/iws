@@ -1,8 +1,8 @@
 ﻿
 @Html.DevExpress().CallbackPanel(settings =>
 {
-    settings.Name = "callbackPanelPartialView";
-    settings.CallbackRouteValues = new { Controller = "Payments", Action = "CallbackPanelPartialView" };
+    settings.Name = "callbackPartialView";
+    settings.CallbackRouteValues = new { Controller = "Journaux", Action = "CallbackPanelPartial" };
 
     settings.SetContent(() =>
     {
@@ -11,3 +11,4 @@
     });
     settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
 }).GetHtml()
+

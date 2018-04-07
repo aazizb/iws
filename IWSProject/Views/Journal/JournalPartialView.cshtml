@@ -200,14 +200,38 @@
         if (item.FieldName != "Currency")
             return;
 
-        if (e.IsGroupSummary)
+        if ((e.IsTotalSummary) || (e.IsGroupSummary))
         {
             e.TotalValue = e.GetValue("Currency");
         }
     };
+    settings.SetFooterCellTemplateContent(container =>
+    {
+        if ((container.Column as GridViewDataColumn).FieldName == "Amount")
+        {
+            Html.DevExpress().Label(settingsLabel =>
+            {
+                settingsLabel.Name = "customTotalSummary" + container.Column.Name;
+                settingsLabel.Init = (sender, e) =>
+                {
+                    var lbl = (MVCxLabel)sender;
+                    var grid = container.Grid;
+                    decimal totalPrice = 0;
+                    int startIndex = grid.PageIndex * grid.SettingsPager.PageSize;
+                    int endIndex = startIndex + grid.SettingsPager.PageSize;
+                    for (int i = startIndex; i < endIndex; i++)
+                    {
+                        decimal currentPrice = Convert.ToDecimal(grid.GetRowValues(i, "Amount"));
+                        totalPrice = totalPrice + currentPrice;
+                    }
+                    lbl.Text = string.Format(IWSLocalResource.Total + ": {0:N}", totalPrice);
+                };
+            }).Render();
+        }
+    });
     settings.SummaryDisplayText = (sender, e) =>
     {
-        if (e.IsGroupSummary && e.Item.FieldName != "Currency")
+        if ((e.IsTotalSummary || e.IsGroupSummary) && e.Item.FieldName != "Currency")
         {
             e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
         }
@@ -216,6 +240,9 @@
     settings.Settings.ShowGroupPanel = true;
     settings.SettingsBehavior.AutoExpandAllGroups = true;
     settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Amount").ShowInGroupFooterColumn = "Amount";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
+
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Amount").ShowInGroupFooterColumn = "Amount";
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
 

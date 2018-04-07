@@ -1,0 +1,4 @@
+id;name;balance;description
+x1525;Kautionen;0;ZCZCX
+x1545;USt-Forderungen ;0;ZCZCX
+x1549;Körperschaftsteuerrückforderung ;0;ZCZCX

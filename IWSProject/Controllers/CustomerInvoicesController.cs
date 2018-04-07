@@ -68,6 +68,7 @@ namespace IWSProject.Controllers
                             if (result)
                             {
                                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.CustomerInvoice.ToString(), itemID);
                             }
                         }
                     }
@@ -188,8 +189,8 @@ namespace IWSProject.Controllers
                     if (modelItem != null)
                     {
                         this.UpdateModel(modelItem);
-
                         db.SubmitChanges();
+                        bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.CustomerInvoice.ToString(), transId);
                     }
                 }
                 catch (Exception e)
@@ -240,6 +241,10 @@ namespace IWSProject.Controllers
         public ActionResult TypeJournal(int selectedItemIndex)
         {
             return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
+        }
+        public ActionResult AccountingAccount(int selectedItemIndex)
+        {
+            return Json(IWSLookUp.GetAccount(selectedItemIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
         }
         public bool InsertLines(int itemID, int OID, string ItemType)
         {

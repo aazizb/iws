@@ -46,6 +46,7 @@
             }
         });
     }
+
     function OnOIDSelectedIndexChanged(s, e) {
         $.ajax({
             url: '@Url.Action("Store", "GoodReceivings")',
@@ -81,17 +82,18 @@
             }
         });
     }
+
     var selectedIDs = null;
     var expanded = false;
     var ndxMaster = 0;
     var ndxDetail = 0;
-    var command;                            //====
-    var isDetailRowExpanded = new Array();  //====
+    var command;                            
+    var isDetailRowExpanded = new Array(); 
     function OnMRowClick(s, e) {
         expanded = true;
         ndxMaster = e.visibleIndex;
         s.StartEditRow(ndxMaster);
-        isDetailRowExpanded[ndxMaster] = true;//====
+        isDetailRowExpanded[ndxMaster] = true;
     }
     function OnDRowClick(s, e) {
         ndxDetail = e.visibleIndex
@@ -103,11 +105,11 @@
             expanded = false;
             s.ExpandDetailRow(ndxMaster);
         }
-        if (command == "HIDEDETAILROW") {   //====
+        if (command == "HIDEDETAILROW") {   
             if (s.IsEditing || s.IsNewRowEditing)
                 s.CancelEdit();
         }
-        if (command == 'CANCELEDIT') {      //====
+        if (command == 'CANCELEDIT') {      
             if (isDetailRowExpanded[ndxMaster] == true) {
                 s.CollapseDetailRow(ndxMaster);
             }

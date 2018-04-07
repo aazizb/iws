@@ -4,7 +4,7 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "AccountsGridView";
-        
+
 
         settings.CallbackRouteValues = new { Controller = "Accounts", Action = "AccountsGridViewPartial" };
 
@@ -49,6 +49,7 @@
             e.NewValues["balance"] = 0;
             e.NewValues["IsUsed"] = true;
             e.NewValues["IsBalanceSheetAccount"] = false;
+            e.NewValues["IsResultAccount"] = false;
         };
         settings.CellEditorInitialize = (s, e) =>
         {
@@ -167,7 +168,15 @@
             {
             });
         });
-
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "IsResultAccount";
+            column.Caption = IWSLocalResource.IsResultSheetAccount;
+            column.Width = Unit.Percentage(5);
+            column.EditorProperties().CheckBox(checkBox =>
+            {
+            });
+        });
         settings.Columns.Add(column =>
         {
             column.FieldName = "dateofopen";
@@ -267,9 +276,7 @@
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
                         s.Properties.DataSource = IWSLookUp.GetAccounts();
-                        //s.Properties.Columns.Add("id").Caption = IWSLocalResource.id;
                         s.Properties.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
-                        //s.Properties.Columns.Add("name").Caption = IWSLocalResource.SubAccountOf;
                         s.Properties.Columns.Add("name", IWSLocalResource.SubAccountOf, Unit.Percentage(75));
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
@@ -289,9 +296,7 @@
                         s.Properties.ValueField = "Id";
                         s.Properties.ValueType = typeof(string);
                         s.Properties.DataSource = IWSLookUp.GetTypeJournal();
-                        //s.Properties.Columns.Add("Id").Caption = IWSLocalResource.id;
                         s.Properties.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
-                        //s.Properties.Columns.Add("Name").Caption = IWSLocalResource.TypeJournal;
                         s.Properties.Columns.Add("Name", IWSLocalResource.TypeJournal, Unit.Percentage(75));
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
@@ -349,8 +354,6 @@
                         d.Properties.AllowMouseWheel = true;
                     });
                 });
-                //formLayoutSettings.Items.AddEmptyItem();
-                //formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "IsUsed";
@@ -367,6 +370,17 @@
                 {
                     i.FieldName = "IsBalanceSheetAccount";
                     i.Caption = IWSLocalResource.IsBalanceSheetAccount;
+                    i.NestedExtension().CheckBox(e =>
+                    {
+
+                    });
+                });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "IsResultAccount";
+                    i.Caption = IWSLocalResource.IsResultSheetAccount;
                     i.NestedExtension().CheckBox(e =>
                     {
 

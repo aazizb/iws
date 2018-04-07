@@ -255,8 +255,8 @@
   <data name="customer" xml:space="preserve">
     <value>Client</value>
   </data>
-  <data name="payment" xml:space="preserve">
-    <value>Journal Banque</value>
+  <data name="Payment" xml:space="preserve">
+    <value>Paiement</value>
   </data>
   <data name="amount" xml:space="preserve">
     <value>Total</value>
@@ -265,7 +265,7 @@
     <value>Compte Opposé</value>
   </data>
   <data name="side" xml:space="preserve">
-    <value>Côté</value>
+    <value>D/C</value>
   </data>
   <data name="linepayment" xml:space="preserve">
     <value>Ligne Paiement</value>
@@ -493,10 +493,10 @@
     <value>Client/Fournisseur</value>
   </data>
   <data name="sales" xml:space="preserve">
-    <value>Vente</value>
+    <value>Validation</value>
   </data>
   <data name="Settlement" xml:space="preserve">
-    <value>Journal Caisse</value>
+    <value>Encaissement</value>
   </data>
   <data name="SalesInvoice" xml:space="preserve">
     <value>Facture Client Logistic</value>
@@ -911,5 +911,14 @@
   </data>
   <data name="ClassCash" xml:space="preserve">
     <value>Class Cash fr-FR</value>
+  </data>
+  <data name="IsResultSheetAccount" xml:space="preserve">
+    <value>Vue au Resultat</value>
+  </data>
+  <data name="ViewAccountingBooks" xml:space="preserve">
+    <value>Consultation Journaux</value>
+  </data>
+  <data name="Vending" xml:space="preserve">
+    <value>Vente</value>
   </data>
 </root>

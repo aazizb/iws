@@ -63,12 +63,13 @@ namespace IWSProject.Controllers
                         db.SubmitChanges();
                         if (itemOID != 0)
                         {
-                            int itemID = db.GoodReceivings.Max(i => i.id);
+                            int itemID = db.GeneralLedgers.Max(i => i.id);
 
-                            result = InsertLines(itemID, itemOID, IWSLookUp.DocsType.GoodReceiving.ToString());
+                            result = InsertLines(itemID, itemOID, IWSLookUp.DocsType.GeneralLedger.ToString());
                             if (result)
                             {
                                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.GeneralLedger.ToString(), itemID);
                             }
                         }
                     }
@@ -162,6 +163,7 @@ namespace IWSProject.Controllers
                 {
                     model.InsertOnSubmit(line);
                     db.SubmitChanges();
+                    bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.GeneralLedger.ToString(), transId);
                 }
                 catch (Exception e)
                 {
@@ -189,8 +191,8 @@ namespace IWSProject.Controllers
                     if (modelItem != null)
                     {
                         this.UpdateModel(modelItem);
-
                         db.SubmitChanges();
+                        bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.GeneralLedger.ToString(), transId);
                     }
                 }
                 catch (Exception e)

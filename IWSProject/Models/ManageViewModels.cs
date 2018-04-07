@@ -89,6 +89,42 @@ namespace IWSProject.Models
         public string TypeJournal { get; set; }
         public string CostCenterId { get; set; }
     }
+    public class JournauxViewModel
+    {
+        public int Id { get; set; }
+        public int OId { get; set; }
+        public string CostCenter { get; set; }
+        public string Account { get; set; }
+        public string HeaderText { get; set; }
+        public DateTime TransDate { get; set; }
+        public DateTime ItemDate { get; set; }
+        public DateTime EntryDate { get; set; }
+        public string CompanyId { get; set; }
+        public bool IsValidated { get; set; }
+        public decimal OTotal { get; set; }
+        public string OCurrency { get; set; }
+        public string OPeriode { get; set; }
+        public string OYear { get; set; }
+        public string OMonth { get; set; }
+        public string TypeJournal { get; set; }
+        public int ModelId { get; set; }
+        public string AccountingAccount { get; set; }
+        //public virtual ICollection<LineJournauxViewModel> LineJournauxViewModels { get; set; }
+    }
+    public class LineJournauxViewModel
+    {
+        public int Id { get; set; }
+        public int TransId { get; set; }
+        public string Account { get; set; }
+        public bool Side { get; set; }
+        public string OAccount { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime DueDate { get; set; }
+        public string Text { get; set; }
+        public string Currency { get; set; }
+        public int? ModelId { get; set; }
+        //public virtual JournauxViewModel JournauxViewModel { get; set; }
+    }
     public class ConfigureTwoFactorViewModel
     {
         public string SelectedProvider { get; set; }

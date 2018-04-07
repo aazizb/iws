@@ -255,7 +255,7 @@
   <data name="customer" xml:space="preserve">
     <value>Cliente</value>
   </data>
-  <data name="payment" xml:space="preserve">
+  <data name="Payment" xml:space="preserve">
     <value>Pago</value>
   </data>
   <data name="amount" xml:space="preserve">
@@ -493,7 +493,7 @@
     <value>Cliente/Provedor</value>
   </data>
   <data name="sales" xml:space="preserve">
-    <value>Venta</value>
+    <value>Validacion</value>
   </data>
   <data name="Settlement" xml:space="preserve">
     <value>Settlement es-ES</value>
@@ -911,5 +911,14 @@
   </data>
   <data name="ClassCash" xml:space="preserve">
     <value>Class Cash es-ES</value>
+  </data>
+  <data name="IsResultSheetAccount" xml:space="preserve">
+    <value>Result es-ES</value>
+  </data>
+  <data name="ViewAccountingBooks" xml:space="preserve">
+    <value>View accounting Books</value>
+  </data>
+  <data name="Vending" xml:space="preserve">
+    <value>Vending es-ES</value>
   </data>
 </root>

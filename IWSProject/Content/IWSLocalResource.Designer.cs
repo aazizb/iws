@@ -1186,6 +1186,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Result.
+        /// </summary>
+        public static string IsResultSheetAccount {
+            get {
+                return ResourceManager.GetString("IsResultSheetAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Is Service?.
         /// </summary>
         public static string IsService {
@@ -1267,7 +1276,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Journal.
+        ///   Looks up a localized string similar to Daily Book.
         /// </summary>
         public static string journal {
             get {
@@ -1638,9 +1647,9 @@ namespace IWSProject.Content {
         /// <summary>
         ///   Looks up a localized string similar to Payment.
         /// </summary>
-        public static string payment {
+        public static string Payment {
             get {
-                return ResourceManager.GetString("payment", resourceCulture);
+                return ResourceManager.GetString("Payment", resourceCulture);
             }
         }
         
@@ -1897,7 +1906,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sales.
+        ///   Looks up a localized string similar to Validation.
         /// </summary>
         public static string sales {
             get {
@@ -2392,11 +2401,29 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vending.
+        /// </summary>
+        public static string Vending {
+            get {
+                return ResourceManager.GetString("Vending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Vendor Invoice.
         /// </summary>
         public static string vendorinvoice {
             get {
                 return ResourceManager.GetString("vendorinvoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View Accounting Books.
+        /// </summary>
+        public static string ViewAccountingBooks {
+            get {
+                return ResourceManager.GetString("ViewAccountingBooks", resourceCulture);
             }
         }
         

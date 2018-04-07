@@ -23,12 +23,12 @@
                 alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
             }
         });
-        $.ajax({
-            url: '@Url.Action("TypeJournal", "CustomerInvoices")',
+                $.ajax({
+            url: '@Url.Action("AccountingAccount", "CustomerInvoices")',
             type: "POST",
             data: { selectedItemIndex: s.GetValue() },
             success: function (data) {
-                TypeJournal.SetText(data);
+                AccountingAccount.SetText(data);
             },
             error: function (xhr, textStatus, errorThrown) {
                 alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);

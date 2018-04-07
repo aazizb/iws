@@ -4,7 +4,7 @@
         $.ajax({
             url: '@Url.Action("Supplier", "Payments")',
             type: "POST",
-            data: { selectedOIDIndex: s.GetValue() },
+            data: { selectedItemIndex: s.GetValue() },
             success: function (data) {
                 account.SetText(data);
             },
@@ -15,7 +15,7 @@
         $.ajax({
             url: '@Url.Action("CostCenter", "Payments")',
             type: "POST",
-            data: { selectedOIDIndex: s.GetValue() },
+            data: { selectedItemIndex: s.GetValue() },
             success: function (data) {
                 CostCenter.SetText(data);
             },
@@ -45,7 +45,31 @@
                 alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
             }
         });
-     }
+        $.ajax({
+            url: '@Url.Action("AccountingAccount", "Payments")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                AccountingAccount.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+    }
+    function OnAccountSelectedIndexChanged(s, e) {
+        $.ajax({
+            url: '@Url.Action("AccountingAccount", "Payments")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                AccountingAccount.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+    }
     var selectedIDs = null;
     var expanded = false;
     var ndxMaster = 0;
@@ -154,7 +178,7 @@
 </script>
 @using IWSProject.Content
 @{
-    ViewBag.Title = IWSLocalResource.payment;
+    ViewBag.Title = IWSLocalResource.Payment;
 }
 @using (Html.BeginForm("Index", "Payments"))
 {
