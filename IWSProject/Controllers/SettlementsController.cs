@@ -245,10 +245,13 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.Settlement.ToString()));
         }
+<<<<<<< HEAD
         public ActionResult AccountingAccount(int selectedItemIndex)
         {
             return Json(IWSLookUp.GetAccount(selectedItemIndex, IWSLookUp.DocsType.Settlement.ToString()));
         }
+=======
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
         public bool InsertLines(int itemID, int OID, string ItemType)
         {
             bool results = false;

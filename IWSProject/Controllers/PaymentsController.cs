@@ -187,6 +187,7 @@ namespace IWSProject.Controllers
             ViewData["line"] = line;
             if (ModelState.IsValid)
             {
+                bool result = false;
                 try
                 {
                     var modelItem = model.FirstOrDefault(p => p.id == line.id);
@@ -194,6 +195,10 @@ namespace IWSProject.Controllers
                     if (modelItem != null)
                     {
                         this.UpdateModel(modelItem);
+<<<<<<< HEAD
+=======
+                        result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Payment.ToString(), transId);
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                         db.SubmitChanges();
                         bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Payment.ToString(), transId);
                     }
@@ -255,6 +260,13 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetAccount(selectedItemIndex, IWSLookUp.DocsType.Payment.ToString()));
         }
+<<<<<<< HEAD
+=======
+        public ActionResult TypeJournal(int selectedItemIndex)
+        {
+            return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.Payment.ToString()));
+        }
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
         public bool InsertLines(int itemID, int OID)
         {
             bool results = false;

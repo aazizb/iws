@@ -255,8 +255,13 @@
   <data name="customer" xml:space="preserve">
     <value>Client</value>
   </data>
+<<<<<<< HEAD
   <data name="Payment" xml:space="preserve">
     <value>Paiement</value>
+=======
+  <data name="payment" xml:space="preserve">
+    <value>Journal Banque</value>
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
   </data>
   <data name="amount" xml:space="preserve">
     <value>Total</value>
@@ -496,7 +501,7 @@
     <value>Validation</value>
   </data>
   <data name="Settlement" xml:space="preserve">
-    <value>Encaissement</value>
+    <value>Journal Caisse</value>
   </data>
   <data name="SalesInvoice" xml:space="preserve">
     <value>Facture Client Logistic</value>
@@ -895,6 +900,7 @@
     <value>Affectation Journal</value>
   </data>
   <data name="PaymentBank" xml:space="preserve">
+<<<<<<< HEAD
     <value>Paiement/Banque</value>
   </data>
   <data name="PaymentCash" xml:space="preserve">
@@ -905,6 +911,18 @@
   </data>
   <data name="SettlementCash" xml:space="preserve">
     <value>Encaissement/Caisse</value>
+=======
+    <value>Payment Bank fr-FR</value>
+  </data>
+  <data name="PaymentCash" xml:space="preserve">
+    <value>Payment Cash fr-FR</value>
+  </data>
+  <data name="SettlementBank" xml:space="preserve">
+    <value>Settlement Bank fr-FR</value>
+  </data>
+  <data name="SettlementCash" xml:space="preserve">
+    <value>Settlement Cash fr-FR</value>
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
   </data>
   <data name="ClassBank" xml:space="preserve">
     <value>Class Bank fr-FR</value>
@@ -912,6 +930,7 @@
   <data name="ClassCash" xml:space="preserve">
     <value>Class Cash fr-FR</value>
   </data>
+<<<<<<< HEAD
   <data name="IsResultSheetAccount" xml:space="preserve">
     <value>Vue au Resultat</value>
   </data>
@@ -921,4 +940,6 @@
   <data name="Vending" xml:space="preserve">
     <value>Vente</value>
   </data>
+=======
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
 </root>

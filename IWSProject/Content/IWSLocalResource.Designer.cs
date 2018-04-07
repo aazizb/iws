@@ -1672,6 +1672,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Payment Bank.
+        /// </summary>
+        public static string PaymentBank {
+            get {
+                return ResourceManager.GetString("PaymentBank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Payment Cash.
+        /// </summary>
+        public static string PaymentCash {
+            get {
+                return ResourceManager.GetString("PaymentCash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Payment Clearing Account.
         /// </summary>
         public static string paymentclearingaccountid {

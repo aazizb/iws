@@ -57,7 +57,11 @@
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Companies.Any(c =>
+<<<<<<< HEAD
                                     c.BalanceSheet == accountId && c.id == companyID);
+=======
+            c.BalanceSheet == accountId && c.id == companyID);
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
         }
         public static bool CheckPeriod(int DocumentID, DocsType DocumentType, string CompanyId, bool Current, bool Open)
         {
@@ -118,6 +122,7 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Accounts.Where(c => c.CompanyID == companyID);
         }
+<<<<<<< HEAD
         public static IEnumerable GetAccount(string transType)
         {
 
@@ -163,6 +168,22 @@
                 return accountid = IWSEntities.Customers.SingleOrDefault(i => i.id == account).accountid;
             }
             return null;
+=======
+        public static IEnumerable GetAccount(string TransType)
+        {
+            string accountid = String.Empty;
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            if (TransType.Equals("SettlementBank") || TransType.Equals("PaymentBank"))
+            {
+                accountid = IWSEntities.Companies.SingleOrDefault(i => i.id == companyID).ClassBank;
+            }
+            if (TransType.Equals("SettlementCash") || TransType.Equals("PaymentCash"))
+            {
+                accountid = IWSEntities.Companies.SingleOrDefault(i => i.id == companyID).ClassCash;
+            }
+            return IWSEntities.ClassChild(accountid, companyID).Select(i => 
+                                                new { id = i.ChildId, name = i.ChildName });
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
         }
         public static IEnumerable GetAccounts()
         {
@@ -179,11 +200,27 @@
             .OrderBy(o => o.Name);
             return account;
         }
+        public static IEnumerable GetAccount(string account, string transType)
+        {
+            string accountid = String.Empty;
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            transType = transType.ToLower();
+            if (transType.Equals("paymentcash") || transType.Equals("paymentbank") || transType.Equals("vendorinvoice"))
+            {
+                accountid = IWSEntities.Suppliers.SingleOrDefault(i => i.id == account).accountid;
+            }
+            if (transType.Equals("settlementcash") || transType.Equals("settlementbank") || transType.Equals("customerinvoice"))
+            {
+                accountid = IWSEntities.Customers.SingleOrDefault(i => i.id == account).accountid;
+            }
+            return IWSEntities.ClassChildren(accountid, companyID).Select(i => new { Id = i.id, Name = i.name });
+        }
         public static IEnumerable GetTypeJournal() => IWSEntities.TypeJournals.Where(c =>
                 c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
                 Select(s => new {  s.Id, s.Name }).
                 OrderBy(o => o.Id).AsEnumerable();
 
+<<<<<<< HEAD
         public static IEnumerable GetCustomersAccount()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -210,6 +247,8 @@
                                                            CompanyId = a.CompanyID
                                                        }).Where(x => x.CompanyId.Equals(companyID));
         }
+=======
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
         public static bool SetTypeJournal(string Itemtype, int TransId)
         {
             int result = -1;
@@ -219,6 +258,7 @@
                 return true;
             return false;
         }
+<<<<<<< HEAD
         public static bool SetAccount(string Itemtype, int TransId)
         {
             int result = -1;
@@ -228,6 +268,8 @@
                 return true;
             return false;
         }
+=======
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
         public static IEnumerable GetTypeJournals() => IWSEntities.TypeJournals.Where(c =>
                 c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
                AsEnumerable();
@@ -318,6 +360,58 @@
             return null;
         }
         public static string GetTypeJournal(string ItemType , int TransId) //does nothing yet
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+
+            return null;
+
+        }
+
+        public static string GetTypeJournal(int id, string ItemType)
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            if (ItemType.Equals(DocsType.VendorInvoice.ToString()))
+            {
+                return IWSEntities.GoodReceivings.Join(IWSEntities.Suppliers, v => v.account, s => s.id,
+                                        (v, s) => new
+                                        {
+                                            v,
+                                            s
+                                        }).Join(IWSEntities.Accounts, vs => vs.s.accountid, a => a.id,
+                                        (vs, a) => new
+                                        {
+                                            Id = vs.v.id,
+                                            CompanyID = vs.s.CompanyID,
+                                            TypeJournal = a.TypeJournal
+                                        }).Where(x => x.CompanyID.Equals(companyID) && x.Id.Equals(id)).SingleOrDefault().TypeJournal;
+            }
+            if (ItemType.Equals(DocsType.CustomerInvoice.ToString()))
+            {
+                return IWSEntities.SalesInvoices.Join(IWSEntities.Customers, s => s.account, c => c.id,
+                                        (s, c) => new
+                                        {
+                                            s,
+                                            c
+                                        }).Join(IWSEntities.Accounts, sc => sc.c.accountid, a => a.id,
+                                        (sc, a) => new
+                                        {
+                                            Id = sc.s.id,
+                                            CompanyID = sc.c.CompanyID,
+                                            TypeJournal = a.TypeJournal
+                                        }).Where(x => x.CompanyID.Equals(companyID) && x.Id.Equals(id)).SingleOrDefault().TypeJournal;
+            }
+            if (ItemType.Equals(DocsType.Payment.ToString()) || ItemType.Equals(DocsType.Settlement.ToString()))
+            {
+                return IWSEntities.Companies.Join(IWSEntities.Accounts, c => c.bankaccountid, a => a.id,
+                                        (c, a) => new
+                                        {
+                                            CompanyID = c.id,
+                                            TypeJournal = a.TypeJournal
+                                        }).Where(x => x.CompanyID.Equals(companyID)).SingleOrDefault().TypeJournal;
+            }
+            return null;
+        }
+        public static string GetTypeJournal(string ItemType , int TransId)
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
 
@@ -1732,8 +1826,8 @@
 
         public static IEnumerable GetNewLineGoodReceiving(int  itemID, int oid)
         {
-            List<LinePurchaseOrder> items = new List<LinePurchaseOrder>();
-            items = IWSEntities.LinePurchaseOrders
+            List<LineInventoryInvoice> items = new List<LineInventoryInvoice>();
+            items = IWSEntities.LineInventoryInvoices
                     .Where(c => c.transid == oid)
                     .ToList();
             List<LineGoodReceiving> docs = 
@@ -1939,8 +2033,8 @@
         }
         public static IEnumerable GetNewLineInventoryInvoice(int itemID, int oid)
         {
-            List<LineGoodReceiving> items = new List<LineGoodReceiving>();
-            items = IWSEntities.LineGoodReceivings
+            List<LinePurchaseOrder> items = new List<LinePurchaseOrder>();
+            items = IWSEntities.LinePurchaseOrders
                     .Where(c => c.transid == oid)
                     .ToList();
             List<LineInventoryInvoice> docs =
@@ -1958,7 +2052,11 @@
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             List<CreditViewModel> c = new List<CreditViewModel>
+<<<<<<< HEAD
             ((from l in IWSEntities.LineInventoryInvoices
+=======
+            ((from l in IWSEntities.LineGoodReceivings
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
               where
                           l.transid == oid &&
                           l.Article.CompanyID == companyID &&
@@ -1971,7 +2069,11 @@
 
 
             List<DebitViewModel> d = new List<DebitViewModel>
+<<<<<<< HEAD
                 (from l in IWSEntities.InventoryInvoices
+=======
+                (from l in IWSEntities.GoodReceivings
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                  where
                    l.CompanyId == companyID &&
                    l.id == oid
@@ -2442,17 +2544,30 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             if (ItemType.Equals(DocsType.GoodReceiving.ToString()))
             {
+<<<<<<< HEAD
                 return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
+=======
+                return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
+            }
+            if (ItemType.Equals(DocsType.BillOfDelivery.ToString()))
+            {
+                return IWSEntities.SalesOrders.FirstOrDefault(c =>
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                 c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.InventoryInvoice.ToString()))
             {
+<<<<<<< HEAD
                 return IWSEntities.GoodReceivings.FirstOrDefault(c =>
                 c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.BillOfDelivery.ToString()))
             {
                 return IWSEntities.SalesOrders.FirstOrDefault(c =>
+=======
+                return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                 c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.SalesInvoice.ToString()))
@@ -2462,7 +2577,11 @@
             }
             if (ItemType.Equals(DocsType.VendorInvoice.ToString()))
             {
+<<<<<<< HEAD
                 return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
+=======
+                return IWSEntities.GoodReceivings.FirstOrDefault(c =>
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                 c.id == id && c.CompanyId == companyID).HeaderText ?? "N/A";
             }
             if (ItemType.Equals(DocsType.CustomerInvoice.ToString()))
@@ -2498,17 +2617,30 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             if (ItemType.Equals(DocsType.GoodReceiving.ToString()))
             {
+<<<<<<< HEAD
                 return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
+=======
+                return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).store;
+            }
+            if (ItemType.Equals(DocsType.BillOfDelivery.ToString()))
+            {
+                return IWSEntities.SalesOrders.FirstOrDefault(c =>
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                 c.id == id && c.CompanyId == companyID).store;
             }
             if (ItemType.Equals(DocsType.InventoryInvoice.ToString()))
             {
+<<<<<<< HEAD
                 return IWSEntities.GoodReceivings.FirstOrDefault(c =>
                 c.id == id && c.CompanyId == companyID).store;
             }
             if (ItemType.Equals(DocsType.BillOfDelivery.ToString()))
             {
                 return IWSEntities.SalesOrders.FirstOrDefault(c =>
+=======
+                return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                 c.id == id && c.CompanyId == companyID).store;
             }
             if (ItemType.Equals(DocsType.SalesInvoice.ToString()))
@@ -2524,17 +2656,30 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             if (ItemType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()))
             {
+<<<<<<< HEAD
                 return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
+=======
+                return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
+                c.id == id && c.CompanyId == companyID).account;
+            }
+            if (ItemType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()))
+            {
+                return IWSEntities.SalesOrders.FirstOrDefault(c =>
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                 c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.InventoryInvoice.ToString()))
             {
+<<<<<<< HEAD
                 return IWSEntities.GoodReceivings.FirstOrDefault(c =>
                 c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()))
             {
                 return IWSEntities.SalesOrders.FirstOrDefault(c =>
+=======
+                return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                 c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.SalesInvoice.ToString()))
@@ -2544,7 +2689,11 @@
             }
             if (ItemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
             {
+<<<<<<< HEAD
                 return IWSEntities.InventoryInvoices.FirstOrDefault(c =>
+=======
+                return IWSEntities.GoodReceivings.FirstOrDefault(c =>
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                 c.id == id && c.CompanyId == companyID).account;
             }
             if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
@@ -2605,8 +2754,13 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.Stores
+<<<<<<< HEAD
             join p in IWSEntities.PurchaseOrders on new {  s.id } equals new { id = p.store }
             join r in IWSEntities.Suppliers on new {  p.account } equals new { account = r.id }
+=======
+            join p in IWSEntities.InventoryInvoices on new { id = s.id } equals new { id = p.store }
+            join r in IWSEntities.Suppliers on new { account = p.account } equals new { account = r.id }
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
             where
               p.CompanyId == companyID
             orderby
@@ -2625,8 +2779,13 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.Stores
+<<<<<<< HEAD
             join g in IWSEntities.GoodReceivings on new {  s.id } equals new { id = g.store }
             join r in IWSEntities.Suppliers on new {  g.account } equals new { account = r.id }
+=======
+            join g in IWSEntities.PurchaseOrders on new { id = s.id } equals new { id = g.store }
+            join r in IWSEntities.Suppliers on new { account = g.account } equals new { account = r.id }
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
             where
               g.CompanyId == companyID
             orderby
@@ -2645,8 +2804,13 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             var query =
             from s in IWSEntities.Stores
+<<<<<<< HEAD
             join p in IWSEntities.InventoryInvoices on new {  s.id } equals new { id = p.store }
             join r in IWSEntities.Suppliers on new {  p.account } equals new { account = r.id }
+=======
+            join p in IWSEntities.GoodReceivings on new { id = s.id } equals new { id = p.store }
+            join r in IWSEntities.Suppliers on new { account = p.account } equals new { account = r.id }
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
             where
               p.CompanyId == companyID
             orderby

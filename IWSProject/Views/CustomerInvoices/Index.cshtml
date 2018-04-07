@@ -23,12 +23,21 @@
                 alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
             }
         });
+<<<<<<< HEAD
                 $.ajax({
             url: '@Url.Action("AccountingAccount", "CustomerInvoices")',
             type: "POST",
             data: { selectedItemIndex: s.GetValue() },
             success: function (data) {
                 AccountingAccount.SetText(data);
+=======
+        $.ajax({
+            url: '@Url.Action("TypeJournal", "CustomerInvoices")',
+            type: "POST",
+            data: { selectedItemIndex: s.GetValue() },
+            success: function (data) {
+                TypeJournal.SetText(data);
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
             },
             error: function (xhr, textStatus, errorThrown) {
                 alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);

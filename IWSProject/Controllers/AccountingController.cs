@@ -2449,6 +2449,20 @@ namespace IWSProject.Controllers
                         ItemType = GetItemType(ItemType);
                     }
                     docsType = GetDocType(ItemType);
+<<<<<<< HEAD
+=======
+
+                    results = UpdateEntryDate(ItemID, docsType, companyId);
+                    if (!results)
+                    {
+                        msg = IWSLocalResource.GenericError;
+                        throw new Exception(msg);
+                    }
+                    results = UpdateStock(ItemID, docsType, companyId);
+                    if (!results)
+                    {
+                        msg = (string)ViewData["GenericError"];
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
 
                     if (CheckTypeJournal(ItemID, ItemType, companyId))
                     {
@@ -2486,6 +2500,10 @@ namespace IWSProject.Controllers
                     {
                         ViewData["GenericError"] = IWSLocalResource.GenericError;
                     }
+<<<<<<< HEAD
+=======
+                    db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
               
                     //tx.Complete(); 
                 }

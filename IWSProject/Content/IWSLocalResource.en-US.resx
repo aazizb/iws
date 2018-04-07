@@ -903,6 +903,7 @@
   <data name="ClassCash" xml:space="preserve">
     <value>Class Cash</value>
   </data>
+<<<<<<< HEAD
   <data name="IsResultSheetAccount" xml:space="preserve">
     <value>Result</value>
   </data>
@@ -912,4 +913,6 @@
   <data name="Vending" xml:space="preserve">
     <value>Vending</value>
   </data>
+=======
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
 </root>

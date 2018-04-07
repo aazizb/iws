@@ -149,6 +149,7 @@
         });
         settings.Columns.Add(column =>
         {
+<<<<<<< HEAD
             column.FieldName = "AccountingAccount";
             column.Caption = IWSLocalResource.account;
             column.Width = Unit.Percentage(10);
@@ -165,6 +166,8 @@
         });
         settings.Columns.Add(column =>
         {
+=======
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
             column.FieldName = "TypeJournal";
             column.Caption = IWSLocalResource.TypeJournal;
             column.Width = Unit.Percentage(10);
@@ -502,6 +505,36 @@
                         s.ReadOnly = true;
                     });
                 });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "TypeJournal";
+                    i.Caption = IWSLocalResource.TypeJournal;
+                    i.NestedExtension().ComboBox(s =>
+                    {
+                        s.Properties.TextField = "Name";
+                        s.Properties.ValueField = "Id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = IWSLookUp.GetTypeJournal();
+                        s.Properties.Columns.Add(a =>
+                        {
+                            a.FieldName = "Id";
+                            a.Caption = IWSLocalResource.id;
+                            a.Width = Unit.Percentage(15);
+                        });
+                        s.Properties.Columns.Add(a =>
+                        {
+                            a.FieldName = "Name";
+                            a.Caption = IWSLocalResource.name;
+                            a.Width = Unit.Percentage(85);
+                        });
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.Properties.TextFormatString = "{0}-{1}";
+                        s.ShowModelErrors = true;
+                        s.TabIndex = 8;
+                        s.Width = Unit.Percentage(98);
+                    });
+                });
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "AccountingAccount";
@@ -572,7 +605,11 @@
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(99);
+<<<<<<< HEAD
                         s.TabIndex = 5;
+=======
+                        s.TabIndex = 4;
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
                     });
                 });
             })

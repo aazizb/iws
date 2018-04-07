@@ -121,8 +121,6 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
@@ -197,6 +195,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\iwslite.mdf" />
+    <Content Include="App_Data\iwslite_log.ldf">
+      <DependentUpon>iwslite.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\Images\AquaHeader.jpg" />
     <Content Include="Content\Images\BlackGlassHeader.jpg" />
     <Content Include="Content\Images\Collapse.gif" />
@@ -244,6 +246,7 @@
     </None>
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\iwsproject.pubxml" />
+    <None Include="Properties\PublishProfiles\localIWS.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Views\Shared\DisplayTemplates\Boolean.cshtml" />
@@ -428,11 +431,6 @@
     <Content Include="Views\TypeJournal\TypeJournalsGridViewPartial.cshtml" />
     <Content Include="Views\AffectationJournal\Index.cshtml" />
     <Content Include="Views\AffectationJournal\AffectationJournalGridViewPartial.cshtml" />
-    <Content Include="Views\Journaux\Index.cshtml" />
-    <Content Include="Views\Journaux\GridLookupPartial.cshtml" />
-    <Content Include="Views\Journaux\_CallbackPartialView.cshtml" />
-    <Content Include="Views\Journaux\MasterGridViewPartial.cshtml" />
-    <Content Include="Views\Journaux\DetailGridViewPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -478,7 +476,6 @@
     <Compile Include="Controllers\ExceptionLogController.cs" />
     <Compile Include="Controllers\FiscalYearController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\JournauxController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\AccountingController.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
@@ -557,7 +554,6 @@
     <Compile Include="Views\Manage\VerifyPhoneNumber.generated.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Content\Uploads\" />
   </ItemGroup>
   <ItemGroup>

@@ -88,6 +88,7 @@ namespace IWSProject.Models
         public string Info { get; set; }
         public string TypeJournal { get; set; }
         public string CostCenterId { get; set; }
+<<<<<<< HEAD
     }
     public class JournauxViewModel
     {
@@ -124,6 +125,8 @@ namespace IWSProject.Models
         public string Currency { get; set; }
         public int? ModelId { get; set; }
         //public virtual JournauxViewModel JournauxViewModel { get; set; }
+=======
+>>>>>>> 5c9ec3ef6e8afacb6ab2979acdf6ff9b1eabbe3e
     }
     public class ConfigureTwoFactorViewModel
     {
