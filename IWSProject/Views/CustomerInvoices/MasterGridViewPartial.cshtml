@@ -86,7 +86,7 @@
         {
             if (e.VisibleIndex == -1) return;
             MVCxGridView g = (MVCxGridView)s;
-            bool isValidated = Convert.ToBoolean(g.GetRowValues(e.VisibleIndex, "IsValidated"));
+            bool isValidated = Convert.ToBoolean(g.GetRowValues(e.VisibleIndex, "IsValidated"));    ////
             if (e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.Delete)
             {
                 e.Visible = false.Equals(isValidated);
@@ -145,6 +145,22 @@
                 combo.Width = Unit.Percentage(100);
                 combo.TextFormatString = "{0}-{1}";
 
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "AccountingAccount";
+            column.Caption = IWSLocalResource.account;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "Id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetCustomersAccount();
+                combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(20));
+                combo.Columns.Add("Name", IWSLocalResource.TypeJournal, Unit.Percentage(80));
+                combo.TextFormatString = "{0}-{1}";
             });
         });
         settings.Columns.Add(column =>
@@ -486,7 +502,36 @@
                         s.ReadOnly = true;
                     });
                 });
-                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "AccountingAccount";
+                    i.Caption = IWSLocalResource.account;
+                    i.NestedExtension().ComboBox(s =>
+                    {
+                        s.Properties.TextField = "Name";
+                        s.Properties.ValueField = "Id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = IWSLookUp.GetCustomersAccount();
+                        s.Properties.Columns.Add(a =>
+                        {
+                            a.FieldName = "Id";
+                            a.Caption = IWSLocalResource.id;
+                            a.Width = Unit.Percentage(15);
+                        });
+                        s.Properties.Columns.Add(a =>
+                        {
+                            a.FieldName = "Name";
+                            a.Caption = IWSLocalResource.name;
+                            a.Width = Unit.Percentage(85);
+                        });
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.Properties.TextFormatString = "{0}-{1}";
+                        s.ShowModelErrors = true;
+                        s.TabIndex = 4;
+                        s.Width = Unit.Percentage(100);
+                        s.ReadOnly = true;
+                    });
+                });
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "TypeJournal";
@@ -514,6 +559,7 @@
                         s.ShowModelErrors = true;
                         s.TabIndex = 8;
                         s.Width = Unit.Percentage(98);
+                        s.ReadOnly = true;
                     });
                 });
                 formLayoutSettings.Items.Add(i =>
@@ -526,7 +572,7 @@
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(99);
-                        s.TabIndex = 4;
+                        s.TabIndex = 5;
                     });
                 });
             })

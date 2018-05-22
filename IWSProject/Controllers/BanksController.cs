@@ -31,6 +31,8 @@ namespace IWSProject.Controllers
             var model = db.Banks;
             ViewData["bank"] = item;
             item.CompanyID = (string)Session["CompanyID"];
+            item.Posted = DateTime.Now.Date;
+            item.Updated = DateTime.Now.Date;
             if (ModelState.IsValid)
             {
                 try

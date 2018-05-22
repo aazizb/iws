@@ -32,6 +32,8 @@ namespace IWSProject.Controllers
         {
             var model = db.QuantityUnits;
             item.CompanyID = (string)Session["CompanyID"];
+            item.Posted = DateTime.Now.Date;
+            item.Updated = DateTime.Now.Date;
             ViewData["quantityunit"] = item;
             if (ModelState.IsValid)
             {

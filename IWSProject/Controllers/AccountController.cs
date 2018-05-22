@@ -68,7 +68,7 @@ namespace IWSProject.Controllers
 
                         Session["CompanyID"] = companyID;
 
-                            //Session["Menus"] = null;
+                            
                         if (Session["Menus"] == null)
                             Session["Menus"] = IWSLookUp.GetMenu(companyID);
 

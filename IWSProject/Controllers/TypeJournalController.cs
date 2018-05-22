@@ -31,6 +31,8 @@ namespace IWSProject.Controllers
         {
             var model = db.TypeJournals;
             item.CompanyId = (string)Session["CompanyID"];
+            item.Posted = DateTime.Now.Date;
+            item.Updated = DateTime.Now.Date;
             ViewData["typeDraft"] = item;
             if (ModelState.IsValid)
             {

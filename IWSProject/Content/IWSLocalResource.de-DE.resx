@@ -166,7 +166,7 @@
     <value>Lager</value>
   </data>
   <data name="text" xml:space="preserve">
-    <value>TEXT</value>
+    <value>Wordings de-DE</value>
   </data>
   <data name="transid" xml:space="preserve">
     <value>N° Transaction de-DE</value>
@@ -899,5 +899,8 @@
   </data>
   <data name="ClassCash" xml:space="preserve">
     <value>Class Cash de-DE</value>
+  </data>
+  <data name="IsResultSheetAccount" xml:space="preserve">
+    <value>Result de-DE</value>
   </data>
 </root>

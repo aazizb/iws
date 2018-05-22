@@ -200,14 +200,15 @@
         if (item.FieldName != "Currency")
             return;
 
-        if (e.IsGroupSummary)
+        if (e.IsTotalSummary)
         {
             e.TotalValue = e.GetValue("Currency");
         }
     };
+
     settings.SummaryDisplayText = (sender, e) =>
     {
-        if (e.IsGroupSummary && e.Item.FieldName != "Currency")
+        if (e.IsTotalSummary && e.Item.FieldName != "Currency")
         {
             e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
         }
@@ -216,8 +217,7 @@
     settings.Settings.ShowGroupPanel = true;
     settings.SettingsBehavior.AutoExpandAllGroups = true;
     settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
-    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Amount").ShowInGroupFooterColumn = "Amount";
-    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
-
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Amount").ShowInGroupFooterColumn = "Amount";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
 
 }).Bind(Model).GetHtml()

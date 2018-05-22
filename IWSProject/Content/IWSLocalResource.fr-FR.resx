@@ -166,7 +166,7 @@
     <value>Entrepôt</value>
   </data>
   <data name="text" xml:space="preserve">
-    <value>TEXTE</value>
+    <value>Libellé</value>
   </data>
   <data name="transid" xml:space="preserve">
     <value>N° Transaction</value>
@@ -911,5 +911,8 @@
   </data>
   <data name="ClassCash" xml:space="preserve">
     <value>Class Cash fr-FR</value>
+  </data>
+  <data name="IsResultSheetAccount" xml:space="preserve">
+    <value>Vue au Resultat</value>
   </data>
 </root>

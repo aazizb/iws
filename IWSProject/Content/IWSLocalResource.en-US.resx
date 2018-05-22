@@ -166,7 +166,7 @@
     <value>Store</value>
   </data>
   <data name="text" xml:space="preserve">
-    <value>Text</value>
+    <value>Wordings</value>
   </data>
   <data name="transid" xml:space="preserve">
     <value>Transaction ID</value>
@@ -902,5 +902,8 @@
   </data>
   <data name="ClassCash" xml:space="preserve">
     <value>Class Cash</value>
+  </data>
+  <data name="IsResultSheetAccount" xml:space="preserve">
+    <value>Result</value>
   </data>
 </root>

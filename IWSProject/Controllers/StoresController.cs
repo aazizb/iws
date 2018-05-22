@@ -32,6 +32,8 @@ namespace IWSProject.Controllers
         {
             var model = db.Stores;
             item.CompanyID = (string)Session["CompanyID"];
+            item.Posted = DateTime.Now.Date;
+            item.Updated = DateTime.Now.Date;
             ViewData["stores"] = item;
             if (ModelState.IsValid)
             {

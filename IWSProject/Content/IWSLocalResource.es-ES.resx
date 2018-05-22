@@ -874,7 +874,7 @@
     <value>Inicio de año</value>
   </data>
   <data name="ItemNumber" xml:space="preserve">
-    <value>Item #</value>
+    <value>Articulo #</value>
   </data>
   <data name="Posted" xml:space="preserve">
     <value>Posting Date es-ES</value>
@@ -911,5 +911,8 @@
   </data>
   <data name="ClassCash" xml:space="preserve">
     <value>Class Cash es-ES</value>
+  </data>
+  <data name="IsResultSheetAccount" xml:space="preserve">
+    <value>Result es-ES</value>
   </data>
 </root>

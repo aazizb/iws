@@ -1186,6 +1186,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Result.
+        /// </summary>
+        public static string IsResultSheetAccount {
+            get {
+                return ResourceManager.GetString("IsResultSheetAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Is Service?.
         /// </summary>
         public static string IsService {
@@ -2203,7 +2212,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TEXT.
+        ///   Looks up a localized string similar to Wordings.
         /// </summary>
         public static string text {
             get {
