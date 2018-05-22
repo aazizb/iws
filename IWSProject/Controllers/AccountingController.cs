@@ -451,7 +451,7 @@ namespace IWSProject.Controllers
             return false;
         }
 
-        private bool UpdateAccountBalance(string Periode, string AccountID, decimal amount,
+        private bool UpdatePeriodicBalance(string Periode, string AccountID, decimal amount,
                                                     string currency, bool IsDebit, string companyID)
         {
            
@@ -704,7 +704,7 @@ namespace IWSProject.Controllers
                     foreach (var doc in docs)
                     {
 
-                        results = UpdateAccountBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
+                        results = UpdatePeriodicBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
 
                         if (!results)
                             return results;
@@ -772,12 +772,12 @@ namespace IWSProject.Controllers
                                 } into g
                                 select new
                                 {
-                                    Periode = g.Key.Periode,
+                                    g.Key.Periode,
                                     accountID = g.Key.OAccount,
                                     amount = g.Sum(p => p.doc.Amount),
                                     currency = g.Key.Currency
                                 }).Single();
-                    results = UpdateAccountBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+                    results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
 
                     if (!results)
                         return results;
@@ -845,7 +845,7 @@ namespace IWSProject.Controllers
                         l.Article.ExpenseAccount,
                         l.Article.StockAccount,
                         CompanyIBAN = l.BillOfDelivery.Company.IBAN,
-                        IBAN = l.BillOfDelivery.Customer.IBAN,
+                        l.BillOfDelivery.Customer.IBAN,
                         l.BillOfDelivery.oCurrency,
                         l.BillOfDelivery.HeaderText
                     } into g
@@ -884,7 +884,7 @@ namespace IWSProject.Controllers
                 foreach (var doc in docs)
                 {
 
-                    results = UpdateAccountBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
+                    results = UpdatePeriodicBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
 
                     if (!results)
                         return results;
@@ -949,13 +949,13 @@ namespace IWSProject.Controllers
                             } into g
                             select new
                             {
-                                Periode = g.Key.Periode,
+                                g.Key.Periode,
                                 accountID = g.Key.OAccount,
                                 amount = g.Sum(p => p.doc.Amount),
                                 currency = g.Key.Currency
                             }).Single();
 
-                results = UpdateAccountBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+                results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
 
                 if (!results)
                     return results;
@@ -1010,7 +1010,7 @@ namespace IWSProject.Controllers
 
                     foreach (var doc in docs)
                     {
-                        results = UpdateAccountBalance(doc.Periode,
+                        results = UpdatePeriodicBalance(doc.Periode,
                                         doc.Account, doc.Amount, doc.Currency, true, companyId);
 
                         if (!results)
@@ -1088,7 +1088,7 @@ namespace IWSProject.Controllers
                                     amount = g.Sum(p => p.doc.Amount),
                                     currency = g.Key.Currency
                                 }).Single();
-                    results = UpdateAccountBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+                    results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
 
                     if (!results)
                         return results;
@@ -1143,7 +1143,7 @@ namespace IWSProject.Controllers
 
                     foreach (var doc in docs)
                     {
-                        results = UpdateAccountBalance(doc.Periode,
+                        results = UpdatePeriodicBalance(doc.Periode,
                                         doc.Account, doc.Amount, doc.Currency, true, companyId);
                         
                         if (!results)
@@ -1220,7 +1220,7 @@ namespace IWSProject.Controllers
                                     amount = g.Sum(p => p.doc.Amount),
                                     currency = g.Key.Currency
                                 }).Single();
-                    results = UpdateAccountBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+                    results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
 
                     if (!results)
                         return results;
@@ -1276,7 +1276,7 @@ namespace IWSProject.Controllers
                     foreach (var doc in docs)
                     {
 
-                        results = UpdateAccountBalance(doc.Periode, doc.OAccount, doc.Amount, doc.Currency, false, companyId);
+                        results = UpdatePeriodicBalance(doc.Periode, doc.OAccount, doc.Amount, doc.Currency, false, companyId);
 
                         if (!results)
                             return results;
@@ -1353,7 +1353,7 @@ namespace IWSProject.Controllers
                                     amount = g.Sum(p => p.doc.Amount),
                                     currency = g.Key.Currency
                                 }).Single();
-                    results = UpdateAccountBalance(item.Periode, item.accountID, item.amount, item.currency, true, companyId);
+                    results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, true, companyId);
 
                     if (!results)
                         return results;
@@ -1407,7 +1407,7 @@ namespace IWSProject.Controllers
 
                     foreach (var doc in docs)
                     {
-                        results = UpdateAccountBalance(doc.Periode,
+                        results = UpdatePeriodicBalance(doc.Periode,
                                         doc.Account, doc.Amount, doc.Currency, true, companyId);
 
                         if (!results)
@@ -1485,7 +1485,7 @@ namespace IWSProject.Controllers
                                     amount = g.Sum(p => p.doc.Amount),
                                     currency = g.Key.Currency
                                 }).Single();
-                    results = UpdateAccountBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+                    results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
 
                     if (!results)
                         return results;
@@ -1540,7 +1540,7 @@ namespace IWSProject.Controllers
 
                     foreach (var doc in docs)
                     {
-                        results = UpdateAccountBalance(doc.Periode,
+                        results = UpdatePeriodicBalance(doc.Periode,
                                         doc.Account, doc.Amount, doc.Currency, true, companyId);
 
                         if (!results)
@@ -1621,7 +1621,7 @@ namespace IWSProject.Controllers
                     foreach (var item in items)
                     {
 
-                        results = UpdateAccountBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+                        results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
 
                         if (!results)
                             return results;
