@@ -26,7 +26,7 @@
         $.ajax({
             url: '@Url.Action("HeaderText", "Settlements")',
             type: "POST",
-            data: { selectedItemIndex: s.GetValue() },
+            data: { selectedOIDIndex: s.GetValue() },
             success: function (data) {
                 HeaderText.SetText(data);
             },
@@ -35,23 +35,37 @@
             }
         });
         $.ajax({
-            url: '@Url.Action("TypeJournal", "Settlements")',
+            url: '@Url.Action("AccountingAccount", "Settlements")',
             type: "POST",
-            data: { selectedItemIndex: s.GetValue() },
+            data: { selectedOIDIndex: s.GetValue() },
             success: function (data) {
-                TypeJournal.SetText(data);
+                AccountingAccount.SetText(data);
             },
             error: function (xhr, textStatus, errorThrown) {
                 alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
             }
         });
-     }
+    }
+    function OnAccountSelectedIndexChanged(s, e) {
+        $.ajax({
+            url: '@Url.Action("GetCompteTier", "Settlements")',
+            type: "POST",
+            data: { selectedCustomerId: s.GetValue() },
+            success: function (data) {
+                AccountingAccount.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+    }
+
     var selectedIDs = null;
     var expanded = false;
     var ndxMaster = 0;
     var ndxDetail = 0;
-    var command;                            
-    var isDetailRowExpanded = new Array();  
+    var command;
+    var isDetailRowExpanded = new Array();
     function OnMRowClick(s, e) {
         expanded = true;
         ndxMaster = e.visibleIndex;
@@ -68,20 +82,20 @@
             expanded = false;
             s.ExpandDetailRow(ndxMaster);
         }
-        if (command == "HIDEDETAILROW") {   
+        if (command == "HIDEDETAILROW") {
             if (s.IsEditing || s.IsNewRowEditing)
                 s.CancelEdit();
         }
-        if (command == 'CANCELEDIT') {     
+        if (command == 'CANCELEDIT') {
             if (isDetailRowExpanded[ndxMaster] == true) {
                 s.CollapseDetailRow(ndxMaster);
             }
         }
     }
-    function OnDetailRowExpanding(s, e) {   
+    function OnDetailRowExpanding(s, e) {
         isDetailRowExpanded[e.visibleIndex] = true;
     }
-    function OnDetailRowCollapsing(s, e) {  
+    function OnDetailRowCollapsing(s, e) {
         isDetailRowExpanded[e.visibleIndex] = false;
     }
     function OnDEndCallback(s, e) {
@@ -89,7 +103,7 @@
     }
     function OnMBeginCallback(s, e) {
         e.customArgs["selectedIDs"] = selectedIDs;
-        command = e.command;              
+        command = e.command;
     }
     function OnMSelectionChanged(s, e) {
         s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
@@ -116,7 +130,7 @@
                             else {
                                 s.CancelEdit();
                             }
-                        } k;
+                        }
                     case 27://ESC
                         if (s.IsEditing()) {
                             s.CancelEdit();
@@ -152,6 +166,7 @@
     }
 
 </script>
+@using IWSProject.Content
 @{
     ViewBag.Title = IWSLocalResource.Settlement;
 }
@@ -160,16 +175,16 @@
     @Html.Hidden("cbxOID");
 
     @Html.DevExpress().Button(
-    settings =>
-    {
-        settings.Name = "btnSubmit";
-        settings.ControlStyle.CssClass = "button";
-        settings.Text = IWSLocalResource.Validate;
-        settings.Width = Unit.Pixel(150);
-        settings.UseSubmitBehavior = false;
-        settings.ClientSideEvents.Click = "OnSubmitClick";
-    }
-    ).GetHtml()
+            settings =>
+            {
+                settings.Name = "btnSubmit";
+                settings.ControlStyle.CssClass = "button";
+                settings.Text = IWSLocalResource.Validate;
+                settings.Width = Unit.Pixel(150);
+                settings.UseSubmitBehavior = false;
+                settings.ClientSideEvents.Click = "OnSubmitClick";
+            }
+            ).GetHtml()
 
     @Html.Partial("CallbackPanelPartialView")
 }

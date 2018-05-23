@@ -26,7 +26,7 @@
         $.ajax({
             url: '@Url.Action("HeaderText", "Payments")',
             type: "POST",
-            data: { selectedItemIndex: s.GetValue() },
+            data: { selectedOIDIndex: s.GetValue() },
             success: function (data) {
                 HeaderText.SetText(data);
             },
@@ -35,17 +35,31 @@
             }
         });
         $.ajax({
-            url: '@Url.Action("TypeJournal", "Payments")',
+            url: '@Url.Action("AccountingAccount", "Payments")',
             type: "POST",
-            data: { selectedItemIndex: s.GetValue() },
+            data: { selectedOIDIndex: s.GetValue() },
             success: function (data) {
-                TypeJournal.SetText(data);
+                AccountingAccount.SetText(data);
             },
             error: function (xhr, textStatus, errorThrown) {
-                alert('Request Status: ' + xhr.status + '; Status___Text: ' + textStatus + '; Error: ' + errorThrown);
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
             }
         });
-     }
+    }
+    function OnAccountSelectedIndexChanged(s, e) {
+        $.ajax({
+            url: '@Url.Action("GetCompteTier", "Payments")',
+            type: "POST",
+            data: { selectedSupplierId: s.GetValue() },
+            success: function (data) {
+                AccountingAccount.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+    }
+
     var selectedIDs = null;
     var expanded = false;
     var ndxMaster = 0;
@@ -116,7 +130,7 @@
                             else {
                                 s.CancelEdit();
                             }
-                        } k;
+                        }
                     case 27://ESC
                         if (s.IsEditing()) {
                             s.CancelEdit();

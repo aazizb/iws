@@ -148,6 +148,7 @@
         });
         settings.Columns.Add(column =>
         {
+
             column.FieldName = "AccountingAccount";
             column.Caption = IWSLocalResource.account;
             column.Width = Unit.Percentage(10);
@@ -267,7 +268,6 @@
         });
 
         settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oTotal").DisplayFormat = "N";
-
         settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oTotal").DisplayFormat = "N";
 
         #region Template
@@ -302,7 +302,11 @@
                     btnSettings.Width = Unit.Pixel(80);
                     btnSettings.ClientSideEvents.Click = "function(s, e){ Settlement.UpdateEdit(); }";
                     btnSettings.ClientVisible = ViewBag.Visible;
+
                     btnSettings.TabIndex = 10;
+
+                    //btnSettings.TabIndex = 9;
+
                 }).Render();
                     Html.DevExpress().Button(
                 btnSettings =>
@@ -314,7 +318,11 @@
                     btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
                     btnSettings.Width = Unit.Pixel(80);
                     btnSettings.ClientSideEvents.Click = "function(s, e){ Settlement.CancelEdit(); }";
+
                     btnSettings.TabIndex = 11;
+
+                    //btnSettings.TabIndex = 10;
+
                 }).Render();
                 });
 
@@ -374,7 +382,7 @@
                         });
                         s.Properties.Columns.Add(a =>
                         {
-                            a.FieldName = "costcenter";
+                            a.FieldName = "CostCenter";
                             a.Caption = IWSLocalResource.costcenters;
                             a.Width = Unit.Percentage(39);
                         });
@@ -403,7 +411,7 @@
                         s.Properties.UseMaskBehavior = true;
                         s.Properties.EditFormat = EditFormat.Date;
                         s.Properties.EditFormatString = "d";
-                        s.Width = Unit.Percentage(94);
+                        s.Width = Unit.Percentage(93);
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
                         s.TabIndex = 6;
@@ -449,7 +457,7 @@
                         s.Properties.UseMaskBehavior = true;
                         s.Properties.EditFormat = EditFormat.Date;
                         s.Properties.EditFormatString = "d";
-                        s.Width = Unit.Percentage(94);
+                        s.Width = Unit.Percentage(93);
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
                         s.ReadOnly = true;
@@ -483,6 +491,8 @@
                         s.ShowModelErrors = true;
                         s.TabIndex = 3;
                         s.Width = Unit.Percentage(100);
+                        s.Properties.ClientSideEvents.SelectedIndexChanged = "OnAccountSelectedIndexChanged";
+
                     });
                 });
                 formLayoutSettings.Items.Add(i =>
@@ -495,7 +505,7 @@
                         s.Properties.UseMaskBehavior = true;
                         s.Properties.EditFormat = EditFormat.Date;
                         s.Properties.EditFormatString = "d";
-                        s.Width = Unit.Percentage(94);
+                        s.Width = Unit.Percentage(93);
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
                         s.TabIndex = 8;
@@ -561,7 +571,7 @@
                         s.ReadOnly = true;
                     });
                 });
-
+                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "HeaderText";
@@ -572,14 +582,17 @@
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(99);
+
                         s.TabIndex = 5;
+
+                        s.TabIndex = 4;
+
                     });
                 });
             })
             .Bind(ViewData["item"] ?? c.DataItem)
             .Render();
         });
-
         #endregion
 
         settings.SetDetailRowTemplateContent(c =>

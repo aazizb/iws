@@ -245,9 +245,9 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetTypeJournal(selectedOIDIndex, IWSLookUp.DocsType.Settlement.ToString()));
         }
-        public ActionResult AccountingAccount(int selectedItemIndex)
+        public ActionResult AccountingAccount(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetAccount(selectedItemIndex, IWSLookUp.DocsType.Settlement.ToString()));
+            return Json(IWSLookUp.GetAccount(selectedOIDIndex, IWSLookUp.DocsType.Settlement.ToString()));
         }
         public ActionResult GetCompteTier(string selectedCustomerId)
         {

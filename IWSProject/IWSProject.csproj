@@ -250,6 +250,14 @@
     <Content Include="Views\CustomerInvoices\DetailGridViewPartial.cshtml" />
     <Content Include="Views\CustomerInvoices\Index.cshtml" />
     <Content Include="Views\CustomerInvoices\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\Payments\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\Payments\DetailGridViewPartial.cshtml" />
+    <Content Include="Views\Payments\Index.cshtml" />
+    <Content Include="Views\Payments\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\Settlements\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\Settlements\DetailGridViewPartial.cshtml" />
+    <Content Include="Views\Settlements\Index.cshtml" />
+    <Content Include="Views\Settlements\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\Boolean.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Boolean.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DateTime.cshtml" />
@@ -321,10 +329,6 @@
     <Content Include="Views\Journal\_CallbackPartialView.cshtml" />
     <Content Include="Views\MenuUI\Index.cshtml" />
     <Content Include="Views\MenuUI\MenuUIGridViewPartial.cshtml" />
-    <Content Include="Views\Payments\CallbackPanelPartialView.cshtml" />
-    <Content Include="Views\Payments\DetailGridViewPartial.cshtml" />
-    <Content Include="Views\Payments\Index.cshtml" />
-    <Content Include="Views\Payments\MasterGridViewPartial.cshtml" />
     <Content Include="Views\PurchaseOrders\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\PurchaseOrders\DetailGridViewPartial.cshtml" />
     <Content Include="Views\PurchaseOrders\Index.cshtml" />
@@ -347,10 +351,6 @@
     <Content Include="Views\SalesOrders\DetailGridViewPartial.cshtml" />
     <Content Include="Views\SalesOrders\Index.cshtml" />
     <Content Include="Views\SalesOrders\MasterGridViewPartial.cshtml" />
-    <Content Include="Views\Settlements\CallbackPanelPartialView.cshtml" />
-    <Content Include="Views\Settlements\DetailGridViewPartial.cshtml" />
-    <Content Include="Views\Settlements\Index.cshtml" />
-    <Content Include="Views\Settlements\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Stocks\Index.cshtml" />
     <Content Include="Views\Stocks\StocksPartialView.cshtml" />
     <Content Include="Views\Stores\Index.cshtml" />
