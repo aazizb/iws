@@ -148,6 +148,7 @@
         });
         settings.Columns.Add(column =>
         {
+
             column.FieldName = "AccountingAccount";
             column.Caption = IWSLocalResource.account;
             column.Width = Unit.Percentage(10);
@@ -164,6 +165,8 @@
         });
         settings.Columns.Add(column =>
         {
+
+
             column.FieldName = "TypeJournal";
             column.Caption = IWSLocalResource.TypeJournal;
             column.Width = Unit.Percentage(10);
@@ -402,7 +405,7 @@
                         s.Properties.UseMaskBehavior = true;
                         s.Properties.EditFormat = EditFormat.Date;
                         s.Properties.EditFormatString = "d";
-                        s.Width = Unit.Percentage(94);
+                        s.Width = Unit.Percentage(93);
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
                         s.TabIndex = 5;
@@ -448,7 +451,7 @@
                         s.Properties.UseMaskBehavior = true;
                         s.Properties.EditFormat = EditFormat.Date;
                         s.Properties.EditFormatString = "d";
-                        s.Width = Unit.Percentage(94);
+                        s.Width = Unit.Percentage(93);
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
                         s.ReadOnly = true;
@@ -482,6 +485,7 @@
                         s.ShowModelErrors = true;
                         s.TabIndex = 3;
                         s.Width = Unit.Percentage(100);
+                        s.Properties.ClientSideEvents.SelectedIndexChanged = "OnAccountSelectedIndexChanged";
                     });
                 });
                 formLayoutSettings.Items.Add(i =>
@@ -494,7 +498,7 @@
                         s.Properties.UseMaskBehavior = true;
                         s.Properties.EditFormat = EditFormat.Date;
                         s.Properties.EditFormatString = "d";
-                        s.Width = Unit.Percentage(94);
+                        s.Width = Unit.Percentage(93);
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
                         s.TabIndex = 7;
@@ -572,7 +576,11 @@
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(99);
+
                         s.TabIndex = 5;
+
+                        s.TabIndex = 4;
+
                     });
                 });
             })

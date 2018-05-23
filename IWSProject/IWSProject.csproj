@@ -246,6 +246,10 @@
     <None Include="Properties\PublishProfiles\iwsproject.pubxml" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Views\CustomerInvoices\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\CustomerInvoices\DetailGridViewPartial.cshtml" />
+    <Content Include="Views\CustomerInvoices\Index.cshtml" />
+    <Content Include="Views\CustomerInvoices\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\Boolean.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Boolean.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\DateTime.cshtml" />
@@ -293,10 +297,6 @@
     <Content Include="Views\CostCenters\Index.cshtml" />
     <Content Include="Views\Currencies\CurrenciesGridViewPartial.cshtml" />
     <Content Include="Views\Currencies\Index.cshtml" />
-    <Content Include="Views\CustomerInvoices\CallbackPanelPartialView.cshtml" />
-    <Content Include="Views\CustomerInvoices\DetailGridViewPartial.cshtml" />
-    <Content Include="Views\CustomerInvoices\Index.cshtml" />
-    <Content Include="Views\CustomerInvoices\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Customers\CustomersGridViewPartial.cshtml" />
     <Content Include="Views\Customers\DetailGridViewPartial.cshtml" />
     <Content Include="Views\Customers\Index.cshtml" />
@@ -360,12 +360,12 @@
     <Content Include="Views\Suppliers\SuppliersGridViewPartial.cshtml" />
     <Content Include="Views\Vats\Index.cshtml" />
     <Content Include="Views\Vats\VatsGridViewPartial.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Views\VendorInvoices\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\VendorInvoices\DetailGridViewPartial.cshtml" />
     <Content Include="Views\VendorInvoices\Index.cshtml" />
     <Content Include="Views\VendorInvoices\MasterGridViewPartial.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>

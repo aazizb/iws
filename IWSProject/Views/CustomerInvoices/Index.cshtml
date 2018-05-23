@@ -2,7 +2,7 @@
 <script type="text/javascript">
     function OnOIDSelectedIndexChanged(s, e) {
         $.ajax({
-            url: '@Url.Action("Supplier", "CustomerInvoices")',
+            url: '@Url.Action("Customer", "CustomerInvoices")',
             type: "POST",
             data: { selectedOIDIndex: s.GetValue() },
             success: function (data) {
@@ -15,7 +15,7 @@
         $.ajax({
             url: '@Url.Action("HeaderText", "CustomerInvoices")',
             type: "POST",
-            data: { selectedItemIndex: s.GetValue() },
+            data: { selectedOIDIndex: s.GetValue() },
             success: function (data) {
                 HeaderText.SetText(data);
             },
@@ -23,6 +23,30 @@
                 alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
             }
         });
+        $.ajax({
+            url: '@Url.Action("AccountingAccount", "CustomerInvoices")',
+            type: "POST",
+            data: { selectedOIDIndex: s.GetValue() },
+            success: function (data) {
+                AccountingAccount.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+    }
+    function OnAccountSelectedIndexChanged(s, e) {
+    $.ajax({
+        url: '@Url.Action("GetCompteTier", "CustomerInvoices")',
+        type: "POST",
+        data: { selectedCustomerId: s.GetValue() },
+        success: function (data) {
+            AccountingAccount.SetText(data);
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+        }
+    });
     }
     var selectedIDs = null;
     var expanded = false;
@@ -94,7 +118,7 @@
                             else {
                                 s.CancelEdit();
                             }
-                        } k;
+                        }
                     case 27://ESC
                         if (s.IsEditing()) {
                             s.CancelEdit();

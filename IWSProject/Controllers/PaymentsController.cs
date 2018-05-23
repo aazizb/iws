@@ -50,8 +50,10 @@ namespace IWSProject.Controllers
             int itemOID = item.oid;
             ViewData["item"] = item;
             bool result;
+
             if (ModelState.IsValid)
             {
+
                 try
                 {
                     model.InsertOnSubmit(item);
@@ -59,14 +61,15 @@ namespace IWSProject.Controllers
                     if (result)
                     {
                         db.SubmitChanges();
+                        int itemID = db.Payments.Max(i => i.id);
                         if (itemOID != 0)
                         {
-                            int itemID = db.Payments.Max(i => i.id);
 
                             result = InsertLines(itemID, itemOID);
                             if (result)
                             {
                                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Payment.ToString(), itemID);
                             }
                         }
                     }
@@ -95,13 +98,16 @@ namespace IWSProject.Controllers
             ViewData["item"] = item;
             if (ModelState.IsValid)
             {
+                int id = item.id;
                 try
                 {
                     var modelItem = model.FirstOrDefault(it => it.id == item.id);
                     if (modelItem != null)
                     {
                         this.UpdateModel(modelItem);
+
                         db.SubmitChanges();
+
                     }
                 }
                 catch (Exception e)
@@ -189,8 +195,11 @@ namespace IWSProject.Controllers
                     if (modelItem != null)
                     {
                         this.UpdateModel(modelItem);
+
                         result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Payment.ToString(), transId);
+
                         db.SubmitChanges();
+
                     }
                 }
                 catch (Exception e)
@@ -229,11 +238,10 @@ namespace IWSProject.Controllers
             return PartialView("DetailGridViewPartial", IWSLookUp.GetLinePayment(transId));
         }
 
-
         #region Helper
-        public ActionResult HeaderText(int selectedItemIndex)
+        public ActionResult HeaderText(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetHeaderText(selectedItemIndex, IWSLookUp.DocsType.Payment.ToString()));
+            return Json(IWSLookUp.GetHeaderText(selectedOIDIndex, IWSLookUp.DocsType.Payment.ToString()));
         }
         public ActionResult Supplier(int selectedOIDIndex)
         {
@@ -247,6 +255,15 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.Payment.ToString()));
         }
+        public ActionResult AccountingAccount(int selectedOIDIndex)
+        {
+            return Json(IWSLookUp.GetAccount(selectedOIDIndex, IWSLookUp.DocsType.Payment.ToString()));
+        }
+        public ActionResult GetCompteTier(string selectedSupplierId)
+        {
+            return Json(IWSLookUp.GetCompteTier(selectedSupplierId, IWSLookUp.DocsType.Payment.ToString()));
+        }
+
         public bool InsertLines(int itemID, int OID)
         {
             bool results = false;

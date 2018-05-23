@@ -490,7 +490,7 @@
     <value>Customer/Supplier</value>
   </data>
   <data name="sales" xml:space="preserve">
-    <value>Sales</value>
+    <value>Vending</value>
   </data>
   <data name="Settlement" xml:space="preserve">
     <value>Settlement</value>

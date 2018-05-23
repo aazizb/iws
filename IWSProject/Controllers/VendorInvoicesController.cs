@@ -67,6 +67,7 @@ namespace IWSProject.Controllers
                             if (result)
                             {
                                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.VendorInvoice.ToString(), itemID);
                             }
                         }
                     }
@@ -187,8 +188,8 @@ namespace IWSProject.Controllers
                     if (modelItem != null)
                     {
                         this.UpdateModel(modelItem);
-
                         db.SubmitChanges();
+                        bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.VendorInvoice.ToString(), transId);
                     }
                 }
                 catch (Exception e)
@@ -228,17 +229,25 @@ namespace IWSProject.Controllers
         }
 
         #region Helper
-        public ActionResult HeaderText(int selectedItemIndex)
+        public ActionResult HeaderText(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetHeaderText(selectedItemIndex, IWSLookUp.DocsType.VendorInvoice.ToString()));
+            return Json(IWSLookUp.GetHeaderText(selectedOIDIndex, IWSLookUp.DocsType.VendorInvoice.ToString()));
         }
         public ActionResult Supplier(int selectedOIDIndex)
         {
             return Json(IWSLookUp.GetSupplier(selectedOIDIndex, IWSLookUp.DocsType.VendorInvoice.ToString()));
         }
-        public ActionResult TypeJournal(int selectedItemIndex)
+        public ActionResult TypeJournal(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.VendorInvoice.ToString()));
+            return Json(IWSLookUp.GetTypeJournal(selectedOIDIndex, IWSLookUp.DocsType.VendorInvoice.ToString()));
+        }
+        public ActionResult AccountingAccount(int selectedOIDIndex)
+        {
+            return Json(IWSLookUp.GetAccount(selectedOIDIndex, IWSLookUp.DocsType.VendorInvoice.ToString()));
+        }
+        public ActionResult GetCompteTier(string selectedSupplierId)
+        {
+            return Json(IWSLookUp.GetCompteTier(selectedSupplierId, IWSLookUp.DocsType.VendorInvoice.ToString()));
         }
         public bool InsertLines(int itemID, int OID, string ItemType)
         {

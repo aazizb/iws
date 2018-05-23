@@ -118,6 +118,26 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Accounts.Where(c => c.CompanyID == companyID);
         }
+
+        public static string GetCompteTier(string account, string transType)
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+
+            transType = transType.ToLower();
+
+            if (transType.Equals("payment") || transType.Equals("vendorinvoice"))
+            {
+                return IWSEntities.Suppliers.SingleOrDefault(i => i.id == account &&
+                                                                i.CompanyID.Equals(companyID)).accountid;
+            }
+            if (transType.Equals("settlement") || transType.Equals("customerinvoice"))
+            {
+                return IWSEntities.Customers.SingleOrDefault(i => i.id == account &&
+                                                                    i.CompanyID.Equals(companyID)).accountid;
+            }
+            return null;
+        }
+
         public static IEnumerable GetAccount(string TransType)
         {
             string accountid = String.Empty;
@@ -270,6 +290,48 @@
             .OrderBy(o => o.Id);
             return account;
         }
+
+        public static string GetAccount(int id, string ItemType)
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+
+            if (ItemType.Equals(DocsType.CustomerInvoice.ToString()))
+            {
+                return IWSEntities.SalesInvoices.Join(IWSEntities.Customers,
+                               v => v.account, s => s.id, (v, s) => new
+                               {
+                                   AccountId = s.accountid,
+                                   InvoiceId = v.id,
+                                   CompanyId = s.CompanyID
+                               }).FirstOrDefault(d =>
+                               d.CompanyId.Equals(companyID) && d.InvoiceId.Equals(id)).AccountId;
+            }
+
+            if (ItemType.Equals(DocsType.VendorInvoice.ToString()))
+            {
+                return IWSEntities.InventoryInvoices.Join(IWSEntities.Suppliers,
+                               v => v.account, s => s.id, (v, s) => new
+                               {
+                                   AccountId = s.accountid,
+                                   InvoiceId = v.id,
+                                   CompanyId = s.CompanyID
+                               }).FirstOrDefault(d =>
+                               d.CompanyId.Equals(companyID) && d.InvoiceId.Equals(id)).AccountId;
+            }
+
+            if (ItemType.Equals(DocsType.Payment.ToString()))
+            {
+                return IWSEntities.VendorInvoices.FirstOrDefault(v =>
+                                           v.CompanyId.Equals(companyID) && v.id.Equals(id)).AccountingAccount;
+            }
+            if (ItemType.Equals(DocsType.Settlement.ToString()))
+            {
+                return IWSEntities.CustomerInvoices.FirstOrDefault(v =>
+                                           v.CompanyId.Equals(companyID) && v.id.Equals(id)).AccountingAccount;
+            }
+            return null;
+        }
+
         public static IEnumerable GetArticle()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];

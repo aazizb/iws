@@ -68,6 +68,7 @@ namespace IWSProject.Controllers
                             if (result)
                             {
                                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.CustomerInvoice.ToString(), itemID);
                             }
                         }
                     }
@@ -188,8 +189,8 @@ namespace IWSProject.Controllers
                     if (modelItem != null)
                     {
                         this.UpdateModel(modelItem);
-
                         db.SubmitChanges();
+                        bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.CustomerInvoice.ToString(), transId);
                     }
                 }
                 catch (Exception e)
@@ -229,22 +230,31 @@ namespace IWSProject.Controllers
         }
 
         #region Helper
-        public ActionResult HeaderText(int selectedItemIndex)
+        public ActionResult HeaderText(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetHeaderText(selectedItemIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
+            return Json(IWSLookUp.GetHeaderText(selectedOIDIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
         }
-        public ActionResult Supplier(int selectedOIDIndex)
+        public ActionResult Customer(int selectedOIDIndex)
         {
             return Json(IWSLookUp.GetSupplier(selectedOIDIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
         }
-        public ActionResult TypeJournal(int selectedItemIndex)
+        public ActionResult TypeJournal(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
+            return Json(IWSLookUp.GetTypeJournal(selectedOIDIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
         }
+        public ActionResult AccountingAccount(int selectedOIDIndex)
+        {
+            return Json(IWSLookUp.GetAccount(selectedOIDIndex, IWSLookUp.DocsType.CustomerInvoice.ToString()));
+        }
+        public ActionResult GetCompteTier(string selectedCustomerId)
+        {
+            return Json(IWSLookUp.GetCompteTier(selectedCustomerId, IWSLookUp.DocsType.CustomerInvoice.ToString()));
+        }
+
         public bool InsertLines(int itemID, int OID, string ItemType)
         {
             bool results = false;
-            
+
             if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
             {
                 try

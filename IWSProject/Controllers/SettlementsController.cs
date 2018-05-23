@@ -67,6 +67,7 @@ namespace IWSProject.Controllers
                             if (result)
                             {
                                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Settlement.ToString(), itemID);
                             }
                         }
                     }
@@ -88,7 +89,7 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", IWSLookUp.GetSettlement());
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult MasterGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Settlement  item)
+        public ActionResult MasterGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Settlement item)
         {
             var model = db.Settlements;
 
@@ -187,8 +188,8 @@ namespace IWSProject.Controllers
                     if (modelItem != null)
                     {
                         this.UpdateModel(modelItem);
-
                         db.SubmitChanges();
+                        bool result = IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Settlement.ToString(), transId);
                     }
                 }
                 catch (Exception e)
@@ -228,9 +229,9 @@ namespace IWSProject.Controllers
         }
 
         #region Helper
-        public ActionResult HeaderText(int selectedItemIndex)
+        public ActionResult HeaderText(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetHeaderText(selectedItemIndex, IWSLookUp.DocsType.Settlement.ToString()));
+            return Json(IWSLookUp.GetHeaderText(selectedOIDIndex, IWSLookUp.DocsType.Settlement.ToString()));
         }
         public ActionResult Supplier(int selectedOIDIndex)
         {
@@ -240,9 +241,17 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetCostCenter(selectedOIDIndex, IWSLookUp.DocsType.Settlement.ToString()));
         }
-        public ActionResult TypeJournal(int selectedItemIndex)
+        public ActionResult TypeJournal(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.Settlement.ToString()));
+            return Json(IWSLookUp.GetTypeJournal(selectedOIDIndex, IWSLookUp.DocsType.Settlement.ToString()));
+        }
+        public ActionResult AccountingAccount(int selectedItemIndex)
+        {
+            return Json(IWSLookUp.GetAccount(selectedItemIndex, IWSLookUp.DocsType.Settlement.ToString()));
+        }
+        public ActionResult GetCompteTier(string selectedCustomerId)
+        {
+            return Json(IWSLookUp.GetCompteTier(selectedCustomerId, IWSLookUp.DocsType.Settlement.ToString()));
         }
         public bool InsertLines(int itemID, int OID, string ItemType)
         {

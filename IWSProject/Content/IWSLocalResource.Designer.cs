@@ -1906,7 +1906,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sales.
+        ///   Looks up a localized string similar to Vending.
         /// </summary>
         public static string sales {
             get {
