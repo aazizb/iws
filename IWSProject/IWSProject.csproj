@@ -250,6 +250,10 @@
     <Content Include="Views\CustomerInvoices\DetailGridViewPartial.cshtml" />
     <Content Include="Views\CustomerInvoices\Index.cshtml" />
     <Content Include="Views\CustomerInvoices\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\GeneralLedgerOut\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\GeneralLedgerOut\DetailGridViewPartial.cshtml" />
+    <Content Include="Views\GeneralLedgerOut\Index.cshtml" />
+    <Content Include="Views\GeneralLedgerOut\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Payments\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\Payments\DetailGridViewPartial.cshtml" />
     <Content Include="Views\Payments\Index.cshtml" />
@@ -311,10 +315,6 @@
     <Content Include="Views\GeneralLedgerIn\DetailGridViewPartial.cshtml" />
     <Content Include="Views\GeneralLedgerIn\Index.cshtml" />
     <Content Include="Views\GeneralLedgerIn\MasterGridViewPartial.cshtml" />
-    <Content Include="Views\GeneralLedgerOut\CallbackPanelPartialView.cshtml" />
-    <Content Include="Views\GeneralLedgerOut\DetailGridViewPartial.cshtml" />
-    <Content Include="Views\GeneralLedgerOut\Index.cshtml" />
-    <Content Include="Views\GeneralLedgerOut\MasterGridViewPartial.cshtml" />
     <Content Include="Views\GoodReceivings\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\GoodReceivings\DetailGridViewPartial.cshtml" />
     <Content Include="Views\GoodReceivings\Index.cshtml" />
