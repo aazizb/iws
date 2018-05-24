@@ -173,11 +173,13 @@
             string accountid = String.Empty;
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             transType = transType.ToLower();
-            if (transType.Equals("paymentcash") || transType.Equals("paymentbank") || transType.Equals("vendorinvoice"))
+            if (transType.Equals("paymentcash") || transType.Equals("paymentbank") || 
+                            transType.Equals("vendorinvoice") || transType.Equals("payment"))
             {
                 accountid = IWSEntities.Suppliers.SingleOrDefault(i => i.id == account).accountid;
             }
-            if (transType.Equals("settlementcash") || transType.Equals("settlementbank") || transType.Equals("customerinvoice"))
+            if (transType.Equals("settlementcash") || transType.Equals("settlementbank") || 
+                            transType.Equals("customerinvoice") || transType.Equals("settlement"))
             {
                 accountid = IWSEntities.Customers.SingleOrDefault(i => i.id == account).accountid;
             }

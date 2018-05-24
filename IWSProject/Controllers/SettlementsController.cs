@@ -253,6 +253,7 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetCompteTier(selectedCustomerId, IWSLookUp.DocsType.Settlement.ToString()));
         }
+
         public bool InsertLines(int itemID, int OID, string ItemType)
         {
             bool results = false;
