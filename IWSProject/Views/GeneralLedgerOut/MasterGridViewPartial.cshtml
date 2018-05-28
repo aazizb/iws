@@ -301,7 +301,7 @@
                     i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
                     i.NestedExtension().TextBox(s =>
                     {
-                        s.Width = Unit.Percentage(95);
+                        s.Width = Unit.Percentage(95.3);
                         s.ReadOnly = true;
                     });
                 });
@@ -314,59 +314,6 @@
                     {
                         s.Width = Unit.Percentage(20);
                         s.ReadOnly = true;
-                    });
-                });
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.FieldName = "oid";
-                    i.Caption = IWSLocalResource.oid;
-                    i.NestedExtension().ComboBox(s =>
-                    {
-                        s.Properties.TextField = "Name";
-                        s.Properties.ValueField = "id";
-                        s.Properties.ValueType = typeof(int);
-                        s.Properties.DataSource = IWSLookUp.GetGeneralLedgerOutOID();
-                        s.Properties.Columns.Add(a =>
-                        {
-                            a.FieldName = "id";
-                            a.Caption = IWSLocalResource.id;
-                            a.Width = Unit.Percentage(10);
-                        });
-                        s.Properties.Columns.Add(a =>
-                        {
-                            a.FieldName = "customer";
-                            a.Caption = IWSLocalResource.customer;
-                            a.Width = Unit.Percentage(39);
-                        });
-                        s.Properties.Columns.Add(a =>
-                        {
-                            a.FieldName = "DueDate";
-                            a.Caption = IWSLocalResource.duedate;
-                            a.Width = Unit.Percentage(12);
-                        });
-                        s.Properties.TextFormatString = "{0}";
-                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
-                        s.Width = Unit.Percentage(100);
-                        s.TabIndex = 1;
-                        s.Properties.ClientSideEvents.SelectedIndexChanged = "OnOIDSelectedIndexChanged";
-
-                    });
-                });
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.FieldName = "TransDate";
-                    i.Caption = IWSLocalResource.TransDate;
-                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
-                    i.NestedExtension().DateEdit(s =>
-                    {
-                        s.Properties.UseMaskBehavior = true;
-                        s.Properties.EditFormat = EditFormat.Date;
-                        s.Properties.EditFormatString = "d";
-                        s.Width = Unit.Percentage(94);
-                        s.Properties.AllowUserInput = true;
-                        s.Properties.AllowMouseWheel = true;
-                        s.TabIndex = 5;
                     });
                 });
                 formLayoutSettings.Items.Add(i =>
@@ -399,6 +346,23 @@
                         s.Properties.ClientSideEvents.Init = "function(s, e) { s.Focus(); }";
                     });
                 });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "TransDate";
+                    i.Caption = IWSLocalResource.TransDate;
+                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
+                    i.NestedExtension().DateEdit(s =>
+                    {
+                        s.Properties.UseMaskBehavior = true;
+                        s.Properties.EditFormat = EditFormat.Date;
+                        s.Properties.EditFormatString = "d";
+                        s.Width = Unit.Percentage(94);
+                        s.Properties.AllowUserInput = true;
+                        s.Properties.AllowMouseWheel = true;
+                        s.TabIndex = 5;
+                    });
+                });
+                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "ItemDate";

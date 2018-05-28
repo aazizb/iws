@@ -1,4 +1,5 @@
 ﻿@using IWSProject.Content
+
 @Html.DevExpress().CallbackPanel(settings =>
 {
     settings.Name = "CallbackPanel";
@@ -20,19 +21,23 @@
                 group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
                 group.Caption = IWSLocalResource.FiscalYearCurrent;
                 group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
-                group.Items.Add(i =>
+                group.Items.Add(txtExtension =>
                 {
-                    i.FieldName = "CStart";
-                    i.Name = "CStart";
-                    i.Caption = IWSLocalResource.FiscalYearStart;
-                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    txtExtension.FieldName = "CStart";
+                    txtExtension.Name = "CStart";
+                    txtExtension.Caption = IWSLocalResource.FiscalYearStart;
+                    txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
+                    textBoxSettings.ReadOnly = true;
                 });
-                group.Items.Add(i =>
+                group.Items.Add(txtExtension =>
                 {
-                    i.FieldName = "CEnd";
-                    i.Name = "CEnd";
-                    i.Caption = IWSLocalResource.FiscalYearEnd;
-                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    txtExtension.FieldName = "CEnd";
+                    txtExtension.Name = "CEnd";
+                    txtExtension.Caption = IWSLocalResource.FiscalYearEnd;
+                    txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
+                    textBoxSettings.ReadOnly = true;
                 });
             });
             formLayout.Items.AddGroupItem(group =>
@@ -41,19 +46,23 @@
                 group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
                 group.Caption = IWSLocalResource.FiscalYearOpen;
                 group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
-                group.Items.Add(i =>
+                group.Items.Add(txtExtension =>
                 {
-                    i.FieldName = "OStart";
-                    i.Name = "OStart";
-                    i.Caption = IWSLocalResource.FiscalYearStart;
-                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    txtExtension.FieldName = "OStart";
+                    txtExtension.Name = "OStart";
+                    txtExtension.Caption = IWSLocalResource.FiscalYearStart;
+                    txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
+                    textBoxSettings.ReadOnly = true;
                 });
-                group.Items.Add(i =>
+                group.Items.Add(txtExtension =>
                 {
-                    i.FieldName = "OEnd";
-                    i.Name = "OEnd";
-                    i.Caption = IWSLocalResource.FiscalYearEnd;
-                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    txtExtension.FieldName = "OEnd";
+                    txtExtension.Name = "OEnd";
+                    txtExtension.Caption = IWSLocalResource.FiscalYearEnd;
+                    txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                    var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
+                    textBoxSettings.ReadOnly = true;
                 });
             });
             formLayout.Items.AddGroupItem(group =>

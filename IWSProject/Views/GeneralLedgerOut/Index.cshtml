@@ -144,8 +144,11 @@
     {
         settings.Name = "btnSubmit";
         settings.ControlStyle.CssClass = "button";
-        settings.Text = IWSLocalResource.Validate;
-        settings.Width = Unit.Pixel(150);
+        settings.Text = "";
+        settings.ToolTip = IWSLocalResource.Validate;
+        settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+        settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
+        settings.Width = Unit.Pixel(80);
         settings.UseSubmitBehavior = false;
         settings.ClientSideEvents.Click = "OnSubmitClick";
     }

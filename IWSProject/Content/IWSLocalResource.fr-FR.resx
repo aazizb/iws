@@ -142,7 +142,7 @@
     <value>Bon de Réception</value>
   </data>
   <data name="id" xml:space="preserve">
-    <value>ID</value>
+    <value>N°#</value>
   </data>
   <data name="item" xml:space="preserve">
     <value>Article</value>
@@ -154,7 +154,7 @@
     <value>Model ID</value>
   </data>
   <data name="oid" xml:space="preserve">
-    <value>OID</value>
+    <value>Justificatif#</value>
   </data>
   <data name="price" xml:space="preserve">
     <value>Prix</value>
