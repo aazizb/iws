@@ -10,6 +10,8 @@
 
     settings.SettingsEditing.AllowDelete = true;
 
+    settings.SettingsContextMenu.Enabled = true;
+
     settings.SettingsUpload.Enabled = true;
     settings.SettingsEditing.AllowDownload = true;
     settings.SettingsUpload.UseAdvancedUploadMode = true;
@@ -31,7 +33,6 @@
     uploadToDBButton.BeginGroup = true;
 
     settings.SettingsContextMenu.Items.Add(uploadToDBButton);
-    settings.SettingsContextMenu.Enabled = true;
 
     uploadToDBButton = new FileManagerToolbarCustomButton();
     uploadToDBButton.CommandName = "UploadBrouillardToDb";

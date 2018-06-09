@@ -239,6 +239,7 @@ namespace IWSProject.Models
         public decimal? Betrag { get; set; }
         public string Waehrung { get; set; }
         public string Info { get; set; }
+        public string CompanyIBAN { get; set; }
         public string CompanyID { get; set; }
         public bool? IsValidated { get; set; }
     }

@@ -909,4 +909,10 @@
   <data name="IsResultSheetAccount" xml:space="preserve">
     <value>Result</value>
   </data>
+  <data name="CompanyIBAN" xml:space="preserve">
+    <value>Company IBAN</value>
+  </data>
+  <data name="Vending" xml:space="preserve">
+    <value>Vending</value>
+  </data>
 </root>

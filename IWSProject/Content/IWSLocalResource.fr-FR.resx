@@ -915,4 +915,10 @@
   <data name="IsResultSheetAccount" xml:space="preserve">
     <value>Vue au Resultat</value>
   </data>
+  <data name="CompanyIBAN" xml:space="preserve">
+    <value>IBAN Société</value>
+  </data>
+  <data name="Vending" xml:space="preserve">
+    <value>Vente</value>
+  </data>
 </root>

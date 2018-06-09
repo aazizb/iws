@@ -228,11 +228,6 @@
 
             const string accounts = "id;name;balance;description";
 
-            //const string providerXLS = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=";
-            //const string extensionXLS= ";Extended Properties=\"Excel 8.0;HDR=Yes;IMEX=2\"";
-            //const string providerXLSX = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=";
-            //const string extensionXLSX= ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
-
             const string providerXLS = "Provider=Microsoft.ACE.OLEDB.12.0.;Data Source=";
             const string extensionXLS = ";Extended Properties=\"Excel 8.0;HDR=YES;IMEX=2\"";
             const string providerXLSX = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=";
@@ -657,14 +652,14 @@
         {
             string companyId = (string)Session["CompanyID"];
 
-            InvoiceViewModel invoice = IWSLookUp.GetInvoiceDetail(settlementId, 
+            InvoiceViewModel invoice = IWSLookUp.GetInvoiceDetail(settlementId,
                                             IWSLookUp.DocsType.CustomerInvoice.ToString(), companyId);
 
             int itemID = 0;
 
             if (invoice.Equals(null))
                 return false;
-
+            string accountingAccount = IWSLookUp.GetCompteTier(invoice.AccountId, IWSLookUp.DocsType.CustomerInvoice.ToString());
             CustomerInvoice customerInvoice = new CustomerInvoice
             {
                 oid = 0,
@@ -674,6 +669,7 @@
                 TransDate = invoice.TransDate,
                 ItemDate = invoice.ItemDate,
                 EntryDate = invoice.EntryDate,
+                AccountingAccount = accountingAccount,
                 CompanyId = invoice.CompanyId,
                 IsValidated = false
             };
@@ -709,7 +705,11 @@
             };
             int countLineID = new AccountingController().MakeCustomerInvoiceLine(lineCustomerInvoice);
             if (countLineID != 0)
+            {
+                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.CustomerInvoice.ToString(), lineCustomerInvoice.First().transid);
+
                 return UpdateOid(IWSLookUp.DocsType.Settlement.ToString(), settlementId, itemID);
+            }
             return false;
         }
 
@@ -719,11 +719,12 @@
 
             InvoiceViewModel invoice = IWSLookUp.GetInvoiceDetail(paymentId,
                                             IWSLookUp.DocsType.VendorInvoice.ToString(), companyId);
-
             int itemID = 0;
 
             if (invoice.Equals(null))
                 return false;
+
+            string accountingAccount = IWSLookUp.GetCompteTier(invoice.AccountId, IWSLookUp.DocsType.VendorInvoice.ToString());
 
             VendorInvoice vendorInvoice = new VendorInvoice
             {
@@ -734,6 +735,7 @@
                 TransDate = invoice.TransDate,
                 ItemDate = invoice.ItemDate,
                 EntryDate = invoice.EntryDate,
+                AccountingAccount = accountingAccount,
                 CompanyId = invoice.CompanyId,
                 IsValidated = false
             };
@@ -769,30 +771,36 @@
             };
             int countLineID = new AccountingController().MakeVendorInvoiceLine(lineVendorInvoice);
             if (countLineID != 0)
+            {
+                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.VendorInvoice.ToString(), lineVendorInvoice.First().transid);
                 return UpdateOid(IWSLookUp.DocsType.Payment.ToString(), paymentId, itemID);
+            }
             return false;
         }
 
-        private int MakePayment(int bankStatementID, int oid)
+        private int MakePayment(int bankStatementId, int oid)
         {
             string companyId = (string)Session["CompanyID"];
-            StatementDetailViewModel SD = IWSLookUp.GetStatementDetail(bankStatementID,
+            StatementDetailViewModel bankStatement = IWSLookUp.GetStatementDetail(bankStatementId,
                                             IWSLookUp.DocsType.Payment.ToString(), companyId);
+
 
             int itemID = 0;
 
-            if (SD==null)
+            if (bankStatement==null)
                 return itemID;
+            string accountingAccount = IWSLookUp.GetCompteTier(bankStatement.Id, IWSLookUp.DocsType.Payment.ToString());
 
             Payment payment = new Payment
             {
                 oid = oid,
                 CostCenter = "200", // to be confirmed
-                account = SD.Id,
-                HeaderText = SD.Verwendungszweck,
-                TransDate = SD.Valutadatum,
-                ItemDate = SD.Buchungstag,
+                account = bankStatement.Id,
+                HeaderText = bankStatement.Verwendungszweck,
+                TransDate = bankStatement.Valutadatum,
+                ItemDate = bankStatement.Buchungstag,
                 EntryDate = DateTime.Today,
+                AccountingAccount = accountingAccount,
                 CompanyId = companyId,
                 IsValidated = false
             };
@@ -806,43 +814,45 @@
                 new LinePayment
                 {
                     transid = itemID,
-                    account = SD.AccountID,
+                    account =  IWSLookUp.GetPaymentDebitAcount(bankStatementId),
                     side = true,
-                    oaccount = SD.OAccountID,
-                    amount = SD.Betrag,
-                    Currency = SD.Waehrung,
-                    duedate = SD.Valutadatum,
-                    text = SD.Buchungstext
+                    oaccount = IWSLookUp.GetPaymentCreditAcount(bankStatementId),
+                    amount = bankStatement.Betrag,
+                    Currency = bankStatement.Waehrung,
+                    duedate = bankStatement.Valutadatum,
+                    text = bankStatement.Buchungstext
                 }
             };
             int countLineID = new AccountingController().MakePaymentLine(linePayment);
             if (countLineID > 0)
             {
+                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Payment.ToString(), linePayment.First().transid);
                 return itemID;
 
             }
             return countLineID;
         }
-
-        private int MakeSettlement(int bankStatementID, int oid)
+        
+        private int MakeSettlement(int bankStatementId, int oid)
         {
             string companyId = (string)Session["CompanyID"];
 
-            StatementDetailViewModel SD = IWSLookUp.GetStatementDetail(bankStatementID,
+            StatementDetailViewModel bankStatement = IWSLookUp.GetStatementDetail(bankStatementId,
                                                 IWSLookUp.DocsType.Settlement.ToString(), companyId);
             int itemID = 0;
 
-            if (SD.Equals(null))
+            if (bankStatement.Equals(null))
                 return itemID;
-
+            string accountingAccount = IWSLookUp.GetCompteTier(bankStatement.Id, IWSLookUp.DocsType.Settlement.ToString());
             Settlement settlement = new Settlement
                 {
                     oid = oid,
                     CostCenter = "100", // to be confirmed
-                    account = SD.Id,
-                    HeaderText = SD.Verwendungszweck,
-                    TransDate = SD.Valutadatum,
-                    ItemDate = SD.Buchungstag,
+                    account = bankStatement.Id,
+                    HeaderText = bankStatement.Verwendungszweck,
+                    TransDate = bankStatement.Valutadatum,
+                    ItemDate = bankStatement.Buchungstag,
+                    AccountingAccount = accountingAccount,
                     EntryDate = DateTime.Today,
                     CompanyId = companyId,
                     IsValidated = false
@@ -857,18 +867,19 @@
                     new LineSettlement
                     {
                         transid = itemID,
-                        account = SD.AccountID,
+                        account = IWSLookUp.GetSettlementDebitAcount(bankStatementId),
                         side = true,
-                        oaccount = SD.OAccountID,
-                        amount = SD.Betrag,
-                        Currency = SD.Waehrung,
-                        duedate = SD.Valutadatum,
-                        text = SD.Buchungstext
+                        oaccount = IWSLookUp.GetSettlementCreditAcount(bankStatementId), 
+                        amount = bankStatement.Betrag,
+                        Currency = bankStatement.Waehrung,
+                        duedate = bankStatement.Valutadatum,
+                        text = bankStatement.Buchungstext
                     }
                 };
             int countLineID = new AccountingController().MakeSettlementLine(lineSettlement);
             if (countLineID > 0)
             {
+                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Settlement.ToString(), lineSettlement.First().transid);
                 return itemID;
 
             }
@@ -919,6 +930,7 @@
             int countLineID = new AccountingController().MakeGeneralLedgerLine(lineGeneralLedger);
             if (countLineID > 0)
             {
+                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.GeneralLedger.ToString(), lineGeneralLedger.First().transid);
                 return itemID;
             }
             return countLineID;

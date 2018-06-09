@@ -37,13 +37,6 @@
         $("#selectedIDs").val(selectedIDs);
         callbackPanelPartialView.PerformCallback();
     }
-
-    //function OnInitGrid() {
-    //    if ($("#selectedIDs").val()) {
-    //        var keysArray = $("#selectedIDs").val().split(",");
-    //        BankStatementsGridView.SelectRowsByKey(keysArray);
-    //    }
-    //}
 </script>
 
 @{
@@ -55,14 +48,14 @@
     @Html.Hidden("selectedIDs");
 
     @Html.DevExpress().Button(settings =>
-    {
-        settings.Name = "btnSubmit";
+{
+    settings.Name = "btnSubmit";
 
-        settings.Text = IWSLocalResource.Validate;
-        settings.Width = Unit.Pixel(100);
-        settings.UseSubmitBehavior = false;
-        settings.ClientSideEvents.Click = "OnSubmitClick";
-    }).GetHtml()
+    settings.Text = IWSLocalResource.Validate;
+    settings.Width = Unit.Pixel(100);
+    settings.UseSubmitBehavior = false;
+    settings.ClientSideEvents.Click = "OnSubmitClick";
+}).GetHtml()
 
 
     @Html.DevExpress().Button(settings =>

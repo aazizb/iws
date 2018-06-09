@@ -493,6 +493,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Company IBAN.
+        /// </summary>
+        public static string CompanyIBAN {
+            get {
+                return ResourceManager.GetString("CompanyIBAN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Company Information.
         /// </summary>
         public static string CompanyInfo {
@@ -2397,6 +2406,15 @@ namespace IWSProject.Content {
         public static string vatcode {
             get {
                 return ResourceManager.GetString("vatcode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vending.
+        /// </summary>
+        public static string Vending {
+            get {
+                return ResourceManager.GetString("Vending", resourceCulture);
             }
         }
         

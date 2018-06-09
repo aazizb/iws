@@ -118,7 +118,12 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Accounts.Where(c => c.CompanyID == companyID);
         }
-
+        /// <summary>
+        /// Retourne le compte tier connaissant tier
+        /// </summary>
+        /// <param name="account">Tier</param>
+        /// <param name="transType">Doc type</param>
+        /// <returns>Compte tier</returns>
         public static string GetCompteTier(string account, string transType)
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -296,7 +301,6 @@
         public static string GetAccount(int id, string ItemType)
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
-
             if (ItemType.Equals(DocsType.CustomerInvoice.ToString()))
             {
                 return IWSEntities.SalesInvoices.Join(IWSEntities.Customers,
@@ -308,7 +312,6 @@
                                }).FirstOrDefault(d =>
                                d.CompanyId.Equals(companyID) && d.InvoiceId.Equals(id)).AccountId;
             }
-
             if (ItemType.Equals(DocsType.VendorInvoice.ToString()))
             {
                 return IWSEntities.InventoryInvoices.Join(IWSEntities.Suppliers,
@@ -320,7 +323,6 @@
                                }).FirstOrDefault(d =>
                                d.CompanyId.Equals(companyID) && d.InvoiceId.Equals(id)).AccountId;
             }
-
             if (ItemType.Equals(DocsType.Payment.ToString()))
             {
                 return IWSEntities.VendorInvoices.FirstOrDefault(v =>
@@ -332,6 +334,99 @@
                                            v.CompanyId.Equals(companyID) && v.id.Equals(id)).AccountingAccount;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Compte à débiter cas paiement
+        /// </summary>
+        /// <param name="bankStatementId">Bank Statement ID</param>
+        /// <returns>N° de compte</returns>
+        public static string GetPaymentDebitAcount(int bankStatementId)    
+        {
+            BankStatement bankStatement = IWSEntities.BankStatements
+                                .FirstOrDefault(bs => bs.id == bankStatementId);
+
+            var account = from s in IWSEntities.Suppliers
+                          from b in IWSEntities.BankAccounts
+                          where
+                            s.id == b.Owner &&
+                            b.IBAN == bankStatement.Kontonummer
+                          select new
+                          {
+                              s.accountid
+                          };
+
+            return account.Single().accountid;
+
+        }
+        /// <summary>
+        /// Compte à créditer cas paiement
+        /// </summary>
+        /// <param name="bankStatementId">Bank Statement ID</param>
+        /// <returns>N° de compte</returns>
+        public static string GetPaymentCreditAcount(int bankStatementId)
+        {
+            BankStatement bankStatement = IWSEntities.BankStatements
+                                .FirstOrDefault(bs => bs.id == bankStatementId);
+
+            var account = from s in IWSEntities.Companies
+                          from b in IWSEntities.BankAccounts
+                          where
+                            s.id == b.Owner &&
+                            b.IBAN == bankStatement.CompanyIBAN
+                          select new
+                          {
+                              s.bankaccountid
+                          };
+
+            return account.Single().bankaccountid;
+
+        }
+        /// <summary>
+        /// Compte à débiter cas encaissement
+        /// </summary>
+        /// <param name="bankStatementId">Bank Statement ID</param>
+        /// <returns>N° de compte</returns>
+        public static string GetSettlementDebitAcount(int bankStatementId)
+        {
+            BankStatement bankStatement = IWSEntities.BankStatements
+                                .FirstOrDefault(bs => bs.id == bankStatementId);
+
+            var account = from c in IWSEntities.Companies
+                          from b in IWSEntities.BankAccounts
+                          where
+                            c.id == b.Owner &&
+                            b.IBAN == bankStatement.CompanyIBAN
+                          select new
+                          {
+                              c.bankaccountid
+                          };
+
+            return account.Single().bankaccountid;
+
+        }
+        /// <summary>
+        /// Compte à créditer cas encaissement
+        /// </summary>
+        /// <param name="bankStatementId">Bank Statement ID</param>
+        /// <returns>N° de compte</returns>
+        public static string GetSettlementCreditAcount(int bankStatementId)
+        {
+            BankStatement bankStatement = IWSEntities.BankStatements
+                                .FirstOrDefault(bs => bs.id == bankStatementId);
+
+            var account = from c in IWSEntities.Customers
+                          from b in IWSEntities.BankAccounts
+                          where
+                            c.id == b.Owner &&
+                            b.IBAN == bankStatement.Kontonummer
+                          select new
+                          {
+                              c.accountid
+                          };
+
+            return account.Single().accountid;
+
         }
 
         public static IEnumerable GetArticle()
@@ -1161,7 +1256,7 @@
                     BeguenstigterZahlungspflichtiger = b.BeguenstigterZahlungspflichtiger,
                     Kontonummer = b.Kontonummer, BLZ = b.BLZ, Betrag = b.Betrag,
                     Waehrung = b.Waehrung, Info = b.Info, CompanyID = b.CompanyID,
-                    IsValidated = b.IsValidated
+                    CompanyIBAN = b.CompanyIBAN, IsValidated = b.IsValidated
                 }).ToList();
             return doc;
         }

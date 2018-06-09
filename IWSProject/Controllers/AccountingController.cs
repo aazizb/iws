@@ -2121,6 +2121,7 @@ namespace IWSProject.Controllers
         public int MakePaymentLine(List<LinePayment> linePayment)
         {
             int id = 0;
+
             try
             {
                 foreach (var item in linePayment)
@@ -2129,6 +2130,7 @@ namespace IWSProject.Controllers
                     id++;
                 }
                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                
                 return id;
             }
             catch (Exception ex)

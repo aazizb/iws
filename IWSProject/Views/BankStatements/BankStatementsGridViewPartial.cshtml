@@ -4,7 +4,7 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "BankStatementsGridView";
-      
+
 
         settings.CallbackRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartial" };
 
@@ -19,8 +19,7 @@
 
         settings.CommandColumn.ShowSelectCheckbox = true;
 
-        settings.CommandColumn.Visible = true;
-        settings.CommandColumn.Width = Unit.Percentage(7);
+
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
@@ -42,6 +41,12 @@
         settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
 
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
+
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowSelectCheckbox = true;
+        settings.CommandColumn.Width = Unit.Percentage(8);
+        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
@@ -169,12 +174,14 @@
         {
             if (e.Column.FieldName == "Periode")
             {
+                e.Column.Width = Unit.Percentage(5);
                 DateTime transDate = (DateTime)e.GetListSourceFieldValue("Valutadatum");
                 string periode = Convert.ToString((int)transDate.Year);
                 periode += ((int)transDate.Month < 10) ? "0" + Convert.ToString((int)transDate.Month) : Convert.ToString((int)transDate.Month);
                 e.Value = periode;
             }
         };
+
         settings.Columns.Add(column =>
         {
             column.FieldName = "Buchungstext";
@@ -190,7 +197,13 @@
             column.Width = Unit.Percentage(22);
             column.Visible = false;
         });
-
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CompanyIBAN";
+            column.Caption = IWSLocalResource.CompanyIBAN;
+            column.Width = Unit.Percentage(20);
+            column.Visible = false;
+        });
         settings.Columns.Add(column =>
         {
             column.FieldName = "BeguenstigterZahlungspflichtiger";
@@ -377,6 +390,18 @@
                         s.Width = Unit.Percentage(100);
                     });
                 });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "CompanyIBAN";
+                    i.Caption = IWSLocalResource.CompanyIBAN;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.ShowCaption = DefaultBoolean.False;
