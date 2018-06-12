@@ -158,6 +158,7 @@
             return IWSEntities.ClassChild(accountid, companyID).Select(i => 
                                                 new { id = i.ChildId, name = i.ChildName });
         }
+
         public static IEnumerable GetAccounts()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -172,6 +173,29 @@
                             && c.IsUsed.Equals(true))
             .OrderBy(o => o.Name);
             return account;
+        }
+        public static IEnumerable GetBankChildren()
+        {
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+
+            string companyBank = IWSEntities.Companies
+                .SingleOrDefault(company => company.id == companyId).ClassBank;
+
+            var bankChildren = IWSEntities.GetChildren(companyBank, companyId).AsEnumerable().Select(i => new
+            {
+                Id = i.id
+            });
+
+            return from b in bankChildren
+                   from a in IWSEntities.Accounts
+                   orderby a.name
+                   where
+                     b.Id == a.id
+                   select new
+                   {
+                       b.Id,
+                       a.name
+                   } ;
         }
         public static IEnumerable GetAccount(string account, string transType)
         {
@@ -368,18 +392,26 @@
         {
             BankStatement bankStatement = IWSEntities.BankStatements
                                 .FirstOrDefault(bs => bs.id == bankStatementId);
-
-            var account = from s in IWSEntities.Companies
-                          from b in IWSEntities.BankAccounts
+            #region Modification du 05/06/2018
+            //var account = from s in IWSEntities.Companies
+            //              from b in IWSEntities.BankAccounts
+            //              where
+            //                s.id == b.Owner &&
+            //                b.IBAN == bankStatement.CompanyIBAN
+            //              select new
+            //              {
+            //                  s.bankaccountid
+            //              };
+            #endregion
+            var account = from b in IWSEntities.BankAccounts
                           where
-                            s.id == b.Owner &&
                             b.IBAN == bankStatement.CompanyIBAN
                           select new
                           {
-                              s.bankaccountid
+                              b.Account
                           };
 
-            return account.Single().bankaccountid;
+            return account.Single().Account;
 
         }
         /// <summary>
@@ -391,18 +423,26 @@
         {
             BankStatement bankStatement = IWSEntities.BankStatements
                                 .FirstOrDefault(bs => bs.id == bankStatementId);
+            #region Modification du 05/06/2018
 
-            var account = from c in IWSEntities.Companies
-                          from b in IWSEntities.BankAccounts
+            //var account = from c in IWSEntities.Companies
+            //              from b in IWSEntities.BankAccounts
+            //              where
+            //                c.id == b.Owner &&
+            //                b.IBAN == bankStatement.CompanyIBAN
+            //              select new
+            //              {
+            //                  c.bankaccountid
+            //              };
+            #endregion
+            var account = from b in IWSEntities.BankAccounts
                           where
-                            c.id == b.Owner &&
                             b.IBAN == bankStatement.CompanyIBAN
                           select new
                           {
-                              c.bankaccountid
+                              b.Account
                           };
-
-            return account.Single().bankaccountid;
+            return account.Single().Account;
 
         }
         /// <summary>

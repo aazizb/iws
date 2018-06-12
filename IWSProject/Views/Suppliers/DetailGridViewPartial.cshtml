@@ -7,11 +7,11 @@
         settings.Name = "DetailGridView";
         settings.Caption = IWSLocalResource.bankaccount;
         settings.SettingsDetail.MasterGridName = "CustomersGridViewPartial";
-        settings.CallbackRouteValues = new { Controller = "Customers", Action = "DetailGridViewPartial", owner = Session["owner"] };
+        settings.CallbackRouteValues = new { Controller = "Suppliers", Action = "DetailGridViewPartial", owner = Session["owner"] };
 
-        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Customers", Action = "DetailGridViewPartialAddNew", owner = Session["owner"] };
-        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Customers", Action = "DetailGridViewPartialUpdate", owner = Session["owner"] };
-        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Customers", Action = "DetailGridViewPartialDelete", owner = Session["owner"] };
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Suppliers", Action = "DetailGridViewPartialAddNew", owner = Session["owner"] };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Suppliers", Action = "DetailGridViewPartialUpdate", owner = Session["owner"] };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Suppliers", Action = "DetailGridViewPartialDelete", owner = Session["owner"] };
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
         settings.SettingsContextMenu.Enabled = true;

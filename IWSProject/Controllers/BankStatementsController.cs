@@ -804,6 +804,7 @@
                 CompanyId = companyId,
                 IsValidated = false
             };
+
             itemID = new AccountingController().MakePaymentHeader(payment);
 
             if (!(itemID > 0))
