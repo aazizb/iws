@@ -17,11 +17,19 @@ namespace IWSProject.Controllers
         // GET: goodreceivings
         public ActionResult Index()
         {
-            return View();
+            return View(IWSLookUp.GetGoodReceiving());
         }
         [ValidateInput(false)]
         public ActionResult MasterGridViewPartial()
         {
+            ViewBag.Store = IWSLookUp.GetStore();
+
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+
+            ViewBag.GoodReceivingOID = IWSLookUp.GetGoodReceivingOID();
+
+            ViewBag.Store = IWSLookUp.GetStore();
+
             return PartialView("MasterGridViewPartial", IWSLookUp.GetGoodReceiving());
         }
         [HttpPost, ValidateInput(false)]
@@ -144,6 +152,12 @@ namespace IWSProject.Controllers
             {
                 ViewData["IsNewDetailRow"] = true;
             }
+            ViewBag.ComboArticleId = IWSLookUp.GetArticle();
+
+            ViewBag.QttyUnit = IWSLookUp.GetQuantityUnits();
+
+            ViewBag.Currency = IWSLookUp.GetCurrency();
+
             return PartialView("DetailGridViewPartial", db.LineGoodReceivings.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]

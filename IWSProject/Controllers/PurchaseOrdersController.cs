@@ -17,7 +17,7 @@ namespace IWSProject.Controllers
         // GET: purchaseorders
         public ActionResult Index()
         {
-            return View();
+            return View(IWSLookUp.GetPurchaseOrder());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartial()

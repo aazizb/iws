@@ -134,7 +134,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetStore();
+                combo.DataSource = ViewBag.Store;
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("name", IWSLocalResource.store, Unit.Percentage(75));
                 combo.TextFormatString = "{0}-{1}";
@@ -152,7 +152,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetSuppliers();
+                combo.DataSource = ViewBag.ComboSupplierId;
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("name", IWSLocalResource.supplier, Unit.Percentage(75));
                 combo.TextFormatString = "{0}-{1}";
@@ -344,7 +344,7 @@
                         s.Properties.TextField = "Name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(int);
-                        s.Properties.DataSource = IWSLookUp.GetGoodReceivingOID();
+                        s.Properties.DataSource = ViewBag.GoodReceivingOID;
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -402,7 +402,7 @@
                         s.Properties.TextField = "Name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetStore();
+                        s.Properties.DataSource = ViewBag.Store;
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -448,7 +448,7 @@
                         s.Properties.TextField = "Name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetSuppliers();
+                        s.Properties.DataSource = ViewBag.ComboSupplierId;
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
