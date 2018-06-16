@@ -24,6 +24,8 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult ArticlesGridViewPartial()
         {
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
             ViewBag.Currency = IWSLookUp.GetCurrency();
 
             ViewBag.QttyUnit = IWSLookUp.GetQuantityUnits();
@@ -31,6 +33,8 @@ namespace IWSProject.Controllers
             ViewBag.PackUnit = IWSLookUp.GetPackUnits();
 
             ViewBag.VAT = IWSLookUp.GetVAT();
+
+            ViewBag.ComboArticleId = IWSLookUp.GetArticle();
 
             return PartialView( IWSLookUp.GetArticles());
         }

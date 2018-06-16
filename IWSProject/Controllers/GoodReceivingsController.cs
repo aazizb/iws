@@ -17,7 +17,7 @@ namespace IWSProject.Controllers
         // GET: goodreceivings
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetGoodReceiving());
+            return View();
         }
         [ValidateInput(false)]
         public ActionResult MasterGridViewPartial()

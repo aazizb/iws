@@ -284,7 +284,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetPackUnits();
+                        s.Properties.DataSource = ViewBag.PackUnit;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -312,7 +312,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -351,7 +351,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetPackUnits();
+                        s.Properties.DataSource = ViewBag.QttyUnit;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -379,7 +379,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -418,7 +418,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetVAT();
+                        s.Properties.DataSource = ViewBag.VAT;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -447,7 +447,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -477,7 +477,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetCurrency();
+                        s.Properties.DataSource = ViewBag.Currency;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -507,7 +507,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetArticle();
+                        s.Properties.DataSource = ViewBag.ComboArticleId;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";

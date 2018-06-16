@@ -22,6 +22,10 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartial()
         {
+            ViewBag.Store = IWSLookUp.GetStore();
+
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+
             return PartialView("MasterGridViewPartial", IWSLookUp.GetPurchaseOrder());
         }
         [HttpPost, ValidateInput(false)]
@@ -136,6 +140,12 @@ namespace IWSProject.Controllers
             {
                 ViewData["IsNewDetailRow"] = true;
             }
+            ViewBag.ComboArticleId = IWSLookUp.GetArticle();
+
+            ViewBag.QttyUnit = IWSLookUp.GetQuantityUnits();
+
+            ViewBag.Currency = IWSLookUp.GetCurrency();
+
             return PartialView("DetailGridViewPartial", IWSLookUp.GetLinePurchaseOrders(transId));
         }
         [HttpPost, ValidateInput(false)]
