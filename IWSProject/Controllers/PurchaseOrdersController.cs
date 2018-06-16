@@ -17,7 +17,7 @@ namespace IWSProject.Controllers
         // GET: purchaseorders
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetPurchaseOrder());
+            return View();
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartial()
@@ -136,7 +136,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["IsNewDetailRow"] = true;
             }
-            return PartialView("DetailGridViewPartial", IWSLookUp.GetLinePurchaseOrders(transId));// db.LinePurchaseOrders.Where(p => p.transid == transId).ToList());
+            return PartialView("DetailGridViewPartial", IWSLookUp.GetLinePurchaseOrders(transId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] LinePurchaseOrder line, int transId)

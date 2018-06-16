@@ -22,7 +22,7 @@ namespace IWSProject.Controllers
         // GET: Companies
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetCompany());
+            return View();
         }
         [ValidateInput(false)]
         public ActionResult SetLogo()
@@ -58,6 +58,10 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult CompaniesGridViewPartial()
         {
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
+            ViewBag.Currency = IWSLookUp.GetCurrency();
+
             return PartialView("CompaniesGridViewPartial", IWSLookUp.GetCompany());
         }
 
@@ -141,6 +145,10 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(string owner)
         {
+            ViewBag.BankChildren = IWSLookUp.GetBankChildren();
+
+            ViewBag.BIC = IWSLookUp.GetBIC();
+
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
         [HttpPost, ValidateInput(false)]

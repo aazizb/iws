@@ -961,11 +961,9 @@
         {
             if (HttpContext.Current.Session["Menus"] == null)
             {
-                List<Menu> menus = new List<Menu>();
-                menus = IWSEntities.Menus
-                        .Where(c=>c.CompanyID == CompanyID && c.Disable==false)
-                        .ToList();
-                HttpContext.Current.Session["Menus"] = menus;
+                HttpContext.Current.Session["Menus"] = IWSEntities.Menus
+                        .Where(c => c.CompanyID == CompanyID && c.Disable == false)
+                        .ToList<Menu>();
             }
             return (List<Menu>)HttpContext.Current.Session["Menus"];
         }

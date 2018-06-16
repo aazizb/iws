@@ -12,18 +12,21 @@ namespace IWSProject.Controllers
         IWSDataContext db;
         public VatsController()
         {
+            
             db = new IWSDataContext();
         }
 
         // GET: Vats
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetVats());
+            return View();// IWSLookUp.GetVats());
         }
 
         [ValidateInput(false)]
         public ActionResult VatsGridViewPartial()
         {
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
             return PartialView("VatsGridViewPartial", IWSLookUp.GetVats());
         }
 

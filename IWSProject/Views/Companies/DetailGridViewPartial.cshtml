@@ -74,7 +74,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "Id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetBIC();
+                combo.DataSource = ViewBag.BIC;
                 combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("Name", IWSLocalResource.name, Unit.Percentage(75));
                 combo.TextFormatString = "{0}-{1}";
@@ -91,7 +91,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "Id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetBankChildren();
+                combo.DataSource = ViewBag.BankChildren;// IWSLookUp.GetBankChildren();
                 combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("Name", IWSLocalResource.name, Unit.Percentage(75));
                 combo.TextFormatString = "{0}-{1}";
@@ -162,7 +162,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetBIC();
+                        s.Properties.DataSource = ViewBag.BIC;
                         s.Properties.Columns.Add("id").Caption = IWSLocalResource.bic;
                         s.Properties.Columns.Add("name").Caption = IWSLocalResource.banks;
                         s.Properties.TextFormatString = "{0}-{1}";
@@ -180,7 +180,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetBankChildren();
+                        s.Properties.DataSource = ViewBag.BankChildren;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";

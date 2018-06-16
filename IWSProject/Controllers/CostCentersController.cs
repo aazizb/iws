@@ -18,11 +18,13 @@ namespace IWSProject.Controllers
         // GET: costcenters
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetCostCenter());
+            return View();
         }
         [ValidateInput(false)]
         public ActionResult CostCentersGridViewPartial()
         {
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
             return PartialView("CostCentersGridViewPartial", IWSLookUp.GetCostCenter());
         }
         [HttpPost, ValidateInput(false)]

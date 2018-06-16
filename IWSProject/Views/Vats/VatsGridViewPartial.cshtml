@@ -116,7 +116,7 @@
             column.Width = Unit.Percentage(30);
 
         });
-        
+
         #region Template Edit
         settings.SetEditFormTemplateContent(templateContent =>
         {
@@ -185,7 +185,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId;// IWSLookUp.GetAccounts();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -218,7 +218,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId; // IWSLookUp.GetAccounts();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -233,7 +233,6 @@
                             column.Width = Unit.Percentage(85);
 
                         });
-
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
@@ -252,7 +251,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId;// IWSLookUp.GetAccounts();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -267,7 +266,6 @@
                             column.Width = Unit.Percentage(85);
 
                         });
-
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;

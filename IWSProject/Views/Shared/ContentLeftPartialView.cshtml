@@ -3,11 +3,11 @@
 @using System.Resources;
 @using System.Linq;
 @{
-        List<IWSProject.Models.Menu> menuItems = new List<IWSProject.Models.Menu>();
-        if (HttpContext.Current.Session["Menus"] != null)
-        {
-            menuItems = (List<IWSProject.Models.Menu>)HttpContext.Current.Session["Menus"];
-        } }
+    List<IWSProject.Models.Menu> menuItems = new List<IWSProject.Models.Menu>();
+    if (HttpContext.Current.Session["Menus"] != null)
+    {
+        menuItems = (List<IWSProject.Models.Menu>)HttpContext.Current.Session["Menus"];
+    } }
  
 @*Configure the left panel's menu *@
 @Html.DevExpress().NavBar(settings =>

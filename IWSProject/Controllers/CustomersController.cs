@@ -18,12 +18,16 @@ namespace IWSProject.Controllers
         // GET: Customers
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetCustomer());
+            return View();
         }
 
         [ValidateInput(false)]
         public ActionResult CustomersGridViewPartial()
         {
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
+            ViewBag.VAT = IWSLookUp.GetVAT();
+
             return PartialView("CustomersGridViewPartial", IWSLookUp.GetCustomer());
         }
 

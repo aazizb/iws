@@ -18,12 +18,16 @@ namespace IWSProject.Controllers
         // GET: suppliers
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetSupplier());
+            return View();// IWSLookUp.GetSupplier());
         }
 
         [ValidateInput(false)]
         public ActionResult SuppliersGridViewPartial()
         {
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
+            ViewBag.VAT = IWSLookUp.GetVAT();
+
             return PartialView("SuppliersGridViewPartial", IWSLookUp.GetSupplier());
         }
 
@@ -105,10 +109,11 @@ namespace IWSProject.Controllers
             return PartialView("SuppliersGridViewPartial", IWSLookUp.GetSupplier());
         }
 
-
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(string owner)
         {
+            ViewBag.BIC = IWSLookUp.GetBIC();
+
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
         [HttpPost, ValidateInput(false)]

@@ -109,7 +109,7 @@ namespace IWSProject.Controllers
                 };
                 await UserManager.SmsService.SendAsync(message);
             }
-            return RedirectToAction("VerifyPhoneNumber", new { PhoneNumber = model.PhoneNumber });
+            return RedirectToAction("VerifyPhoneNumber", new { model.PhoneNumber });
         }
 
         //

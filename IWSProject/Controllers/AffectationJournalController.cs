@@ -20,12 +20,16 @@ namespace IWSProject.Controllers
         // GET: AffectationJournal
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetAffectationJournal());
+            return View();
         }
 
         [ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartial()
         {
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
+            ViewBag.TypeJournal = IWSLookUp.GetTypeJournal();
+
             return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
         }
 

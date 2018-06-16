@@ -2,6 +2,7 @@
 using IWSProject.Models;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace IWSProject.Controllers
@@ -17,12 +18,20 @@ namespace IWSProject.Controllers
         // GET: articles
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetArticles());
+            return View();
         }
 
         [ValidateInput(false)]
         public ActionResult ArticlesGridViewPartial()
         {
+            ViewBag.Currency = IWSLookUp.GetCurrency();
+
+            ViewBag.QttyUnit = IWSLookUp.GetQuantityUnits();
+
+            ViewBag.PackUnit = IWSLookUp.GetPackUnits();
+
+            ViewBag.VAT = IWSLookUp.GetVAT();
+
             return PartialView( IWSLookUp.GetArticles());
         }
         [HttpPost, ValidateInput(false)]

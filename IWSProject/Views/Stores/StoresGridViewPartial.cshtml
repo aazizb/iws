@@ -234,7 +234,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";

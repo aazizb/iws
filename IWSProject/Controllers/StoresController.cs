@@ -18,12 +18,14 @@ namespace IWSProject.Controllers
         // GET: stores
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetStores());
+            return View();
         }
 
         [ValidateInput(false)]
         public ActionResult StoresGridViewPartial()
         {
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
             return PartialView("StoresGridViewPartial", IWSLookUp.GetStores());
         }
 
