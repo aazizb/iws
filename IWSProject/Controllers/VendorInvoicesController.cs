@@ -23,6 +23,17 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult MasterGridViewPartial()
         {
+            ViewBag.CostCenter = IWSLookUp.GetCostCenters();
+
+            ViewBag.SupplierAccount = IWSLookUp.GetSuppliersAccount();
+
+            ViewBag.TypeJournal = IWSLookUp.GetTypeJournal();
+
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+
+            ViewBag.VendorInvoiceOID = IWSLookUp.GetVendorInvoiceOID();
+
+
             return PartialView("MasterGridViewPartial", IWSLookUp.GetVendorInvoice());
         }
         [HttpPost, ValidateInput(false)]
@@ -146,6 +157,13 @@ namespace IWSProject.Controllers
                 ViewData["IsNewDetailRow"] = true;
             }
             ViewBag.DefaultCurrency = IWSLookUp.GetCurrencyDefault();
+
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
+            ViewBag.Currency = IWSLookUp.GetCurrency();
+
+            //ViewBag.OAccountId = IWSLookUp.GetAccount((string)Session["supplierid"], (string)Session["MenuID"]);
+
             return PartialView("DetailGridViewPartial", db.LineVendorInvoices.Where(p => p.transid == transid).ToList());
         }
         [HttpPost, ValidateInput(false)]

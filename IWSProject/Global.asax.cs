@@ -1,8 +1,10 @@
+using IWSProject.App_Start;
 using System;
 using System.Globalization;
 using System.Threading;
 using System.Web.Http;
 using System.Web.Mvc;
+using System.Web.Optimization;
 using System.Web.Routing;
 
 namespace IWSProject
@@ -25,6 +27,8 @@ namespace IWSProject
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             
             ModelBinders.Binders.DefaultBinder = new DevExpress.Web.Mvc.DevExpressEditorsBinder();
+
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             DevExpress.Web.ASPxWebControl.CallbackError += Application_Error;
         }

@@ -7,23 +7,26 @@
     <title>@ViewBag.Title</title>
     <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
    
-@Html.DevExpress().GetStyleSheets(
-    new StyleSheet { ExtensionSuite = ExtensionSuite.Report },
-    new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
-    new StyleSheet { ExtensionSuite = ExtensionSuite.GridView },
-    new StyleSheet { ExtensionSuite = ExtensionSuite.Editors },
-    new StyleSheet { ExtensionType = ExtensionType.WebDocumentViewer },
-    new StyleSheet { ExtensionSuite = ExtensionSuite.PivotGrid }
-    )
-@Html.DevExpress().GetScripts(
-    new Script { ExtensionSuite = ExtensionSuite.Report },
-    new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout },
-    new Script { ExtensionSuite = ExtensionSuite.GridView },
-    new Script { ExtensionSuite = ExtensionSuite.Editors },
-    new Script { ExtensionType = ExtensionType.WebDocumentViewer },
-    new Script { ExtensionSuite = ExtensionSuite.PivotGrid }
-    )
 
+    @Html.DevExpress().GetStyleSheets(
+                              new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout, ExtensionType = ExtensionType.Menu },
+                              new StyleSheet { ExtensionSuite = ExtensionSuite.Report },
+                              new StyleSheet { ExtensionSuite = ExtensionSuite.Editors },
+                              new StyleSheet { ExtensionSuite = ExtensionSuite.Editors },
+                              new StyleSheet { ExtensionSuite = ExtensionSuite.GridView },
+                              new StyleSheet { ExtensionSuite = ExtensionSuite.PivotGrid }
+                          )
+        @Html.DevExpress().GetScripts(
+                            new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout, ExtensionType = ExtensionType.Menu },
+                            new Script { ExtensionSuite = ExtensionSuite.Report },
+                            new Script { ExtensionSuite = ExtensionSuite.GridView },
+                            new Script { ExtensionSuite = ExtensionSuite.Editors },
+                            new Script { ExtensionSuite = ExtensionSuite.PivotGrid },
+                            new Script { ExtensionSuite = ExtensionSuite.Editors }
+                        )
+    @*@Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/style")*@
 </head>
 <body>
     @Html.DevExpress().Splitter(settings => {

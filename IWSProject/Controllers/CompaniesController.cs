@@ -22,6 +22,20 @@ namespace IWSProject.Controllers
         // GET: Companies
         public ActionResult Index()
         {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
+            ViewBag.Currency = IWSLookUp.GetCurrency();
+
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            if(Session["DurationCom"] == null)
+            {
+                Session["DurationCom"] = $"Data reading time: {elapsedTime}";
+
+            }
             return View();
         }
         [ValidateInput(false)]
@@ -58,6 +72,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult CompaniesGridViewPartial()
         {
+
             ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
 
             ViewBag.Currency = IWSLookUp.GetCurrency();
@@ -140,7 +155,6 @@ namespace IWSProject.Controllers
             }
             return PartialView("CompaniesGridViewPartial", IWSLookUp.GetCompany());
         }
-
 
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(string owner)

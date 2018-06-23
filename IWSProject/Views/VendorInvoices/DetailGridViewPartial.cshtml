@@ -89,7 +89,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = ViewBag.ComboAccountId;
                 combo.Columns.Add("id").Caption = IWSLocalResource.id;
                 combo.Columns.Add("name").Caption = IWSLocalResource.item;
                 combo.Width = Unit.Percentage(100);
@@ -115,7 +115,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = ViewBag.ComboAccountId;
                 combo.Columns.Add("id").Caption = IWSLocalResource.id;
                 combo.Columns.Add("name").Caption = IWSLocalResource.item;
                 combo.Width = Unit.Percentage(100);
@@ -145,7 +145,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetCurrency();
+                combo.DataSource = ViewBag.Currency;
                 combo.Columns.Add("id").Caption = IWSLocalResource.id;
                 combo.Columns.Add("name").Caption = IWSLocalResource.Currency;
                 combo.Width = Unit.Percentage(100);
@@ -235,7 +235,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -297,7 +297,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccount((string)Session["supplierid"], (string)Session["MenuID"]);
+                        s.Properties.DataSource = IWSLookUp.GetAccount((string)Session["supplierid"], (string)Session["MenuID"]); //ViewBag.OAccountId;
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -345,7 +345,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetCurrency();
+                        s.Properties.DataSource = ViewBag.Currency;
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";

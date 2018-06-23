@@ -22,6 +22,11 @@
 
         settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
+        //performance tuning
+        settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
+        settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
+        settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
+
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
         settings.SettingsCommandButton.NewButton.Text = " ";
@@ -238,7 +243,7 @@
                     i.NestedExtension().TextBox(s =>
                     {
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                     });
                 });
@@ -251,7 +256,7 @@
                     i.NestedExtension().Memo(s =>
                     {
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                     });
                 });
@@ -299,7 +304,7 @@
                         });
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                     });
                 });
@@ -327,7 +332,7 @@
                         });
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                     });
                 });
@@ -366,7 +371,7 @@
                         });
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                     });
                 });
@@ -395,7 +400,7 @@
                         });
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                     });
                 });
@@ -434,7 +439,7 @@
                         });
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                     });
                 });
@@ -464,7 +469,7 @@
                         });
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                     });
                 });
@@ -494,7 +499,7 @@
                         });
                         s.Properties.TextFormatString = "{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                     });
                 });
@@ -524,7 +529,7 @@
                         });
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                     });
                 });
@@ -536,7 +541,7 @@
                     i.NestedExtension().Memo(s =>
                     {
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
+                        s.ShowModelErrors = false;
                         s.Width = Unit.Percentage(100);
                         s.Height = Unit.Pixel(60);
                     });

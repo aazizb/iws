@@ -16,7 +16,7 @@ namespace IWSProject.Controllers
         // GET: Banks
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetBanks());
+            return View();// IWSLookUp.GetBanks());
         }
 
         [ValidateInput(false)]

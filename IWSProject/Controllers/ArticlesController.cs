@@ -18,25 +18,47 @@ namespace IWSProject.Controllers
         // GET: articles
         public ActionResult Index()
         {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+            ViewBag.Currency = IWSLookUp.GetCurrency();
+            ViewBag.QttyUnit = IWSLookUp.GetQuantityUnits();
+            ViewBag.PackUnit = IWSLookUp.GetPackUnits();
+            ViewBag.VAT = IWSLookUp.GetVAT();
+            ViewBag.ComboArticleId = IWSLookUp.GetArticle();
+
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            if(Session["DurationArt"] == null)
+            {
+                Session["DurationArt"] = $"Data reading time: {elapsedTime}";
+
+            }
+
             return View();
         }
 
         [ValidateInput(false)]
         public ActionResult ArticlesGridViewPartial()
         {
+            
             ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
             ViewBag.Currency = IWSLookUp.GetCurrency();
-
             ViewBag.QttyUnit = IWSLookUp.GetQuantityUnits();
-
             ViewBag.PackUnit = IWSLookUp.GetPackUnits();
-
             ViewBag.VAT = IWSLookUp.GetVAT();
-
             ViewBag.ComboArticleId = IWSLookUp.GetArticle();
+            //System.Diagnostics.Debug.WriteLine($"start 1: {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
+            //System.Diagnostics.Debug.WriteLine($"start 2: {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
+            //System.Diagnostics.Debug.WriteLine($"start 3: {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
+            //System.Diagnostics.Debug.WriteLine($"start 4: {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
+            //System.Diagnostics.Debug.WriteLine($"start 5: {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
+            //System.Diagnostics.Debug.WriteLine($"start 6: {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
+            //System.Diagnostics.Debug.WriteLine($"start 7: {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
+            //System.Diagnostics.Debug.WriteLine($"end   7: {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt")}");
 
-            return PartialView( IWSLookUp.GetArticles());
+            return PartialView(IWSLookUp.GetArticles());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult ArticlesGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Article item)

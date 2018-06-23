@@ -47,6 +47,14 @@ namespace IWSProject.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<IWSProject.Models.AffectationJournal> AffectationJournals { get; set; }
+
+        public System.Data.Entity.DbSet<IWSProject.Models.Account> Accounts { get; set; }
+
+        public System.Data.Entity.DbSet<IWSProject.Models.Company> Companies { get; set; }
+
+        public System.Data.Entity.DbSet<IWSProject.Models.TypeJournal> TypeJournals { get; set; }
     }
 }
 

@@ -17,6 +17,10 @@ namespace IWSProject.Controllers
         // GET: purchaseorders
         public ActionResult Index()
         {
+            ViewBag.Store = IWSLookUp.GetStore();
+
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+
             return View(IWSLookUp.GetPurchaseOrder());
         }
         [HttpPost, ValidateInput(false)]

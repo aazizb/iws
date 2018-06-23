@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using DevExpress.Web.Mvc;
 using IWSProject.Models;
-using IWSProject.Content;
+using DevExpress.Web.Mvc;
 
 namespace IWSProject.Controllers
 {
@@ -17,7 +16,7 @@ namespace IWSProject.Controllers
         {
             db = new IWSDataContext();
         }
-        // GET: AffectationJournal
+        //GET: AffectationJournal
         public ActionResult Index()
         {
             return View();
@@ -26,24 +25,22 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartial()
         {
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+            Session["ComboAccountId"] = IWSLookUp.GetAccounts();
 
-            ViewBag.TypeJournal = IWSLookUp.GetTypeJournal();
-
+            Session["TypeJournal"] = IWSLookUp.GetTypeJournal();
             return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
         }
 
         [HttpPost, ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] AffectationJournal item)
         {
-            var model = db.AffectationJournals;
             item.CompanyID = (string)Session["CompanyID"];
             ViewData["affectationJournal"] = item;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    model.InsertOnSubmit(item);
+                    db.AffectationJournals.InsertOnSubmit(item);
                     db.SubmitChanges();
                 }
                 catch (Exception e)
@@ -55,6 +52,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
+
             return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
         }
         [HttpPost, ValidateInput(false)]
@@ -87,7 +85,8 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
+
+            return PartialView ("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartialDelete(string accountID, bool side, string oaccountID)
@@ -110,6 +109,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = e.Message;
             }
+
             return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
         }
     }

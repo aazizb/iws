@@ -128,7 +128,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.Store;
+                combo.DataSource = ViewBag.Store;//IWSLookUp.GetStore();
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("name", IWSLocalResource.store, Unit.Percentage(75));
                 combo.TextFormatString = "{0}-{1}";
@@ -146,7 +146,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.ComboSupplierId;
+                combo.DataSource = ViewBag.ComboSupplierId;// IWSLookUp.GetSuppliers(); //
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("name", IWSLocalResource.supplier, Unit.Percentage(75));
                 combo.TextFormatString = "{0}-{1}";

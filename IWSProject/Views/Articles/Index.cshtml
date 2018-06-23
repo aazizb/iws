@@ -1,7 +1,28 @@
-﻿
-@using IWSProject.Content
+﻿@using IWSProject.Content
+<script type="text/javascript">
+    var callbackInitTime;
+    var command;
+
+    function OnStartCallback(s, e) {
+        callbackInitTime = new Date();
+        command = e.command;
+    }
+    function OnEndCallback(s, e) {
+        var currentTime = new Date();
+        var allapseTime = currentTime - callbackInitTime;
+        document.getElementById("Operation").innerHTML = command;
+        document.getElementById("Time").innerHTML = allapseTime;
+    }
+</script>
 @{
     ViewBag.Title = IWSLocalResource.articles;
 }
-
+<div class="options">
+    <div class="options-item">
+        @Html.Partial("PerformancePartialView")
+    </div>
+</div>
+@{
+    @Session["DurationArt"];
+}
 @Html.Action("ArticlesGridViewPartial")
