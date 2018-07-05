@@ -85,8 +85,8 @@
     var expanded = false;
     var ndxMaster = 0;
     var ndxDetail = 0;
-    var command;                            
-    var isDetailRowExpanded = new Array();  
+    var command;
+    var isDetailRowExpanded = new Array();
     function OnMRowClick(s, e) {
         expanded = true;
         ndxMaster = e.visibleIndex;
@@ -103,20 +103,20 @@
             expanded = false;
             s.ExpandDetailRow(ndxMaster);
         }
-        if (command == "HIDEDETAILROW") {   
+        if (command == "HIDEDETAILROW") {
             if (s.IsEditing || s.IsNewRowEditing)
                 s.CancelEdit();
         }
-        if (command == 'CANCELEDIT') {      
+        if (command == 'CANCELEDIT') {
             if (isDetailRowExpanded[ndxMaster] == true) {
                 s.CollapseDetailRow(ndxMaster);
             }
         }
     }
-    function OnDetailRowExpanding(s, e) {   
+    function OnDetailRowExpanding(s, e) {
         isDetailRowExpanded[e.visibleIndex] = true;
     }
-    function OnDetailRowCollapsing(s, e) {  
+    function OnDetailRowCollapsing(s, e) {
         isDetailRowExpanded[e.visibleIndex] = false;
     }
     function OnDEndCallback(s, e) {
@@ -124,7 +124,7 @@
     }
     function OnMBeginCallback(s, e) {
         e.customArgs["selectedIDs"] = selectedIDs;
-        command = e.command;                
+        command = e.command;
     }
     function OnMSelectionChanged(s, e) {
         s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
@@ -186,6 +186,25 @@
                 }
             });
     }
+
+    function OnButtonClick() {
+        if (BillOfDelivery.IsCustomizationWindowVisible()) {
+
+            BillOfDelivery.HideCustomizationWindow();
+        }
+        else {
+            BillOfDelivery.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = BillOfDelivery.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+
 </script>
 
 @{
@@ -196,19 +215,27 @@
     @Html.Hidden("cbxOID");
 
     @Html.DevExpress().Button(
-    settings =>
+        settings =>
+        {
+            settings.Name = "btnSubmit";
+            settings.ControlStyle.CssClass = "button";
+            settings.Text = "";
+            settings.ToolTip = IWSLocalResource.Validate;
+            settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+            settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
+            settings.Width = Unit.Pixel(80);
+            settings.UseSubmitBehavior = false;
+            settings.ClientSideEvents.Click = "OnSubmitClick";
+        }
+        ).GetHtml()
+    @Html.DevExpress().Button(settings =>
     {
-        settings.Name = "btnSubmit";
-        settings.ControlStyle.CssClass = "button";
-        settings.Text = "";
-        settings.ToolTip = IWSLocalResource.Validate;
-        settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-        settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
-        settings.Width = Unit.Pixel(80);
+        settings.Name = "btShowCustomizationWindow";
+        settings.Text = IWSLocalResource.WindowCustomization;
+        settings.Width = Unit.Pixel(100);
         settings.UseSubmitBehavior = false;
-        settings.ClientSideEvents.Click = "OnSubmitClick";
-    }
-    ).GetHtml()
+        settings.ClientSideEvents.Click = "OnButtonClick";
+    }).GetHtml()
 
     @Html.Partial("CallbackPanelPartialView")
 }
