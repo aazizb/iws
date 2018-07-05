@@ -25,11 +25,15 @@
         settings.ClientSideEvents.DetailRowCollapsing = "OnDetailRowCollapsing";
         settings.ClientSideEvents.DetailRowExpanding = "OnDetailRowExpanding";
 
-        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
+
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
         settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 

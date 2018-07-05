@@ -930,4 +930,7 @@
   <data name="WindowShow" xml:space="preserve">
     <value>Mostrar</value>
   </data>
+  <data name="Validation" xml:space="preserve">
+    <value>Validación</value>
+  </data>
 </root>

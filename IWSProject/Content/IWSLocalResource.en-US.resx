@@ -921,4 +921,7 @@
   <data name="WindowShow" xml:space="preserve">
     <value>Show</value>
   </data>
+  <data name="Validation" xml:space="preserve">
+    <value>Validation</value>
+  </data>
 </root>

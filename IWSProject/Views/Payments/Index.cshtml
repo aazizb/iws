@@ -165,6 +165,24 @@
             });
     }
 
+    function OnButtonClick() {
+        if (Payments.IsCustomizationWindowVisible()) {
+
+            Payments.HideCustomizationWindow();
+        }
+        else {
+            Payments.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = Payments.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+
 </script>
 @using IWSProject.Content
 @{
@@ -175,19 +193,27 @@
     @Html.Hidden("cbxOID");
 
     @Html.DevExpress().Button(
-    settings =>
-    {
-        settings.Name = "btnSubmit";
-        settings.ControlStyle.CssClass = "button";
-        settings.Text = "";
-        settings.ToolTip = IWSLocalResource.Validate;
-        settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-        settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
-        settings.Width = Unit.Pixel(80);
-        settings.UseSubmitBehavior = false;
-        settings.ClientSideEvents.Click = "OnSubmitClick";
-    }
-    ).GetHtml()
+        settings =>
+        {
+            settings.Name = "btnSubmit";
+            settings.ControlStyle.CssClass = "button";
+            settings.Text = "";
+            settings.ToolTip = IWSLocalResource.Validate;
+            settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+            settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
+            settings.Width = Unit.Pixel(80);
+            settings.UseSubmitBehavior = false;
+            settings.ClientSideEvents.Click = "OnSubmitClick";
+        }
+        ).GetHtml()
 
+    @Html.DevExpress().Button(settings =>
+    {
+        settings.Name = "btShowCustomizationWindow";
+        settings.Text = IWSLocalResource.WindowCustomization;
+        settings.Width = Unit.Pixel(100);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnButtonClick";
+    }).GetHtml()
     @Html.Partial("CallbackPanelPartialView")
 }

@@ -8,6 +8,8 @@
 
         settings.CallbackRouteValues = new { Controller = "Accounting", Action = "ValidateBLPartialView" };
 
+        settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
+
         settings.KeyFieldName = "ItemID;ItemType";
         settings.SettingsContextMenu.Enabled = true;
 
@@ -15,10 +17,22 @@
         settings.Settings.ShowFilterRowMenu = true;
 
         settings.Settings.ShowGroupPanel = true;
-        settings.SettingsBehavior.AllowFocusedRow = true;
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Pixel(85);
+
+
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
+        settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.AllowFocusedRow = true;
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
+
         settings.CommandColumn.ShowSelectCheckbox = true;
 
         settings.Width = Unit.Percentage(100);
@@ -29,8 +43,6 @@
         settings.ClientSideEvents.SelectionChanged = "OnSelectionChanged";
         settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
 
-        settings.SettingsBehavior.AllowSelectByRowClick = true;
-        settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
