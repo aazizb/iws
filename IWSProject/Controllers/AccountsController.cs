@@ -17,13 +17,41 @@ namespace IWSProject.Controllers
         // GET: Accounts
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetAccount());
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ViewBag.Accounts = IWSLookUp.GetAccount();
+
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
+            ViewBag.Journal = IWSLookUp.GetTypeJournal();
+
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+
+            //if (Session["DurationAccount"] == null)
+            //{
+                Session["DurationAccount"] = $"Data reading time: {elapsedTime} ms";
+
+            //}
+      
+            return View();
         }
 
         [ValidateInput(false)]
         public ActionResult AccountsGridViewPartial()
         {
-            return PartialView("AccountsGridViewPartial", IWSLookUp.GetAccount());
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+            ViewBag.Acc = IWSLookUp.GetAccount();
+
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
+            ViewBag.Journal = IWSLookUp.GetTypeJournal();
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            Session["DurationAccount"] = $"Data reading time: {elapsedTime} ms";
+            return PartialView("AccountsGridViewPartial", ViewBag.Acc);
         }
 
         [HttpPost, ValidateInput(false)]

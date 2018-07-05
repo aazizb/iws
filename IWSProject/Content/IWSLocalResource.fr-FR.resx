@@ -250,7 +250,7 @@
     <value>Facture Fournisseur Logistic</value>
   </data>
   <data name="LineInventoryInvoice" xml:space="preserve">
-    <value>Line Inventory Invoice</value>
+    <value>Ligne Facture Fournisseur Logistique</value>
   </data>
   <data name="customer" xml:space="preserve">
     <value>Client</value>
@@ -920,5 +920,14 @@
   </data>
   <data name="Vending" xml:space="preserve">
     <value>Vente</value>
+  </data>
+  <data name="ViewAccountingBooks" xml:space="preserve">
+    <value>Consultation Journaux</value>
+  </data>
+  <data name="WindowHide" xml:space="preserve">
+    <value>Masquer</value>
+  </data>
+  <data name="WindowShow" xml:space="preserve">
+    <value>Montrer</value>
   </data>
 </root>

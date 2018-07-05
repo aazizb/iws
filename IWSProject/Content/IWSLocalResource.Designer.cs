@@ -8,10 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IWSProject.Content
-{
-
-
+namespace IWSProject.Content {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -2428,11 +2428,38 @@ namespace IWSProject.Content
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to View Accounting Books.
+        /// </summary>
+        public static string ViewAccountingBooks {
+            get {
+                return ResourceManager.GetString("ViewAccountingBooks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show.
         /// </summary>
         public static string WindowCustomization {
             get {
                 return ResourceManager.GetString("WindowCustomization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide.
+        /// </summary>
+        public static string WindowHide {
+            get {
+                return ResourceManager.GetString("WindowHide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show.
+        /// </summary>
+        public static string WindowShow {
+            get {
+                return ResourceManager.GetString("WindowShow", resourceCulture);
             }
         }
         

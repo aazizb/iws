@@ -16,13 +16,33 @@ namespace IWSProject.Controllers
         // GET: Banks
         public ActionResult Index()
         {
-            return View();// IWSLookUp.GetBanks());
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ViewBag.Banks = IWSLookUp.GetBanks();
+
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+
+            if (Session["DurationBank"] == null)
+            {
+                Session["DurationBank"] = $"Data reading time: {elapsedTime} ms";
+
+            }
+            return View();
         }
 
         [ValidateInput(false)]
         public ActionResult BanksGridViewPartial()
         {
-            return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+            ViewBag.BankX = IWSLookUp.GetBanks();
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            Session["DurationBank"] = $"Data reading time: {elapsedTime} ms";
+
+            return PartialView("BanksGridViewPartial", ViewBag.BankX);
         }
 
         [HttpPost, ValidateInput(false)]

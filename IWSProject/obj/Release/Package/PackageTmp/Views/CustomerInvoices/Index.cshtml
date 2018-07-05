@@ -1,0 +1,180 @@
+﻿@using IWSProject.Content
+<script type="text/javascript">
+    function OnOIDSelectedIndexChanged(s, e) {
+        $.ajax({
+            url: '@Url.Action("Customer", "CustomerInvoices")',
+            type: "POST",
+            data: { selectedOIDIndex: s.GetValue() },
+            success: function (data) {
+                account.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("HeaderText", "CustomerInvoices")',
+            type: "POST",
+            data: { selectedOIDIndex: s.GetValue() },
+            success: function (data) {
+                HeaderText.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        $.ajax({
+            url: '@Url.Action("AccountingAccount", "CustomerInvoices")',
+            type: "POST",
+            data: { selectedOIDIndex: s.GetValue() },
+            success: function (data) {
+                AccountingAccount.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+    }
+    function OnAccountSelectedIndexChanged(s, e) {
+    $.ajax({
+        url: '@Url.Action("GetCompteTier", "CustomerInvoices")',
+        type: "POST",
+        data: { selectedCustomerId: s.GetValue() },
+        success: function (data) {
+            AccountingAccount.SetText(data);
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+        }
+    });
+    }
+    var selectedIDs = null;
+    var expanded = false;
+    var ndxMaster = 0;
+    var ndxDetail = 0;
+    var command;
+    var isDetailRowExpanded = new Array();
+    function OnMRowClick(s, e) {
+        expanded = true;
+        ndxMaster = e.visibleIndex;
+        s.StartEditRow(ndxMaster);
+        isDetailRowExpanded[ndxMaster] = true;
+    }
+    function OnDRowClick(s, e) {
+        ndxDetail = e.visibleIndex
+        s.SetFocusedRowIndex(ndxDetail);
+        s.StartEditRow(ndxDetail);
+    }
+    function OnMEndCallback(s, e) {
+        if (expanded == true) {
+            expanded = false;
+            s.ExpandDetailRow(ndxMaster);
+        }
+        if (command == "HIDEDETAILROW") {
+            if (s.IsEditing || s.IsNewRowEditing)
+                s.CancelEdit();
+        }
+        if (command == 'CANCELEDIT') {
+            if (isDetailRowExpanded[ndxMaster] == true) {
+                s.CollapseDetailRow(ndxMaster);
+            }
+        }
+    }
+    function OnDetailRowExpanding(s, e) {
+        isDetailRowExpanded[e.visibleIndex] = true;
+    }
+    function OnDetailRowCollapsing(s, e) {
+        isDetailRowExpanded[e.visibleIndex] = false;
+    }
+    function OnDEndCallback(s, e) {
+        s.SetFocusedRowIndex(e.visibleIndex);
+    }
+    function OnMBeginCallback(s, e) {
+        e.customArgs["selectedIDs"] = selectedIDs;
+        command = e.command;
+    }
+    function OnMSelectionChanged(s, e) {
+        s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
+    }
+    function GetSelectedFieldValuesCallback(values) {
+        selectedIDs = values.join(';');
+    }
+    function OnSubmitClick(s, e) {
+        callbackPanelPartialView.PerformCallback();
+    }
+    function OnMInit(s, e) {
+
+        ASPxClientUtils.AttachEventToElement(
+            s.GetMainElement(),
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    case 13://ENTER
+                        var isValidated = IsValidated.GetValue();
+                        if (s.IsEditing()) {
+                            if (isValidated == false) {
+                                s.UpdateEdit();
+                            }
+                            else {
+                                s.CancelEdit();
+                            }
+                        }
+                    case 27://ESC
+                        if (s.IsEditing()) {
+                            s.CancelEdit();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+    }
+    function OnDInit(s, e) {
+
+        ASPxClientUtils.AttachEventToElement(
+            s.GetMainElement(),
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    case 13://ENTER
+                        if (s.IsEditing()) {
+                            s.UpdateEdit();
+                            s.AddNewRow();
+                        }
+                        break;
+                    case 27://ESC
+                        if (s.IsEditing()) {
+                            s.CancelEdit();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+    }
+</script>
+
+@{
+    ViewBag.Title = IWSLocalResource.CustomerInvoice;
+}
+@using (Html.BeginForm("Index", "CustomerInvoices"))
+{
+    @Html.Hidden("cbxOID");
+
+    @Html.DevExpress().Button(
+    settings =>
+    {
+        settings.Name = "btnSubmit";
+        settings.ControlStyle.CssClass = "button";
+        settings.Text = "";
+        settings.ToolTip = IWSLocalResource.Validate;
+        settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+        settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
+        settings.Width = Unit.Pixel(80);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnSubmitClick";
+    }
+    ).GetHtml()
+
+    @Html.Partial("CallbackPanelPartialView")
+}

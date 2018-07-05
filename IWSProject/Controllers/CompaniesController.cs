@@ -28,14 +28,16 @@ namespace IWSProject.Controllers
 
             ViewBag.Currency = IWSLookUp.GetCurrency();
 
+            ViewBag.Company = IWSLookUp.GetCompany();
+
             sw.Stop();
 
             string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            if(Session["DurationCom"] == null)
-            {
-                Session["DurationCom"] = $"Data reading time: {elapsedTime}";
+            //if(Session["DurationCom"] == null)
+            //{
+                Session["DurationCom"] = $"Data reading time: {elapsedTime} ms";
 
-            }
+            //}
             return View();
         }
         [ValidateInput(false)]
@@ -72,12 +74,18 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult CompaniesGridViewPartial()
         {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
 
             ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
 
             ViewBag.Currency = IWSLookUp.GetCurrency();
 
-            return PartialView("CompaniesGridViewPartial", IWSLookUp.GetCompany());
+            ViewBag.Comp = IWSLookUp.GetCompany();
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            Session["DurationCom"] = $"Data reading time: {elapsedTime} ms";
+            return PartialView("CompaniesGridViewPartial", ViewBag.Comp);
         }
 
         [HttpPost, ValidateInput(false)]

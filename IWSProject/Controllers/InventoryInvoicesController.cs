@@ -18,6 +18,10 @@ namespace IWSProject.Controllers
         // GET: InventoryInvoices
         public ActionResult Index()
         {
+            ViewBag.Store = IWSLookUp.GetStore();
+
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+
             return View(IWSLookUp.GetInventoryInvoice());
         }
         [ValidateInput(false)]

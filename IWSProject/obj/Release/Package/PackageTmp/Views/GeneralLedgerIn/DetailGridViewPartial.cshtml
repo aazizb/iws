@@ -1,0 +1,396 @@
+﻿
+@using IWSProject.Content
+@using IWSProject.Models
+
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "DetailGridView";
+        settings.Caption = IWSLocalResource.lineGeneralLedger;
+        settings.SettingsDetail.MasterGridName = "MasterGridViewPartial";
+        settings.CallbackRouteValues = new { Controller = "GeneralLedgerIn", Action = "DetailGridViewPartial", transid = Session["transid"] };
+
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "GeneralLedgerIn", Action = "DetailGridViewPartialAddNew", transid = Session["transid"] };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "GeneralLedgerIn", Action = "DetailGridViewPartialUpdate", transid = Session["transid"] };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "GeneralLedgerIn", Action = "DetailGridViewPartialDelete", transid = Session["transid"] };
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+
+
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.Width = Unit.Percentage(5);
+
+        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
+        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
+        settings.SettingsCommandButton.NewButton.Text = " ";
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+
+        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
+        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
+        settings.SettingsCommandButton.EditButton.Text = " ";
+        settings.CommandColumn.ShowEditButton = true;
+
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
+        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
+        settings.SettingsCommandButton.DeleteButton.Text = " ";
+        settings.CommandColumn.ShowDeleteButton = true;
+
+        settings.CommandButtonInitialize = (s, e) =>
+        {
+            var value = Session["IsValidated"];
+            if (e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.Delete
+                                                    || e.ButtonType == ColumnCommandButtonType.New)
+            {
+                e.Enabled = false.Equals(value);
+            }
+        };
+        settings.InitNewRow = (s, e) =>
+        {
+            e.NewValues["duedate"] = DateTime.Today;
+            e.NewValues["side"] = false;
+        };
+
+        settings.KeyFieldName = "id";
+
+        settings.Width = Unit.Percentage(100);
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
+        settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+        settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+        settings.SettingsPager.Visible = true;
+        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowFilterRowMenu = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
+
+        settings.SettingsBehavior.EnableRowHotTrack = true;
+
+        settings.Styles.RowHotTrack.Cursor = "pointer";
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "account";
+            column.Caption = IWSLocalResource.account;
+            column.Width = Unit.Percentage(18);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.Columns.Add("id").Caption = IWSLocalResource.id;
+                combo.Columns.Add("name").Caption = IWSLocalResource.item;
+                combo.Width = Unit.Percentage(100);
+                combo.TextFormatString = "{0}-{1}";
+            });
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "side";
+            column.Caption = IWSLocalResource.side;
+            column.Width = Unit.Percentage(5);
+            column.EditorProperties().CheckBox(checkBox =>
+            {
+            });
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "oaccount";
+            column.Caption = IWSLocalResource.oaccount;
+            column.Width = Unit.Percentage(18);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.Columns.Add("id").Caption = IWSLocalResource.id;
+                combo.Columns.Add("name").Caption = IWSLocalResource.item;
+                combo.Width = Unit.Percentage(100);
+                combo.TextFormatString = "{0}-{1}";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "amount";
+            column.Caption = IWSLocalResource.amount;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().SpinEdit(p =>
+            {
+                p.DisplayFormatString = "N";
+                p.DisplayFormatInEditMode = true;
+                p.SpinButtons.ShowLargeIncrementButtons = true;
+                p.Width = Unit.Percentage(100);
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Currency";
+            column.Caption = IWSLocalResource.Currency;
+            column.Width = Unit.Percentage(5);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetCurrency();
+                combo.Columns.Add("id").Caption = IWSLocalResource.id;
+                combo.Columns.Add("name").Caption = IWSLocalResource.Currency;
+                combo.Width = Unit.Percentage(100);
+                combo.TextFormatString = "{1}";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "duedate";
+            column.Caption = IWSLocalResource.duedate;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(8);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormatString = "MM/dd/yyyy";
+                d.NullDisplayText = "MM/dd/yyyy";
+                d.EditFormat = EditFormat.Custom;
+                d.Width = Unit.Percentage(100);
+                d.DisplayFormatString = "yyyy-MM-dd";
+                d.DisplayFormatInEditMode = true;
+                d.AllowUserInput = true;
+                d.AllowMouseWheel = true;
+
+            });
+        });
+
+        settings.Columns.Add("text").Caption = IWSLocalResource.text;
+        settings.Columns.Add(column =>
+        {
+            column.Visible = false;
+            column.FieldName = "Total";
+            column.Caption = IWSLocalResource.Total;
+            column.UnboundType = DevExpress.Data.UnboundColumnType.Decimal;
+            column.PropertiesEdit.DisplayFormatString = "N";
+        });
+
+        settings.CustomUnboundColumnData = (sender, e) =>
+        {
+            if (e.Column.FieldName == "Total")
+            {
+                decimal amount = Convert.ToDecimal(e.GetListSourceFieldValue("amount"));
+                e.Value = amount;
+            }
+        };
+        settings.Settings.ShowFooter = false;
+        settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Total");
+
+        #region Template
+
+        settings.SetEditFormTemplateContent(templateContent =>
+        {
+
+            Html.DevExpress().FormLayout(formLayoutSettings =>
+            {
+                formLayoutSettings.Name = "DetailGridViewEdit";
+                formLayoutSettings.Width = Unit.Percentage(100);
+                formLayoutSettings.ColCount = 2;
+
+                formLayoutSettings.Items.Add(column =>
+                {
+                    column.FieldName = "account";
+                    column.Caption = IWSLocalResource.account;
+                    column.NestedExtension().ComboBox(combo =>
+                    {
+                        combo.Properties.TextField = "name";
+                        combo.Properties.ValueField = "id";
+                        combo.Properties.ValueType = typeof(string);
+                        combo.Properties.DataSource = IWSLookUp.GetAccounts();
+                        combo.Properties.Columns.Add(i =>
+                        {
+                            i.FieldName = "id";
+                            i.Caption = IWSLocalResource.id;
+                            i.Width = Unit.Percentage(15);
+                        });
+                        combo.Properties.Columns.Add(i =>
+                        {
+                            i.FieldName = "name";
+                            i.Caption = IWSLocalResource.name;
+                            i.Width = Unit.Percentage(85);
+                        });
+                        combo.Properties.TextFormatString = "{0}-{1}";
+                        combo.Properties.CallbackPageSize = 15;
+                        combo.Properties.FilterMinLength = 2;
+                        combo.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        combo.Width = Unit.Percentage(100);
+                        combo.ShowModelErrors = true;
+                    });
+                });
+
+                formLayoutSettings.Items.Add(column =>
+                {
+                    column.FieldName = "side";
+                    column.Caption = IWSLocalResource.side;
+                    column.NestedExtension().CheckBox(checkBox =>
+                    {
+                        checkBox.Width = Unit.Percentage(5);
+                    });
+                });
+                formLayoutSettings.Items.Add(column =>
+                {
+                    column.FieldName = "oaccount";
+                    column.Caption = IWSLocalResource.oaccount;
+                    column.NestedExtension().ComboBox(combo =>
+                    {
+                        combo.Properties.TextField = "name";
+                        combo.Properties.ValueField = "id";
+                        combo.Properties.ValueType = typeof(string);
+                        combo.Properties.DataSource = IWSLookUp.GetAccounts();
+                        combo.Properties.Columns.Add(i =>
+                        {
+                            i.FieldName = "id";
+                            i.Caption = IWSLocalResource.id;
+                            i.Width = Unit.Percentage(15);
+                        });
+                        combo.Properties.Columns.Add(i =>
+                        {
+                            i.FieldName = "name";
+                            i.Caption = IWSLocalResource.name;
+                            i.Width = Unit.Percentage(85);
+                        });
+                        combo.Properties.TextFormatString = "{0}-{1}";
+                        combo.Properties.CallbackPageSize = 15;
+                        combo.Properties.FilterMinLength = 2;
+                        combo.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        combo.Width = Unit.Percentage(100);
+                        combo.ShowModelErrors = true;
+                    });
+                });
+                formLayoutSettings.Items.Add(column =>
+                {
+                    column.FieldName = "amount";
+                    column.Caption = IWSLocalResource.amount;
+                    column.NestedExtension().SpinEdit(spinEdit =>
+                    {
+                        spinEdit.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        spinEdit.Properties.SpinButtons.ShowLargeIncrementButtons = true;
+                        spinEdit.ShowModelErrors = true;
+                        spinEdit.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(column =>
+                {
+                    column.FieldName = "Currency";
+                    column.Caption = IWSLocalResource.Currency;
+                    column.NestedExtension().ComboBox(combo =>
+                    {
+                        combo.Properties.TextField = "name";
+                        combo.Properties.ValueField = "id";
+                        combo.Properties.ValueType = typeof(string);
+                        combo.Properties.DataSource = IWSLookUp.GetCurrency();
+                        combo.Properties.Columns.Add(i =>
+                        {
+                            i.FieldName = "id";
+                            i.Caption = IWSLocalResource.id;
+                            i.Width = Unit.Percentage(15);
+                        });
+                        combo.Properties.Columns.Add(i =>
+                        {
+                            i.FieldName = "name";
+                            i.Caption = IWSLocalResource.Currency;
+                            i.Width = Unit.Percentage(85);
+                        });
+                        combo.Properties.TextFormatString = "{1}";
+                        combo.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        combo.Width = Unit.Percentage(100);
+                        combo.ShowModelErrors = true;
+                        combo.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(column =>
+                {
+                    column.FieldName = "duedate";
+                    column.Caption = IWSLocalResource.duedate;
+                    column.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
+                    column.NestedExtension().DateEdit(dateEdit =>
+                    {
+                        dateEdit.Properties.EditFormatString = "MM/dd/yyyy";
+                        dateEdit.Properties.NullDisplayText = "MM/dd/yyyy";
+                        dateEdit.Properties.EditFormat = EditFormat.Custom;
+                        dateEdit.Width = Unit.Percentage(95);
+                        dateEdit.Properties.DisplayFormatString = "yyyy-MM-dd";
+                        dateEdit.Properties.DisplayFormatInEditMode = true;
+                        dateEdit.Properties.AllowUserInput = true;
+                        dateEdit.Properties.AllowMouseWheel = true;
+                    });
+                });
+
+                formLayoutSettings.Items.Add(column =>
+                {
+                    column.FieldName = "text";
+                    column.Caption = IWSLocalResource.text;
+                    column.ColSpan = 2;
+
+                    column.NestedExtension().Memo(memo =>
+                    {
+                        memo.ShowModelErrors = true;
+                        memo.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        memo.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                    i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
+                }).SetNestedContent(() =>
+                {
+
+                    Html.DevExpress().Button(
+                btnSettings =>
+                {
+                    btnSettings.Name = "btnUpdate";
+                    btnSettings.Text = "";
+                    btnSettings.ToolTip = IWSLocalResource.btnUpdate;
+                    btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+                    btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
+                    btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.UpdateEdit(); }";
+                }).Render();
+
+                    Html.DevExpress().Button(
+                btnSettings =>
+                {
+                    btnSettings.Name = "btnCancel";
+                    btnSettings.Text = "";
+                    btnSettings.ToolTip = IWSLocalResource.btnCancel;
+                    btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+                    btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
+                    btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.CancelEdit(); }";
+                }).Render();
+
+                });
+            })
+            .Bind(ViewData["lineGeneralLedger"] ?? templateContent.DataItem)
+            .Render();
+        });
+        #endregion
+
+        settings.DataBinding = (sender, e) =>
+        {
+            ((MVCxGridView)sender).ForceDataRowType(typeof(LineGeneralLedger));
+        };
+    });
+
+    if (ViewData["GenericError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GenericError"]);
+
+    }
+}
+@grid.Bind(Model).GetHtml()
+

@@ -609,16 +609,25 @@
                         foreach (var item in items)
                         {
                         item.Kontonummer = "DE4748050161XXXXXXXXXX";//("DE47" + item.BLZ + "00" + item.Auftragskonto);
-                        }
-                        
-                    var  ibans =
+                    }
+
+                    var ibans =
                         from b in db.BankStatements
                         where
-                          b.Auftragskonto == "43006329"
+                          b.Auftragskonto == "43006329" && b.CompanyIBAN.Length == 0
                         select b;
                         foreach (var iban in ibans)
                         {
                         iban.CompanyIBAN = "DE47480501610043006329";
+                    }
+                    var ibanx =
+                        from b in db.BankStatements
+                        where
+                          b.Auftragskonto.Length == 22 && b.CompanyIBAN.Length == 0
+                        select b;
+                        foreach (var iban in ibanx)
+                        {
+                        iban.CompanyIBAN = iban.Auftragskonto;
                         }
                     db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
 

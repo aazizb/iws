@@ -19,6 +19,11 @@ namespace IWSProject.Controllers
         public ActionResult Index(string MenuID)
         {
             Session["MenuID"] = MenuID;
+
+            ViewBag.Store = IWSLookUp.GetStore();
+
+            ViewBag.ComboCustomerId = IWSLookUp.GetCustomer();
+
             return View(IWSLookUp.GetSalesInvoice());
         }
         [ValidateInput(false)]

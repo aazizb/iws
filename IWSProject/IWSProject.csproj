@@ -422,6 +422,12 @@
     <Content Include="Views\AffectationJournal\Index.cshtml" />
     <Content Include="Views\AffectationJournal\AffectationJournalGridViewPartial.cshtml" />
     <Content Include="Views\Shared\PerformancePartialView.cshtml" />
+    <Content Include="Views\Journaux\Index.cshtml" />
+    <Content Include="Views\Journaux\GridLookupPartial.cshtml" />
+    <Content Include="Views\Journaux\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\Journaux\DetailGridViewPartial.cshtml" />
+    <Content Include="Views\Journaux\_CallbackPartialView.cshtml" />
+    <Content Include="Views\AffectationJournal\FormLayoutPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -468,6 +474,7 @@
     <Compile Include="Controllers\ExceptionLogController.cs" />
     <Compile Include="Controllers\FiscalYearController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\JournauxController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\AccountingController.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
@@ -514,6 +521,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IWSDataModel.cs" />
+    <Compile Include="Models\IWSComboHelper.cs" />
     <Compile Include="Models\IWSLookUpData.cs" />
     <Compile Include="Models\IWSUserRole.cs" />
     <Compile Include="Models\ManageViewModels.cs" />

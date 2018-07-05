@@ -921,4 +921,13 @@
   <data name="Vending" xml:space="preserve">
     <value>Venta</value>
   </data>
+  <data name="ViewAccountingBooks" xml:space="preserve">
+    <value>Ver Libros Contabilidad</value>
+  </data>
+  <data name="WindowHide" xml:space="preserve">
+    <value>Ocultar</value>
+  </data>
+  <data name="WindowShow" xml:space="preserve">
+    <value>Mostrar</value>
+  </data>
 </root>

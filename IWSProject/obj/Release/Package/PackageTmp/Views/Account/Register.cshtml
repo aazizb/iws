@@ -1,0 +1,100 @@
+@using IWSProject.Content
+@using IWSProject.Models
+@model RegisterModel
+
+<div class="accountHeader">
+    <h2>@IWSLocalResource.NewUser </h2>
+</div>
+
+@{
+    Html.EnableClientValidation();
+    Html.EnableUnobtrusiveJavaScript();
+
+    Action<MVCxFormLayoutItem> TextBoxSettingsMethod = (item) =>
+    {
+        item.NestedExtension().TextBox(s =>
+        {
+            s.Properties.Password = s.Name.Contains("email") || s.Name.Contains("Password");
+            s.Properties.ValidationSettings.ErrorTextPosition = ErrorTextPosition.Bottom;
+            s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.Text;
+            s.Properties.ValidationSettings.Display = Display.Dynamic;
+            s.ShowModelErrors = true;
+        });
+    };
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.DevExpress().FormLayout(settings =>
+{
+    settings.Name = "formRegister";
+
+
+    settings.Items.AddGroupItem(group =>
+    {
+        group.Caption = IWSLocalResource.UserInformation;
+        group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+        group.Items.Add(i => i.FirstName, TextBoxSettingsMethod).Caption=IWSLocalResource.FirstName;
+        group.Items.Add(i => i.LastName, TextBoxSettingsMethod).Caption=IWSLocalResource.LastName;
+        group.Items.Add(combo =>
+        {
+            combo.Name = "Company";
+            combo.Caption = IWSLocalResource.company;
+            combo.NestedExtension().ComboBox(s =>
+            {
+                s.Properties.TextField = "Name";
+                s.Properties.ValueField = "Id";
+                s.Properties.ValueType = typeof(string);
+                s.Properties.DataSource = IWSLookUp.GetCompanies();
+                s.Properties.Columns.Add(column =>
+                {
+                    column.FieldName = "id";
+                    column.Caption = IWSLocalResource.id;
+                    column.Width = Unit.Percentage(15);
+                    column.Visible = true;
+                });
+                s.Properties.Columns.Add(column =>
+                {
+                    column.FieldName = "name";
+                    column.Caption = IWSLocalResource.company;
+                    column.Width = Unit.Percentage(75);
+                });
+                s.Properties.TextFormatString = "{1}";
+            });
+        });
+
+    });
+
+    settings.Items.AddGroupItem(group =>
+    {
+        group.Caption = IWSLocalResource.UserCredential;
+        group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+
+        group.Items.Add(i => i.UserName, TextBoxSettingsMethod).Caption=IWSLocalResource.User;
+        group.Items.Add(i => i.Email, TextBoxSettingsMethod).Caption=IWSLocalResource.Email;
+        group.Items.Add(i => i.Password, TextBoxSettingsMethod).Caption=IWSLocalResource.Password;
+        group.Items.Add(i => i.ConfirmPassword, TextBoxSettingsMethod).Caption=IWSLocalResource.ConfirmPassword;
+
+    });
+
+    settings.Items.AddGroupItem(group =>
+    {
+        group.Caption = "  ";
+        group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+        group.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.NestedExtension().Button(b =>
+            {
+                b.Name = "signUp";
+                b.Text = IWSLocalResource.SignUp;
+                b.UseSubmitBehavior = true;
+                b.Width = Unit.Pixel(120);
+            });
+        });
+    });
+
+}).GetHtml()
+}

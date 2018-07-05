@@ -1,0 +1,12 @@
+﻿@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPartialView";
+    settings.CallbackRouteValues = new { Controller = "Resultat", Action = "CallbackPanelPartial" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("ResultatPartialView");
+
+    });
+    settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+}).GetHtml()

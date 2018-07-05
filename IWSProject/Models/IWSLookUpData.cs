@@ -2236,6 +2236,193 @@
             }
             return journals; 
         }
+
+        public static List<JournauxViewModel> GetJournaux(string TypeJournal, string CompanyId)
+        {
+
+            List<JournauxViewModel> payment = new List<JournauxViewModel>();
+            payment = IWSEntities.Payments.Join(IWSEntities.Suppliers,
+                                                    p => p.account, s => s.id, (p, s) =>
+                                                        new JournauxViewModel()
+                                                        {
+                                                            Id = p.id,
+                                                            OId = p.oid,
+                                                            CostCenter = p.CostCenter,
+                                                            Account = p.account + '-' + s.name,
+                                                            HeaderText = p.HeaderText,
+                                                            TransDate = p.TransDate,
+                                                            ItemDate = p.ItemDate,
+                                                            EntryDate = p.EntryDate,
+                                                            CompanyId = p.CompanyId,
+                                                            IsValidated = (bool)p.IsValidated,
+                                                            OTotal = (decimal)p.oTotal,
+                                                            OCurrency = p.oCurrency,
+                                                            OPeriode = p.oPeriode,
+                                                            OYear = p.oYear,
+                                                            OMonth = p.oMonth,
+                                                            TypeJournal = p.TypeJournal,
+                                                            ModelId = Convert.ToInt32(p.ModelId ?? 0),
+                                                            AccountingAccount = p.AccountingAccount,
+                                                        //LigneJournauxViewModels=p.LinePayments.Select(l=>new LigneJournauxViewModel()
+                                                        //{
+                                                        //    Id=l.id,
+                                                        //    TransId=l.transid,
+                                                        //    Account=l.account,
+                                                        //    Side=l.side,
+                                                        //    OAccount=l.oaccount,
+                                                        //    Amount=l.amount,
+                                                        //    DueDate=l.duedate,
+                                                        //    Text=l.text,
+                                                        //    ModelId=l.ModelId
+                                                        //}).ToList()
+                                                    }).Where(p => p.CompanyId.Equals(CompanyId) && TypeJournal.IndexOf(p.TypeJournal) >= 0).ToList();
+            //List<JournauxViewModel> settlement = new List<JournauxViewModel>();
+            //settlement= IWSEntities.Settlements.Join(IWSEntities.Customers,
+            //                                        p => p.account, c => c.id, (p, c) =>
+            //                                        new JournauxViewModel()
+            //                                        {
+            //                                            Id = p.id,
+            //                                            OId = p.oid,
+            //                                            CostCenter = p.CostCenter,
+            //                                            Account = p.account + '-' + c.name,
+            //                                            HeaderText = p.HeaderText,
+            //                                            TransDate = p.TransDate,
+            //                                            ItemDate = p.ItemDate,
+            //                                            EntryDate = p.EntryDate,
+            //                                            CompanyId = p.CompanyId,
+            //                                            IsValidated = (bool)p.IsValidated,
+            //                                            OTotal = (decimal)p.oTotal,
+            //                                            OCurrency = p.oCurrency,
+            //                                            OPeriode = p.oPeriode,
+            //                                            OYear = p.oYear,
+            //                                            OMonth = p.oMonth,
+            //                                            TypeJournal = p.TypeJournal,
+            //                                            ModelId = Convert.ToInt32(p.ModelId ?? 0),
+            //                                            AccountingAccount = p.AccountingAccount
+            //                                        }).Where(p => p.CompanyId.Equals(CompanyId) && TypeJournal.IndexOf(p.TypeJournal) >= 0).ToList();
+            //List<JournauxViewModel> vendorInvoice = new List<JournauxViewModel>();
+            //vendorInvoice = IWSEntities.VendorInvoices.Join(IWSEntities.Suppliers,
+            //                                        p => p.account, s => s.id, (p, s) =>
+            //                                        new JournauxViewModel()
+            //                                        {
+            //                                            Id = p.id,
+            //                                            OId = p.oid,
+            //                                            CostCenter = p.CostCenter,
+            //                                            Account = p.account + '-' + s.name,
+            //                                            HeaderText = p.HeaderText,
+            //                                            TransDate = p.TransDate,
+            //                                            ItemDate = p.ItemDate,
+            //                                            EntryDate = p.EntryDate,
+            //                                            CompanyId = p.CompanyId,
+            //                                            IsValidated = (bool)p.IsValidated,
+            //                                            OTotal = (decimal)p.oTotal,
+            //                                            OCurrency = p.oCurrency,
+            //                                            OPeriode = p.oPeriode,
+            //                                            OYear = p.oYear,
+            //                                            OMonth = p.oMonth,
+            //                                            TypeJournal = p.TypeJournal,
+            //                                            ModelId = Convert.ToInt32(p.ModelId ?? 0),
+            //                                            AccountingAccount = p.AccountingAccount
+            //                                        }).Where(p => p.CompanyId.Equals(CompanyId) && TypeJournal.IndexOf(p.TypeJournal) >= 0).ToList();
+            //List<JournauxViewModel> customerInvoice = new List<JournauxViewModel>();
+            //customerInvoice = IWSEntities.CustomerInvoices.Join(IWSEntities.Customers,
+            //                                        p => p.account, s => s.id, (p, s) =>
+            //                                        new JournauxViewModel()
+            //                                        {
+            //                                            Id = p.id,
+            //                                            OId = p.oid,
+            //                                            CostCenter = p.CostCenter,
+            //                                            Account = p.account + '-' + s.name,
+            //                                            HeaderText = p.HeaderText,
+            //                                            TransDate = p.TransDate,
+            //                                            ItemDate = p.ItemDate,
+            //                                            EntryDate = p.EntryDate,
+            //                                            CompanyId = p.CompanyId,
+            //                                            IsValidated = (bool)p.IsValidated,
+            //                                            OTotal = (decimal)p.oTotal,
+            //                                            OCurrency = p.oCurrency,
+            //                                            OPeriode = p.oPeriode,
+            //                                            OYear = p.oYear,
+            //                                            OMonth = p.oMonth,
+            //                                            TypeJournal = p.TypeJournal,
+            //                                            ModelId = Convert.ToInt32(p.ModelId ?? 0),
+            //                                            AccountingAccount = p.AccountingAccount
+            //                                        }).Where(p => p.CompanyId.Equals(CompanyId) && TypeJournal.IndexOf(p.TypeJournal) >= 0).ToList();
+            //List<JournauxViewModel> generalLedger = new List<JournauxViewModel>();
+            //generalLedger = IWSEntities.GeneralLedgers.Select(p=>
+            //                                        new JournauxViewModel()
+            //                                        {
+            //                                            Id = p.id,
+            //                                            OId = p.oid,
+            //                                            CostCenter = p.CostCenter,
+            //                                            Account = "...",
+            //                                            HeaderText = p.HeaderText,
+            //                                            TransDate = p.TransDate,
+            //                                            ItemDate = p.ItemDate,
+            //                                            EntryDate = p.EntryDate,
+            //                                            CompanyId = p.CompanyId,
+            //                                            IsValidated = (bool)p.IsValidated,
+            //                                            OTotal = (decimal)p.oTotal,
+            //                                            OCurrency = p.oCurrency,
+            //                                            OPeriode = p.oPeriode,
+            //                                            OYear = p.oYear,
+            //                                            OMonth = p.oMonth,
+            //                                            TypeJournal = p.TypeJournal,
+            //                                            ModelId = Convert.ToInt32(p.ModelId ?? 0),
+            //                                            AccountingAccount = "..."
+            //                                        }).Where(p => p.CompanyId.Equals(CompanyId) && TypeJournal.IndexOf(p.TypeJournal) >= 0).ToList();
+            //return payment.Union(settlement).ToList().Union(vendorInvoice).Union(customerInvoice).Union(generalLedger).ToList();
+            return payment.ToList();
+        }
+        public static List<LineJournauxViewModel> GetLineJournaux(int transId)
+        {
+
+            //var account = IWSEntities.LinePayments.AsEnumerable<LineJournauxViewModel>().Select(i => new
+            //{
+            //    Id = i.id,
+            //    TranstId=i.transid,
+            //    Account = i.account,
+            //    Side=i.side,
+            //    OAccount=i.oaccount,
+            //    Amount=i.amount,
+            //})
+            //.Where(c => c.TranstId == transId)
+            //.OrderBy(o => o.Id);
+
+
+            List<LineJournauxViewModel> linePayment = new List<LineJournauxViewModel>();
+            linePayment = IWSEntities.LinePayments.AsEnumerable().Select(p =>
+                                                      new LineJournauxViewModel
+                                                      {
+                                                          Id = p.id,
+                                                          TransId = transId,
+                                                          Account = p.account,
+                                                          Side = p.side,
+                                                          OAccount = p.oaccount,
+                                                          Amount = p.amount,
+                                                          Text = p.text,
+                                                          DueDate = p.duedate,
+                                                          Currency = p.Currency,
+                                                          ModelId = Convert.ToInt32(p.ModelId ?? 0)
+                                                      }).Where(t => t.TransId == transId).ToList();
+
+
+            //linePayment = IWSEntities.LinePayments.Select(p=>
+            //                                            new LineJournauxViewModel()
+            //                                            {
+            //                                                Id = p.id,
+            //                                                TransId=transId,
+            //                                                Account = p.account,
+            //                                                Side=p.side,
+            //                                                OAccount=p.oaccount,
+            //                                                Amount=p.amount,
+            //                                                Text=p.text,
+            //                                                DueDate=p.duedate,
+            //                                                Currency=p.Currency,
+            //                                                ModelId = Convert.ToInt32(p.ModelId ?? 0)
+            //                                            }).Where(t => t.TransId==transId).ToList();
+            return linePayment;
+        }
         public static IEnumerable GetReport(string start, string end, string CompanyID)
         {
             string uiCulture = Thread.CurrentThread.CurrentUICulture.Name;

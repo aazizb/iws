@@ -17,6 +17,10 @@ namespace IWSProject.Controllers
         // GET: BillOfDeliveries
         public ActionResult Index()
         {
+            ViewBag.Store = IWSLookUp.GetStore();
+
+            ViewBag.ComboCustomerId = IWSLookUp.GetCustomer();
+
             return View(IWSLookUp.GetBillOfDelivery());
         }
         [ValidateInput(false)]

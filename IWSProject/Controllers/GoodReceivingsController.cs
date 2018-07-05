@@ -17,6 +17,10 @@ namespace IWSProject.Controllers
         // GET: goodreceivings
         public ActionResult Index()
         {
+            ViewBag.Store = IWSLookUp.GetStore();
+
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+
             return View(IWSLookUp.GetGoodReceiving());
         }
         [ValidateInput(false)]
@@ -27,8 +31,6 @@ namespace IWSProject.Controllers
             ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
 
             ViewBag.GoodReceivingOID = IWSLookUp.GetGoodReceivingOID();
-
-            ViewBag.Store = IWSLookUp.GetStore();
 
             return PartialView("MasterGridViewPartial", IWSLookUp.GetGoodReceiving());
         }

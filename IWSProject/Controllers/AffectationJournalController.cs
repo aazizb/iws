@@ -19,16 +19,40 @@ namespace IWSProject.Controllers
         //GET: AffectationJournal
         public ActionResult Index()
         {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
+            ViewBag.TypeJournal = IWSLookUp.GetTypeJournals();
+
+            ViewBag.AffectationJournal = IWSLookUp.GetAffectationJournal();
+
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            //if (Session["DurationAff"] == null)
+            //{
+                Session["DurationAff"] = $"Data reading time: {elapsedTime} ms";
+
+            //}
             return View();
         }
 
         [ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartial()
         {
-            Session["ComboAccountId"] = IWSLookUp.GetAccounts();
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
 
-            Session["TypeJournal"] = IWSLookUp.GetTypeJournal();
-            return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
+            ViewBag.TypeJournal = IWSLookUp.GetTypeJournals();
+
+            ViewBag.Aff = IWSLookUp.GetAffectationJournal();
+
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            Session["DurationAff"] = $"Data reading time: {elapsedTime} ms";
+            return PartialView("AffectationJournalGridViewPartial", ViewBag.Aff);
         }
 
         [HttpPost, ValidateInput(false)]
@@ -111,6 +135,15 @@ namespace IWSProject.Controllers
             }
 
             return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
+        }
+        public ActionResult AccountIdComboBox()
+        {
+            object dataObject = IWSLookUp.GetAccounts();
+
+            MVCxColumnComboBoxProperties combo = IWSComboBoxHelper.CreateComboBox("AffectationJournal", "AccountIdComboBox", 
+                                                                            "Name", "id", dataObject);
+
+            return GridViewExtension.GetComboBoxCallbackResult(combo);
         }
     }
 }

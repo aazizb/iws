@@ -909,4 +909,13 @@
   <data name="Vending" xml:space="preserve">
     <value>Vending de-DE</value>
   </data>
+  <data name="ViewAccountingBooks" xml:space="preserve">
+    <value>View Accounting Books</value>
+  </data>
+  <data name="WindowHide" xml:space="preserve">
+    <value>Hide de-DE</value>
+  </data>
+  <data name="WindowShow" xml:space="preserve">
+    <value>Show de-DE</value>
+  </data>
 </root>

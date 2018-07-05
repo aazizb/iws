@@ -1,0 +1,45 @@
+﻿@model IWSProject.Models.UserRolesViewModel
+    @using IWSProject.Content
+
+<h2>@IWSLocalResource.User : @Html.DisplayFor(model => model.UserName)</h2>
+<hr />
+
+@using (Html.BeginForm("UserRoles", "Account", FormMethod.Post, new { encType = "multipart/form-data", name = "myform" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true)
+        <div class="form-group">
+            <div class="col-md-10">
+                @Html.HiddenFor(model => model.UserName)
+            </div>
+        </div>
+        <h4>@IWSLocalResource.RolesAssignement</h4>
+        <hr />
+        <table>
+            <tr>
+                <th></th>
+                <th></th>
+            </tr>
+            @Html.EditorFor(model => model.Roles)
+        </table>
+        <br /><br />
+        <hr />
+        @*<div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>*@
+    </div>
+
+    @Html.DevExpress().Button(settings =>
+{
+    settings.Name = "btnSubmit";
+    settings.Text = IWSLocalResource.Validate;
+    settings.Width = Unit.Pixel(150);
+    settings.UseSubmitBehavior = true;
+    //settings.ClientSideEvents.Click = "OnSubmitClick";
+}).GetHtml()
+}
+

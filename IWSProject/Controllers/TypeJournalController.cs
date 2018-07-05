@@ -14,16 +14,37 @@ namespace IWSProject.Controllers
         {
             db = new IWSDataContext();
         }
-        // GET: bankaccounts
+        // GET: TypeJournal
         public ActionResult Index()
         {
-            return View(IWSLookUp.GetTypeJournals());
+            
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ViewBag.TypeJournal = IWSLookUp.GetTypeJournals();
+
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            //if (Session["DurationTypeJ"] == null)
+            //{
+                Session["DurationTypeJ"] = $"Data reading time: {elapsedTime} ms";
+
+            //}
+            return View();
         }
 
         [ValidateInput(false)]
         public ActionResult TypeJournalsGridViewPartial()
         {
-            return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
+            
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+            ViewBag.TypeJour = IWSLookUp.GetTypeJournals();
+            var p = IWSLookUp.GetTypeJournals();
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            Session["DurationTypeJ"] = $"Data reading time: {elapsedTime} ms";
+            return PartialView("TypeJournalsGridViewPartial", ViewBag.TypeJour);
         }
 
         [HttpPost, ValidateInput(false)]

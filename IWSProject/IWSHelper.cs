@@ -1,4 +1,5 @@
-﻿using IWSProject.Models;
+﻿using DevExpress.Web.Mvc;
+using IWSProject.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System;
@@ -154,6 +155,7 @@ namespace IWSProject
                 }
             }
         }
+
         public void RemoveUserFromRole(string userName, string roleName)
         {
             UserManager = new UserManager<ApplicationUser>(

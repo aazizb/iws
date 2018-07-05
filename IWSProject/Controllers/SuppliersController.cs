@@ -18,17 +18,39 @@ namespace IWSProject.Controllers
         // GET: suppliers
         public ActionResult Index()
         {
-            return View();// IWSLookUp.GetSupplier());
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+
+            ViewBag.VAT = IWSLookUp.GetVAT();
+
+            ViewBag.Supplier = IWSLookUp.GetSupplier();
+
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            //if (Session["DurationSupp"] == null)
+            //{
+                Session["DurationSupp"] = $"Data reading time: {elapsedTime} ms";
+
+            //}
+            return View();
         }
 
         [ValidateInput(false)]
         public ActionResult SuppliersGridViewPartial()
         {
+            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
             ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
 
             ViewBag.VAT = IWSLookUp.GetVAT();
 
-            return PartialView("SuppliersGridViewPartial", IWSLookUp.GetSupplier());
+            ViewBag.Sup = IWSLookUp.GetSupplier();
+            sw.Stop();
+
+            string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            Session["DurationSupp"] = $"Data reading time: {elapsedTime} ms";
+            return PartialView("SuppliersGridViewPartial", ViewBag.Sup);
         }
 
         [HttpPost, ValidateInput(false)]
