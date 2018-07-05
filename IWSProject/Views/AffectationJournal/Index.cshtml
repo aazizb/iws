@@ -1,21 +1,47 @@
 ﻿@using IWSProject.Content
-    <script type="text/javascript">
-        function OnSelectedIndexChanged(s, e) {
-            grid.AutoFilterByColumn("AccountID", s.GetText());
+<script type="text/javascript">
+    function OnSelectedIndexChanged(s, e) {
+        grid.AutoFilterByColumn("AccountID", s.GetText());
+    }
+
+    function OnButtonClick() {
+        if (AffectationJournalGridView.IsCustomizationWindowVisible()) {
+
+            AffectationJournalGridView.HideCustomizationWindow();
         }
-    </script>
-    @{
-        ViewBag.Title = IWSLocalResource.AffectationJournal;
+        else {
+            AffectationJournalGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
     }
-    <div class="options">
-        <div class="options-item">
-            @Html.Partial("PerformancePartialView")
-        </div>
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = AffectationJournalGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+</script>
+@{
+    ViewBag.Title = IWSLocalResource.AffectationJournal;
+}
+@Html.DevExpress().Button(settings =>
+{
+    settings.Name = "btShowCustomizationWindow";
+    settings.Text = IWSLocalResource.WindowCustomization;
+    settings.Width = Unit.Pixel(100);
+    settings.UseSubmitBehavior = false;
+    settings.ClientSideEvents.Click = "OnButtonClick";
+}).GetHtml()
+<div class="options">
+    <div class="options-item">
+        @Html.Partial("PerformancePartialView")
     </div>
-    @{
-        @Session["DurationAff"];
-    }
-    @*@Html.Action("AffectationJournalGridViewPartial")*@
+</div>
+@{
+    @Session["DurationAff"];
+}
+@*@Html.Action("AffectationJournalGridViewPartial")*@
 
 
 @using (Html.BeginForm())

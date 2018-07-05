@@ -87,8 +87,8 @@
     var expanded = false;
     var ndxMaster = 0;
     var ndxDetail = 0;
-    var command;                            
-    var isDetailRowExpanded = new Array(); 
+    var command;
+    var isDetailRowExpanded = new Array();
     function OnMRowClick(s, e) {
         expanded = true;
         ndxMaster = e.visibleIndex;
@@ -105,11 +105,11 @@
             expanded = false;
             s.ExpandDetailRow(ndxMaster);
         }
-        if (command == "HIDEDETAILROW") {   
+        if (command == "HIDEDETAILROW") {
             if (s.IsEditing || s.IsNewRowEditing)
                 s.CancelEdit();
         }
-        if (command == 'CANCELEDIT') {      
+        if (command == 'CANCELEDIT') {
             if (isDetailRowExpanded[ndxMaster] == true) {
                 s.CollapseDetailRow(ndxMaster);
             }
@@ -189,6 +189,25 @@
             });
     }
 
+
+    function OnButtonClick() {
+        if (GoodReceiving.IsCustomizationWindowVisible()) {
+
+            GoodReceiving.HideCustomizationWindow();
+        }
+        else {
+            GoodReceiving.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = GoodReceiving.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+
 </script>
 
 @{
@@ -199,19 +218,27 @@
     @Html.Hidden("cbxOID");
 
     @Html.DevExpress().Button(
-    settings =>
-    {
-        settings.Name = "btnSubmit";
-        settings.ControlStyle.CssClass = "button";
-        settings.Text = "";
-        settings.ToolTip = IWSLocalResource.Validate;
-        settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-        settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
-        settings.Width = Unit.Pixel(80);
-        settings.UseSubmitBehavior = false;
-        settings.ClientSideEvents.Click = "OnSubmitClick";
-    }
-    ).GetHtml()
+        settings =>
+        {
+            settings.Name = "btnSubmit";
+            settings.ControlStyle.CssClass = "button";
+            settings.Text = "";
+            settings.ToolTip = IWSLocalResource.Validate;
+            settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+            settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
+            settings.Width = Unit.Pixel(80);
+            settings.UseSubmitBehavior = false;
+            settings.ClientSideEvents.Click = "OnSubmitClick";
+        }
+        ).GetHtml()
 
+    @Html.DevExpress().Button(settings =>
+    {
+        settings.Name = "btShowCustomizationWindow";
+        settings.Text = IWSLocalResource.WindowCustomization;
+        settings.Width = Unit.Pixel(100);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnButtonClick";
+    }).GetHtml()
     @Html.Partial("CallbackPanelPartialView")
 }

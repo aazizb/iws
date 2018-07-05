@@ -11,17 +11,22 @@
         settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "AffectationJournal", Action = "AffectationJournalGridViewPartialUpdate" };
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "AffectationJournal", Action = "AffectationJournalGridViewPartialDelete" };
 
+        settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
+
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
         settings.SettingsContextMenu.Enabled = true;
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
 
+
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
-        settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
@@ -85,22 +90,22 @@
 
             column.ColumnType = MVCxGridViewColumnType.ComboBox;//
 
-    column.EditorProperties().ComboBox(combo =>
+            column.EditorProperties().ComboBox(combo =>
             {
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-        //combo.DataSource = ViewBag.ComboAccountId;
-        combo.Columns.Add("id").Caption = IWSLocalResource.id;
+                //combo.DataSource = ViewBag.ComboAccountId;
+                combo.Columns.Add("id").Caption = IWSLocalResource.id;
                 combo.Columns.Add("name").Caption = IWSLocalResource.item;
                 combo.Width = Unit.Percentage(100);
                 combo.TextFormatString = "{0}-{1}";
 
                 combo.CallbackRouteValues = new { Controller = "AffectationJournal", Action = "AccountIdComboBox" };//
-        combo.DropDownStyle = DropDownStyle.DropDown;//
-        combo.CallbackPageSize = 15;//
-        combo.BindList(ViewBag.ComboAccountId);//
-    });
+                combo.DropDownStyle = DropDownStyle.DropDown;//
+                combo.CallbackPageSize = 15;//
+                combo.BindList(ViewBag.ComboAccountId);//
+            });
         });
         settings.Columns.Add(column =>
         {
@@ -152,9 +157,9 @@
             column.Width = Unit.Percentage(35);
         });
 
-#region Template Edit
+        #region Template Edit
 
-settings.SetEditFormTemplateContent(templateContent =>
+        settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -333,10 +338,10 @@ settings.SetEditFormTemplateContent(templateContent =>
             .Render();
         });
 
-#endregion
+        #endregion
 
 
-settings.DataBinding = (sender, e) =>
+        settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(AffectationJournal));
         };
