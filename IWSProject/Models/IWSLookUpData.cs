@@ -7,6 +7,7 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Web;
 
@@ -14,6 +15,7 @@
     {
 
         const string IWSDataContext = "IWSDataContext";
+       
 
         public static IWSDataContext IWSEntities
         {
@@ -59,6 +61,7 @@
             return IWSEntities.Companies.Any(c =>
                                     c.BalanceSheet == accountId && c.id == companyID);
         }
+
         public static bool CheckPeriod(int DocumentID, DocsType DocumentType, string CompanyId, bool Current, bool Open)
         {
             return true;
@@ -825,7 +828,70 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Banks.Where(c => c.CompanyID == companyID);
         }
+        public static IEnumerable GetAccountAmounts(int bankStatementId)
+        {
+            const char comma = ',';
+            const char space = ' ';
+            string results = string.Empty;
+            string search = string.Empty;
+            int nextPosition = 0;
+            int indexAccount = 0;
+            int indexAmount = 0;
+            int indexComma = 0;
+            int countOccurences = 0;
 
+            string usage = IWSEntities.BankStatements.SingleOrDefault(bs =>
+                                        bs.id.Equals(bankStatementId)).Verwendungszweck;
+
+            List<LookupAccountAmount> lookupAccountAmount = GetAccountAmount();
+
+            List<AccountAmountViewModel> accountAmount = new List<AccountAmountViewModel>();
+
+            foreach (var item in lookupAccountAmount)
+            {
+                search = item.AccountName;
+
+                nextPosition = 0;
+
+                countOccurences = CountOccurence(usage, search);
+
+                for (int i = 0; i < countOccurences; i++)
+                {
+                    indexAccount = usage.IndexOf(search, nextPosition, StringComparison.InvariantCultureIgnoreCase);
+
+                    if (indexAccount > 0)
+                    {
+                        indexComma = usage.IndexOf(comma, indexAccount);
+                        if (indexComma > 0)
+                        {
+                            indexAmount = usage.LastIndexOf(space, indexComma);
+
+                            if (indexAmount > 0)
+                            {
+                                var amount = usage.Substring(indexAmount, indexComma - indexAmount + 3);
+                                accountAmount.Add(new AccountAmountViewModel
+                                {
+                                    AccountCode = item.AccountCode,
+                                    AccountAmount = StringToDecimal(amount)
+                                });
+                            }
+                        }
+                    }
+                    nextPosition = indexAccount + 1;
+                }
+            }
+            return accountAmount;
+        }
+
+        private static int CountOccurence(string source, string search)
+        {
+            int count = 0;
+            foreach (Match match in Regex.Matches(source, search, RegexOptions.IgnoreCase)) { count++; }
+            return count;
+        }
+
+        private static List<LookupAccountAmount> GetAccountAmount() => IWSEntities.LookupAccountAmounts.ToList();
+            
         public static IEnumerable GetMenus()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -3009,12 +3075,8 @@
         private static Decimal StringToDecimal(string amount)
         {
             if (string.IsNullOrEmpty(amount))
-                return 0;
-            //int index = amount.LastIndexOf('.');
-            //if (index > 0)
-            //    amount = amount.Substring(0, index);
-            decimal b = Convert.ToDecimal(amount, CultureInfo.GetCultureInfo(Thread.CurrentThread.CurrentUICulture.Name).NumberFormat );
-            return b;
+                amount = "0";
+            return Convert.ToDecimal(amount, CultureInfo.GetCultureInfo(Thread.CurrentThread.CurrentUICulture.Name).NumberFormat );
         }
 
     }

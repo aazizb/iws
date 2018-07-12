@@ -10,6 +10,7 @@
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Data.Linq;
     using System.Text.RegularExpressions;
     using System.Web.Mvc;
     [Authorize]
@@ -63,6 +64,30 @@
 
                         ItemID = Convert.ToInt32(list[0]);
 
+                        IEnumerable<AccountAmountViewModel> accountAmount = IWSLookUp.GetAccountAmounts(ItemID).Cast<AccountAmountViewModel>();
+
+                        List<tempAccountAmount> ls = db.tempAccountAmounts.ToList();
+                        foreach (var l in ls)
+                        {
+                            db.tempAccountAmounts.DeleteOnSubmit(l);
+                        }
+                        db.SubmitChanges();
+                        tempAccountAmount temp = new tempAccountAmount();
+                        
+                        
+                        foreach (AccountAmountViewModel itemx in accountAmount)
+                        {
+                            temp = new tempAccountAmount
+                            {
+                                AccountCode = itemx.AccountCode,
+                                AccountAmount = itemx.AccountAmount
+                            };
+
+                            db.tempAccountAmounts.InsertOnSubmit(temp);
+                        }
+                        db.SubmitChanges();
+
+
                         amount = Convert.ToDecimal(list[1]);
 
                         IBAN = list[2];
@@ -113,7 +138,7 @@
                             msg = IWSLocalResource.GenericError;
                             throw new Exception(msg);
                         }
-                        db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                        db.SubmitChanges(ConflictMode.FailOnFirstConflict);
                     }
                 }
             }
@@ -753,31 +778,63 @@
             if (itemID == 0)
                 return false;
 
-            List<LineVendorInvoice> lineVendorInvoice = new List<LineVendorInvoice>
+            ////start
+
+            List<LineVendorInvoice> lineVendorInvoice = new List<LineVendorInvoice>();
+
+            LineVendorInvoice temp = new LineVendorInvoice();
+
+            if (db.tempAccountAmounts.Any())
             {
-                new LineVendorInvoice
+                List<tempAccountAmount> ls = db.tempAccountAmounts.ToList();
+
+                foreach (var l in ls)
                 {
-                    transid = itemID,
-                    account = invoice.Account,
-                    side = true,
-                    oaccount = invoice.OAccount,
-                    amount = (decimal)invoice.Amount,
-                    Currency = invoice.OCurrency,
-                    duedate = invoice.DueDate,
-                    text = invoice.Text
-                },
-                new LineVendorInvoice
-                {
-                    transid = itemID,
-                    account = invoice.VatAccountId,
-                    side = true,
-                    oaccount = invoice.OAccount,
-                    amount = (decimal)invoice.VatAmount,
-                    Currency = invoice.OCurrency,
-                    duedate = invoice.DueDate,
-                    text = invoice.Text
+                    temp = new LineVendorInvoice
+                    {
+                        transid = itemID,
+                        account = l.AccountCode,
+                        side = true,
+                        oaccount = invoice.OAccount,
+                        amount = l.AccountAmount,
+                        Currency = invoice.OCurrency,
+                        duedate = invoice.DueDate,
+                        text = invoice.HeaderText
+                    };
+                    lineVendorInvoice.Add(temp);
                 }
-            };
+            }
+            else
+            {
+                lineVendorInvoice = new List<LineVendorInvoice>
+                {
+                    new LineVendorInvoice
+                    {
+                        transid = itemID,
+                        account = invoice.Account,
+                        side = true,
+                        oaccount = invoice.OAccount,
+                        amount = (decimal)invoice.Amount,
+                        Currency = invoice.OCurrency,
+                        duedate = invoice.DueDate,
+                        text = invoice.HeaderText
+                    },
+                    new LineVendorInvoice
+                    {
+                        transid = itemID,
+                        account = invoice.VatAccountId,
+                        side = true,
+                        oaccount = invoice.OAccount,
+                        amount = (decimal)invoice.VatAmount,
+                        Currency = invoice.OCurrency,
+                        duedate = invoice.DueDate,
+                        text = invoice.HeaderText
+                    }
+                };
+            }
+            
+            ////===end
+
             int countLineID = new AccountingController().MakeVendorInvoiceLine(lineVendorInvoice);
             if (countLineID != 0)
             {

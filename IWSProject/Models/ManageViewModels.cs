@@ -182,6 +182,12 @@ namespace IWSProject.Models
         public string Currency { get; set; }
         public bool IsValidated { get; set; }
     }
+    public class AccountAmountViewModel
+    {
+        [Key]
+        public string AccountCode { get; set; }
+        public decimal AccountAmount { get; set; }
+    }
     public class ValidateInvoiceViewModel
     {
         [Key]
