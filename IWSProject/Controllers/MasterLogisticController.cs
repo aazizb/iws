@@ -9,7 +9,7 @@ using System.Web.Mvc;
 namespace IWSProject.Controllers
 {
     [Authorize]
-    public class MasterLogisticController : Controller
+    public class MasterLogisticController : IWSBaseController
     {
         IWSDataContext db;
 
@@ -145,22 +145,26 @@ namespace IWSProject.Controllers
         {
             var model = db.MasterLogistics;
 
+            int modelId = (int)Session["Modelid"];
+
             if (id >= 0)
             {
                 try
                 {
                     var item = model.FirstOrDefault(it => it.id == id);
                     if (item != null)
+                    {
                         model.DeleteOnSubmit(item);
+                        db.SubmitChanges();
+                    }
 
-                    db.SubmitChanges();
                 }
                 catch (Exception e)
                 {
                     ViewData["GenericError"] = e.Message;
                 }
             }
-            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterLogistic(000));
+            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
         }
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(int transId, object newKeyValue)
@@ -278,33 +282,29 @@ namespace IWSProject.Controllers
         }
         public ActionResult HeaderText(int selectedItemIndex)
         {
-            return Json(IWSLookUp.GetHeaderText(selectedItemIndex, (int)Session["Modelid"]));
+            return Json(IWSLookUp.GetHeaderText(selectedItemIndex));
         }
         public ActionResult Store(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetStore(selectedOIDIndex, (int)Session["Modelid"]));
+            return Json(IWSLookUp.GetStore(selectedOIDIndex));
         }
         public ActionResult Account(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetAccount(selectedOIDIndex, (int)Session["Modelid"]));
+            return Json(IWSLookUp.GetAccount(selectedOIDIndex));
         }
-        private bool InsertLines(int itemID, int OID, int modelId)
+        private bool InsertLines(int itemId, int OID, int modelId)
         {
             bool results = false;
 
                 try
                 {
-                    if (modelId.Equals(IWSLookUp.LogisticMasterModelId.GoodReceiving))
-                    {
-                        List<DetailLogistic> items = IWSLookUp.GetNewLineDetailLogistic(itemID, OID,
-                                                                (int)IWSLookUp.LogisticMasterModelId.PurchaseOrder);
+                    var items = IWSLookUp.GetNewLineDetailLogistic(itemId, OID, modelId);
 
-                        foreach (var item in items)
-                        {
-                            db.DetailLogistics.InsertOnSubmit(item);
-                        }
-                        results = true;
+                    foreach (var item in items)
+                    {
+                        db.DetailLogistics.InsertOnSubmit((DetailLogistic)item);
                     }
+                    results = true;
                 }
                 catch (Exception e)
                 {
@@ -312,7 +312,6 @@ namespace IWSProject.Controllers
                 }
                 return results;
         }
-
 
         private string IsVending(int modelId)
         {

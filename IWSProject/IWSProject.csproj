@@ -478,6 +478,7 @@
     <Compile Include="Controllers\ExceptionLogController.cs" />
     <Compile Include="Controllers\FiscalYearController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\IWSBaseController.cs" />
     <Compile Include="Controllers\JournauxController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\AccountingController.cs" />
@@ -562,6 +563,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Content\Uploads\" />
     <Folder Include="Models\data\" />
+    <Folder Include="Views\IWSBase\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Content\IWSLocalResource.de-DE.resx">

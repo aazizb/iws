@@ -582,20 +582,30 @@
             }
             return null;
         }
-        public static List<DetailLogistic> GetNewLineDetailLogistic(int itemID, int OID, int modelId) =>
-                                        IWSEntities.DetailLogistics.Select(item => new DetailLogistic
-                                        {
-                                            transid = itemID,
-                                            item = item.item,
-                                            unit = item.unit,
-                                            price = item.price,
-                                            quantity = item.quantity,
-                                            Vat = item.Vat,
-                                            duedate = item.duedate,
-                                            text = item.text,
-                                            Currency = item.Currency,
-                                            ModelId = modelId
-                                        }).Where(c => c.transid == OID).ToList();
+        public static IEnumerable GetNewLineDetailLogistic(int itemId, int OID, int modelId)
+        {
+            List<DetailLogistic> docs = new List<DetailLogistic>();
+            docs = IWSEntities.DetailLogistics.Where(c => c.transid.Equals(OID)).ToList();
+
+            List<DetailLogistic> items =
+                (from o in docs
+                 where o.transid == OID
+                 select new DetailLogistic()
+                 {
+                     transid = itemId,
+                     item = o.item,
+                     unit = o.unit,
+                     price = o.price,
+                     quantity = o.quantity,
+                     Vat = o.Vat,
+                     duedate = o.duedate,
+                     text = o.text,
+                     Currency = o.Currency,
+                     ModelId = modelId
+                 }).ToList();
+            return items;
+        }
+
         public static IEnumerable GetGoodReceiving()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -2822,31 +2832,28 @@
             return null;
         }
 
-        public static string GetHeaderText(int itemId, int modelId)
+        public static string GetHeaderText(int itemId)
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
 
             return IWSEntities.MasterLogistics.FirstOrDefault(item => 
                                             item.id.Equals(itemId) && 
-                                            item.ModelId.Equals(modelId) && 
                                             item.CompanyId.Equals(companyId)).HeaderText ?? "N/A";
         }
-        public static string GetStore(int itemId, int modelId)
+        public static string GetStore(int itemId)
+        {
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+
+            return IWSEntities.MasterLogistics.FirstOrDefault(item =>
+                                         item.id.Equals(itemId) &&
+                                         item.CompanyId.Equals(companyId)).store ?? "N/A";
+        }
+        public static string GetAccount(int itemId)
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
 
             return IWSEntities.MasterLogistics.FirstOrDefault(item =>
                                             item.id.Equals(itemId) &&
-                                            item.ModelId.Equals(modelId) &&
-                                            item.CompanyId.Equals(companyId)).HeaderText ?? "N/A";
-        }
-        public static string GetAccount(int itemId, int modelId)
-        {
-            string companyId = (string)HttpContext.Current.Session["CompanyID"];
-
-            return IWSEntities.MasterLogistics.FirstOrDefault(item =>
-                                            item.id.Equals(itemId) &&
-                                            item.ModelId.Equals(modelId) &&
                                             item.CompanyId.Equals(companyId)).account ?? "N/A";
         }
         public static string GetStore(int id, string ItemType)
@@ -2854,6 +2861,7 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             if (ItemType.Equals(DocsType.GoodReceiving.ToString()))
             {
+                
                 return IWSEntities.PurchaseOrders.FirstOrDefault(c =>
                 c.id == id && c.CompanyId == companyID).store;
             }

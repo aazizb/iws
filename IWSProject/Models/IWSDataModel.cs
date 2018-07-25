@@ -1,6 +1,7 @@
 ﻿namespace IWSProject.Models
 {
     using System;
+    using System.Collections;
     using System.ComponentModel;
     using System.Data.Linq;
     using System.Data.Linq.Mapping;
@@ -10520,6 +10521,7 @@
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
     }
 
     [global::System.Data.Linq.Mapping.TableAttribute(Name = "dbo.FiscalYear")]
