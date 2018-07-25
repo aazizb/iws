@@ -56,7 +56,26 @@
         settings.CommandColumn.ShowDeleteButton = true;
 
         settings.KeyFieldName = "Id";
-
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["LayoutTj"] != null)
+                    {
+                        e.LayoutData = Session["LayoutTj"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["LayoutTj"] = e.LayoutData;
+                    break;
+            }
+        };
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = true;
         settings.Settings.ShowFilterRowMenu = true;

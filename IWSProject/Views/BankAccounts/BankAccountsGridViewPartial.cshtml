@@ -48,6 +48,27 @@
 
         settings.KeyFieldName = "id";
 
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["LayoutBA"] != null)
+                    {
+                        e.LayoutData = Session["LayoutBA"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["LayoutBA"] = e.LayoutData;
+                    break;
+            }
+        };
+
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = true;
         settings.Settings.ShowFilterRowMenu = true;

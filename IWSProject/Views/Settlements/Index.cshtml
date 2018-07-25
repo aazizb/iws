@@ -182,6 +182,12 @@
         btShowCustomizationWindow.SetText(text);
     }
 
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutST").text(layout)
+    }
 </script>
 @using IWSProject.Content
 @{

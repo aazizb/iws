@@ -70,7 +70,26 @@
             ASPxEdit editor = (ASPxEdit)e.Editor;
             editor.ValidationSettings.Display = Display.Dynamic;
         };
-
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["LayoutAc"] != null)
+                    {
+                        e.LayoutData = Session["LayoutAc"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["LayoutAc"] = e.LayoutData;
+                    break;
+            }
+        };
         settings.KeyFieldName = "id";
 
         settings.Settings.ShowFilterRow = true;

@@ -428,6 +428,10 @@
     <Content Include="Views\Journaux\DetailGridViewPartial.cshtml" />
     <Content Include="Views\Journaux\_CallbackPartialView.cshtml" />
     <Content Include="Views\AffectationJournal\FormLayoutPartial.cshtml" />
+    <Content Include="Views\MasterLogistic\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\MasterLogistic\Index.cshtml" />
+    <Content Include="Views\MasterLogistic\DetailGridViewPartial.cshtml" />
+    <Content Include="Views\MasterLogistic\CallbackPanelPartialView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -495,6 +499,7 @@
     <Compile Include="Controllers\InventoryInvoicesController.cs" />
     <Compile Include="Controllers\JournalController.cs" />
     <Compile Include="Controllers\MasterfileController.cs" />
+    <Compile Include="Controllers\MasterLogisticController.cs" />
     <Compile Include="Controllers\MenuUIController.cs" />
     <Compile Include="Controllers\MVCxGridViewState.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />

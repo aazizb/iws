@@ -18,6 +18,13 @@
         var text = SuppliersGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
         btShowCustomizationWindow.SetText(text);
     }
+
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutSu").text(layout)
+    }
 </script>
 @{
     ViewBag.Title = IWSLocalResource.supplier;

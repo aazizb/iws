@@ -170,7 +170,12 @@
         var text = CustomerInvoice.IsCustomizationWindowVisible() ? "Hide" : "Show";
         btShowCustomizationWindow.SetText(text);
     }
-
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutCI").text(layout)
+    }
 </script>
 
 @{

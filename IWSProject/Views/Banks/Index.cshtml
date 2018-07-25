@@ -18,7 +18,12 @@
         var text = BanksGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
         btShowCustomizationWindow.SetText(text);
     }
-
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutBK").text(layout)
+    }
 </script>
 @{
     ViewBag.Title = IWSLocalResource.banks;

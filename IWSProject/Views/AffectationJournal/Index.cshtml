@@ -21,6 +21,13 @@
         var text = AffectationJournalGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
         btShowCustomizationWindow.SetText(text);
     }
+
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutAj").text(layout)
+    }
 </script>
 @{
     ViewBag.Title = IWSLocalResource.AffectationJournal;

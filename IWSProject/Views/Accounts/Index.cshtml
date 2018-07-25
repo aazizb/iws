@@ -19,7 +19,12 @@
         var text = AccountsGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
         btShowCustomizationWindow.SetText(text);
     }
-
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutAc").text(layout)
+    }
 </script>
 
 @{

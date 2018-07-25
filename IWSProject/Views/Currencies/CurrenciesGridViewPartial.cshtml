@@ -51,14 +51,33 @@
         settings.CommandColumn.ShowDeleteButton = true;
 
         settings.KeyFieldName = "Id";
-
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["LayoutCr"] != null)
+                    {
+                        e.LayoutData = Session["LayoutCr"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["LayoutCr"] = e.LayoutData;
+                    break;
+            }
+        };
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = true;
         settings.Settings.ShowFilterRowMenu = true;
-        
+
         settings.Width = Unit.Percentage(100);
 
         settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);

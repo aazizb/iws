@@ -490,6 +490,139 @@
             return article;
         }
 
+        public static IEnumerable GetMasterLogistic(LogisticMasterModelId modelId) => IWSEntities.MasterLogistics.Where(c =>
+                                c.CompanyId == (string)HttpContext.Current.Session["CompanyID"] &&
+                                c.ModelId == (int)modelId).
+                                OrderByDescending(o => o.id).AsEnumerable();
+
+        public static IEnumerable GetDetailLogistic(int transId) => IWSEntities.DetailLogistics.Where(c =>
+                                c.transid == transId).
+                                OrderByDescending(o => o.id).AsEnumerable();
+        public static IEnumerable GetMasterLogisticOID()
+        {
+            int modelId = (int)HttpContext.Current.Session["ModelId"];
+
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+
+            if (modelId.Equals((int)LogisticMasterModelId.GoodReceiving))
+            {
+                return
+                from store in IWSEntities.Stores
+                join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
+                join supplier in IWSEntities.Suppliers on new { master.account } equals new { account = supplier.id }
+                where
+                  master.CompanyId == companyId &&
+                  master.ModelId == (int)LogisticMasterModelId.PurchaseOrder
+                orderby
+                  master.id
+                select new
+                {
+                    ID = master.id,
+                    Name = supplier.name,
+                    Store = store.name,
+                    DueDate = master.ItemDate.ToShortDateString()
+                };
+            }
+            if (modelId.Equals((int)LogisticMasterModelId.InventoryInvoice))
+            {
+                return
+                from store in IWSEntities.Stores
+                join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
+                join supplier in IWSEntities.Suppliers on new { master.account } equals new { account = supplier.id }
+                where
+                  master.CompanyId == companyId &&
+                  master.ModelId == (int)LogisticMasterModelId.GoodReceiving
+                orderby
+                  master.id
+                select new
+                {
+                    ID = master.id,
+                    Name = supplier.name,
+                    Store = store.name,
+                    DueDate = master.ItemDate.ToShortDateString()
+                };
+            }
+            if (modelId.Equals((int)LogisticMasterModelId.BillOfDelivery))
+            {
+                return
+                from store in IWSEntities.Stores
+                join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
+                join customer in IWSEntities.Customers on new { master.account } equals new { account = customer.id }
+                where
+                  master.CompanyId == companyId &&
+                  master.ModelId == (int)LogisticMasterModelId.SalesOrder
+                orderby
+                  master.id
+                select new
+                {
+                    ID = master.id,
+                    Name = customer.name,
+                    Store = store.name,
+                    DueDate = master.ItemDate.ToShortDateString()
+                };
+            }
+            if (modelId.Equals((int)LogisticMasterModelId.SalesInvoice))
+            {
+                return
+                from store in IWSEntities.Stores
+                join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
+                join customer in IWSEntities.Customers on new { master.account } equals new { account = customer.id }
+                where
+                  master.CompanyId == companyId &&
+                  master.ModelId == (int)LogisticMasterModelId.BillOfDelivery
+                orderby
+                  master.id
+                select new
+                {
+                    ID = master.id,
+                    Name = customer.name,
+                    Store = store.name,
+                    DueDate = master.ItemDate.ToShortDateString()
+                };
+            }
+            return null;
+        }
+        public static List<DetailLogistic> GetNewLineDetailLogistic(int itemID, int OID, int modelId) =>
+                                        IWSEntities.DetailLogistics.Select(item => new DetailLogistic
+                                        {
+                                            transid = itemID,
+                                            item = item.item,
+                                            unit = item.unit,
+                                            price = item.price,
+                                            quantity = item.quantity,
+                                            Vat = item.Vat,
+                                            duedate = item.duedate,
+                                            text = item.text,
+                                            Currency = item.Currency,
+                                            ModelId = modelId
+                                        }).Where(c => c.transid == OID).ToList();
+        public static IEnumerable GetGoodReceiving()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            var b = from o in IWSEntities.GoodReceivings
+                    where o.CompanyId == companyID
+                    orderby o.id descending
+                    select o;
+            return b;
+        }
+        public static IEnumerable GetInventoryInvoice()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            var b = from o in IWSEntities.InventoryInvoices
+                    where o.CompanyId == companyID
+                    orderby o.id descending
+                    select o;
+            return b;
+        }
+        public static IEnumerable GetPurchaseOrder()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            var b = from o in IWSEntities.PurchaseOrders
+                    where o.CompanyId == companyID
+                    orderby o.id descending
+                    select o;
+            return b;
+        }
         public static IEnumerable GetBillOfDelivery()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -499,7 +632,24 @@
                     select o;
             return b;
         }
-
+        public static IEnumerable GetSalesInvoice()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            var b = from o in IWSEntities.SalesInvoices
+                    where o.CompanyId == companyID
+                    orderby o.id descending
+                    select o;
+            return b;
+        }
+        public static IEnumerable GetSalesOrder()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            var b = from o in IWSEntities.SalesOrders
+                    where o.CompanyId == companyID
+                    orderby o.id descending
+                    select o;
+            return b;
+        }
         public static IEnumerable CloseCurrentFiscalYear(string companyId)=> 
                             IWSEntities.CloseFiscalYear(companyId).Where(c=>
                                 c.CompanyID == companyId).AsEnumerable();
@@ -603,20 +753,38 @@
                     select o;
             return b;
         }
-
-        public static IEnumerable GetGeneralLedger() => IWSEntities.GeneralLedgers.Where(c =>
-                 c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
-                OrderByDescending(o => o.id).AsEnumerable();
-
-        public static IEnumerable GetGoodReceiving()
+        public static IEnumerable GetVendorInvoice()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            var b = from o in IWSEntities.GoodReceivings
+            var b = from o in IWSEntities.VendorInvoices
                     where o.CompanyId == companyID
                     orderby o.id descending
                     select o;
             return b;
         }
+
+        public static IEnumerable GetPayment()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            var b = from o in IWSEntities.Payments
+                    where o.CompanyId == companyID
+                    orderby o.id descending
+                    select o;
+            return b;
+        }
+        public static IEnumerable GetSettlement()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            var b = from o in IWSEntities.Settlements
+                    where o.CompanyId == companyID
+                    orderby o.id descending
+                    select o;
+            return b;
+        }
+        public static IEnumerable GetGeneralLedger() => IWSEntities.GeneralLedgers.Where(c =>
+         c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
+        OrderByDescending(o => o.id).AsEnumerable();
+
         public static OwnerViewModel GetOwnerType(string IBAN)
         {
             try
@@ -678,74 +846,14 @@
                 IWSLookUp.LogException(ex);
             }
             return null;
-        }
-        public static IEnumerable GetInventoryInvoice()
-        {
-            string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            var b = from o in IWSEntities.InventoryInvoices
-                    where o.CompanyId == companyID
-                    orderby o.id descending
-                    select o;
-            return b;
-        }
-        public static IEnumerable GetPayment()
-        {
-            string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            var b = from o in IWSEntities.Payments
-                    where o.CompanyId == companyID
-                    orderby o.id descending
-                    select o;
-            return b;
-        }
+        }   
+
+
         public static List<LinePayment> GetLinePayment(int TransId)
         {
             return IWSEntities.LinePayments.Where(i => i.transid == TransId).ToList();
         }
-        public static IEnumerable GetPurchaseOrder()
-        {
-            string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            var b = from o in IWSEntities.PurchaseOrders
-                    where o.CompanyId == companyID
-                    orderby o.id descending
-                    select o;
-            return b;
-        }
-        public static IEnumerable GetSalesInvoice()
-        {
-            string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            var b = from o in IWSEntities.SalesInvoices
-                    where o.CompanyId == companyID
-                    orderby o.id descending
-                    select o;
-            return b;
-        }
-        public static IEnumerable GetSalesOrder()
-        {
-            string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            var b = from o in IWSEntities.SalesOrders
-                    where o.CompanyId == companyID
-                    orderby o.id descending
-                    select o;
-            return b;
-        }
-        public static IEnumerable GetSettlement()
-        {
-            string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            var b = from o in IWSEntities.Settlements
-                    where o.CompanyId == companyID
-                    orderby o.id descending
-                    select o;
-            return b;
-        }
-        public static IEnumerable GetVendorInvoice()
-        {
-            string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            var b = from o in IWSEntities.VendorInvoices
-                    where o.CompanyId == companyID
-                    orderby o.id descending
-                    select o;
-            return b;
-        }
+
         public static IEnumerable GetCustSuppliers()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -781,19 +889,7 @@
             .OrderBy(p => p.Name);
             return owner;
         }
-        public static IEnumerable GetCustomers()
-        {
-            string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            var customer = IWSEntities.Customers.AsEnumerable().Select(item => new
-            {
-                Id = item.id,
-                Name = item.name,
-                item.CompanyID
-            })
-            .Where(c => c.CompanyID == companyID)
-            .OrderBy(o => o.Id);
-            return customer;
-        }
+
         public static IEnumerable GetCustomer()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -1045,6 +1141,31 @@
             .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Id);
             return supplier;
+        }
+        public static IEnumerable GetCustomers()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            var customer = IWSEntities.Customers.AsEnumerable().Select(item => new
+            {
+                Id = item.id,
+                Name = item.name,
+                item.CompanyID
+            })
+            .Where(c => c.CompanyID == companyID)
+            .OrderBy(o => o.Id);
+            return customer;
+        }
+        public static IEnumerable GetSupplierOrCustomer(string IsVending)
+        {
+            if (IsVending == "SU")
+            {
+                return GetSuppliers();
+            }
+            if(IsVending == "CU")
+            {
+                return GetCustomers();
+            }
+            return null;
         }
         public static IEnumerable GetVAT()
         {
@@ -2195,6 +2316,18 @@
             return lines;
         }
 
+        //public static List<CashLine> GetCashLines(int transId) => IWSEntities.CashLines.Where(c =>
+        //        c.TransId == transId).ToList();
+
+        //var account = IWSEntities.BankAccounts.AsEnumerable().Select(i => new
+        //{
+        //    Id = i.IBAN,
+        //    Name = i.Owner,
+        //    i.CompanyID,
+        //})
+        //.Where(c => c.CompanyID == companyID)
+        //.OrderBy(o => o.Id);
+
         public static IEnumerable GetAccountBalance(string accountId, string CompanyID)
         {
             List<AccountBalanceViewModel> items = new List<AccountBalanceViewModel>();
@@ -2689,6 +2822,33 @@
             return null;
         }
 
+        public static string GetHeaderText(int itemId, int modelId)
+        {
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+
+            return IWSEntities.MasterLogistics.FirstOrDefault(item => 
+                                            item.id.Equals(itemId) && 
+                                            item.ModelId.Equals(modelId) && 
+                                            item.CompanyId.Equals(companyId)).HeaderText ?? "N/A";
+        }
+        public static string GetStore(int itemId, int modelId)
+        {
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+
+            return IWSEntities.MasterLogistics.FirstOrDefault(item =>
+                                            item.id.Equals(itemId) &&
+                                            item.ModelId.Equals(modelId) &&
+                                            item.CompanyId.Equals(companyId)).HeaderText ?? "N/A";
+        }
+        public static string GetAccount(int itemId, int modelId)
+        {
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+
+            return IWSEntities.MasterLogistics.FirstOrDefault(item =>
+                                            item.id.Equals(itemId) &&
+                                            item.ModelId.Equals(modelId) &&
+                                            item.CompanyId.Equals(companyId)).account ?? "N/A";
+        }
         public static string GetStore(int id, string ItemType)
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -2715,6 +2875,7 @@
             return null;
            
         }
+
         public static string GetSupplier(int id, string ItemType)
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -2796,6 +2957,7 @@
             }
             return null;
         }
+
         public static IEnumerable GetGoodReceivingOID()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -3044,6 +3206,60 @@
             Cash,
             Brouillard,
             Default
+        }
+
+        public enum MetaModelId
+        {
+            Article = 2000,
+            Banks = 2005,
+            Customer = 2010,
+            Account = 2015,
+            Company = 2020,
+            CostCenter = 2025,
+            QuantityUnit = 2030,
+            Store = 2035,
+            Supplier = 2040,
+            VAT = 2045,
+            Currency = 2050,
+            Default = 0000
+        }
+        public enum LogisticMasterModelId
+        {
+            PurchaseOrder = 3000,
+            GoodReceiving = 3005,
+            InventoryInvoice = 3010,
+            SalesOrder = 3500,
+            BillOfDelivery = 3505,
+            SalesInvoice = 3510,
+            Default=0000
+        }
+        public enum LogisticDetailModelId
+        {
+            LinePurchaseOrder = 4000,
+            LineGoodReceiving = 4005,
+            LineInventoryInvoice = 4010,
+            LineSalesOrder = 4500,
+            LineBillOfDelivery = 4505,
+            LineSalesInvoice = 4010,
+            Default = 0000
+        }
+        public enum ComptaMasterModelId
+        {
+            VendorInvoice = 5000,
+            CustomerInvoice = 5005,
+            Payment = 5010,
+            Settlement = 5015,
+            GeneralLedger = 5020,
+            Default = 0000
+        }
+        public enum ComptaDetailModelId
+        {
+            LineVendorInvoice = 6000,
+            LineCustomerInvoice = 6005,
+            LinePayment = 6010,
+            LineSettlement = 6015,
+            LineGeneralLedger = 6020,
+            Default = 0000
         }
         public enum Side
         {

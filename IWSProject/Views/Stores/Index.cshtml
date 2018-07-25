@@ -19,6 +19,12 @@
         btShowCustomizationWindow.SetText(text);
     }
 
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutSt").text(layout)
+    }
 </script>
 @{
     ViewBag.Title = IWSLocalResource.store;

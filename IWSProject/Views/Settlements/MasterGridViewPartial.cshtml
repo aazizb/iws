@@ -119,7 +119,26 @@
                 g.DetailRows.ExpandRowByKey((int)ViewData["NewKeyValue"]);
             }
         };
-
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["LayoutST"] != null)
+                    {
+                        e.LayoutData = Session["LayoutST"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["LayoutST"] = e.LayoutData;
+                    break;
+            }
+        };
         settings.KeyFieldName = "id";
 
         settings.Columns.Add(column =>

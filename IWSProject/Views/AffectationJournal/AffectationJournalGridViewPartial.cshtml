@@ -55,13 +55,32 @@
         settings.SettingsCommandButton.DeleteButton.Text = " ";
         settings.CommandColumn.ShowDeleteButton = true;
 
-        settings.KeyFieldName = "AccountID;Side;OAccountID";
 
         settings.InitNewRow = (s, e) =>
         {
             e.NewValues["Side"] = true;
         };
-
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["LayoutAj"] != null)
+                    {
+                        e.LayoutData = Session["LayoutAj"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["LayoutAj"] = e.LayoutData;
+                    break;
+            }
+        };
+        settings.KeyFieldName = "AccountID;Side;OAccountID";
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = true;
         settings.Settings.ShowFilterRowMenu = true;

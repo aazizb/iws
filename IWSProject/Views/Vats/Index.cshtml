@@ -19,7 +19,12 @@
         var text = VatsGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
         btShowCustomizationWindow.SetText(text);
     }
-
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutVa").text(layout)
+    }
 </script>
 @{
     ViewBag.Title = IWSLocalResource.vat;

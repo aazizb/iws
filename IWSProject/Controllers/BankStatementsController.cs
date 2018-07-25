@@ -72,9 +72,14 @@
                             db.tempAccountAmounts.DeleteOnSubmit(l);
                         }
                         db.SubmitChanges();
+
                         tempAccountAmount temp = new tempAccountAmount();
-                        
-                        
+
+                        //ls.Add(new tempAccountAmount
+                        //{
+                        //    AccountAmount=(decimal)239.45,
+                        //    AccountCode="999191"
+                        //});
                         foreach (AccountAmountViewModel itemx in accountAmount)
                         {
                             temp = new tempAccountAmount

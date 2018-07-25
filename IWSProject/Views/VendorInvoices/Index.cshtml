@@ -171,6 +171,13 @@
         var text = VendorInvoices.IsCustomizationWindowVisible() ? "Hide" : "Show";
         btShowCustomizationWindow.SetText(text);
     }
+
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutVI").text(layout)
+    }
 </script>
 
 @{
