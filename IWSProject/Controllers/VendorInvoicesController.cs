@@ -23,6 +23,8 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult MasterGridViewPartial()
         {
+
+            string companyID = (string)Session["CompanyID"];
             ViewBag.CostCenter = IWSLookUp.GetCostCenters();
 
             ViewBag.SupplierAccount = IWSLookUp.GetSuppliersAccount();

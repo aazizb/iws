@@ -11,13 +11,12 @@ namespace IWSProject.Controllers
     [Authorize]
     public class MasterLogisticController : IWSBaseController
     {
-        IWSDataContext db;
 
         public MasterLogisticController()
         {
             db = new IWSDataContext();
         }
-        // GET: InventoryInvoices
+        // GET: 
         public ActionResult Index()
         {
             if (Session["IsVending"] == null)
@@ -49,17 +48,11 @@ namespace IWSProject.Controllers
 
             Session["IsVending"] = IsVending(modelId);
 
-            string selectedItems = selectedIDs;
-
-            if (!string.IsNullOrEmpty(selectedItems) && selectedItems != null)
+            if (!String.IsNullOrWhiteSpace(selectedIDs) && (modelId >0))
             {
                 string companyID = (string)Session["CompanyID"];
 
-                AccountingController c = new AccountingController();
-
-                string items = c.SetDocType(selectedItems,
-                                        IWSLookUp.DocsType.InventoryInvoice.ToString());
-                c.ProcessData(items, companyID, false);
+                ProcessData(selectedIDs, companyID, false, modelId);
             }
             return PartialView("CallbackPanelPartialView", IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
         }
@@ -86,9 +79,9 @@ namespace IWSProject.Controllers
                         db.SubmitChanges();
                         if (itemOID != 0)
                         {
-                            int itemID = db.MasterLogistics.Max(i => i.id);
+                            int itemId = db.MasterLogistics.Max(i => i.id);
 
-                            result = InsertLines(itemID, itemOID, modelId);
+                            result = InsertLines(itemId, itemOID, modelId);
                             if (result)
                             {
                                 db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
@@ -116,7 +109,7 @@ namespace IWSProject.Controllers
         public ActionResult MasterGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] MasterLogistic item)
         {
             var model = db.MasterLogistics;
-
+            int modelId = (int)Session["Modelid"];
             ViewData["item"] = item;
             if (ModelState.IsValid)
             {
@@ -138,7 +131,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterLogistic(000));
+            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialDelete(int id)
@@ -260,29 +253,25 @@ namespace IWSProject.Controllers
         }
 
         #region Helper
-        public ActionResult PackUnit(string selectedItemIndex)
+        public ActionResult PackUnit(string selectedIndex)
         {
-            return Json(IWSLookUp.GetPackUnit(selectedItemIndex));
+            return Json(IWSLookUp.GetPackUnit(selectedIndex));
         }
-        public ActionResult QttyUnit(string selectedItemIndex)
+        public ActionResult VATCode(string selectedIndex)
         {
-            return Json(IWSLookUp.GetQttyUnit(selectedItemIndex));
+            return Json(IWSLookUp.GetVatCode(selectedIndex));
         }
-        public ActionResult VATCode(string selectedItemIndex)
+        public ActionResult Price(string selectedIndex)
         {
-            return Json(IWSLookUp.GetVatCode(selectedItemIndex));
+            return Json(IWSLookUp.GetSalesPrice(selectedIndex));
         }
-        public ActionResult Price(string selectedItemIndex)
+        public ActionResult Currency(string selectedIndex)
         {
-            return Json(IWSLookUp.GetSalesPrice(selectedItemIndex));
+            return Json(IWSLookUp.GetCurrency(selectedIndex));
         }
-        public ActionResult Currency(string selectedItemIndex)
+        public ActionResult HeaderText(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetCurrency(selectedItemIndex));
-        }
-        public ActionResult HeaderText(int selectedItemIndex)
-        {
-            return Json(IWSLookUp.GetHeaderText(selectedItemIndex));
+            return Json(IWSLookUp.GetHeaderText(selectedOIDIndex, (int)Session["ModelId"]));
         }
         public ActionResult Store(int selectedOIDIndex)
         {
@@ -290,7 +279,7 @@ namespace IWSProject.Controllers
         }
         public ActionResult Account(int selectedOIDIndex)
         {
-            return Json(IWSLookUp.GetAccount(selectedOIDIndex));
+            return Json(IWSLookUp.GetAccount(selectedOIDIndex, (int)Session["ModelId"]));
         }
         private bool InsertLines(int itemId, int OID, int modelId)
         {
@@ -312,7 +301,6 @@ namespace IWSProject.Controllers
                 }
                 return results;
         }
-
         private string IsVending(int modelId)
         {
             if (Math.Round(modelId * 0.01) == 30)
@@ -325,8 +313,6 @@ namespace IWSProject.Controllers
             }
             return null;
         }
-
         #endregion
-
     }
 }

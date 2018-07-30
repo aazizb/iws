@@ -1,7 +1,7 @@
-﻿namespace IWSProject.Models
+﻿
+namespace IWSProject.Models
 {
     using System;
-    using System.Collections;
     using System.ComponentModel;
     using System.Data.Linq;
     using System.Data.Linq.Mapping;
@@ -921,6 +921,10 @@
 
         private EntitySet<CostCenter> _CostCenters;
 
+        private EntitySet<DetailCompta> _DetailComptas;
+
+        private EntitySet<DetailCompta> _DetailComptas1;
+
         private EntitySet<Journal> _Journals;
 
         private EntitySet<Journal> _Journals1;
@@ -973,6 +977,8 @@
             this._AffectationJournals1 = new EntitySet<AffectationJournal>(new Action<AffectationJournal>(this.attach_AffectationJournals1), new Action<AffectationJournal>(this.detach_AffectationJournals1));
             this._ClassSetups = new EntitySet<ClassSetup>(new Action<ClassSetup>(this.attach_ClassSetups), new Action<ClassSetup>(this.detach_ClassSetups));
             this._CostCenters = new EntitySet<CostCenter>(new Action<CostCenter>(this.attach_CostCenters), new Action<CostCenter>(this.detach_CostCenters));
+            this._DetailComptas = new EntitySet<DetailCompta>(new Action<DetailCompta>(this.attach_DetailComptas), new Action<DetailCompta>(this.detach_DetailComptas));
+            this._DetailComptas1 = new EntitySet<DetailCompta>(new Action<DetailCompta>(this.attach_DetailComptas1), new Action<DetailCompta>(this.detach_DetailComptas1));
             this._Journals = new EntitySet<Journal>(new Action<Journal>(this.attach_Journals), new Action<Journal>(this.detach_Journals));
             this._Journals1 = new EntitySet<Journal>(new Action<Journal>(this.attach_Journals1), new Action<Journal>(this.detach_Journals1));
             this._PeriodicAccountBalances = new EntitySet<PeriodicAccountBalance>(new Action<PeriodicAccountBalance>(this.attach_PeriodicAccountBalances), new Action<PeriodicAccountBalance>(this.detach_PeriodicAccountBalances));
@@ -1337,6 +1343,32 @@
             }
         }
 
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Account_DetailCompta", Storage = "_DetailComptas", ThisKey = "id", OtherKey = "account")]
+        public EntitySet<DetailCompta> DetailComptas
+        {
+            get
+            {
+                return this._DetailComptas;
+            }
+            set
+            {
+                this._DetailComptas.Assign(value);
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Account_DetailCompta1", Storage = "_DetailComptas1", ThisKey = "id", OtherKey = "oaccount")]
+        public EntitySet<DetailCompta> DetailComptas1
+        {
+            get
+            {
+                return this._DetailComptas1;
+            }
+            set
+            {
+                this._DetailComptas1.Assign(value);
+            }
+        }
+
         [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Account_Journal", Storage = "_Journals", ThisKey = "id", OtherKey = "Account")]
         public EntitySet<Journal> Journals
         {
@@ -1489,6 +1521,30 @@
         {
             this.SendPropertyChanging();
             entity.Account = null;
+        }
+
+        private void attach_DetailComptas(DetailCompta entity)
+        {
+            this.SendPropertyChanging();
+            entity.Account1 = this;
+        }
+
+        private void detach_DetailComptas(DetailCompta entity)
+        {
+            this.SendPropertyChanging();
+            entity.Account1 = null;
+        }
+
+        private void attach_DetailComptas1(DetailCompta entity)
+        {
+            this.SendPropertyChanging();
+            entity.Account2 = this;
+        }
+
+        private void detach_DetailComptas1(DetailCompta entity)
+        {
+            this.SendPropertyChanging();
+            entity.Account2 = null;
         }
 
         private void attach_Journals(Journal entity)
@@ -9794,11 +9850,17 @@
 
         private string _text;
 
+        private string _Terms;
+
         private string _Currency;
 
         private System.Nullable<int> _ModelId;
 
-        private EntityRef<Payment> _Payment;
+        private EntityRef<Account> _Account1;
+
+        private EntityRef<Account> _Account2;
+
+        private EntityRef<MasterCompta> _MasterCompta;
 
         #region Extensibility Method Definitions
         partial void OnLoaded();
@@ -9820,6 +9882,8 @@
         partial void OnduedateChanged();
         partial void OntextChanging(string value);
         partial void OntextChanged();
+        partial void OnTermsChanging(string value);
+        partial void OnTermsChanged();
         partial void OnCurrencyChanging(string value);
         partial void OnCurrencyChanged();
         partial void OnModelIdChanging(System.Nullable<int> value);
@@ -9828,7 +9892,9 @@
 
         public DetailCompta()
         {
-            this._Payment = default(EntityRef<Payment>);
+            this._Account1 = default(EntityRef<Account>);
+            this._Account2 = default(EntityRef<Account>);
+            this._MasterCompta = default(EntityRef<MasterCompta>);
             OnCreated();
         }
 
@@ -9863,7 +9929,7 @@
             {
                 if ((this._transid != value))
                 {
-                    if (this._Payment.HasLoadedOrAssignedValue)
+                    if (this._MasterCompta.HasLoadedOrAssignedValue)
                     {
                         throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
                     }
@@ -9887,6 +9953,10 @@
             {
                 if ((this._account != value))
                 {
+                    if (this._Account1.HasLoadedOrAssignedValue)
+                    {
+                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+                    }
                     this.OnaccountChanging(value);
                     this.SendPropertyChanging();
                     this._account = value;
@@ -9927,6 +9997,10 @@
             {
                 if ((this._oaccount != value))
                 {
+                    if (this._Account2.HasLoadedOrAssignedValue)
+                    {
+                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+                    }
                     this.OnoaccountChanging(value);
                     this.SendPropertyChanging();
                     this._oaccount = value;
@@ -9996,6 +10070,26 @@
             }
         }
 
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Terms", DbType = "NVarChar(250)")]
+        public string Terms
+        {
+            get
+            {
+                return this._Terms;
+            }
+            set
+            {
+                if ((this._Terms != value))
+                {
+                    this.OnTermsChanging(value);
+                    this.SendPropertyChanging();
+                    this._Terms = value;
+                    this.SendPropertyChanged("Terms");
+                    this.OnTermsChanged();
+                }
+            }
+        }
+
         [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Currency", DbType = "NVarChar(10) NOT NULL", CanBeNull = false)]
         public string Currency
         {
@@ -10036,26 +10130,94 @@
             }
         }
 
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Payment_DetailCompta", Storage = "_Payment", ThisKey = "transid", OtherKey = "id", IsForeignKey = true)]
-        public Payment Payment
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Account_DetailCompta", Storage = "_Account1", ThisKey = "account", OtherKey = "id", IsForeignKey = true)]
+        public Account Account1
         {
             get
             {
-                return this._Payment.Entity;
+                return this._Account1.Entity;
             }
             set
             {
-                Payment previousValue = this._Payment.Entity;
+                Account previousValue = this._Account1.Entity;
                 if (((previousValue != value)
-                            || (this._Payment.HasLoadedOrAssignedValue == false)))
+                            || (this._Account1.HasLoadedOrAssignedValue == false)))
                 {
                     this.SendPropertyChanging();
                     if ((previousValue != null))
                     {
-                        this._Payment.Entity = null;
+                        this._Account1.Entity = null;
                         previousValue.DetailComptas.Remove(this);
                     }
-                    this._Payment.Entity = value;
+                    this._Account1.Entity = value;
+                    if ((value != null))
+                    {
+                        value.DetailComptas.Add(this);
+                        this._account = value.id;
+                    }
+                    else
+                    {
+                        this._account = default(string);
+                    }
+                    this.SendPropertyChanged("Account1");
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Account_DetailCompta1", Storage = "_Account2", ThisKey = "oaccount", OtherKey = "id", IsForeignKey = true)]
+        public Account Account2
+        {
+            get
+            {
+                return this._Account2.Entity;
+            }
+            set
+            {
+                Account previousValue = this._Account2.Entity;
+                if (((previousValue != value)
+                            || (this._Account2.HasLoadedOrAssignedValue == false)))
+                {
+                    this.SendPropertyChanging();
+                    if ((previousValue != null))
+                    {
+                        this._Account2.Entity = null;
+                        previousValue.DetailComptas1.Remove(this);
+                    }
+                    this._Account2.Entity = value;
+                    if ((value != null))
+                    {
+                        value.DetailComptas1.Add(this);
+                        this._oaccount = value.id;
+                    }
+                    else
+                    {
+                        this._oaccount = default(string);
+                    }
+                    this.SendPropertyChanged("Account2");
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "MasterCompta_DetailCompta", Storage = "_MasterCompta", ThisKey = "transid", OtherKey = "id", IsForeignKey = true)]
+        public MasterCompta MasterCompta
+        {
+            get
+            {
+                return this._MasterCompta.Entity;
+            }
+            set
+            {
+                MasterCompta previousValue = this._MasterCompta.Entity;
+                if (((previousValue != value)
+                            || (this._MasterCompta.HasLoadedOrAssignedValue == false)))
+                {
+                    this.SendPropertyChanging();
+                    if ((previousValue != null))
+                    {
+                        this._MasterCompta.Entity = null;
+                        previousValue.DetailComptas.Remove(this);
+                    }
+                    this._MasterCompta.Entity = value;
                     if ((value != null))
                     {
                         value.DetailComptas.Add(this);
@@ -10065,7 +10227,7 @@
                     {
                         this._transid = default(int);
                     }
-                    this.SendPropertyChanged("Payment");
+                    this.SendPropertyChanged("MasterCompta");
                 }
             }
         }
@@ -10115,6 +10277,8 @@
 
         private string _text;
 
+        private string _Terms;
+
         private System.Nullable<decimal> _lineNet;
 
         private System.Nullable<decimal> _lineVAT;
@@ -10149,6 +10313,8 @@
         partial void OnduedateChanged();
         partial void OntextChanging(string value);
         partial void OntextChanged();
+        partial void OnTermsChanging(string value);
+        partial void OnTermsChanged();
         partial void OnlineNetChanging(System.Nullable<decimal> value);
         partial void OnlineNetChanged();
         partial void OnlineVATChanging(System.Nullable<decimal> value);
@@ -10354,6 +10520,26 @@
             }
         }
 
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Terms", DbType = "NVarChar(250)")]
+        public string Terms
+        {
+            get
+            {
+                return this._Terms;
+            }
+            set
+            {
+                if ((this._Terms != value))
+                {
+                    this.OnTermsChanging(value);
+                    this.SendPropertyChanging();
+                    this._Terms = value;
+                    this.SendPropertyChanged("Terms");
+                    this.OnTermsChanged();
+                }
+            }
+        }
+
         [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_lineNet", AutoSync = AutoSync.Always, DbType = "Money", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
         public System.Nullable<decimal> lineNet
         {
@@ -10521,7 +10707,6 @@
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
     }
 
     [global::System.Data.Linq.Mapping.TableAttribute(Name = "dbo.FiscalYear")]
@@ -10718,8 +10903,6 @@
 
         private string _CostCenter;
 
-        private string _Area;
-
         private string _HeaderText;
 
         private System.DateTime _TransDate;
@@ -10746,8 +10929,6 @@
 
         private System.Nullable<int> _ModelId;
 
-        private string _Are;
-
         private EntitySet<LineGeneralLedger> _LineGeneralLedgers;
 
         private EntityRef<Company> _Company;
@@ -10764,8 +10945,6 @@
         partial void OnoidChanged();
         partial void OnCostCenterChanging(string value);
         partial void OnCostCenterChanged();
-        partial void OnAreaChanging(string value);
-        partial void OnAreaChanged();
         partial void OnHeaderTextChanging(string value);
         partial void OnHeaderTextChanged();
         partial void OnTransDateChanging(System.DateTime value);
@@ -10792,8 +10971,6 @@
         partial void OnTypeJournalChanged();
         partial void OnModelIdChanging(System.Nullable<int> value);
         partial void OnModelIdChanged();
-        partial void OnAreChanging(string value);
-        partial void OnAreChanged();
         #endregion
 
         public GeneralLedger()
@@ -10860,26 +11037,6 @@
                     this._CostCenter = value;
                     this.SendPropertyChanged("CostCenter");
                     this.OnCostCenterChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Area", DbType = "NVarChar(15)")]
-        public string Area
-        {
-            get
-            {
-                return this._Area;
-            }
-            set
-            {
-                if ((this._Area != value))
-                {
-                    this.OnAreaChanging(value);
-                    this.SendPropertyChanging();
-                    this._Area = value;
-                    this.SendPropertyChanged("Area");
-                    this.OnAreaChanged();
                 }
             }
         }
@@ -11148,26 +11305,6 @@
                     this._ModelId = value;
                     this.SendPropertyChanged("ModelId");
                     this.OnModelIdChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Are", DbType = "NVarChar(15)")]
-        public string Are
-        {
-            get
-            {
-                return this._Are;
-            }
-            set
-            {
-                if ((this._Are != value))
-                {
-                    this.OnAreChanging(value);
-                    this.SendPropertyChanging();
-                    this._Are = value;
-                    this.SendPropertyChanged("Are");
-                    this.OnAreChanged();
                 }
             }
         }
@@ -18611,11 +18748,9 @@
 
         private System.Nullable<int> _ModelId;
 
-        private string _AccountingAccount;
+        private EntitySet<DetailCompta> _DetailComptas;
 
         private EntityRef<Company> _Company;
-
-        private EntityRef<Supplier> _Supplier;
 
         private EntityRef<TypeJournal> _TypeJournal1;
 
@@ -18657,14 +18792,12 @@
         partial void OnTypeJournalChanged();
         partial void OnModelIdChanging(System.Nullable<int> value);
         partial void OnModelIdChanged();
-        partial void OnAccountingAccountChanging(string value);
-        partial void OnAccountingAccountChanged();
         #endregion
 
         public MasterCompta()
         {
+            this._DetailComptas = new EntitySet<DetailCompta>(new Action<DetailCompta>(this.attach_DetailComptas), new Action<DetailCompta>(this.detach_DetailComptas));
             this._Company = default(EntityRef<Company>);
-            this._Supplier = default(EntityRef<Supplier>);
             this._TypeJournal1 = default(EntityRef<TypeJournal>);
             OnCreated();
         }
@@ -18740,10 +18873,6 @@
             {
                 if ((this._account != value))
                 {
-                    if (this._Supplier.HasLoadedOrAssignedValue)
-                    {
-                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-                    }
                     this.OnaccountChanging(value);
                     this.SendPropertyChanging();
                     this._account = value;
@@ -19021,23 +19150,16 @@
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_AccountingAccount", DbType = "VarChar(50)")]
-        public string AccountingAccount
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "MasterCompta_DetailCompta", Storage = "_DetailComptas", ThisKey = "id", OtherKey = "transid")]
+        public EntitySet<DetailCompta> DetailComptas
         {
             get
             {
-                return this._AccountingAccount;
+                return this._DetailComptas;
             }
             set
             {
-                if ((this._AccountingAccount != value))
-                {
-                    this.OnAccountingAccountChanging(value);
-                    this.SendPropertyChanging();
-                    this._AccountingAccount = value;
-                    this.SendPropertyChanged("AccountingAccount");
-                    this.OnAccountingAccountChanged();
-                }
+                this._DetailComptas.Assign(value);
             }
         }
 
@@ -19071,40 +19193,6 @@
                         this._CompanyId = default(string);
                     }
                     this.SendPropertyChanged("Company");
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Supplier_MasterCompta", Storage = "_Supplier", ThisKey = "account", OtherKey = "id", IsForeignKey = true)]
-        public Supplier Supplier
-        {
-            get
-            {
-                return this._Supplier.Entity;
-            }
-            set
-            {
-                Supplier previousValue = this._Supplier.Entity;
-                if (((previousValue != value)
-                            || (this._Supplier.HasLoadedOrAssignedValue == false)))
-                {
-                    this.SendPropertyChanging();
-                    if ((previousValue != null))
-                    {
-                        this._Supplier.Entity = null;
-                        previousValue.MasterComptas.Remove(this);
-                    }
-                    this._Supplier.Entity = value;
-                    if ((value != null))
-                    {
-                        value.MasterComptas.Add(this);
-                        this._account = value.id;
-                    }
-                    else
-                    {
-                        this._account = default(string);
-                    }
-                    this.SendPropertyChanged("Supplier");
                 }
             }
         }
@@ -19161,6 +19249,18 @@
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void attach_DetailComptas(DetailCompta entity)
+        {
+            this.SendPropertyChanging();
+            entity.MasterCompta = this;
+        }
+
+        private void detach_DetailComptas(DetailCompta entity)
+        {
+            this.SendPropertyChanging();
+            entity.MasterCompta = null;
         }
     }
 
@@ -20088,8 +20188,6 @@
 
         private string _AccountingAccount;
 
-        private EntitySet<DetailCompta> _DetailComptas;
-
         private EntitySet<LinePayment> _LinePayments;
 
         private EntityRef<Company> _Company;
@@ -20142,7 +20240,6 @@
 
         public Payment()
         {
-            this._DetailComptas = new EntitySet<DetailCompta>(new Action<DetailCompta>(this.attach_DetailComptas), new Action<DetailCompta>(this.detach_DetailComptas));
             this._LinePayments = new EntitySet<LinePayment>(new Action<LinePayment>(this.attach_LinePayments), new Action<LinePayment>(this.detach_LinePayments));
             this._Company = default(EntityRef<Company>);
             this._Supplier = default(EntityRef<Supplier>);
@@ -20522,19 +20619,6 @@
             }
         }
 
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Payment_DetailCompta", Storage = "_DetailComptas", ThisKey = "id", OtherKey = "transid")]
-        public EntitySet<DetailCompta> DetailComptas
-        {
-            get
-            {
-                return this._DetailComptas;
-            }
-            set
-            {
-                this._DetailComptas.Assign(value);
-            }
-        }
-
         [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Payment_LinePayment", Storage = "_LinePayments", ThisKey = "id", OtherKey = "transid")]
         public EntitySet<LinePayment> LinePayments
         {
@@ -20668,18 +20752,6 @@
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
-        }
-
-        private void attach_DetailComptas(DetailCompta entity)
-        {
-            this.SendPropertyChanging();
-            entity.Payment = this;
-        }
-
-        private void detach_DetailComptas(DetailCompta entity)
-        {
-            this.SendPropertyChanging();
-            entity.Payment = null;
         }
 
         private void attach_LinePayments(LinePayment entity)
@@ -24529,8 +24601,6 @@
 
         private EntitySet<InventoryInvoice> _InventoryInvoices;
 
-        private EntitySet<MasterCompta> _MasterComptas;
-
         private EntitySet<Payment> _Payments;
 
         private EntitySet<VendorInvoice> _VendorInvoices;
@@ -24581,7 +24651,6 @@
         {
             this._GoodReceivings = new EntitySet<GoodReceiving>(new Action<GoodReceiving>(this.attach_GoodReceivings), new Action<GoodReceiving>(this.detach_GoodReceivings));
             this._InventoryInvoices = new EntitySet<InventoryInvoice>(new Action<InventoryInvoice>(this.attach_InventoryInvoices), new Action<InventoryInvoice>(this.detach_InventoryInvoices));
-            this._MasterComptas = new EntitySet<MasterCompta>(new Action<MasterCompta>(this.attach_MasterComptas), new Action<MasterCompta>(this.detach_MasterComptas));
             this._Payments = new EntitySet<Payment>(new Action<Payment>(this.attach_Payments), new Action<Payment>(this.detach_Payments));
             this._VendorInvoices = new EntitySet<VendorInvoice>(new Action<VendorInvoice>(this.attach_VendorInvoices), new Action<VendorInvoice>(this.detach_VendorInvoices));
             OnCreated();
@@ -24973,19 +25042,6 @@
             }
         }
 
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Supplier_MasterCompta", Storage = "_MasterComptas", ThisKey = "id", OtherKey = "account")]
-        public EntitySet<MasterCompta> MasterComptas
-        {
-            get
-            {
-                return this._MasterComptas;
-            }
-            set
-            {
-                this._MasterComptas.Assign(value);
-            }
-        }
-
         [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Supplier_Payment", Storage = "_Payments", ThisKey = "id", OtherKey = "account")]
         public EntitySet<Payment> Payments
         {
@@ -25051,18 +25107,6 @@
         }
 
         private void detach_InventoryInvoices(InventoryInvoice entity)
-        {
-            this.SendPropertyChanging();
-            entity.Supplier = null;
-        }
-
-        private void attach_MasterComptas(MasterCompta entity)
-        {
-            this.SendPropertyChanging();
-            entity.Supplier = this;
-        }
-
-        private void detach_MasterComptas(MasterCompta entity)
         {
             this.SendPropertyChanging();
             entity.Supplier = null;

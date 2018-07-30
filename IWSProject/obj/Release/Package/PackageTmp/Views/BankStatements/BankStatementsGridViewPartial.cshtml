@@ -1,0 +1,459 @@
+﻿@using IWSProject.Content
+@using IWSProject.Models
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "BankStatementsGridView";
+
+
+        settings.CallbackRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartial" };
+
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartialAddNew" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartialUpdate" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartialDelete" };
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+        settings.SettingsContextMenu.Enabled = true;
+
+        settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
+
+        settings.CommandColumn.ShowSelectCheckbox = true;
+
+        settings.Styles.RowHotTrack.Cursor = "pointer";
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
+        settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
+
+
+        settings.ClientSideEvents.SelectionChanged = "OnSelectionChanged";
+        settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+
+        settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
+
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowSelectCheckbox = true;
+        settings.CommandColumn.Width = Unit.Percentage(8);
+        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
+
+        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
+        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
+        settings.SettingsCommandButton.NewButton.Text = " ";
+        settings.CommandColumn.ShowNewButtonInHeader = false;
+
+        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
+        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
+        settings.SettingsCommandButton.EditButton.Text = " ";
+        settings.CommandColumn.ShowEditButton = false;
+
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
+        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
+        settings.SettingsCommandButton.DeleteButton.Text = " ";
+        settings.CommandColumn.ShowDeleteButton = false;
+
+        settings.InitNewRow = (s, e) =>
+        {
+            e.NewValues["Buchungstag"] = DateTime.Today;
+            e.NewValues["Valutadatum"] = DateTime.Today;
+        };
+
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["Layout"] != null)
+                    {
+                        e.LayoutData = Session["Layout"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["Layout"] = e.LayoutData;
+                    break;
+            }
+        };
+
+        settings.KeyFieldName = "id";
+
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowFilterRowMenu = true;
+        settings.SettingsBehavior.AllowFocusedRow = true;
+
+
+        settings.SettingsBehavior.ConfirmDelete = true;
+
+        settings.Width = Unit.Percentage(100);
+
+
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
+        settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+        settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+
+        settings.SettingsPager.PageSize = 19;
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "id";
+            column.Caption = IWSLocalResource.id;
+            column.Width = Unit.Percentage(6);
+            column.Visible = false;
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Auftragskonto";
+            column.Caption = IWSLocalResource.account;
+            column.Width = Unit.Percentage(7);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Buchungstag";
+            column.Caption = IWSLocalResource.OrderDate;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(8);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormatString = "MM/dd/yyyy";
+                d.NullDisplayText = "MM/dd/yyyy";
+                d.EditFormat = EditFormat.Custom;
+                d.DisplayFormatString = "yyyy-MM-dd";
+                d.DisplayFormatInEditMode = true;
+                d.Width = Unit.Percentage(100);
+                d.AllowUserInput = true;
+                d.AllowMouseWheel = true;
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Valutadatum";
+            column.Caption = IWSLocalResource.ValueDate;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(8);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormatString = "MM/dd/yyyy";
+                d.NullDisplayText = "MM/dd/yyyy";
+                d.EditFormat = EditFormat.Custom;
+                d.DisplayFormatString = "yyyy-MM-dd";
+                d.DisplayFormatInEditMode = true;
+                d.Width = Unit.Percentage(100);
+                d.AllowUserInput = true;
+                d.AllowMouseWheel = true;
+            });
+        });
+        var ucolumn = settings.Columns.Add("Periode");
+        ucolumn.Caption = IWSLocalResource.periode;
+        ucolumn.UnboundType = DevExpress.Data.UnboundColumnType.String;
+        settings.CustomUnboundColumnData = (sender, e) =>
+        {
+            if (e.Column.FieldName == "Periode")
+            {
+                e.Column.Width = Unit.Percentage(5);
+                DateTime transDate = (DateTime)e.GetListSourceFieldValue("Valutadatum");
+                string periode = Convert.ToString((int)transDate.Year);
+                periode += ((int)transDate.Month < 10) ? "0" + Convert.ToString((int)transDate.Month) : Convert.ToString((int)transDate.Month);
+                e.Value = periode;
+            }
+        };
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Buchungstext";
+            column.Caption = IWSLocalResource.BookingText;
+            column.Width = Unit.Percentage(15);
+            column.Visible = false;
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Verwendungszweck";
+            column.Caption = IWSLocalResource.Usage;
+            column.Width = Unit.Percentage(22);
+            column.Visible = false;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CompanyIBAN";
+            column.Caption = IWSLocalResource.CompanyIBAN;
+            column.Width = Unit.Percentage(20);
+            column.Visible = false;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "BeguenstigterZahlungspflichtiger";
+            column.Caption = IWSLocalResource.BeneficiaryOfPayment;
+            column.Width = Unit.Percentage(19);
+        });
+
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Kontonummer";
+            column.Caption = IWSLocalResource.IBAN;
+            column.Width = Unit.Percentage(20);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "BLZ";
+            column.Caption = IWSLocalResource.BLZ;
+            column.Width = Unit.Percentage(15);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Betrag";
+            column.Caption = IWSLocalResource.amount;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().TextBox(p =>
+            {
+                p.DisplayFormatString = "N";
+                p.DisplayFormatInEditMode = true;
+                p.Width = Unit.Percentage(100);
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Waehrung";
+            column.Caption = IWSLocalResource.Currency;
+            column.Width = Unit.Percentage(6);
+        });
+
+        #region Template Edit
+
+        settings.SetEditFormTemplateContent(templateContent =>
+        {
+            Html.DevExpress().FormLayout(formLayoutSettings =>
+            {
+                formLayoutSettings.Name = "BankStatementsViewEdit";
+                formLayoutSettings.Width = Unit.Percentage(100);
+                formLayoutSettings.ColCount = 1;
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "id";
+                    i.Caption = IWSLocalResource.id;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Auftragskonto";
+                    i.Caption = IWSLocalResource.OrderAccount;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Buchungstag";
+                    i.Caption = IWSLocalResource.OrderDate;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Valutadatum";
+                    i.Caption = IWSLocalResource.ValueDate;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Buchungstext";
+                    i.Caption = IWSLocalResource.BookingText;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Verwendungszweck";
+                    i.Caption = IWSLocalResource.Usage;
+                    i.NestedExtension().Memo(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                        s.Height = Unit.Pixel(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "BeguenstigterZahlungspflichtiger";
+                    i.Caption = IWSLocalResource.BeneficiaryOfPayment;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Kontonummer";
+                    i.Caption = IWSLocalResource.IBAN;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "BLZ";
+                    i.Caption = IWSLocalResource.BLZ;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Betrag";
+                    i.Caption = IWSLocalResource.amount;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.DisplayFormatString = "N";
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Waehrung";
+                    i.Caption = IWSLocalResource.Currency;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Info";
+                    i.Caption = IWSLocalResource.Info;
+                    i.NestedExtension().Memo(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "CompanyIBAN";
+                    i.Caption = IWSLocalResource.CompanyIBAN;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                    });
+                });
+
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.ShowCaption = DefaultBoolean.False;
+                    i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
+                }).SetNestedContent(() =>
+                {
+                    Html.DevExpress().Button(
+                        b =>
+                        {
+                            b.Name = "btnUpdate";
+                            b.Text = "";
+                            b.ToolTip = IWSLocalResource.btnUpdate;
+                            b.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+                            b.Images.Image.IconID = IconID.ActionsApply16x16;
+                            b.Width = Unit.Pixel(80);
+                            b.ClientSideEvents.Click = "function(s, e){ BankStatementsGridView.UpdateEdit(); }";
+                        }).Render();
+
+                    Html.DevExpress().Button(
+                        b =>
+                        {
+                            b.Name = "btnCancel";
+                            b.Text = "";
+                            b.ToolTip = IWSLocalResource.btnCancel;
+                            b.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+                            b.Images.Image.IconID = IconID.ActionsCancel16x16;
+                            b.Width = Unit.Pixel(80);
+                            b.ClientSideEvents.Click = "function(s, e){ BankStatementsGridView.CancelEdit(); }";
+                        }).Render();
+                });
+            })
+        .Bind(ViewData["BankStatement"] ?? templateContent.DataItem)
+        .Render();
+        });
+        #endregion
+        settings.DataBinding = (sender, e) =>
+        {
+            ((MVCxGridView)sender).ForceDataRowType(typeof(BankStatement));
+        };
+
+
+
+
+    });
+    if (ViewData["GenericError"] != null)
+    {
+        < script type = "text/javascript" >
+        alert("@ViewData["GenericError"]");
+        </ script >
+    }
+
+    if (ViewData["GenericError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GenericError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()

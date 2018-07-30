@@ -250,7 +250,6 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetCompteTier(selectedCustomerId, IWSLookUp.DocsType.CustomerInvoice.ToString()));
         }
-
         public bool InsertLines(int itemID, int OID, string ItemType)
         {
             bool results = false;
@@ -273,7 +272,6 @@ namespace IWSProject.Controllers
             }
             return results;
         }
-
         #endregion
     }
 }

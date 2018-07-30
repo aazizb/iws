@@ -1,0 +1,15 @@
+﻿
+@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPartialView";
+    settings.CallbackRouteValues = new { Controller = "Journaux", Action = "CallbackPanelPartial" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("MasterGridViewPartial");
+
+    });
+    settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+}).GetHtml()
+
+

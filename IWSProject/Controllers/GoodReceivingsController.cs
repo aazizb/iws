@@ -17,6 +17,7 @@ namespace IWSProject.Controllers
         // GET: goodreceivings
         public ActionResult Index()
         {
+            string companyID = (string)Session["CompanyID"];
             ViewBag.Store = IWSLookUp.GetStore();
 
             ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
@@ -26,6 +27,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult MasterGridViewPartial()
         {
+            string companyID = (string)Session["CompanyID"];
             ViewBag.Store = IWSLookUp.GetStore();
 
             ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();

@@ -247,10 +247,6 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetSupplier(selectedOIDIndex, IWSLookUp.DocsType.Payment.ToString()));
         }
-        public ActionResult CostCenter(int selectedOIDIndex)
-        {
-            return Json(IWSLookUp.GetCostCenter(selectedOIDIndex, IWSLookUp.DocsType.Payment.ToString()));
-        }
         public ActionResult TypeJournal(int selectedItemIndex)
         {
             return Json(IWSLookUp.GetTypeJournal(selectedItemIndex, IWSLookUp.DocsType.Payment.ToString()));
@@ -263,7 +259,10 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetCompteTier(selectedSupplierId, IWSLookUp.DocsType.Payment.ToString()));
         }
-
+        public ActionResult CostCenter(int selectedOIDIndex)
+        {
+            return Json(IWSLookUp.GetCostCenter(selectedOIDIndex, IWSLookUp.DocsType.Payment.ToString()));
+        }
         public bool InsertLines(int itemID, int OID)
         {
             bool results = false;
@@ -282,7 +281,6 @@ namespace IWSProject.Controllers
             }
             return results;
         }
-
         #endregion
 
     }

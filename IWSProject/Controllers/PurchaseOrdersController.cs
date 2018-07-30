@@ -17,6 +17,7 @@ namespace IWSProject.Controllers
         // GET: purchaseorders
         public ActionResult Index()
         {
+            string companyID = (string)Session["CompanyID"];
             ViewBag.Store = IWSLookUp.GetStore();
 
             ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
@@ -26,6 +27,7 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartial()
         {
+            string companyID = (string)Session["CompanyID"];
             ViewBag.Store = IWSLookUp.GetStore();
 
             ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
@@ -37,12 +39,12 @@ namespace IWSProject.Controllers
         {
             if (!string.IsNullOrEmpty(selectedIDs) && selectedIDs != null)
             {
-                string companyId = (string)Session["CompanyID"];
-                AccountingController c = new AccountingController();
+                //string companyId = (string)Session["CompanyID"];
+                //AccountingController c = new AccountingController();
             
-                string items=c.SetDocType(selectedIDs,
-                                        IWSLookUp.DocsType.PurchaseOrder.ToString());
-                c.ProcessData(items, companyId, false);
+                //string items=c.SetDocType(selectedIDs,
+                //                        IWSLookUp.DocsType.PurchaseOrder.ToString());
+                //c.ProcessData(items, companyId, false);
             }
             return PartialView("CallbackPanelPartialView", IWSLookUp.GetPurchaseOrder());
         }

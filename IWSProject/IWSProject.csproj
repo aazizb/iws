@@ -305,9 +305,6 @@
     <Content Include="Views\Customers\CustomersGridViewPartial.cshtml" />
     <Content Include="Views\Customers\DetailGridViewPartial.cshtml" />
     <Content Include="Views\Customers\Index.cshtml" />
-    <Content Include="Views\GeneralLedgerIn\DetailGridViewPartial.cshtml" />
-    <Content Include="Views\GeneralLedgerIn\Index.cshtml" />
-    <Content Include="Views\GeneralLedgerIn\MasterGridViewPartial.cshtml" />
     <Content Include="Views\GoodReceivings\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\GoodReceivings\DetailGridViewPartial.cshtml" />
     <Content Include="Views\GoodReceivings\Index.cshtml" />
@@ -432,6 +429,10 @@
     <Content Include="Views\MasterLogistic\Index.cshtml" />
     <Content Include="Views\MasterLogistic\DetailGridViewPartial.cshtml" />
     <Content Include="Views\MasterLogistic\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\MasterCompta\Index.cshtml" />
+    <Content Include="Views\MasterCompta\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\MasterCompta\DetailGridViewPartial.cshtml" />
+    <Content Include="Views\MasterCompta\CallbackPanelPartialView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -494,11 +495,11 @@
     <Compile Include="Controllers\CurrenciesController.cs" />
     <Compile Include="Controllers\CustomerInvoicesController.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
-    <Compile Include="Controllers\GeneralLedgerInController.cs" />
     <Compile Include="Controllers\GeneralLedgerOutController.cs" />
     <Compile Include="Controllers\GoodReceivingsController.cs" />
     <Compile Include="Controllers\InventoryInvoicesController.cs" />
     <Compile Include="Controllers\JournalController.cs" />
+    <Compile Include="Controllers\MasterComptaController.cs" />
     <Compile Include="Controllers\MasterfileController.cs" />
     <Compile Include="Controllers\MasterLogisticController.cs" />
     <Compile Include="Controllers\MenuUIController.cs" />

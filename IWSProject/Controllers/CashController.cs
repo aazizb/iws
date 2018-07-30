@@ -81,7 +81,7 @@ namespace IWSProject.Controllers
                             {
                                 oid = itemId,
                                 CostCenter = cashLine.CostCenter,
-                                Area =itemType,
+                                //Area =itemType,
                                 HeaderText=cashLine.Beschreibung,
                                 TransDate=cashLine.Datum,
                                 ItemDate=cashLine.Datum,

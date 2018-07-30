@@ -1,0 +1,149 @@
+﻿@using IWSProject.Content
+@using IWSProject.Controllers
+@Html.DevExpress().GridView(settings =>
+{
+    settings.Name = "ResultatPartialView";
+
+    settings.CallbackRouteValues = new { Controller = "Resultat", Action = "ResultatPartial" };
+
+    settings.KeyFieldName = "AccountId";
+    settings.SettingsContextMenu.Enabled = true;
+
+    settings.SettingsBehavior.AllowSelectByRowClick = false;
+    settings.SettingsBehavior.EnableRowHotTrack = true;
+    settings.SettingsBehavior.AllowEllipsisInText = true;
+    settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+    settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+    settings.SettingsResizing.Visualization = ResizingMode.Live;
+
+    settings.Styles.RowHotTrack.Cursor = "pointer";
+    settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+    settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+    settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+    settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+    settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.SettingsBehavior.AllowFocusedRow = true;
+
+    settings.Width = Unit.Percentage(100);
+
+    settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
+    settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+    settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+    settings.SettingsPager.Visible = true;
+    settings.SettingsPager.Position = PagerPosition.Bottom;
+    settings.SettingsPager.FirstPageButton.Visible = true;
+    settings.SettingsPager.LastPageButton.Visible = true;
+    settings.SettingsPager.PageSizeItemSettings.Visible = true;
+
+    settings.SettingsPager.PageSize = 24;
+
+    settings.Images.CollapsedButton.IconID = IconID.ActionsAdd16x16;
+    settings.Images.ExpandedButton.IconID = IconID.ActionsRemove16x16;
+
+    settings.PreRender =  (s, e) =>
+    {
+        MVCxGridView g = (MVCxGridView)s;
+        if (g != null)
+            g.ExpandAll();
+        Session["gridViewState"] = new MVCxGridViewState(g);
+    };
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "ClassName";
+        column.GroupIndex = 0;
+        column.Caption = IWSLocalResource.classx;
+        column.Width = Unit.Percentage(12);
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "SubClassName";
+        column.GroupIndex = 1;
+        column.Caption = IWSLocalResource.subClass;
+        column.Width = Unit.Percentage(14);
+        column.Visible = false;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "AccountId";
+        column.Caption = IWSLocalResource.accountid;
+        column.Width = Unit.Percentage(12);
+        column.Visible = false;
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "AccountName";
+        column.Caption = IWSLocalResource.name;
+        column.Width = Unit.Percentage(32);
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "TDebit";
+        column.Caption = IWSLocalResource.tdebit;
+        column.Width = Unit.Percentage(12);
+        column.PropertiesEdit.DisplayFormatString = "N";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "TCredit";
+        column.Caption = IWSLocalResource.tcredit;
+        column.Width = Unit.Percentage(12);
+        column.PropertiesEdit.DisplayFormatString = "N";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Balance";
+        column.Caption = IWSLocalResource.balance;
+        column.Width = Unit.Percentage(12);
+        column.PropertiesEdit.DisplayFormatString = "N";
+    });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Currency";
+        column.Caption = IWSLocalResource.Currency;
+        column.Width = Unit.Percentage(6);
+    });
+
+    settings.CustomSummaryCalculate = (s, e) =>
+    {
+        ASPxSummaryItem item = ((ASPxSummaryItem)e.Item);
+
+        if (item.FieldName != "Currency")
+            return;
+
+        if (e.IsGroupSummary)
+        {
+            e.TotalValue = e.GetValue("Currency");
+        }
+    };
+
+    settings.SummaryDisplayText = (sender, e) =>
+    {
+        if (e.IsGroupSummary && e.Item.FieldName != "Currency")
+        {
+            e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
+        }
+    };
+
+    settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleIfExpanded;
+
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TDebit").ShowInGroupFooterColumn = "TDebit";
+
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TCredit").ShowInGroupFooterColumn = "TCredit";
+
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").ShowInGroupFooterColumn = "Balance";
+
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
+
+}).Bind(Model).GetHtml()
+

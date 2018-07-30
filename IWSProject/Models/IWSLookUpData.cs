@@ -16,7 +16,6 @@
 
         const string IWSDataContext = "IWSDataContext";
        
-
         public static IWSDataContext IWSEntities
         {
 
@@ -64,43 +63,45 @@
 
         public static bool CheckPeriod(int DocumentID, DocsType DocumentType, string CompanyId, bool Current, bool Open)
         {
+            var vf = IWSEntities.FiscalYears.Where(e => IWSEntities.MasterLogistics.
+                                Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
             return true;
             #region testing period
 
-            //if (DocsType.PurchaseOrder.Equals(DocumentType))
-            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.PurchaseOrders.
-            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //if(DocsType.GoodReceiving.Equals(DocumentType))
-            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.GoodReceivings.
-            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //if(DocsType.InventoryInvoice.Equals(DocumentType))
-            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.InventoryInvoices.
-            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //if(DocsType.SalesOrder.Equals(DocumentType))
-            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.SalesOrders.
-            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //if(DocsType.BillOfDelivery.Equals(DocumentType))
-            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.BillOfDeliveries.
-            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //if(DocsType.SalesInvoice.Equals(DocumentType))
-            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.SalesInvoices.
-            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //if(DocsType.VendorInvoice.Equals(DocumentType))
-            //    return IWSEntities.FiscalYears.Where(e => IWSEntities.VendorInvoices.
-            //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //    if(DocsType.CustomerInvoice.Equals(DocumentType))
+            //    if (DocsType.PurchaseOrder.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.PurchaseOrders.
+            //    Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if (DocsType.GoodReceiving.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.GoodReceivings.
+            //    Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if (DocsType.InventoryInvoice.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.InventoryInvoices.
+            //    Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if (DocsType.SalesOrder.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.SalesOrders.
+            //    Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if (DocsType.BillOfDelivery.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.BillOfDeliveries.
+            //    Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if (DocsType.SalesInvoice.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.SalesInvoices.
+            //    Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if (DocsType.VendorInvoice.Equals(DocumentType))
+            //        return IWSEntities.FiscalYears.Where(e => IWSEntities.VendorInvoices.
+            //    Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
+            //    if (DocsType.CustomerInvoice.Equals(DocumentType))
             //        return IWSEntities.FiscalYears.Where(e => IWSEntities.CustomerInvoices.
             //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //    if(DocsType.Payment.Equals(DocumentType))
+            //    if (DocsType.Payment.Equals(DocumentType))
             //        return IWSEntities.FiscalYears.Where(e => IWSEntities.Payments.
             //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //    if(DocsType.Settlement.Equals(DocumentType))
+            //    if (DocsType.Settlement.Equals(DocumentType))
             //        return IWSEntities.FiscalYears.Where(e => IWSEntities.Settlements.
             //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //    if(DocsType.GeneralLedger.Equals(DocumentType))
+            //    if (DocsType.GeneralLedger.Equals(DocumentType))
             //        return IWSEntities.FiscalYears.Where(e => IWSEntities.GeneralLedgers.
             //Any(x => e.Period == x.oPeriode && x.id == DocumentID)).Any();
-            //return false;
+            //    return false;
             #endregion
         }
         public static bool CheckPeriod(DateTime TransDate, string CompanyId, bool Current, bool Open)
@@ -108,7 +109,7 @@
             return true;
             #region testing period
 
-            //string periode = TransDate.Month < 10? '0' + Convert.ToString(TransDate.Month) : Convert.ToString(TransDate.Month);
+            //string periode = TransDate.Month < 10 ? '0' + Convert.ToString(TransDate.Month) : Convert.ToString(TransDate.Month);
             //periode = Convert.ToString(TransDate.Year) + periode;
 
             //return IWSEntities.FiscalYears.Where(x => x.Period
@@ -116,6 +117,7 @@
             //                x.CompanyId == CompanyId).Any();
             #endregion
         }
+
         public static IEnumerable GetAccount()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -494,10 +496,18 @@
                                 c.CompanyId == (string)HttpContext.Current.Session["CompanyID"] &&
                                 c.ModelId == (int)modelId).
                                 OrderByDescending(o => o.id).AsEnumerable();
+        public static IEnumerable GetMasterCompta(ComptaMasterModelId modelId) => IWSEntities.MasterComptas.Where(c =>
+                        c.CompanyId == (string)HttpContext.Current.Session["CompanyID"] &&
+                        c.ModelId == (int)modelId).
+                        OrderByDescending(o => o.id).AsEnumerable();
 
         public static IEnumerable GetDetailLogistic(int transId) => IWSEntities.DetailLogistics.Where(c =>
                                 c.transid == transId).
                                 OrderByDescending(o => o.id).AsEnumerable();
+        public static IEnumerable GetDetailCompta(int transId) => IWSEntities.DetailComptas.Where(c =>
+                          c.transid == transId).
+                          OrderByDescending(o => o.id).AsEnumerable();
+
         public static IEnumerable GetMasterLogisticOID()
         {
             int modelId = (int)HttpContext.Current.Session["ModelId"];
@@ -582,6 +592,88 @@
             }
             return null;
         }
+        public static IEnumerable GetMasterComptaOID()
+        {
+            int modelId = (int)HttpContext.Current.Session["ModelId"];
+
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+
+            if (modelId.Equals((int)ComptaMasterModelId.VendorInvoice))
+            {
+               return from store in IWSEntities.Stores
+                join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
+                join supplier in IWSEntities.Suppliers on new { master.account } equals new { account = supplier.id }
+                where
+                  master.CompanyId == companyId &&
+                  master.ModelId == (int)LogisticMasterModelId.InventoryInvoice
+                orderby
+                  master.id
+                select new
+                {
+                    ID = master.id,
+                    Name = supplier.name,
+                    Store = store.name,
+                    DueDate = master.ItemDate.ToShortDateString()
+                };
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.Payment))
+            {
+                return from center in IWSEntities.CostCenters
+                join master in IWSEntities.MasterComptas on new { center.id } equals new { id = master.CostCenter }
+                join account in IWSEntities.Accounts on new { master.account } equals new { account = account.id }
+                where
+                  master.CompanyId == companyId &&
+                  master.ModelId == (int)ComptaMasterModelId.VendorInvoice
+                orderby
+                  master.id
+                select new
+                {
+                    ID = master.id,
+                    Name = account.name,
+                    Store = center.name,
+                    DueDate = master.ItemDate.ToShortDateString()
+                };
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.CustomerInvoice))
+            {
+                return
+                from store in IWSEntities.Stores
+                join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
+                join customer in IWSEntities.Customers on new { master.account } equals new { account = customer.id }
+                where
+                  master.CompanyId == companyId &&
+                  master.ModelId == (int)LogisticMasterModelId.SalesInvoice
+                orderby
+                  master.id
+                select new
+                {
+                    ID = master.id,
+                    Name = customer.name,
+                    Store = store.name,
+                    DueDate = master.ItemDate.ToShortDateString()
+                };
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.Settlement))
+            {
+                return from center in IWSEntities.CostCenters
+                join master in IWSEntities.MasterComptas on new { center.id } equals new { id = master.CostCenter }
+                join account in IWSEntities.Accounts on new { master.account } equals new { account = account.id }
+                where
+                  master.CompanyId == companyId &&
+                  master.ModelId == (int)ComptaMasterModelId.CustomerInvoice
+                orderby
+                  master.id
+                select new
+                {
+                    ID = master.id,
+                    Name = account.name,
+                    Store = center.name,
+                    DueDate = master.ItemDate.ToShortDateString()
+                };
+            }
+            return null;
+        }
+
         public static IEnumerable GetNewLineDetailLogistic(int itemId, int OID, int modelId)
         {
             List<DetailLogistic> docs = new List<DetailLogistic>();
@@ -604,6 +696,188 @@
                      ModelId = modelId
                  }).ToList();
             return items;
+        }
+        public static IEnumerable GetNewLineDetailCompta(int itemId, int OID, int modelId)
+        {
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+
+            List<DebitViewModel> debit = new List<DebitViewModel>();
+
+            List<CreditViewModel> credit = new List<CreditViewModel>();
+
+            IList<DetailCompta> lines = new List<DetailCompta>();
+
+            string account = GetAccount(OID, modelId);
+
+            if (modelId.Equals((int)ComptaMasterModelId.CustomerInvoice) ||
+                modelId.Equals((int)ComptaMasterModelId.VendorInvoice))
+            {
+                credit = new List<CreditViewModel>
+                        ((from l in IWSEntities.DetailLogistics
+                          where
+                                l.transid == OID &&
+                                l.Article.CompanyID == companyId &&
+                                l.Article.Vat.CompanyID == companyId
+                          select new CreditViewModel()
+                          {
+                                OCreditVAT = l.Article.Vat.outputvataccountid,
+                                OCreditTotal = l.Article.Vat.revenueaccountid
+                          }).Distinct());
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.Payment) ||
+                modelId.Equals((int)ComptaMasterModelId.Settlement))
+            {
+                credit = new List<CreditViewModel>
+                    ((from l in IWSEntities.MasterComptas
+                      where
+                        l.id == OID
+                      select new CreditViewModel()
+                      {
+                          OCreditTotal = l.Company.bankaccountid
+                      }).Distinct());
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.Settlement))
+            {
+                debit = new List<DebitViewModel>
+                        (from l in IWSEntities.DetailComptas
+                         group l by new
+                         {
+                             l.transid,
+                             l.account,
+                             l.side,
+                             l.duedate,
+                             l.Currency,
+                             l.text
+                         } into g
+                         where g.Key.transid == OID
+                         select new DebitViewModel()
+                         {
+                             TransID = g.Key.transid,
+                             ODebit = g.Key.account,
+                             Side = !g.Key.side,
+                             OVat = (decimal?)g.Sum(p => p.amount),
+                             ItemDate = g.Key.duedate,
+                             Currency = g.Key.Currency,
+                             HeaderText = g.Key.text
+                         });
+                lines = new List<DetailCompta>() {
+                        new DetailCompta(){
+                            transid =itemId, account=credit.Single().OCreditTotal, side=debit.Single().Side, oaccount=debit.Single().ODebit,
+                            amount=(decimal)debit.Single().OVat, duedate=debit.Single().ItemDate, text=debit.Single().HeaderText,
+                            Currency=debit.Single().Currency}
+                     };
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.VendorInvoice))
+            {
+                debit = new List<DebitViewModel>
+                    (from l in IWSEntities.MasterLogistics
+                     where
+                       l.CompanyId == companyId &&
+                       l.id == OID
+                     select new DebitViewModel()
+                     {
+                         TransID = itemId,
+                         ODebit = account,
+                         OCredit = l.Company.purchasingclearingaccountid,
+                         Side = false,
+                         HeaderText = l.HeaderText,
+                         ItemDate = l.ItemDate,
+                         OVat = l.oVat,
+                         OTotal = l.oTotal,
+                         Currency = l.oCurrency
+                     });
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.CustomerInvoice))
+            {
+                debit = new List<DebitViewModel>
+               (from l in IWSEntities.MasterLogistics
+                where
+                   l.CompanyId == companyId &&
+                   l.id == OID
+                select new DebitViewModel()
+                {
+                    TransID = itemId,
+                    ODebit = account,
+                    OCredit = l.Company.salesclearingaccountid,
+                    Side = false,
+                    HeaderText = l.HeaderText,
+                    ItemDate = l.ItemDate,
+                    OVat = l.oVat,
+                    OTotal = l.oTotal,
+                    Currency = l.oCurrency
+                });
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.Payment))
+            {
+                debit = new List<DebitViewModel>
+                        (from l in IWSEntities.MasterComptas
+                         where
+                           l.id == OID
+                         select new DebitViewModel()
+                         {
+                             TransID = itemId,
+                             ODebit = account,              // l.Supplier.accountid,
+                             Side = true,
+                             OTotal = l.oTotal,
+                             ItemDate = l.ItemDate,
+                             HeaderText = l.HeaderText,
+                             Currency = l.oCurrency,
+                         });
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.Settlement))
+            {
+                debit = new List<DebitViewModel>
+                        (from l in IWSEntities.DetailComptas
+                         group l by new
+                         {
+                             l.transid,
+                             l.account,
+                             l.side,
+                             l.duedate,
+                             l.Currency,
+                             l.text
+                         } into g
+                         where g.Key.transid == OID
+                         select new DebitViewModel()
+                         {
+                             TransID = g.Key.transid,
+                             ODebit = g.Key.account,
+                             Side = !g.Key.side,
+                             OVat = (decimal?)g.Sum(p => p.amount),
+                             ItemDate = g.Key.duedate,
+                             Currency = g.Key.Currency,
+                             HeaderText = g.Key.text
+                         });
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.CustomerInvoice) ||
+                modelId.Equals((int)ComptaMasterModelId.VendorInvoice))
+            {
+                lines = new List<DetailCompta>() {
+                    new DetailCompta(){
+                        transid =itemId, account=debit.Single().ODebit, side=debit.Single().Side, oaccount=credit.Single().OCreditVAT,
+                        amount=(decimal)debit.Single().OVat, duedate=debit.Single().ItemDate, text=debit.Single().HeaderText,
+                        Currency=debit.Single().Currency},
+                    new DetailCompta(){
+                        transid =itemId, account=debit.Single().ODebit, side=debit.Single().Side, oaccount=debit.Single().OCredit,
+                        amount=(decimal)debit.Single().OTotal, duedate=debit.Single().ItemDate, text=debit.Single().HeaderText,
+                        Currency=debit.Single().Currency}
+                    };
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.Payment) ||
+                modelId.Equals((int)ComptaMasterModelId.Settlement))
+            {
+                lines = new List<DetailCompta>() {
+                        new DetailCompta(){
+                            transid =itemId, account=debit.Single().ODebit, side=debit.Single().Side, oaccount=credit.Single().OCreditVAT,
+                            amount=(decimal)debit.Single().OVat, duedate=debit.Single().ItemDate, text=debit.Single().HeaderText,
+                            Currency=debit.Single().Currency},
+                        new DetailCompta(){
+                            transid =itemId, account=debit.Single().ODebit, side=debit.Single().Side, oaccount=debit.Single().OCredit,
+                            amount=(decimal)debit.Single().OTotal, duedate=debit.Single().ItemDate, text=debit.Single().HeaderText,
+                            Currency=debit.Single().Currency}
+                    };
+            }
+            return lines;
         }
 
         public static IEnumerable GetGoodReceiving()
@@ -1139,39 +1413,56 @@
             }
             return (List<Menu>)HttpContext.Current.Session["Menus"];
         }
-        public static IEnumerable GetSuppliers()
+        public static IEnumerable GetSuppliers()        ///string companyId
         {
-            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+
             var supplier = IWSEntities.Suppliers.AsEnumerable().Select(item => new
             {
                 Id = item.id,
                 Name = item.name,
+                Account = item.accountid,
                 item.CompanyID
             })
-            .Where(c => c.CompanyID == companyID)
+            .Where(c => c.CompanyID == companyId)
             .OrderBy(o => o.Id);
             return supplier;
         }
-        public static IEnumerable GetCustomers()
+        public static IEnumerable GetCustomers()        //string companyId
         {
-            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
             var customer = IWSEntities.Customers.AsEnumerable().Select(item => new
             {
                 Id = item.id,
                 Name = item.name,
+                Account = item.accountid,
                 item.CompanyID
             })
-            .Where(c => c.CompanyID == companyID)
+            .Where(c => c.CompanyID == companyId)
             .OrderBy(o => o.Id);
             return customer;
         }
-        public static IEnumerable GetSupplierOrCustomer(string IsVending)
+        //public static IEnumerable GetSupplierOrCustomer(string isVending)
+        //{
+        //    string companyId = (string)HttpContext.Current.Session["CompanyID"];
+        //    if (isVending == "SU")
+        //    {
+        //        return GetSuppliers(companyId);
+        //    }
+        //    if(isVending == "CU")
+        //    {
+        //        return GetCustomers(companyId);
+        //    }
+        //    return null;
+        //}
+        public static IEnumerable GetAccounts(string isVending)
         {
-            if (IsVending == "SU")
+
+            if (isVending == "SU")
             {
                 return GetSuppliers();
             }
-            if(IsVending == "CU")
+            if (isVending == "CU")
             {
                 return GetCustomers();
             }
@@ -1526,7 +1817,7 @@
                  ItemType = g.Key.ItemType,
                  DueDate = Convert.ToDateTime(g.Key.ItemDate),
                  Periode = g.Key.Periode,// g.Key.xYear + g.Key.xMonth,
-                 Area = false,
+                 //Area = false,
                  SupplierID = g.Key.account,
                  CompanyID = g.Key.CompanyId,
                  VAT = g.Key.Vat,
@@ -1565,7 +1856,7 @@
                     ItemType = g.Key.ItemType,
                     DueDate = Convert.ToDateTime(g.Key.ItemDate),
                     Periode = g.Key.Periode,
-                    Area = true,
+                    //Area = true,
                     SupplierID = g.Key.account,
                     CompanyID = g.Key.CompanyId,
                     VAT = 0,
@@ -1606,7 +1897,7 @@
                  ItemType = g.Key.ItemType,
                  DueDate = Convert.ToDateTime(g.Key.ItemDate),
                  Periode = g.Key.Periode,
-                 Area = false,
+                 //Area = false,
                  SupplierID = g.Key.account,
                  CompanyID = g.Key.CompanyId,
                  VAT=g.Key.Vat,
@@ -1646,7 +1937,7 @@
                  ItemType = g.Key.ItemType,
                  DueDate = Convert.ToDateTime(g.Key.ItemDate),
                  Periode = g.Key.Periode,
-                 Area = false,
+                 //Area = false,
                  SupplierID = g.Key.account,
                  CompanyID = g.Key.CompanyId,
                  VAT=0,
@@ -1687,7 +1978,7 @@
                      ItemType = g.Key.ItemType,
                      DueDate = Convert.ToDateTime(g.Key.ItemDate),
                      Periode = g.Key.Periode,
-                     Area = true,
+                     //Area = true,
                      SupplierID = g.Key.account,
                      CompanyID = g.Key.CompanyId,
                      VAT = g.Key.Vat,
@@ -1728,7 +2019,7 @@
                  ItemType = g.Key.ItemType,
                  DueDate = Convert.ToDateTime(g.Key.ItemDate),
                  Periode= g.Key.Periode,
-                 Area = true,
+                 //Area = true,
                  SupplierID = g.Key.account,
                  CompanyID = g.Key.CompanyId,
                  VAT=g.Key.Vat,
@@ -1769,7 +2060,7 @@
                  ItemType = g.Key.ItemType,
                  DueDate = Convert.ToDateTime(g.Key.ItemDate),
                  Periode = g.Key.Periode,
-                 Area = false,
+                 //Area = false,
                  SupplierID = g.Key.account,
                  CompanyID = g.Key.CompanyId,
                  VAT = g.Key.Vat,
@@ -1810,7 +2101,7 @@
                      ItemType = g.Key.ItemType,
                      DueDate = Convert.ToDateTime(g.Key.ItemDate),
                      Periode = g.Key.Periode,
-                     Area = false,
+                     //Area = false,
                      SupplierID = g.Key.account,
                      CompanyID = g.Key.CompanyId,
                      VAT = g.Key.Vat,
@@ -1849,7 +2140,7 @@
                  ItemType = g.Key.ItemType,
                  DueDate = Convert.ToDateTime(g.Key.ItemDate),
                  Periode = g.Key.Periode,
-                 Area = false,
+                 //Area = false,
                  SupplierID = g.Key.account,
                  CompanyID = g.Key.CompanyId,
                  VAT = 0,
@@ -1888,7 +2179,7 @@
                  ItemType = g.Key.ItemType,
                  DueDate = Convert.ToDateTime(g.Key.ItemDate),
                  Periode = g.Key.Periode,
-                 Area = false,
+                 //Area = false,
                  SupplierID = g.Key.account,
                  CompanyID = g.Key.CompanyId,
                  VAT = 0,
@@ -1902,7 +2193,7 @@
         {
             List<ValidateDocsViewModel> BL = Queryable.OrderBy(
             (from line in IWSEntities.LineGeneralLedgers
-             where line.GeneralLedger.IsValidated == IsValidated && line.GeneralLedger.Area == Area.Sales.ToString()
+             where line.GeneralLedger.IsValidated == IsValidated// && line.GeneralLedger.Area == Area.Sales.ToString()
              from Item in IWSEntities.Localizations
              where Item.ItemName == DocsType.GeneralLedger.ToString() && Item.UICulture == uiCulture
              group new
@@ -1926,7 +2217,7 @@
                  ItemType = g.Key.ItemType,
                  DueDate = Convert.ToDateTime(g.Key.ItemDate),
                  Periode = g.Key.Periode,
-                 Area = false,
+                 //Area = false,
                  SupplierID = Area.Sales.ToString(),
                  CompanyID = g.Key.CompanyId,
                  VAT = 0,
@@ -1940,7 +2231,7 @@
         {
             List<ValidateDocsViewModel> BL = Queryable.OrderBy(
             (from line in IWSEntities.LineGeneralLedgers
-             where line.GeneralLedger.IsValidated == IsValidated && line.GeneralLedger.Area == Area.Purchasing.ToString()
+             where line.GeneralLedger.IsValidated == IsValidated// && line.GeneralLedger.Area == Area.Purchasing.ToString()
              from Item in IWSEntities.Localizations
              where Item.ItemName == DocsType.GeneralLedger.ToString() && Item.UICulture == uiCulture
              group new
@@ -1964,7 +2255,7 @@
                  ItemType = g.Key.ItemType,
                  DueDate = Convert.ToDateTime(g.Key.ItemDate),
                  Periode = g.Key.Periode,
-                 Area = false,
+                 //Area = false,
                  SupplierID = Area.Purchasing.ToString(),
                  CompanyID = g.Key.CompanyId,
                  VAT = 0,
@@ -2832,13 +3123,46 @@
             return null;
         }
 
-        public static string GetHeaderText(int itemId)
+        public static string GetHeaderText(int itemId, int modelId)
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
 
-            return IWSEntities.MasterLogistics.FirstOrDefault(item => 
-                                            item.id.Equals(itemId) && 
-                                            item.CompanyId.Equals(companyId)).HeaderText ?? "N/A";
+            string headerText = String.Empty;
+            if (modelId.Equals((int)LogisticMasterModelId.GoodReceiving) ||
+               (modelId.Equals((int)LogisticMasterModelId.InventoryInvoice)) ||
+               (modelId.Equals((int)LogisticMasterModelId.BillOfDelivery)) ||
+               (modelId.Equals((int)LogisticMasterModelId.SalesInvoice)) ||
+               (modelId.Equals((int)ComptaMasterModelId.VendorInvoice)) ||
+               (modelId.Equals((int)ComptaMasterModelId.CustomerInvoice)))
+            {
+                headerText = IWSEntities.MasterLogistics.FirstOrDefault(item => 
+                                                item.id.Equals(itemId) && 
+                                                item.CompanyId.Equals(companyId)).HeaderText ?? "N/A";
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.Payment) ||
+                modelId.Equals((int)ComptaMasterModelId.Settlement))
+            {
+                headerText = IWSEntities.MasterComptas.FirstOrDefault(item =>
+                                item.id.Equals(itemId) &&
+                                item.CompanyId.Equals(companyId)).HeaderText ?? "N/A";
+            }
+            return headerText;
+        }
+        public static string GetCostCenter(int itemId, int modelId)
+        {
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+
+            string costCenter = String.Empty;
+
+            if (modelId.Equals((int)ComptaMasterModelId.Payment) ||
+                modelId.Equals((int)ComptaMasterModelId.Settlement))
+            {
+
+            costCenter = IWSEntities.MasterComptas.FirstOrDefault(item =>
+                                            item.id.Equals(itemId) &&
+                                            item.CompanyId.Equals(companyId)).CostCenter ?? "N/A";
+            }
+            return costCenter;
         }
         public static string GetStore(int itemId)
         {
@@ -2848,13 +3172,53 @@
                                          item.id.Equals(itemId) &&
                                          item.CompanyId.Equals(companyId)).store ?? "N/A";
         }
-        public static string GetAccount(int itemId)
+        public static string GetAccount(int itemId, int modelId)
         {
+            string account = String.Empty;
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
 
-            return IWSEntities.MasterLogistics.FirstOrDefault(item =>
-                                            item.id.Equals(itemId) &&
-                                            item.CompanyId.Equals(companyId)).account ?? "N/A";
+            if (modelId.Equals((int)LogisticMasterModelId.GoodReceiving) ||
+               (modelId.Equals((int)LogisticMasterModelId.InventoryInvoice)) ||
+               (modelId.Equals((int)LogisticMasterModelId.BillOfDelivery)) ||
+               (modelId.Equals((int)LogisticMasterModelId.SalesInvoice)))
+            {
+                account = IWSEntities.MasterLogistics.FirstOrDefault(item =>
+                            item.id.Equals(itemId) &&
+                            item.CompanyId.Equals(companyId)).account ?? "N/A";
+            }
+
+            if (modelId.Equals((int)ComptaMasterModelId.VendorInvoice))
+            {
+                account = IWSEntities.MasterLogistics.Join(IWSEntities.Suppliers,
+                            v => v.account, s => s.id, (v, s) => new
+                            {
+                                AccountId = s.accountid,
+                                ItemId = v.id,
+                                CompanyId = s.CompanyID
+                            }).FirstOrDefault(d =>
+                            d.CompanyId.Equals(companyId) && d.ItemId.Equals(itemId)).AccountId;
+            }
+
+            if (modelId.Equals((int)ComptaMasterModelId.CustomerInvoice))
+            {
+                account = IWSEntities.MasterLogistics.Join(IWSEntities.Customers,
+                        v => v.account, s => s.id, (v, s) => new
+                        {
+                            AccountId = s.accountid,
+                            ItemId = v.id,
+                            CompanyId = s.CompanyID
+                        }).FirstOrDefault(d =>
+                        d.CompanyId.Equals(companyId) && d.ItemId.Equals(itemId)).AccountId;
+            }
+
+            if (modelId.Equals((int)ComptaMasterModelId.Payment) ||
+                (modelId.Equals((int)ComptaMasterModelId.Settlement)))
+            {
+                account = IWSEntities.MasterComptas.FirstOrDefault(item =>
+                        item.id.Equals(itemId) &&
+                        item.CompanyId.Equals(companyId)).account ?? "N/A";
+            }
+            return account;
         }
         public static string GetStore(int id, string ItemType)
         {
@@ -3254,10 +3618,10 @@
         public enum ComptaMasterModelId
         {
             VendorInvoice = 5000,
-            CustomerInvoice = 5005,
-            Payment = 5010,
-            Settlement = 5015,
-            GeneralLedger = 5020,
+            Payment = 5005,
+            CustomerInvoice = 5500,
+            Settlement = 5505,
+            GeneralLedger = 5800,
             Default = 0000
         }
         public enum ComptaDetailModelId

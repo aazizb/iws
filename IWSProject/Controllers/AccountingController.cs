@@ -635,7 +635,7 @@ namespace IWSProject.Controllers
             return results;
         }
 
-        private bool ValidateGoodReceiving(int ItemID, string companyId)
+        private bool ValidateGoodReceiving(int ItemID, string companyId)////0000
         {
             List<JournalViewModel> docs = (from o in (
                 (from i in db.LineGoodReceivings
@@ -797,7 +797,7 @@ namespace IWSProject.Controllers
             return results;
         }
 
-        private bool ValidateBillOfDelivery(int ItemID, string companyId)
+        private bool ValidateBillOfDelivery(int ItemID, string companyId)////0000
         {
 
             bool results = false;
@@ -831,7 +831,7 @@ namespace IWSProject.Controllers
             docs = (from l in db.LineBillOfDeliveries
                     where
                         !(l.Article.IsService == true)
-                    group new { l.BillOfDelivery, l.Article, l.BillOfDelivery.Company, l.BillOfDelivery.Customer, l } by new
+                    group new { l.BillOfDelivery, l.Article, l.BillOfDelivery.Company,  l } by new  //l.BillOfDelivery.Customer,
                     {
                         l.BillOfDelivery.id,
                         l.BillOfDelivery.oid,
@@ -875,7 +875,7 @@ namespace IWSProject.Controllers
             return results;
         }
 
-        private bool ValidateBillOfDelivery(List<JournalViewModel> docs, string companyId)
+        private bool ValidateBillOfDelivery(List<JournalViewModel> docs, string companyId)////0000
         {
             bool results = false;
             try

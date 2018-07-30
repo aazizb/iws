@@ -49,7 +49,6 @@ namespace IWSProject.Controllers
             item.IsValidated = false;
             item.CompanyId = (string)Session["CompanyID"];
             int itemOID = item.oid;
-            item.Area = IWSLookUp.Area.GeneralLedger.ToString();
             ViewData["item"] = item;
             bool result;
             if (ModelState.IsValid)

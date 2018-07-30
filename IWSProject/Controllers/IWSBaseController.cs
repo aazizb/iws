@@ -3,25 +3,171 @@ using IWSProject.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace IWSProject.Controllers
 {
-    public class IWSBaseController : Controller
+    public abstract class IWSBaseController : Controller
     {
-        IWSDataContext db;
+
+        #region New Methods
+        protected static IWSDataContext db;
         public IWSBaseController()
         {
             db = new IWSDataContext();
         }
-        private string GetItemType(string ItemType)
+        protected static bool UpdateEntryDate(int itemId)
         {
-            return db.Localizations.Where(i => i.LocalName == ItemType)
-                                                .Select(i => i.ItemName)
-                                                .FirstOrDefault();
+            var item = db.MasterLogistics.Single(o => o.id.Equals(itemId));
+            if(item != null)
+            {
+                item.EntryDate = DateTime.Today;
+                return true;
+            }
+            return false;
         }
-        private bool StockOut(List<ValidateStockViewModel> items, string CompanyId)
+        protected static bool Validate(int itemId)
+        {
+            var item = db.MasterLogistics.Single(o => o.id.Equals(itemId));
+            if(item != null)
+            {
+                item.IsValidated = true;
+                return true;
+            }
+            return false;
+        }
+        protected static bool UpdateStock(int itemId, int modelId, string CompanyId)
+        {
+            bool results = true;
+            try
+            {
+                //results = IWSLookUp.CheckPeriod(itemId, DocumentType, CompanyId, true, true);
+
+                //if (!results)
+                //{
+                //    string msg = IWSLocalResource.CheckPeriod;
+                //    throw new Exception(msg);
+                //}
+                if ((modelId.Equals((int)IWSLookUp.LogisticMasterModelId.GoodReceiving)) || 
+                    (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.BillOfDelivery)))
+                {
+                    results = false;
+
+                    List<ValidateStockViewModel> validateStock =
+                    (from line in db.DetailLogistics
+                        group new { line, line.MasterLogistic } by new
+                        {
+                            DocumentID = line.MasterLogistic.id,
+                            StoreID = line.MasterLogistic.store,
+                            ItemID = line.item,
+                            ItemName = line.Article.name,
+                            Price = line.price,
+                            Currency = line.MasterLogistic.oCurrency,
+                            line.Article.IsService,
+                            Text = line.MasterLogistic.HeaderText
+                        } into g
+                        where g.Key.DocumentID == itemId
+                        select new ValidateStockViewModel
+                        {
+                            StoreID = g.Key.StoreID,
+                            ItemID = g.Key.ItemID,
+                            ItemName = g.Key.ItemName,
+                            Quantity = g.Sum(q => q.line.quantity),
+                            Price = g.Key.Price,
+                            Currency = g.Key.Currency,
+                            IsService = g.Key.IsService,
+                            Text = g.Key.Text
+                        }).ToList();
+
+                    if (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.GoodReceiving))
+                    {
+                        if (validateStock.Any(i => i.IsService.Equals(false)))
+                        {
+                            results = StockIn(validateStock, CompanyId);
+                        }
+                    }
+                    if (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.BillOfDelivery))
+                    {
+                        if (validateStock.Any(i => i.IsService == false))
+                        {
+                            results = StockOut(validateStock, CompanyId);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                IWSLookUp.LogException(ex);
+                results = false;
+            }
+            return results;
+        }
+        protected static bool StockIn(List<ValidateStockViewModel> items, string CompanyId)
+        {
+            try
+            {
+                foreach (var item in items)
+                {
+
+                    var article = db.Articles
+                        .FirstOrDefault(i => i.id == item.ItemID
+                        && i.CompanyID == CompanyId);
+                    if (item.IsService)
+                    {
+                        //for service items
+                        article.price = item.Price;
+                        article.avgprice = item.Price;
+                    }
+                    else
+                    {
+                        //for stockable items
+                        float currentStock = 0;
+                        bool isItemInStock = db.Stocks.
+                            Any(i => i.itemid == item.ItemID
+                            && i.CompanyID == CompanyId);
+                        if (isItemInStock)
+                        {
+                            currentStock = db.Stocks
+                                .Where(i => i.itemid == item.ItemID
+                                && i.CompanyID == CompanyId)
+                                .Sum(q => q.quantity);
+                        }
+                        var stock = db.Stocks
+                            .FirstOrDefault(s => s.storeid == item.StoreID
+                            && s.itemid == item.ItemID
+                            && s.CompanyID == CompanyId);
+                        if (stock == null)
+                        {
+                            stock = new Stock()
+                            {
+                                itemid = item.ItemID,
+                                name = item.ItemName,
+                                storeid = item.StoreID,
+                                CompanyID = CompanyId,
+                                Currency = item.Currency,
+                                quantity = (float)item.Quantity,
+                                description = item.Text
+                            };
+                            db.Stocks.InsertOnSubmit(stock);
+                        }
+                        else
+                        {
+                            stock.quantity += (float)item.Quantity;
+                        }
+                        article.price = item.Price;
+                        article.avgprice = (article.avgprice * (decimal)currentStock +
+                                            item.Price * item.Quantity) / ((decimal)currentStock + item.Quantity);
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                IWSLookUp.LogException(ex);
+                return false;
+            }
+        }
+        protected static bool StockOut(List<ValidateStockViewModel> items, string CompanyId)
         {
             bool results = false;
             string msg = String.Empty;
@@ -42,14 +188,14 @@ namespace IWSProject.Controllers
                         else
                         {
                             msg = IWSLocalResource.InsufficientStock + ": " + item.ItemID + "-" + item.ItemName;
-                            ViewData["GenericError"] = msg;
+                            //ViewData["GenericError"] = msg;
                             results = false;
                         }
                     }
                     else
                     {
                         msg = IWSLocalResource.InsufficientStock + ": " + item.ItemID + "-" + item.ItemName;
-                        ViewData["GenericError"] = msg;
+                        //ViewData["GenericError"] = msg;
                         results = false;
                     }
                     if (!results)
@@ -63,7 +209,323 @@ namespace IWSProject.Controllers
             }
             return results;
         }
-        public IWSLookUp.DocsType GetDocType(string ItemType)
+        protected static bool ValidateMasterLogistic(int itemId, int modelId, string companyId)
+        {
+            string iban = String.Empty;
+
+            bool results = true;
+
+            if (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.BillOfDelivery))
+            {
+                results = false;
+
+                iban = db.MasterLogistics.Join(db.Customers,
+                       v => v.account, s => s.id, (v, s) => new
+                       {
+                           iban = s.IBAN,
+                           itemId = v.id,
+                           CompanyId = s.CompanyID
+                       }).FirstOrDefault(d =>
+                       d.CompanyId.Equals(companyId) && d.itemId.Equals(itemId)).iban;
+
+                List<JournalViewModel> docs = (from l in db.DetailLogistics
+                    where
+                        l.MasterLogistic.id == itemId
+                    select new JournalViewModel()
+                    {
+                        ItemID = l.MasterLogistic.id,
+                        OID = l.MasterLogistic.oid,
+                        Currency = l.MasterLogistic.oCurrency,
+                        CustSupplierID = l.MasterLogistic.account,
+                        StoreID = l.MasterLogistic.store,
+                        TransDate = l.MasterLogistic.TransDate,
+                        Itemdate = l.MasterLogistic.ItemDate,
+                        EntryDate = l.MasterLogistic.EntryDate,
+                        Periode = l.MasterLogistic.oPeriode,
+                        Amount = (decimal)l.MasterLogistic.oTotal,
+                        Account = l.MasterLogistic.Company.salesclearingaccountid,
+                        OAccount = l.Article.RevenuAccountId,
+                        CompanyIBAN = l.MasterLogistic.Company.IBAN,
+                        IBAN = iban,
+                        Info = l.MasterLogistic.HeaderText
+                    }).Distinct().ToList();
+                if (docs.Any())
+                {
+                    results = ValidateBillOfDelivery(docs, companyId);
+                }
+                if (!results)
+                    return results;
+                docs = (from l in db.DetailLogistics
+                        where
+                            !(l.Article.IsService == true)
+                        group new { l.MasterLogistic, l.Article, l.MasterLogistic.Company,  l } by new 
+                        {
+                            l.MasterLogistic.id,
+                            l.MasterLogistic.oid,
+                            l.MasterLogistic.account,
+                            l.MasterLogistic.store,
+                            l.MasterLogistic.TransDate,
+                            l.MasterLogistic.ItemDate,
+                            l.MasterLogistic.EntryDate,
+                            l.MasterLogistic.oPeriode,
+                            l.Article.avgprice,
+                            l.Article.ExpenseAccount,
+                            l.Article.StockAccount,
+                            CompanyIBAN = l.MasterLogistic.Company.IBAN,
+                            IBAN = iban,
+                            l.MasterLogistic.oCurrency,
+                            l.MasterLogistic.HeaderText
+                        } into g
+                        where g.Key.id == itemId
+                        select new JournalViewModel()
+                        {
+                            ItemID = g.Key.id,
+                            OID = g.Key.oid,
+                            CustSupplierID = g.Key.account,
+                            StoreID = g.Key.store,
+                            TransDate = g.Key.TransDate,
+                            Itemdate = g.Key.ItemDate,
+                            EntryDate = g.Key.EntryDate,
+                            Periode = g.Key.oPeriode,
+                            Account = g.Key.ExpenseAccount,
+                            OAccount = g.Key.StockAccount,
+                            Amount = Enumerable.Sum(g, p => Convert.ToDecimal((p.l.quantity * p.l.Article.avgprice))),
+                            CompanyIBAN = g.Key.CompanyIBAN,
+                            IBAN = g.Key.IBAN,
+                            Currency = g.Key.oCurrency,
+                            Info = g.Key.HeaderText,
+                            ModelId = modelId
+                        }).ToList();
+                if (docs.Any())
+                {
+                    results = ValidateBillOfDelivery(docs, companyId);
+                }
+                return results;
+            }
+
+            if (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.GoodReceiving))
+            {
+                results = false;
+
+                iban = db.MasterLogistics.Join(db.Suppliers,
+                        v => v.account, s => s.id, (v, s) => new
+                        {
+                            iban = s.IBAN,
+                            itemId = v.id,
+                            CompanyId = s.CompanyID
+                        }).FirstOrDefault(d =>
+                        d.CompanyId.Equals(companyId) && d.itemId.Equals(itemId)).iban;
+
+                List<JournalViewModel> docs = (from o in (
+                (from i in db.DetailLogistics
+                 select new
+                 {
+                     i.MasterLogistic.id,
+                     i.MasterLogistic.oid,
+                     i.MasterLogistic.account,
+                     i.MasterLogistic.store,
+                     i.MasterLogistic.TransDate,
+                     i.MasterLogistic.ItemDate,
+                     i.MasterLogistic.EntryDate,
+                     i.MasterLogistic.oPeriode,
+                     i.Article.StockAccount,
+                     i.MasterLogistic.Company.purchasingclearingaccountid,
+                     sAmount = i.lineNet,
+                     i.MasterLogistic.Company.IBAN,
+                     IBAN2 = iban,
+                     i.MasterLogistic.oCurrency,
+                     i.MasterLogistic.HeaderText
+                 }))
+                    group o by new
+                    {
+                        o.id,
+                        o.oid,
+                        o.account,
+                        o.store,
+                        o.TransDate,
+                        o.ItemDate,
+                        o.EntryDate,
+                        o.oPeriode,
+                        o.StockAccount,
+                        o.purchasingclearingaccountid,
+                        o.IBAN,
+                        o.IBAN2,
+                        o.oCurrency,
+                        o.HeaderText
+                    } into g
+                    where g.Key.id == itemId
+                    select new JournalViewModel()
+                    {
+                        ItemID = g.Key.id,
+                        OID = g.Key.oid,
+                        CustSupplierID = g.Key.account,
+                        StoreID = g.Key.store,
+                        TransDate = g.Key.TransDate,
+                        Itemdate = g.Key.ItemDate,
+                        EntryDate = g.Key.EntryDate,
+                        Periode = g.Key.oPeriode,
+                        Account = g.Key.StockAccount,
+                        OAccount = g.Key.purchasingclearingaccountid,
+                        Amount = Convert.ToDecimal(g.Sum(p => p.sAmount)),
+                        CompanyIBAN = g.Key.IBAN,
+                        IBAN = g.Key.IBAN2.ToString(),
+                        Currency = g.Key.oCurrency,
+                        Info = g.Key.HeaderText,
+                        ModelId = modelId
+                    }).Distinct().ToList();                
+
+                if (docs.Any())
+                {
+                    try
+                    {
+                        foreach (var doc in docs)
+                        {
+
+                            results = UpdatePeriodicBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
+
+                            if (!results)
+                                return results;
+
+                            results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
+
+                            if (!results)
+                                return results;
+
+                            List<Journal> journal = new List<Journal> {
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                ItemType = IWSLookUp.LogisticMasterModelId.GoodReceiving.ToString(),
+                                CustSupplierID =doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode =doc.Periode,
+                                Account =doc.Account,
+                                OAccount =doc.OAccount,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Debit.ToString(),
+                                CompanyID =companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency =doc.Currency,
+                                Info =doc.Info,
+                                ModelId = modelId
+                            },
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                ItemType = IWSLookUp.LogisticMasterModelId.GoodReceiving.ToString(),
+                                CustSupplierID=doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode=doc.Periode,
+                                Account =doc.OAccount,
+                                OAccount =doc.Account,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Credit.ToString(),
+                                CompanyID=companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency=doc.Currency,
+                                Info=doc.Info,
+                                ModelId = modelId
+                            }
+                        };
+
+                            results = SendToJournal(journal);
+
+                            if (!results)
+                                return results;
+                        }
+
+                        var item = (from doc in docs
+                                    group new { doc } by new
+                                    {
+                                        doc.Periode,
+                                        doc.OAccount,
+                                        doc.Currency
+                                    } into g
+                                    select new
+                                    {
+                                        g.Key.Periode,
+                                        accountID = g.Key.OAccount,
+                                        amount = g.Sum(p => p.doc.Amount),
+                                        currency = g.Key.Currency
+                                    }).Single();
+                        results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+
+                        if (!results)
+                            return results;
+
+                        results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
+
+                        if (!results)
+                            return results;
+                    }
+                    catch (Exception ex)
+                    {
+                        IWSLookUp.LogException(ex);
+                        return false;
+                    }
+                }
+
+            }
+            return results;
+        }
+        protected static bool Account(int ItemID, string ItemType, string companyId)
+        {
+            IWSLookUp.DocsType docsType = GetDocType(ItemType);
+            bool results = IWSLookUp.CheckPeriod(ItemID, docsType, companyId, true, true);
+            if (!results)
+            {
+                string msg = IWSLocalResource.CheckPeriod;
+                throw new Exception(msg);
+            }
+            //bool results;
+            if (ItemType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()))
+            {
+                return ValidateGoodReceiving(ItemID, companyId);
+            }
+            if (ItemType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()))
+            {
+                return ValidateBillOfDelivery(ItemID, companyId);
+            }
+            if (ItemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
+            {
+                return ValidateVendorInvoice(ItemID, companyId);
+            }
+            if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
+            {
+                return ValidateCustmerInvoice(ItemID, companyId);
+            }
+            if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
+            {
+                return ValidatePayment(ItemID, companyId);
+            }
+            if (ItemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
+            {
+                return ValidateSettlement(ItemID, companyId);
+            }
+            if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedger.ToString()))
+            {
+                return ValidateGeneralLedger(ItemID, companyId);
+            }
+            return true;
+        }
+        #endregion
+
+        protected static string GetItemType(string ItemType)
+        {
+            return db.Localizations.Where(i => i.LocalName == ItemType)
+                                                .Select(i => i.ItemName)
+                                                .FirstOrDefault();
+        }
+
+        protected static IWSLookUp.DocsType GetDocType(string ItemType)
         {
             if (ItemType.Equals(IWSLookUp.DocsType.PurchaseOrder.ToString()))
                 return IWSLookUp.DocsType.PurchaseOrder;
@@ -93,7 +555,8 @@ namespace IWSProject.Controllers
                 return IWSLookUp.DocsType.GeneralLedgerOut;
             return IWSLookUp.DocsType.Default;
         }
-        private bool UpdateEntryDate(int DocumentID, IWSLookUp.DocsType DocumentType, string CompanyId)
+
+        protected static bool UpdateEntryDate(int DocumentID, IWSLookUp.DocsType DocumentType, string CompanyId)
         {
             bool results = false;
             try
@@ -209,17 +672,17 @@ namespace IWSProject.Controllers
             }
             catch (Exception ex)
             {
-                ViewData["GenericError"] = ex.Message;
+                //ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
                 results = false;
             }
             return results;
         }
-        private bool UpdateStock(int DocumentID, IWSLookUp.DocsType DocumentType, string CompanyId)
+        protected static bool UpdateStock(int itemId, IWSLookUp.DocsType DocumentType, string CompanyId)
         {
             try
             {
-                bool results = IWSLookUp.CheckPeriod(DocumentID, DocumentType, CompanyId, true, true);
+                bool results = IWSLookUp.CheckPeriod(itemId, DocumentType, CompanyId, true, true);
                 if (!results)
                 {
                     string msg = IWSLocalResource.CheckPeriod;
@@ -241,7 +704,7 @@ namespace IWSProject.Controllers
                          IsService = line.Article.IsService,
                          Text = line.BillOfDelivery.HeaderText
                      } into g
-                     where g.Key.DocumentID == DocumentID
+                     where g.Key.DocumentID == itemId
                      select new ValidateStockViewModel
                      {
                          StoreID = g.Key.StoreID,
@@ -273,7 +736,7 @@ namespace IWSProject.Controllers
                      IsService = line.Article.IsService,
                      Text = line.GoodReceiving.HeaderText
                  } into g
-                 where g.Key.DocumentID == DocumentID
+                 where g.Key.DocumentID == itemId
                  select new ValidateStockViewModel
                  {
                      StoreID = g.Key.StoreID,
@@ -294,240 +757,13 @@ namespace IWSProject.Controllers
             }
             catch (Exception ex)
             {
-                ViewData["GenericError"] = ex.Message;
+                //ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
                 return false;
             }
             return true;
         }
-        private bool StockIn(List<ValidateStockViewModel> items, string CompanyId)
-        {
-            try
-            {
-                foreach (var item in items)
-                {
-
-                    var article = db.Articles
-                        .FirstOrDefault(i => i.id == item.ItemID
-                        && i.CompanyID == CompanyId);
-                    if (item.IsService)
-                    {
-                        //for service items
-                        article.price = item.Price;
-                        article.avgprice = item.Price;
-                    }
-                    else
-                    {
-                        //for stockable items
-                        float currentStock = 0;
-                        bool isItemInStock = db.Stocks.
-                            Any(i => i.itemid == item.ItemID
-                            && i.CompanyID == CompanyId);
-                        if (isItemInStock)
-                        {
-                            currentStock = db.Stocks
-                                .Where(i => i.itemid == item.ItemID
-                                && i.CompanyID == CompanyId)
-                                .Sum(q => q.quantity);
-                        }
-                        var stock = db.Stocks
-                            .FirstOrDefault(s => s.storeid == item.StoreID
-                            && s.itemid == item.ItemID
-                            && s.CompanyID == CompanyId);
-                        if (stock == null)
-                        {
-                            stock = new Stock()
-                            {
-                                itemid = item.ItemID,
-                                name = item.ItemName,
-                                storeid = item.StoreID,
-                                CompanyID = CompanyId,
-                                Currency = item.Currency,
-                                quantity = (float)item.Quantity,
-                                description = item.Text
-                            };
-                            db.Stocks.InsertOnSubmit(stock);
-                        }
-                        else
-                        {
-                            stock.quantity += (float)item.Quantity;
-                        }
-                        article.price = item.Price;
-                        article.avgprice = (article.avgprice * (decimal)currentStock +
-                                            item.Price * item.Quantity) / ((decimal)currentStock + item.Quantity);
-                    }
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                ViewData["GenericError"] = ex.Message;
-                IWSLookUp.LogException(ex);
-                return false;
-            }
-        }
-        private bool ValidateGoodReceiving(int ItemID, string companyId)
-        {
-            List<JournalViewModel> docs = (from o in (
-                (from i in db.LineGoodReceivings
-                 select new
-                 {
-                     i.GoodReceiving.id,
-                     i.GoodReceiving.oid,
-                     i.GoodReceiving.account,
-                     i.GoodReceiving.store,
-                     i.GoodReceiving.TransDate,
-                     i.GoodReceiving.ItemDate,
-                     i.GoodReceiving.EntryDate,
-                     i.GoodReceiving.oPeriode,
-                     i.Article.StockAccount,
-                     i.GoodReceiving.Company.purchasingclearingaccountid,
-                     sAmount = i.lineNet,
-                     i.GoodReceiving.Company.IBAN,
-                     IBAN2 = i.GoodReceiving.Supplier.IBAN,
-                     i.GoodReceiving.oCurrency,
-                     i.GoodReceiving.HeaderText
-                 }))
-                                           group o by new
-                                           {
-                                               o.id,
-                                               o.oid,
-                                               o.account,
-                                               o.store,
-                                               o.TransDate,
-                                               o.ItemDate,
-                                               o.EntryDate,
-                                               o.oPeriode,
-                                               o.StockAccount,
-                                               o.purchasingclearingaccountid,
-                                               o.IBAN,
-                                               o.IBAN2,
-                                               o.oCurrency,
-                                               o.HeaderText
-                                           } into g
-                                           where g.Key.id == ItemID
-                                           select new JournalViewModel()
-                                           {
-                                               ItemID = g.Key.id,
-                                               OID = g.Key.oid,
-                                               CustSupplierID = g.Key.account,
-                                               StoreID = g.Key.store,
-                                               TransDate = g.Key.TransDate,
-                                               Itemdate = g.Key.ItemDate,
-                                               EntryDate = g.Key.EntryDate,
-                                               Periode = g.Key.oPeriode,
-                                               Account = g.Key.StockAccount,
-                                               OAccount = g.Key.purchasingclearingaccountid,
-                                               Amount = Convert.ToDecimal(g.Sum(p => p.sAmount)),
-                                               CompanyIBAN = g.Key.IBAN,
-                                               IBAN = g.Key.IBAN2,
-                                               Currency = g.Key.oCurrency,
-                                               Info = g.Key.HeaderText
-                                           }).Distinct().ToList();
-
-            bool results = false;
-
-            if (docs.Any())
-            {
-                try
-                {
-
-                    foreach (var doc in docs)
-                    {
-
-                        results = UpdatePeriodicBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
-
-                        if (!results)
-                            return results;
-
-                        results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
-
-                        if (!results)
-                            return results;
-
-                        List<Journal> journal = new List<Journal> {
-                            new Journal {
-                                ItemID =doc.ItemID,
-                                OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.GoodReceiving.ToString(),
-                                CustSupplierID =doc.CustSupplierID,
-                                StoreID =doc.StoreID,
-                                TransDate =doc.TransDate,
-                                ItemDate =doc.Itemdate,
-                                EntryDate =doc.EntryDate,
-                                Periode =doc.Periode,
-                                Account =doc.Account,
-                                OAccount =doc.OAccount,
-                                Amount =doc.Amount,
-                                Side = IWSLookUp. Side.Debit.ToString(),
-                                CompanyID =companyId,
-                                CompanyIBAN =doc.CompanyIBAN,
-                                IBAN =doc.IBAN,
-                                Currency =doc.Currency,
-                                Info =doc.Info
-                            },
-                            new Journal {
-                                ItemID =doc.ItemID,
-                                OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.GoodReceiving.ToString(),
-                                CustSupplierID=doc.CustSupplierID,
-                                StoreID =doc.StoreID,
-                                TransDate =doc.TransDate,
-                                ItemDate =doc.Itemdate,
-                                EntryDate =doc.EntryDate,
-                                Periode=doc.Periode,
-                                Account =doc.OAccount,
-                                OAccount =doc.Account,
-                                Amount =doc.Amount,
-                                Side = IWSLookUp. Side.Credit.ToString(),
-                                CompanyID=companyId,
-                                CompanyIBAN =doc.CompanyIBAN,
-                                IBAN =doc.IBAN,
-                                Currency=doc.Currency,
-                                Info=doc.Info
-                            }
-                        };
-
-                        results = SendToJournal(journal);
-
-                        if (!results)
-                            return results;
-                    }
-
-                    var item = (from doc in docs
-                                group new { doc } by new
-                                {
-                                    doc.Periode,
-                                    doc.OAccount,
-                                    doc.Currency
-                                } into g
-                                select new
-                                {
-                                    g.Key.Periode,
-                                    accountID = g.Key.OAccount,
-                                    amount = g.Sum(p => p.doc.Amount),
-                                    currency = g.Key.Currency
-                                }).Single();
-                    results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
-
-                    if (!results)
-                        return results;
-
-                    results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
-
-                    if (!results)
-                        return results;
-                }
-                catch (Exception ex)
-                {
-                    ViewData["GenericError"] = ex.Message;
-                    IWSLookUp.LogException(ex);
-                    return false;
-                }
-            }
-            return results;
-        }
-        private bool ValidateBillOfDelivery(List<JournalViewModel> docs, string companyId)
+        protected static bool ValidateBillOfDelivery(List<JournalViewModel> docs, string companyId)
         {
             bool results = false;
             try
@@ -590,19 +826,20 @@ namespace IWSProject.Controllers
 
                     if (!results)
                         return results;
+
                 }
 
                 var item = (from doc in docs
                             group new { doc } by new
                             {
                                 doc.Periode,
-                                doc.OAccount,
+                                doc.Account,
                                 doc.Currency
                             } into g
                             select new
                             {
                                 g.Key.Periode,
-                                accountID = g.Key.OAccount,
+                                accountID = g.Key.Account,
                                 amount = g.Sum(p => p.doc.Amount),
                                 currency = g.Key.Currency
                             }).Single();
@@ -619,13 +856,190 @@ namespace IWSProject.Controllers
             }
             catch (Exception ex)
             {
-                ViewData["GenericError"] = ex.Message;
+                //ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
                 return false;
             }
             return results;
         }
-        private bool ValidateBillOfDelivery(int ItemID, string companyId)
+        protected static bool ValidateGoodReceiving(int itemId, string companyId)
+        {
+            string iban = db.MasterLogistics.Join(db.Suppliers,         //goodreceiving
+                               v => v.account, s => s.id, (v, s) => new
+                               {
+                                   iban = s.IBAN,
+                                   itemId = v.id,
+                                   CompanyId = s.CompanyID
+                               }).FirstOrDefault(d =>
+                               d.CompanyId.Equals(companyId) && d.itemId.Equals(itemId)).iban;
+            //string iban = db.MasterLogistics.Join(db.Customers,         //billofdelivey
+            //       v => v.account, s => s.id, (v, s) => new
+            //       {
+            //           iban = s.IBAN,
+            //           itemId = v.id,
+            //           CompanyId = s.CompanyID
+            //       }).FirstOrDefault(d =>
+            //       d.CompanyId.Equals(companyId) && d.itemId.Equals(itemId)).iban;
+
+            List<JournalViewModel> docs = (from o in (
+                (from i in db.DetailLogistics
+                 select new
+                 {
+                     i.MasterLogistic.id,
+                     i.MasterLogistic.oid,
+                     i.MasterLogistic.account,
+                     i.MasterLogistic.store,
+                     i.MasterLogistic.TransDate,
+                     i.MasterLogistic.ItemDate,
+                     i.MasterLogistic.EntryDate,
+                     i.MasterLogistic.oPeriode,
+                     i.Article.StockAccount,
+                     i.MasterLogistic.Company.purchasingclearingaccountid,
+                     sAmount = i.lineNet,
+                     i.MasterLogistic.Company.IBAN,
+                     IBAN2 = iban,
+                     i.MasterLogistic.oCurrency,
+                     i.MasterLogistic.HeaderText
+                 }))
+                    group o by new
+                    {
+                        o.id,
+                        o.oid,
+                        o.account,
+                        o.store,
+                        o.TransDate,
+                        o.ItemDate,
+                        o.EntryDate,
+                        o.oPeriode,
+                        o.StockAccount,
+                        o.purchasingclearingaccountid,
+                        o.IBAN,
+                        o.IBAN2,
+                        o.oCurrency,
+                        o.HeaderText
+                    } into g
+                    where g.Key.id == itemId
+                    select new JournalViewModel()
+                    {
+                        ItemID = g.Key.id,
+                        OID = g.Key.oid,
+                        CustSupplierID = g.Key.account,
+                        StoreID = g.Key.store,
+                        TransDate = g.Key.TransDate,
+                        Itemdate = g.Key.ItemDate,
+                        EntryDate = g.Key.EntryDate,
+                        Periode = g.Key.oPeriode,
+                        Account = g.Key.StockAccount,
+                        OAccount = g.Key.purchasingclearingaccountid,
+                        Amount = Convert.ToDecimal(g.Sum(p => p.sAmount)),
+                        CompanyIBAN = g.Key.IBAN,
+                        IBAN = g.Key.IBAN2.ToString(),
+                        Currency = g.Key.oCurrency,
+                        Info = g.Key.HeaderText
+                    }).Distinct().ToList();
+
+            bool results = false;
+
+            if (docs.Any())
+            {
+                try
+                {
+
+                    foreach (var doc in docs)
+                    {
+
+                        results = UpdatePeriodicBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
+
+                        if (!results)
+                            return results;
+
+                        results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
+
+                        if (!results)
+                            return results;
+
+                        List<Journal> journal = new List<Journal> {
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                ItemType = IWSLookUp.LogisticMasterModelId.GoodReceiving.ToString(),
+                                CustSupplierID =doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode =doc.Periode,
+                                Account =doc.Account,
+                                OAccount =doc.OAccount,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Debit.ToString(),
+                                CompanyID =companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency =doc.Currency,
+                                Info =doc.Info
+                            },
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                ItemType = IWSLookUp.LogisticMasterModelId.GoodReceiving.ToString(),
+                                CustSupplierID=doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode=doc.Periode,
+                                Account =doc.OAccount,
+                                OAccount =doc.Account,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Credit.ToString(),
+                                CompanyID=companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency=doc.Currency,
+                                Info=doc.Info
+                            }
+                        };
+
+                        results = SendToJournal(journal);
+
+                        if (!results)
+                            return results;
+                    }
+
+                    var item = (from doc in docs
+                                group new { doc } by new
+                                {
+                                    doc.Periode,
+                                    doc.OAccount,
+                                    doc.Currency
+                                } into g
+                                select new
+                                {
+                                    g.Key.Periode,
+                                    accountID = g.Key.OAccount,
+                                    amount = g.Sum(p => p.doc.Amount),
+                                    currency = g.Key.Currency
+                                }).Single();
+                    results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+
+                    if (!results)
+                        return results;
+
+                    results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
+
+                    if (!results)
+                        return results;
+                }
+                catch (Exception ex)
+                {
+                    IWSLookUp.LogException(ex);
+                    return false;
+                }
+            }
+            return results;
+        }
+        protected static bool ValidateBillOfDelivery(int ItemID, string companyId)
         {
 
             bool results = false;
@@ -702,7 +1116,7 @@ namespace IWSProject.Controllers
             }
             return results;
         }
-        private bool ValidateVendorInvoice(int ItemID, string companyId)
+        protected static bool ValidateVendorInvoice(int ItemID, string companyId)
         {
 
             List<JournalViewModel> docs = (from l in db.LineVendorInvoices
@@ -828,14 +1242,14 @@ namespace IWSProject.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ViewData["GenericError"] = ex.Message;
+                    //ViewData["GenericError"] = ex.Message;
                     IWSLookUp.LogException(ex);
                     return false;
                 }
             }
             return results;
         }
-        private bool ValidateCustmerInvoice(int ItemID, string companyId)
+        protected static bool ValidateCustmerInvoice(int ItemID, string companyId)
         {
             List<JournalViewModel> docs = (from l in db.LineCustomerInvoices
                                            where
@@ -959,14 +1373,14 @@ namespace IWSProject.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ViewData["GenericError"] = ex.Message;
+                    //ViewData["GenericError"] = ex.Message;
                     IWSLookUp.LogException(ex);
                     return false;
                 }
             }
             return results;
         }
-        private bool ValidatePayment(int ItemID, string companyId)
+        protected static bool ValidatePayment(int ItemID, string companyId)
         {
             List<JournalViewModel> docs = (from l in db.LinePayments
                                            where
@@ -1091,14 +1505,14 @@ namespace IWSProject.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ViewData["GenericError"] = ex.Message;
+                    //ViewData["GenericError"] = ex.Message;
                     IWSLookUp.LogException(ex);
                     return false;
                 }
             }
             return results;
         }
-        private bool ValidateSettlement(int ItemID, string companyId)
+        protected static bool ValidateSettlement(int ItemID, string companyId)
         {
             List<JournalViewModel> docs = (from l in db.LineSettlements
                                            where
@@ -1222,15 +1636,14 @@ namespace IWSProject.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ViewData["GenericError"] = ex.Message;
+                    //ViewData["GenericError"] = ex.Message;
                     IWSLookUp.LogException(ex);
                     return false;
                 }
             }
             return results;
         }
-
-        private bool ValidateGeneralLedger(int ItemID, string companyId)
+        protected static bool ValidateGeneralLedger(int ItemID, string companyId)
         {
             List<JournalViewModel> docs = (from l in db.LineGeneralLedgers
                                            where
@@ -1359,39 +1772,32 @@ namespace IWSProject.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ViewData["GenericError"] = ex.Message;
+                    //ViewData["GenericError"] = ex.Message;
                     IWSLookUp.LogException(ex);
                     return false;
                 }
             }
             return results;
         }
-        public bool SendToJournal(List<Journal> journal)
+        protected static bool SendToJournal(List<Journal> journal)
         {
-            bool results = false;
-            if (ModelState.IsValid)
+        bool results = false;
+        try
+        {
+            foreach (Journal item in journal)
             {
-                try
-                {
-                    foreach (Journal item in journal)
-                    {
-                        db.Journals.InsertOnSubmit(item);
-
-                        //UpdateMetaFiles(item);
-
-                    }
-                    results = true;
-                }
-                catch (Exception ex)
-                {
-                    ViewData["GenericError"] = ex.Message;
-                    IWSLookUp.LogException(ex);
-                    results = false;
-                }
+                db.Journals.InsertOnSubmit(item);
             }
-            return results;
+            results = true;
         }
-        private bool UpdateAccountBalance(string accountID, decimal amount, bool isDebit, string companyId)
+        catch (Exception ex)
+        {
+            IWSLookUp.LogException(ex);
+            results = false;
+        }
+        return results;
+        }
+        protected static bool UpdateAccountBalance(string accountID, decimal amount, bool isDebit, string companyId)
         {
             try
             {
@@ -1408,13 +1814,12 @@ namespace IWSProject.Controllers
             }
             catch (Exception ex)
             {
-                ViewData["GenericError"] = ex.Message;
+                //ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
             }
             return false;
         }
-
-        private bool UpdatePeriodicBalance(string Periode, string AccountID, decimal amount,
+        protected static bool UpdatePeriodicBalance(string Periode, string AccountID, decimal amount,
                                                     string currency, bool IsDebit, string companyID)
         {
 
@@ -1453,7 +1858,7 @@ namespace IWSProject.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ViewData["GenericError"] = ex.Message;
+                    //ViewData["GenericError"] = ex.Message;
                     IWSLookUp.LogException(ex);
                     return false;
                 }
@@ -1474,53 +1879,14 @@ namespace IWSProject.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ViewData["GenericError"] = ex.Message;
+                    //ViewData["GenericError"] = ex.Message;
                     IWSLookUp.LogException(ex);
                     return false;
                 }
             }
         }
-        private bool Account(int ItemID, string ItemType, string companyId)
-        {
-            IWSLookUp.DocsType docsType = GetDocType(ItemType);
-            bool results = IWSLookUp.CheckPeriod(ItemID, docsType, companyId, true, true);
-            if (!results)
-            {
-                string msg = IWSLocalResource.CheckPeriod;
-                throw new Exception(msg);
-            }
-            //bool results;
-            if (ItemType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()))
-            {
-                return ValidateGoodReceiving(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()))
-            {
-                return ValidateBillOfDelivery(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
-            {
-                return ValidateVendorInvoice(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
-            {
-                return ValidateCustmerInvoice(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
-            {
-                return ValidatePayment(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
-            {
-                return ValidateSettlement(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedger.ToString()))
-            {
-                return ValidateGeneralLedger(ItemID, companyId);
-            }
-            return true;
-        }
-        private bool Validate(int ItemID, string ItemType, string companyId)
+      
+        protected static bool Validate(int ItemID, string ItemType, string companyId)
         {
             try
             {
@@ -1634,71 +2000,73 @@ namespace IWSProject.Controllers
             }
             catch (Exception ex)
             {
-                ViewData["GenericError"] = ex.Message;
+                //ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
             }
             return false;
         }
-        public void ProcessData(string selectedItems, string companyId, bool convertType)
+        protected static void ProcessData(string selectedItems, string companyId, bool convertType, int modelId)
         {
-            IList<string> items = new List<string>(selectedItems.Split(new string[] { ";" }, StringSplitOptions.None));
             string msg;
+            int itemId;
+            bool results = false;
+
+            string itemType = IWSLookUp.DocsType.VendorInvoice.ToString();
+
+            IList<string> items = new List<string>(selectedItems.Split(new string[] { ";" }, StringSplitOptions.None));
             foreach (string item in items)
             {
                 try
                 {
-                    bool results = false;
-                    int ItemID;
-                    string ItemType;
-                    IWSLookUp.DocsType docsType;
                     var list = item.Split(new string[] { "," }, StringSplitOptions.None);
 
-                    ItemID = Convert.ToInt32(list[0]);
+                    itemId = Convert.ToInt32(list[0]);
 
-                    ItemType = list[1];
-
-                    if (convertType)
-                    {
-                        ItemType = GetItemType(ItemType);
-                    }
-                    docsType = GetDocType(ItemType);
-
-                    results = UpdateEntryDate(ItemID, docsType, companyId);
+                    results = UpdateEntryDate(itemId);
                     if (!results)
                     {
                         msg = IWSLocalResource.GenericError;
                         throw new Exception(msg);
                     }
-                    results = UpdateStock(ItemID, docsType, companyId);
+                    results = UpdateStock(itemId, modelId, companyId);
                     if (!results)
                     {
-                        msg = (string)ViewData["GenericError"];
-
+                        msg = IWSLocalResource.GenericError;
                         throw new Exception(msg);
                     }
-                    results = Account(ItemID, ItemType, companyId);
+
+                    //results = Account(itemId, itemType, companyId); // give itemtype here as before
+                    results = ValidateMasterLogistic(itemId, modelId, companyId);
                     if (!results)
                     {
-                        msg = (string)ViewData["GenericError"];
-
+                        msg = IWSLocalResource.GenericError;
                         throw new Exception(msg);
                     }
-                    results = Validate(ItemID, ItemType, companyId);
+                    results = Validate(itemId);
+                    
                     if (!results)
                     {
-                        msg = (string)ViewData["GenericError"];
-
+                        msg = IWSLocalResource.GenericError;
                         throw new Exception(msg);
                     }
                     db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
                 }
                 catch (Exception ex)
                 {
-
-                    ViewData["GenericError"] = ex.Message;
                     IWSLookUp.LogException(ex);
                 }
             }
+        }
+
+        protected static string SetDocType(string selectedItems, string docType)
+        {
+
+            string[] items = selectedItems.Split(new string[] { ";" },
+                                        StringSplitOptions.RemoveEmptyEntries);
+
+            items = items.Select(x => x + "," + docType).ToArray();
+
+            return String.Join(";", items);
         }
     }
 }

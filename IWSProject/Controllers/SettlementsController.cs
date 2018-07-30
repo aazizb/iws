@@ -237,10 +237,6 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetSupplier(selectedOIDIndex, IWSLookUp.DocsType.Settlement.ToString()));
         }
-        public ActionResult CostCenter(int selectedOIDIndex)
-        {
-            return Json(IWSLookUp.GetCostCenter(selectedOIDIndex, IWSLookUp.DocsType.Settlement.ToString()));
-        }
         public ActionResult TypeJournal(int selectedOIDIndex)
         {
             return Json(IWSLookUp.GetTypeJournal(selectedOIDIndex, IWSLookUp.DocsType.Settlement.ToString()));
@@ -253,7 +249,10 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetCompteTier(selectedCustomerId, IWSLookUp.DocsType.Settlement.ToString()));
         }
-
+        public ActionResult CostCenter(int selectedOIDIndex)
+        {
+            return Json(IWSLookUp.GetCostCenter(selectedOIDIndex, IWSLookUp.DocsType.Settlement.ToString()));
+        }
         public bool InsertLines(int itemID, int OID, string ItemType)
         {
             bool results = false;

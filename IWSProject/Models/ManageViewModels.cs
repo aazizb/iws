@@ -88,6 +88,7 @@ namespace IWSProject.Models
         public string Info { get; set; }
         public string TypeJournal { get; set; }
         public string CostCenterId { get; set; }
+        public int ModelId { get; set; }
     }
     public class JournauxViewModel
     {

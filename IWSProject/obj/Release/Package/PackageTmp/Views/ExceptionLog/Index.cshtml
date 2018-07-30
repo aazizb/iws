@@ -1,0 +1,32 @@
+﻿@using IWSProject.Content
+<script type="text/javascript">
+
+    function OnButtonClick(s, e) {
+        if (ExceptionsGridView.IsCustomizationWindowVisible())
+            ExceptionsGridView.HideCustomizationWindow();
+        else 
+            ExceptionsGridView.ShowCustomizationWindow();
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = ExceptionsGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btnShowHide.SetText(text);
+    }
+    function OnGridInit(s, e, showCustomizationWindow) {
+        if (showCustomizationWindow)
+            s.ShowCustomizationWindow();
+    }
+</script>
+@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.LogException;
+}        
+@Html.DevExpress().Button(settings =>
+{
+    settings.Name = "btnShowHide";
+    settings.Text = IWSLocalResource.Hide;
+    settings.Width = Unit.Pixel(100);
+    settings.UseSubmitBehavior = false;
+    settings.ClientSideEvents.Click = "OnButtonClick";
+}).GetHtml()
+@Html.Action("ExceptionsGridViewPartial")

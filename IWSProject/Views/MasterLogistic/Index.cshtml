@@ -4,7 +4,7 @@
         $.ajax({
             url: '@Url.Action("PackUnit", "MasterLogistic")',
             type: "POST",
-            data: { selectedItemIndex: s.GetValue() },
+            data: { selectedIndex: s.GetValue() },
             success: function (data) {
                 unit.SetText(data);
             },
@@ -15,7 +15,7 @@
         $.ajax({
             url: '@Url.Action("VatCode", "MasterLogistic")',
             type: "POST",
-            data: { selectedItemIndex: s.GetValue() },
+            data: { selectedIndex: s.GetValue() },
             success: function (data) {
                 Vat.SetText(data);
             },
@@ -26,7 +26,7 @@
         $.ajax({
             url: '@Url.Action("Price", "MasterLogistic")',
             type: "POST",
-            data: { selectedItemIndex: s.GetValue() },
+            data: { selectedIndex: s.GetValue() },
             success: function (data) {
                 price.SetText(data);
             },
@@ -37,7 +37,7 @@
         $.ajax({
             url: '@Url.Action("Currency", "MasterLogistic")',
             type: "POST",
-            data: { selectedItemIndex: s.GetValue() },
+            data: { selectedIndex: s.GetValue() },
             success: function (data) {
                 Currency.SetText(data);
             },
@@ -72,7 +72,7 @@
         $.ajax({
             url: '@Url.Action("HeaderText", "MasterLogistic")',
             type: "POST",
-            data: { selectedItemIndex: s.GetValue() },
+            data: { selectedOIDIndex: s.GetValue() },
             success: function (data) {
                 HeaderText.SetText(data);
             },
@@ -81,6 +81,7 @@
             }
         });
     }
+
     var selectedIDs = null;
     var expanded = false;
     var ndxMaster = 0;
@@ -140,6 +141,7 @@
         selectedIDs = values.join(';');
     }
     function OnSubmitClick(s, e) {
+        modelId = ComboBoxModelId.GetValue();
         callbackPanelPartialView.PerformCallback();
     }
     function OnMInit(s, e) {
@@ -209,8 +211,8 @@
         var text = MasterLogistic.IsCustomizationWindowVisible() ? "Hide" : "Show";
         btShowCustomizationWindow.SetText(text);
     }
-
     function OnModelIdSelectionChanged() {
+        selectedIDs = null;
         modelId = ComboBoxModelId.GetValue();
         if (!callbackPanelPartialView.InCallback()) {
             callbackPanelPartialView.PerformCallback();
@@ -225,7 +227,7 @@
 }
 @using (Html.BeginForm("Index", "MasterLogistic"))
 {
-    @Html.Hidden("cbxOID")
+    @*@Html.Hidden("cbxOID")*@
 
     @Html.DevExpress().ComboBox(settings =>
 {
