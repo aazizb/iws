@@ -75,11 +75,6 @@
 
                         tempAccountAmount temp = new tempAccountAmount();
 
-                        //ls.Add(new tempAccountAmount
-                        //{
-                        //    AccountAmount=(decimal)239.45,
-                        //    AccountCode="999191"
-                        //});
                         foreach (AccountAmountViewModel itemx in accountAmount)
                         {
                             temp = new tempAccountAmount
@@ -91,7 +86,6 @@
                             db.tempAccountAmounts.InsertOnSubmit(temp);
                         }
                         db.SubmitChanges();
-
 
                         amount = Convert.ToDecimal(list[1]);
 
@@ -117,7 +111,7 @@
                             if (oid != 0)
                                 results = MakeCustomerInvoice(oid);
                             }
-                            if (owner.OwnerType == "Supplier")// || owner.OwnerType == "Company")
+                            if (owner.OwnerType == "Supplier")
                             {
                                 oid = MakeGeneralLedger(ItemID, 0);
                                 results = (oid != 0);
@@ -904,7 +898,93 @@
             }
             return countLineID;
         }
-        
+
+        private int MakeComptaMaster(int bankStatementId, int OID, int modelId)
+        {
+            string companyId = (string)Session["CompanyID"];
+
+            StatementDetailViewModel bankStatement = IWSLookUp.GetStatementDetail(bankStatementId,
+                                                IWSLookUp.DocsType.Settlement.ToString(), companyId);
+            int itemID = 0;
+
+            if (bankStatement.Equals(null))
+                return itemID;
+            string accountingAccount = IWSLookUp.GetCompteTier(bankStatement.Id, IWSLookUp.DocsType.Settlement.ToString());
+            MasterCompta masterCompta = new MasterCompta
+            {
+                oid = OID,
+                CostCenter = "100", // to be confirmed
+                account = bankStatement.Id,
+                HeaderText = bankStatement.Verwendungszweck,
+                TransDate = bankStatement.Valutadatum,
+                ItemDate = bankStatement.Buchungstag,
+                EntryDate = DateTime.Today,
+                CompanyId = companyId,
+                ModelId = modelId,
+                IsValidated = false
+            };
+            //itemID = new AccountingController().MakeSettlementHeader(masterCompta);
+
+            if (!(itemID > 0))
+                return itemID;
+
+            List<LineSettlement> lineSettlement = new List<LineSettlement>
+                {
+                    new LineSettlement
+                    {
+                        transid = itemID,
+                        account = IWSLookUp.GetSettlementDebitAcount(bankStatementId),
+                        side = true,
+                        oaccount = IWSLookUp.GetSettlementCreditAcount(bankStatementId),
+                        amount = bankStatement.Betrag,
+                        Currency = bankStatement.Waehrung,
+                        duedate = bankStatement.Valutadatum,
+                        text = bankStatement.Buchungstext
+                    }
+                };
+            int countLineID = new AccountingController().MakeSettlementLine(lineSettlement);
+            if (countLineID > 0)
+            {
+                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Settlement.ToString(), lineSettlement.First().transid);
+                return itemID;
+
+            }
+            return countLineID;
+        }
+
+        private StatementDetailViewModel GetDetailCompta(int bankStatementId, string itemType, string companyId)
+        {
+
+
+            StatementDetailViewModel sd =       //payment
+                (from bs in db.BankStatements
+                 join bao in db.BankAccounts on new { bs.Kontonummer } equals new { Kontonummer = bao.IBAN }
+                 join su in db.Suppliers on new { bao.Owner } equals new { Owner = su.id }
+                 join baa in db.BankAccounts on new { bs.CompanyIBAN } equals new { CompanyIBAN = baa.IBAN }
+                 join co in db.Companies on new { baa.Owner } equals new { Owner = co.id }
+                 where
+                     bs.id == bankStatementId &&
+                     bs.IsValidated == false &&
+                     bs.CompanyID == companyId
+                 select new StatementDetailViewModel()
+                 {
+                     Id = su.id,
+                     AccountID = su.accountid,
+                     OAccountID = co.paymentclearingaccountid,
+                     Betrag = Math.Abs((decimal)bs.Betrag),
+                     Waehrung = bs.Waehrung,
+                     Info = bs.Info,
+                     Buchungstag = (DateTime)bs.Buchungstag,
+                     Valutadatum = (DateTime)bs.Valutadatum,
+                     Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
+                              Convert.ToString((int?)bs.Buchungstag.Value.Month),
+                     Buchungstext = bs.Buchungstext,
+                     Verwendungszweck = bs.Verwendungszweck,
+                     BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger
+                 }).Single();
+                    return sd;
+
+        }
         private int MakeSettlement(int bankStatementId, int oid)
         {
             string companyId = (string)Session["CompanyID"];

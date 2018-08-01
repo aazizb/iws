@@ -921,4 +921,7 @@
   <data name="Validation" xml:space="preserve">
     <value>Validation de-DE</value>
   </data>
+  <data name="Logistic" xml:space="preserve">
+    <value>Logistic de/DE</value>
+  </data>
 </root>

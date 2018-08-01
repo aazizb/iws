@@ -223,11 +223,10 @@
 
 
 @{
-    ViewBag.Title = "IWSLocalResource.MasterLogistic";
+    ViewBag.Title = IWSLocalResource.Logistic;
 }
 @using (Html.BeginForm("Index", "MasterLogistic"))
 {
-    @*@Html.Hidden("cbxOID")*@
 
     @Html.DevExpress().ComboBox(settings =>
 {

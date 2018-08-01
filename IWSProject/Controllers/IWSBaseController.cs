@@ -16,38 +16,79 @@ namespace IWSProject.Controllers
         {
             db = new IWSDataContext();
         }
-        protected static bool UpdateEntryDate(int itemId)
+        protected static bool UpdateEntryDate(int itemId, int modelId)
         {
-            var item = db.MasterLogistics.Single(o => o.id.Equals(itemId));
-            if(item != null)
+            bool results = false;
+
+            if (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.PurchaseOrder) ||
+                modelId.Equals((int)IWSLookUp.LogisticMasterModelId.GoodReceiving) ||
+                    modelId.Equals((int)IWSLookUp.LogisticMasterModelId.InventoryInvoice) ||
+                    modelId.Equals((int)IWSLookUp.LogisticMasterModelId.SalesOrder) ||
+                    modelId.Equals((int)IWSLookUp.LogisticMasterModelId.BillOfDelivery) ||
+                    modelId.Equals((int)IWSLookUp.LogisticMasterModelId.SalesInvoice))
             {
-                item.EntryDate = DateTime.Today;
-                return true;
+                var item = db.MasterLogistics.SingleOrDefault(o => o.id.Equals(itemId));
+                if(item != null)
+                {
+                    item.EntryDate = DateTime.Today;
+                    results = true;
+                }
             }
-            return false;
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice) ||
+                modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice) ||
+                    modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment) ||
+                    modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement) ||
+                    modelId.Equals((int)IWSLookUp.ComptaMasterModelId.GeneralLedger))
+            {
+                var item = db.MasterComptas.SingleOrDefault(o => o.id.Equals(itemId));
+                if (item != null)
+                {
+                    item.EntryDate = DateTime.Today;
+                    results = true;
+                }
+            }
+
+            return results;
         }
-        protected static bool Validate(int itemId)
+        protected static bool Validate(int itemId, int modelId)
         {
-            var item = db.MasterLogistics.Single(o => o.id.Equals(itemId));
-            if(item != null)
+            bool results = false;
+
+            if (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.PurchaseOrder) ||
+                modelId.Equals((int)IWSLookUp.LogisticMasterModelId.GoodReceiving) ||
+                    modelId.Equals((int)IWSLookUp.LogisticMasterModelId.InventoryInvoice) ||
+                    modelId.Equals((int)IWSLookUp.LogisticMasterModelId.SalesOrder) ||
+                    modelId.Equals((int)IWSLookUp.LogisticMasterModelId.BillOfDelivery) ||
+                    modelId.Equals((int)IWSLookUp.LogisticMasterModelId.SalesInvoice))
             {
-                item.IsValidated = true;
-                return true;
+                var item = db.MasterLogistics.SingleOrDefault(o => o.id.Equals(itemId));
+                if (item != null)
+                {
+                    item.IsValidated = true;
+                    results = true;
+                }
             }
-            return false;
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice) ||
+                modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice) ||
+                    modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment) ||
+                    modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement) ||
+                    modelId.Equals((int)IWSLookUp.ComptaMasterModelId.GeneralLedger))
+            {
+                var item = db.MasterComptas.SingleOrDefault(o => o.id.Equals(itemId));
+                if (item != null)
+                {
+                    item.IsValidated = true;
+                    results = true;
+                }
+            }
+            return results;
         }
         protected static bool UpdateStock(int itemId, int modelId, string CompanyId)
         {
             bool results = true;
             try
             {
-                //results = IWSLookUp.CheckPeriod(itemId, DocumentType, CompanyId, true, true);
 
-                //if (!results)
-                //{
-                //    string msg = IWSLocalResource.CheckPeriod;
-                //    throw new Exception(msg);
-                //}
                 if ((modelId.Equals((int)IWSLookUp.LogisticMasterModelId.GoodReceiving)) || 
                     (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.BillOfDelivery)))
                 {
@@ -98,7 +139,6 @@ namespace IWSProject.Controllers
             catch (Exception ex)
             {
                 IWSLookUp.LogException(ex);
-                results = false;
             }
             return results;
         }
@@ -209,7 +249,7 @@ namespace IWSProject.Controllers
             }
             return results;
         }
-        protected static bool ValidateMasterLogistic(int itemId, int modelId, string companyId)
+        protected static bool ValidateMasters(int itemId, int modelId, string companyId)
         {
             string iban = String.Empty;
 
@@ -474,6 +514,704 @@ namespace IWSProject.Controllers
                 }
 
             }
+
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice))
+            {
+                results = false;
+
+                iban = db.MasterComptas.Join(db.Suppliers,
+                        m => m.account, s => s.accountid, (m, s) => new
+                        {
+                            iban = s.IBAN,
+                            itemId = m.id,
+                            CompanyId = s.CompanyID
+                        }).FirstOrDefault(d =>
+                        d.CompanyId.Equals(companyId) && d.itemId.Equals(itemId)).iban;
+
+                List<JournalViewModel> docs = (from l in db.DetailComptas
+                                               where
+                                                 l.MasterCompta.id == itemId
+                                               select new JournalViewModel()
+                                               {
+                                                   ItemID = l.MasterCompta.id,
+                                                   OID = l.MasterCompta.oid,
+                                                   Currency = l.MasterCompta.oCurrency,
+                                                   CustSupplierID = l.MasterCompta.account,
+                                                   StoreID = l.MasterCompta.CostCenter,
+                                                   TransDate = l.MasterCompta.TransDate,
+                                                   Itemdate = l.MasterCompta.ItemDate,
+                                                   EntryDate = l.MasterCompta.EntryDate,
+                                                   Periode = l.MasterCompta.oPeriode,
+                                                   Amount = l.amount,
+                                                   Account = l.account,
+                                                   OAccount = l.oaccount,
+                                                   CompanyIBAN = l.MasterCompta.Company.IBAN ?? "NA",
+                                                   IBAN = iban,
+                                                   Info = l.MasterCompta.HeaderText,
+                                                   TypeJournal = l.MasterCompta.TypeJournal,
+                                                   CostCenterId = l.MasterCompta.CostCenter,
+                                                   ModelId = modelId
+                                               }).Distinct().ToList();
+
+                if (docs.Any())
+                {
+                    try
+                    {
+
+                        foreach (var doc in docs)
+                        {
+                            results = UpdatePeriodicBalance(doc.Periode,
+                                            doc.Account, doc.Amount, doc.Currency, true, companyId);
+
+                            if (!results)
+                                return results;
+
+                            results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
+
+                            if (!results)
+                                return results;
+
+                            List<Journal> journal = new List<Journal> {
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                ModelId = doc.ModelId,
+                                CustSupplierID =doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode =doc.Periode,
+                                Account =doc.Account,
+                                OAccount =doc.OAccount,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Debit.ToString(),
+                                CompanyID =companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency =doc.Currency,
+                                Info =doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
+                            },
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                ModelId = doc.ModelId,
+                                CustSupplierID=doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode=doc.Periode,
+                                Account =doc.OAccount,
+                                OAccount =doc.Account,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Credit.ToString(),
+                                CompanyID=companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency=doc.Currency,
+                                Info=doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId
+                            }
+                        };
+
+                            results = SendToJournal(journal);
+
+                            if (!results)
+                                return results;
+                        }
+
+                        var item = (from doc in docs
+                                    group new { doc } by new
+                                    {
+                                        doc.Periode,
+                                        doc.Account,
+                                        doc.Currency
+                                    } into g
+                                    select new
+                                    {
+                                        g.Key.Periode,
+                                        accountID = g.Key.Account,
+                                        amount = g.Sum(p => p.doc.Amount),
+                                        currency = g.Key.Currency
+                                    }).Single();
+                        results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+
+                        if (!results)
+                            return results;
+
+                        results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
+
+                        if (!results)
+                            return results;
+                    }
+                    catch (Exception ex)
+                    {
+                        IWSLookUp.LogException(ex);
+                        return false;
+                    }
+                }
+                return results;
+
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice))
+            {
+                results = false;
+                iban = db.MasterComptas.Join(db.Customers,
+                        m => m.account, c => c.accountid, (m, c) => new
+                        {
+                            iban = c.IBAN,
+                            itemId = m.id,
+                            CompanyId = c.CompanyID
+                        }).FirstOrDefault(d =>
+                        d.CompanyId.Equals(companyId) && d.itemId.Equals(itemId)).iban;
+
+                List<JournalViewModel> docs = (from l in db.DetailComptas
+                                               where
+                                                 l.MasterCompta.id == itemId
+                                               select new JournalViewModel()
+                                               {
+                                                   ItemID = l.MasterCompta.id,
+                                                   OID = l.MasterCompta.oid,
+                                                   Currency = l.MasterCompta.oCurrency,
+                                                   CustSupplierID = l.MasterCompta.account,
+                                                   StoreID = l.MasterCompta.CostCenter,
+                                                   TransDate = l.MasterCompta.TransDate,
+                                                   Itemdate = l.MasterCompta.ItemDate,
+                                                   EntryDate = l.MasterCompta.EntryDate,
+                                                   Periode = l.MasterCompta.oPeriode,
+                                                   Amount = l.amount,
+                                                   Account = l.account,
+                                                   OAccount = l.oaccount,
+                                                   CompanyIBAN = l.MasterCompta.Company.IBAN ?? "NA",
+                                                   IBAN = iban,
+                                                   Info = l.MasterCompta.HeaderText,
+                                                   TypeJournal = l.MasterCompta.TypeJournal,
+                                                   CostCenterId = l.MasterCompta.CostCenter,
+                                                   ModelId = modelId
+                                               }).Distinct().ToList();
+
+                if (docs.Any())
+                {
+                    try
+                    {
+
+                        foreach (var doc in docs)
+                        {
+
+                            results = UpdatePeriodicBalance(doc.Periode, doc.OAccount, doc.Amount, doc.Currency, false, companyId);
+
+                            if (!results)
+                                return results;
+
+                            results = UpdateAccountBalance(doc.OAccount, doc.Amount, false, companyId);
+
+                            if (!results)
+                                return results;
+
+                            List<Journal> journal = new List<Journal> {
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                CustSupplierID =doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode =doc.Periode,
+                                Account =doc.Account,
+                                OAccount =doc.OAccount,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Debit.ToString(),
+                                CompanyID =companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency =doc.Currency,
+                                Info =doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId,
+                                ModelId = doc.ModelId
+                            },
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                CustSupplierID=doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode=doc.Periode,
+                                Account =doc.OAccount,
+                                OAccount =doc.Account,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Credit.ToString(),
+                                CompanyID=companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency=doc.Currency,
+                                Info=doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId,
+                                ModelId = doc.ModelId
+                            }
+                        };
+
+                            results = SendToJournal(journal);
+
+                            if (!results)
+                                return results;
+                        }
+
+                        var item = (from doc in docs
+                                    group new { doc } by new
+                                    {
+                                        doc.Periode,
+                                        doc.Account,
+                                        doc.Currency
+                                    } into g
+                                    select new
+                                    {
+                                        g.Key.Periode,
+                                        accountID = g.Key.Account,
+                                        amount = g.Sum(p => p.doc.Amount),
+                                        currency = g.Key.Currency
+                                    }).Single();
+                        results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, true, companyId);
+
+                        if (!results)
+                            return results;
+
+                        results = UpdateAccountBalance(item.accountID, item.amount, true, companyId);
+
+                        if (!results)
+                            return results;
+                    }
+                    catch (Exception ex)
+                    {
+                        IWSLookUp.LogException(ex);
+                        return false;
+                    }
+                }
+                return results;
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment))
+            {
+                results = false;
+           
+                iban = db.MasterComptas.Join(db.Suppliers,
+                        m => m.account, s => s.accountid, (m, s) => new
+                        {
+                            iban = s.IBAN,
+                            itemId = m.id,
+                            CompanyId = s.CompanyID
+                        }).FirstOrDefault(d =>
+                        d.CompanyId.Equals(companyId) && d.itemId.Equals(itemId)).iban;
+
+                List<JournalViewModel> docs = (from l in db.DetailComptas
+                                               where
+                                                 l.MasterCompta.id == itemId
+                                               select new JournalViewModel()
+                                               {
+                                                   ItemID = l.MasterCompta.id,
+                                                   OID = l.MasterCompta.oid,
+                                                   Currency = l.MasterCompta.oCurrency,
+                                                   CustSupplierID = l.MasterCompta.account,
+                                                   StoreID = l.MasterCompta.CostCenter,
+                                                   TransDate = l.MasterCompta.TransDate,
+                                                   Itemdate = l.MasterCompta.ItemDate,
+                                                   EntryDate = l.MasterCompta.EntryDate,
+                                                   Periode = l.MasterCompta.oPeriode,
+                                                   Amount = l.amount,
+                                                   Account = l.account,
+                                                   OAccount = l.oaccount,
+                                                   CompanyIBAN = l.MasterCompta.Company.IBAN ?? "NA",
+                                                   IBAN = iban,
+                                                   Info = l.MasterCompta.HeaderText,
+                                                   TypeJournal = l.MasterCompta.TypeJournal,
+                                                   CostCenterId = l.MasterCompta.CostCenter,
+                                                   ModelId = modelId
+                                               }).Distinct().ToList();
+
+                if (docs.Any())
+                {
+                    try
+                    {
+
+                        foreach (var doc in docs)
+                        {
+                            results = UpdatePeriodicBalance(doc.Periode,
+                                            doc.Account, doc.Amount, doc.Currency, true, companyId);
+
+                            if (!results)
+                                return results;
+
+                            results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
+
+                            if (!results)
+                                return results;
+
+                            List<Journal> journal = new List<Journal> {
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                CustSupplierID =doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode =doc.Periode,
+                                Account =doc.Account,
+                                OAccount =doc.OAccount,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Debit.ToString(),
+                                CompanyID =companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency =doc.Currency,
+                                Info =doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId,
+                                ModelId = modelId
+                            },
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                CustSupplierID=doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode=doc.Periode,
+                                Account =doc.OAccount,
+                                OAccount =doc.Account,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Credit.ToString(),
+                                CompanyID=companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency=doc.Currency,
+                                Info=doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId,
+                                ModelId = modelId
+                            }
+                        };
+
+                            results = SendToJournal(journal);
+                            if (!results)
+                                return results;
+                        }
+
+                        var item = (from doc in docs
+                                    group new { doc } by new
+                                    {
+                                        doc.Periode,
+                                        doc.OAccount,
+                                        doc.Currency
+                                    } into g
+                                    select new
+                                    {
+                                        g.Key.Periode,
+                                        accountID = g.Key.OAccount,
+                                        amount = g.Sum(p => p.doc.Amount),
+                                        currency = g.Key.Currency
+                                    }).Single();
+                        results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+
+                        if (!results)
+                            return results;
+                        results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
+
+                        if (!results)
+                            return results;
+                    }
+                    catch (Exception ex)
+                    {
+                        IWSLookUp.LogException(ex);
+                        return false;
+                    }
+                }
+                return results;
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement))
+            {
+                results = false;
+                iban = db.MasterComptas.Join(db.Customers,
+                        m => m.account, c => c.accountid, (m, c) => new
+                        {
+                            iban = c.IBAN,
+                            itemId = m.id,
+                            CompanyId = c.CompanyID
+                        }).FirstOrDefault(d =>
+                        d.CompanyId.Equals(companyId) && d.itemId.Equals(itemId)).iban;
+
+                List<JournalViewModel> docs = (from l in db.DetailComptas
+                                               where
+                                                 l.MasterCompta.id == itemId
+                                               select new JournalViewModel()
+                                               {
+                                                   ItemID = l.MasterCompta.id,
+                                                   OID = l.MasterCompta.oid,
+                                                   Currency = l.MasterCompta.oCurrency,
+                                                   CustSupplierID = l.MasterCompta.account,
+                                                   StoreID = l.MasterCompta.CostCenter,
+                                                   TransDate = l.MasterCompta.TransDate,
+                                                   Itemdate = l.MasterCompta.ItemDate,
+                                                   EntryDate = l.MasterCompta.EntryDate,
+                                                   Periode = l.MasterCompta.oPeriode,
+                                                   Amount = l.amount,
+                                                   Account = l.account,
+                                                   OAccount = l.oaccount,
+                                                   CompanyIBAN = l.MasterCompta.Company.IBAN ?? "NA",
+                                                   IBAN = iban,
+                                                   Info = l.MasterCompta.HeaderText,
+                                                   TypeJournal = l.MasterCompta.TypeJournal,
+                                                   CostCenterId = l.MasterCompta.CostCenter,
+                                                   ModelId = modelId
+                                               }).Distinct().ToList();
+
+                if (docs.Any())
+                {
+                    try
+                    {
+
+                        foreach (var doc in docs)
+                        {
+                            results = UpdatePeriodicBalance(doc.Periode,
+                                            doc.Account, doc.Amount, doc.Currency, true, companyId);
+
+                            if (!results)
+                                return results;
+
+                            results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
+
+                            if (!results)
+                                return results;
+
+                            List<Journal> journal = new List<Journal> {
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                CustSupplierID =doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode =doc.Periode,
+                                Account =doc.Account,
+                                OAccount =doc.OAccount,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Debit.ToString(),
+                                CompanyID =companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency =doc.Currency,
+                                Info =doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId,
+                                ModelId = modelId
+                            },
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                CustSupplierID=doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode=doc.Periode,
+                                Account =doc.OAccount,
+                                OAccount =doc.Account,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Credit.ToString(),
+                                CompanyID=companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency=doc.Currency,
+                                Info=doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId,
+                                ModelId = modelId
+                            }
+                        };
+
+                            results = SendToJournal(journal);
+
+                            if (!results)
+                                return results;
+                        }
+
+                        var item = (from doc in docs
+                                    group new { doc } by new
+                                    {
+                                        doc.Periode,
+                                        doc.OAccount,
+                                        doc.Currency
+                                    } into g
+                                    select new
+                                    {
+                                        g.Key.Periode,
+                                        accountID = g.Key.OAccount,
+                                        amount = g.Sum(p => p.doc.Amount),
+                                        currency = g.Key.Currency
+                                    }).Single();
+                        results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+
+                        if (!results)
+                            return results;
+
+                        results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
+
+                        if (!results)
+                            return results;
+                    }
+                    catch (Exception ex)
+                    {
+                        IWSLookUp.LogException(ex);
+                        return false;
+                    }
+                }
+                return results;
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.GeneralLedger))
+            {
+
+                List<JournalViewModel> docs = (from l in db.DetailComptas
+                                               where
+                                                 l.MasterCompta.id == itemId
+                                               select new JournalViewModel()
+                                               {
+                                                   ItemID = l.MasterCompta.id,
+                                                   OID = l.MasterCompta.oid,
+                                                   Currency = l.MasterCompta.oCurrency,
+                                                   CustSupplierID = l.MasterCompta.CompanyId,
+                                                   StoreID = l.MasterCompta.CostCenter,
+                                                   TransDate = l.MasterCompta.TransDate,
+                                                   Itemdate = l.MasterCompta.ItemDate,
+                                                   EntryDate = l.MasterCompta.EntryDate,
+                                                   Periode = l.MasterCompta.oPeriode,
+                                                   Amount = l.amount,
+                                                   Account = l.account,
+                                                   OAccount = l.oaccount,
+                                                   CompanyIBAN = l.MasterCompta.Company.IBAN ?? "NA",
+                                                   IBAN = l.MasterCompta.Company.IBAN ?? "NA",
+                                                   Info = l.MasterCompta.HeaderText,
+                                                   TypeJournal = l.MasterCompta.TypeJournal,
+                                                   CostCenterId = l.MasterCompta.CostCenter,
+                                                   ModelId = modelId
+                                               }).Distinct().ToList();
+
+                if (docs.Any())
+                {
+                    try
+                    {
+
+                        foreach (var doc in docs)
+                        {
+                            results = UpdatePeriodicBalance(doc.Periode,
+                                            doc.Account, doc.Amount, doc.Currency, true, companyId);
+
+                            if (!results)
+                                return results;
+
+                            results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
+
+                            if (!results)
+                                return results;
+
+                            List<Journal> journal = new List<Journal> {
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                CustSupplierID =doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode =doc.Periode,
+                                Account =doc.Account,
+                                OAccount =doc.OAccount,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Debit.ToString(),
+                                CompanyID =companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency =doc.Currency,
+                                Info =doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId,
+                                ModelId = modelId
+                            },
+                            new Journal {
+                                ItemID =doc.ItemID,
+                                OID =doc.OID,
+                                CustSupplierID=doc.CustSupplierID,
+                                StoreID =doc.StoreID,
+                                TransDate =doc.TransDate,
+                                ItemDate =doc.Itemdate,
+                                EntryDate =doc.EntryDate,
+                                Periode=doc.Periode,
+                                Account =doc.OAccount,
+                                OAccount =doc.Account,
+                                Amount =doc.Amount,
+                                Side = IWSLookUp. Side.Credit.ToString(),
+                                CompanyID=companyId,
+                                CompanyIBAN =doc.CompanyIBAN,
+                                IBAN =doc.IBAN,
+                                Currency=doc.Currency,
+                                Info=doc.Info,
+                                TypeJournal=doc.TypeJournal,
+                                CostCenterId=doc.CostCenterId,
+                                ModelId = modelId
+                            }
+                        };
+
+                            results = SendToJournal(journal);
+
+                            if (!results)
+                                return results;
+                        }
+
+                        var items = (from doc in docs
+                                     group new { doc } by new
+                                     {
+                                         doc.Periode,
+                                         doc.OAccount,
+                                         doc.Currency
+                                     } into g
+                                     select new
+                                     {
+                                         g.Key.Periode,
+                                         accountID = g.Key.OAccount,
+                                         amount = g.Sum(p => p.doc.Amount),
+                                         currency = g.Key.Currency
+                                     });
+                        foreach (var item in items)
+                        {
+
+                            results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
+
+                            if (!results)
+                                return results;
+
+                            results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
+
+                            if (!results)
+                                return results;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        IWSLookUp.LogException(ex);
+                        return false;
+                    }
+                }
+                return results;
+
+            }
             return results;
         }
         protected static bool Account(int ItemID, string ItemType, string companyId)
@@ -486,34 +1224,34 @@ namespace IWSProject.Controllers
                 throw new Exception(msg);
             }
             //bool results;
-            if (ItemType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()))
-            {
-                return ValidateGoodReceiving(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()))
-            {
-                return ValidateBillOfDelivery(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
-            {
-                return ValidateVendorInvoice(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
-            {
-                return ValidateCustmerInvoice(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
-            {
-                return ValidatePayment(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
-            {
-                return ValidateSettlement(ItemID, companyId);
-            }
-            if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedger.ToString()))
-            {
-                return ValidateGeneralLedger(ItemID, companyId);
-            }
+            //if (ItemType.Equals(IWSLookUp.DocsType.GoodReceiving.ToString()))
+            //{
+            //    return ValidateGoodReceiving(ItemID, companyId);
+            //}
+            //if (ItemType.Equals(IWSLookUp.DocsType.BillOfDelivery.ToString()))
+            //{
+            //    return ValidateBillOfDelivery(ItemID, companyId);
+            //}
+            //if (ItemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
+            //{
+            //    return ValidateVendorInvoice(ItemID, companyId);
+            //}
+            //if (ItemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
+            //{
+            //    return ValidateCustmerInvoice(ItemID, companyId);
+            //}
+            //if (ItemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
+            //{
+            //    return ValidatePayment(ItemID, companyId);
+            //}
+            //if (ItemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
+            //{
+            //    return ValidateSettlement(ItemID, companyId);
+            //}
+            //if (ItemType.Equals(IWSLookUp.DocsType.GeneralLedger.ToString()))
+            //{
+            //    return ValidateGeneralLedger(ItemID, companyId);
+            //}
             return true;
         }
         #endregion
@@ -856,7 +1594,6 @@ namespace IWSProject.Controllers
             }
             catch (Exception ex)
             {
-                //ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
                 return false;
             }
@@ -2005,15 +2742,15 @@ namespace IWSProject.Controllers
             }
             return false;
         }
+
         protected static void ProcessData(string selectedItems, string companyId, bool convertType, int modelId)
         {
             string msg;
             int itemId;
             bool results = false;
 
-            string itemType = IWSLookUp.DocsType.VendorInvoice.ToString();
-
             IList<string> items = new List<string>(selectedItems.Split(new string[] { ";" }, StringSplitOptions.None));
+
             foreach (string item in items)
             {
                 try
@@ -2022,7 +2759,15 @@ namespace IWSProject.Controllers
 
                     itemId = Convert.ToInt32(list[0]);
 
-                    results = UpdateEntryDate(itemId);
+                    //results = IWSLookUp.CheckPeriod(itemId, DocumentType, CompanyId, true, true);
+
+                    //if (!results)
+                    //{
+                    //    string msg = IWSLocalResource.CheckPeriod;
+                    //    throw new Exception(msg);
+                    //}
+
+                    results = UpdateEntryDate(itemId, modelId);
                     if (!results)
                     {
                         msg = IWSLocalResource.GenericError;
@@ -2034,15 +2779,13 @@ namespace IWSProject.Controllers
                         msg = IWSLocalResource.GenericError;
                         throw new Exception(msg);
                     }
-
-                    //results = Account(itemId, itemType, companyId); // give itemtype here as before
-                    results = ValidateMasterLogistic(itemId, modelId, companyId);
+                    results = ValidateMasters(itemId, modelId, companyId);
                     if (!results)
                     {
                         msg = IWSLocalResource.GenericError;
                         throw new Exception(msg);
                     }
-                    results = Validate(itemId);
+                    results = Validate(itemId, modelId);
                     
                     if (!results)
                     {

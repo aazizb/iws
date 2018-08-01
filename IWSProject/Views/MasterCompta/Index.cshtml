@@ -176,12 +176,10 @@
 </script>
 
 @{
-    ViewBag.Title = IWSLocalResource.vendorinvoice;
+    ViewBag.Title = IWSLocalResource.Accounting;
 }
 @using (Html.BeginForm("Index", "MasterCompta"))
 {
-    @*@Html.Hidden("cbxOID");*@
-
 
     @Html.DevExpress().ComboBox(settings =>
 {

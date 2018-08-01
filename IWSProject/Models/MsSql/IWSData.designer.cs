@@ -888,6 +888,13 @@ namespace IWSProject.Models.MsSql
 			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), @class, start, end, companyid, isBalance);
 			return ((ISingleResult<AccountBalanceResult>)(result.ReturnValue));
 		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.SetJournal")]
+		public int SetJournal([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="Int")] System.Nullable<int> transid, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(50)")] string companyid)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), transid, companyid);
+			return ((int)(result.ReturnValue));
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Account")]

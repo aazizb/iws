@@ -256,6 +256,11 @@
                 return true;
             return false;
         }
+        public static bool SetJournal(int transId)
+        {
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+            return (IWSEntities.SetJournal( transId, companyId) >= 0);
+        }
         public static IEnumerable GetTypeJournals() => IWSEntities.TypeJournals.Where(c =>
                 c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
                AsEnumerable();
@@ -742,23 +747,14 @@
                         (from l in IWSEntities.DetailComptas
                          group l by new
                          {
-                             l.transid,
-                             l.account,
-                             l.side,
-                             l.duedate,
-                             l.Currency,
-                             l.text
+                             l.transid, l.account, l.side, l.duedate, l.Currency, l.text
                          } into g
                          where g.Key.transid == OID
                          select new DebitViewModel()
                          {
-                             TransID = g.Key.transid,
-                             ODebit = g.Key.account,
-                             Side = !g.Key.side,
-                             OVat = (decimal?)g.Sum(p => p.amount),
-                             ItemDate = g.Key.duedate,
-                             Currency = g.Key.Currency,
-                             HeaderText = g.Key.text
+                             TransID = g.Key.transid, ODebit = g.Key.account, Side = !g.Key.side,
+                             OVat = (decimal?)g.Sum(p => p.amount), ItemDate = g.Key.duedate,
+                             Currency = g.Key.Currency, HeaderText = g.Key.text
                          });
                 lines = new List<DetailCompta>() {
                         new DetailCompta(){
@@ -776,15 +772,10 @@
                        l.id == OID
                      select new DebitViewModel()
                      {
-                         TransID = itemId,
-                         ODebit = account,
-                         OCredit = l.Company.purchasingclearingaccountid,
-                         Side = false,
-                         HeaderText = l.HeaderText,
-                         ItemDate = l.ItemDate,
-                         OVat = l.oVat,
-                         OTotal = l.oTotal,
-                         Currency = l.oCurrency
+                         TransID = itemId, ODebit = account, OCredit = l.Company.purchasingclearingaccountid,
+                         Side = false, HeaderText = l.HeaderText,
+                         ItemDate = l.ItemDate, OVat = l.oVat,
+                         OTotal = l.oTotal, Currency = l.oCurrency
                      });
             }
             if (modelId.Equals((int)ComptaMasterModelId.CustomerInvoice))
@@ -796,15 +787,9 @@
                    l.id == OID
                 select new DebitViewModel()
                 {
-                    TransID = itemId,
-                    ODebit = account,
-                    OCredit = l.Company.salesclearingaccountid,
-                    Side = false,
-                    HeaderText = l.HeaderText,
-                    ItemDate = l.ItemDate,
-                    OVat = l.oVat,
-                    OTotal = l.oTotal,
-                    Currency = l.oCurrency
+                    TransID = itemId, ODebit = account, OCredit = l.Company.salesclearingaccountid,
+                    Side = false, HeaderText = l.HeaderText, ItemDate = l.ItemDate,
+                    OVat = l.oVat, OTotal = l.oTotal, Currency = l.oCurrency
                 });
             }
             if (modelId.Equals((int)ComptaMasterModelId.Payment))
@@ -815,38 +800,9 @@
                            l.id == OID
                          select new DebitViewModel()
                          {
-                             TransID = itemId,
-                             ODebit = account,              // l.Supplier.accountid,
-                             Side = true,
-                             OTotal = l.oTotal,
-                             ItemDate = l.ItemDate,
-                             HeaderText = l.HeaderText,
-                             Currency = l.oCurrency,
-                         });
-            }
-            if (modelId.Equals((int)ComptaMasterModelId.Settlement))
-            {
-                debit = new List<DebitViewModel>
-                        (from l in IWSEntities.DetailComptas
-                         group l by new
-                         {
-                             l.transid,
-                             l.account,
-                             l.side,
-                             l.duedate,
-                             l.Currency,
-                             l.text
-                         } into g
-                         where g.Key.transid == OID
-                         select new DebitViewModel()
-                         {
-                             TransID = g.Key.transid,
-                             ODebit = g.Key.account,
-                             Side = !g.Key.side,
-                             OVat = (decimal?)g.Sum(p => p.amount),
-                             ItemDate = g.Key.duedate,
-                             Currency = g.Key.Currency,
-                             HeaderText = g.Key.text
+                             TransID = itemId, ODebit = account, Side = true,
+                             OTotal = l.oTotal, ItemDate = l.ItemDate,
+                             HeaderText = l.HeaderText, Currency = l.oCurrency,
                          });
             }
             if (modelId.Equals((int)ComptaMasterModelId.CustomerInvoice) ||
@@ -863,19 +819,17 @@
                         Currency=debit.Single().Currency}
                     };
             }
-            if (modelId.Equals((int)ComptaMasterModelId.Payment) ||
-                modelId.Equals((int)ComptaMasterModelId.Settlement))
+            if (modelId.Equals((int)ComptaMasterModelId.Payment))
             {
-                lines = new List<DetailCompta>() {
-                        new DetailCompta(){
-                            transid =itemId, account=debit.Single().ODebit, side=debit.Single().Side, oaccount=credit.Single().OCreditVAT,
-                            amount=(decimal)debit.Single().OVat, duedate=debit.Single().ItemDate, text=debit.Single().HeaderText,
-                            Currency=debit.Single().Currency},
-                        new DetailCompta(){
-                            transid =itemId, account=debit.Single().ODebit, side=debit.Single().Side, oaccount=debit.Single().OCredit,
+                lines = new List<DetailCompta>()
+                {
+                        new DetailCompta()
+                        {
+                            transid =itemId, account=debit.Single().ODebit, side=debit.Single().Side, oaccount=credit.Single().OCreditTotal,
                             amount=(decimal)debit.Single().OTotal, duedate=debit.Single().ItemDate, text=debit.Single().HeaderText,
-                            Currency=debit.Single().Currency}
-                    };
+                            Currency=debit.Single().Currency
+                        }
+                };
             }
             return lines;
         }

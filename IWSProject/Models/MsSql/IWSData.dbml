@@ -1445,4 +1445,9 @@
       <Column Name="IsResult" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
     </ElementType>
   </Function>
+  <Function Name="dbo.SetJournal" Method="SetJournal">
+    <Parameter Name="transid" Type="System.Int32" DbType="Int" />
+    <Parameter Name="companyid" Type="System.String" DbType="NVarChar(50)" />
+    <Return Type="System.Int32" />
+  </Function>
 </Database>

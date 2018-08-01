@@ -187,6 +187,7 @@ namespace IWSProject.Controllers
                 {
                     model.InsertOnSubmit(line);
                     db.SubmitChanges();
+                    IWSLookUp.SetJournal(transId);
                 }
                 catch (Exception e)
                 {
@@ -216,6 +217,7 @@ namespace IWSProject.Controllers
                         this.UpdateModel(modelItem);
 
                         db.SubmitChanges();
+                        IWSLookUp.SetJournal(transId);
                     }
                 }
                 catch (Exception e)
@@ -245,6 +247,7 @@ namespace IWSProject.Controllers
                         model.DeleteOnSubmit(item);
 
                     db.SubmitChanges();
+                    IWSLookUp.SetJournal(transId);
                 }
                 catch (Exception e)
                 {

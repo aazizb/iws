@@ -933,4 +933,7 @@
   <data name="Validation" xml:space="preserve">
     <value>Validación</value>
   </data>
+  <data name="Logistic" xml:space="preserve">
+    <value>Logistica</value>
+  </data>
 </root>

@@ -128,13 +128,13 @@
             switch (e.LayoutMode)
             {
                 case ClientLayoutMode.Loading:
-                    if (Session["LayoutVI"] != null)
+                    if (Session["Compta"] != null)
                     {
-                        e.LayoutData = Session["LayoutVI"].ToString();
+                        e.LayoutData = Session["Compta"].ToString();
                     }
                     break;
                 case ClientLayoutMode.Saving:
-                    Session["LayoutVI"] = e.LayoutData;
+                    Session["Compta"] = e.LayoutData;
                     break;
             }
         };
@@ -394,7 +394,7 @@
                             a.Caption = IWSLocalResource.duedate;
                             a.Width = Unit.Percentage(12);
                         });
-                        s.Properties.TextFormatString = "{0}";
+                        s.Properties.TextFormatString = "{0}-{1}-{2}-{3}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);
@@ -468,7 +468,7 @@
                 });
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "Account";
+                    i.FieldName = "account";
                     i.Caption = IWSLocalResource.account;
                     i.NestedExtension().ComboBox(s =>
                     {
@@ -494,7 +494,7 @@
                             a.Caption = IWSLocalResource.id;
                             a.Width = Unit.Percentage(15);
                         });
-                        s.Properties.TextFormatString = "{0}";
+                        s.Properties.TextFormatString = "{0}-{1}-{2}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);

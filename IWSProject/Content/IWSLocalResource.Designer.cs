@@ -1438,6 +1438,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Logistics.
+        /// </summary>
+        public static string Logistic {
+            get {
+                return ResourceManager.GetString("Logistic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Users Management.
         /// </summary>
         public static string manage {
