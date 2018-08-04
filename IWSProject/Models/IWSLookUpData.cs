@@ -1474,6 +1474,133 @@
             .OrderBy(o => o.Name);
             return unit;
         }
+
+
+        public static InvoiceViewModel GetInvoiceDetailX(int itemId, int bankStatementId, string itemType, string companyId)
+        {
+            try
+            {
+                if (itemType.Equals(ComptaMasterModelId.CustomerInvoice.ToString()))
+                {
+                    var owner = from Vats in IWSEntities.Vats
+                                join Customers in IWSEntities.Customers on new { Vats.id } equals new { id = Customers.VatCode }
+                                where
+                                  Customers.id ==
+                                    ((from BankAccounts in IWSEntities.BankAccounts
+                                      where
+                                 BankAccounts.IBAN ==
+                                 ((from BankStatements in IWSEntities.BankStatements
+                                   where
+                                   BankStatements.id == bankStatementId
+                                   select new
+                                   {
+                                       BankStatements.Kontonummer
+                                   }).First().Kontonummer)
+                                      select new
+                                      {
+                                          BankAccounts.Owner
+                                      }).First().Owner)
+                                select new
+                                {
+                                    Vats.PVat,
+                                    Vats.outputvataccountid,
+                                    Customers.accountid,
+                                    Customers.IBAN,
+                                    Customers.Produit
+                                };
+                    var vat = owner.SingleOrDefault().PVat;
+                    InvoiceViewModel invoice = (from l in IWSEntities.LineSettlements
+                                                where
+                                                    l.Settlement.id == itemId
+                                                select new InvoiceViewModel()
+                                                {
+                                                    Account = l.oaccount,
+                                                    OAccount = owner.SingleOrDefault().Produit,
+                                                    PVat = vat,
+                                                    CostCenter = l.Settlement.CostCenter,
+                                                    HeaderText = l.Settlement.HeaderText,
+                                                    TransDate = l.Settlement.TransDate,
+                                                    ItemDate = l.Settlement.ItemDate,
+                                                    EntryDate = l.Settlement.EntryDate,
+                                                    OTotal = l.Settlement.oTotal,
+                                                    Amount = Math.Round((decimal)l.Settlement.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                    VatAmount = Math.Round((decimal)l.Settlement.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                    OPeriode = l.Settlement.oPeriode,
+                                                    OCurrency = l.Settlement.oCurrency,
+                                                    DueDate = l.duedate,
+                                                    Text = l.text,
+                                                    CompanyId = l.Settlement.CompanyId,
+                                                    AccountId = l.Settlement.account,
+                                                    VatAccountId = owner.SingleOrDefault().outputvataccountid
+                                                }).Single();
+                       return invoice;
+                }
+                if (itemType.Equals(ComptaMasterModelId.VendorInvoice.ToString()))
+                {
+                    var owner = from Vats in IWSEntities.Vats
+                                join Suppliers in IWSEntities.Suppliers on new { Vats.id } equals new { id = Suppliers.VatCode }
+                                where
+                                  Suppliers.id ==
+                                    ((from BankAccounts in IWSEntities.BankAccounts
+                                      where
+                                 BankAccounts.IBAN ==
+                                 ((from BankStatements in IWSEntities.BankStatements
+                                   where
+                                      BankStatements.id == bankStatementId &&
+                                      BankStatements.CompanyID == companyId
+                                   select new
+                                   {
+                                       BankStatements.Kontonummer
+                                   }).First().Kontonummer)
+                                      select new
+                                      {
+                                          BankAccounts.Owner
+                                      }).First().Owner)
+                                select new
+                                {
+                                    Vats.PVat,
+                                    Vats.inputvataccountid,
+                                    Suppliers.accountid,
+                                    Suppliers.IBAN,
+                                    Suppliers.Charge
+                                };
+                    var vat = owner.SingleOrDefault().PVat;
+                    InvoiceViewModel invoice = (from l in IWSEntities.DetailComptas
+                                                where
+                                                    l.MasterCompta.id == itemId &&
+                                                    l.MasterCompta.CompanyId == companyId
+                                                select new InvoiceViewModel()
+                                                {
+                                                    Account = owner.SingleOrDefault().Charge,
+                                                    OAccount = l.account,
+                                                    PVat = vat,
+                                                    CostCenter = l.MasterCompta.CostCenter,
+                                                    HeaderText = l.MasterCompta.HeaderText,
+                                                    TransDate = l.MasterCompta.TransDate,
+                                                    ItemDate = l.MasterCompta.ItemDate,
+                                                    EntryDate = l.MasterCompta.EntryDate,
+                                                    OTotal = l.MasterCompta.oTotal,
+                                                    Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                    VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                    OPeriode = l.MasterCompta.oPeriode,
+                                                    OCurrency = l.MasterCompta.oCurrency,
+                                                    DueDate = l.duedate,
+                                                    Text = l.text,
+                                                    CompanyId = l.MasterCompta.CompanyId,
+                                                    AccountId = l.MasterCompta.account,
+                                                    VatAccountId = owner.SingleOrDefault().inputvataccountid
+                                                }).Single();
+                    return invoice;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return null;
+        }
+
+
         public static InvoiceViewModel GetInvoiceDetail(int itemId, string itemType, string companyId)
         {
             try
@@ -1547,6 +1674,7 @@
             }
             return null;
         }
+
         public static StatementDetailViewModel GetStatementDetail(int bankStatementId, string itemType, string companyId)
         {
             try
@@ -1644,76 +1772,81 @@
                     return sd;
                 }
 
-                #region keepit
+                if (itemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
+                {
 
-                //if (itemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
-                //{
-                //    StatementDetailViewModel sd =
-                //        (from co in IWSEntities.Companies
-                //         join bs in IWSEntities.BankStatements on new { id = co.id } equals new { id = bs.CompanyID }
-                //         join cu in IWSEntities.Customers
-                //             on new { co.id, bs.Kontonummer }
-                //         equals new { id = cu.CompanyID, Kontonummer = cu.IBAN }
-                //         where
-                //         bs.IsValidated.Equals(false) &&
-                //         bs.id.Equals(bankStatementId) &&
-                //         co.id.Equals(companyId)
-                //         select new StatementDetailViewModel()
-                //         {
-                //             Id = cu.id,
-                //             AccountID = cu.accountid,
-                //             OAccountID = co.settlementclearingaccountid,//BankAccountID = 
-                //             Info = bs.Info,
-                //             Waehrung = bs.Waehrung,
-                //             Betrag = (decimal)bs.Betrag,
-                //             Buchungstag = (DateTime)bs.Buchungstag,
-                //             Valutadatum = (DateTime)bs.Valutadatum,
-                //             Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
-                //                         Convert.ToString((int?)bs.Buchungstag.Value.Month),
-                //             Buchungstext = bs.Buchungstext,
-                //             Verwendungszweck = bs.Verwendungszweck,
-                //             BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger,
-                //             IBAN = cu.IBAN
-                //         }).Single();
-                //    return sd;
-                //}
+                }
 
-                //if (itemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
-                //{
+                    #region keepit
 
-                //    StatementDetailViewModel sd =
-                //        (from su in IWSEntities.Suppliers
-                //         join ba in IWSEntities.BankAccounts on new { id = su.id } equals new { id = ba.Owner }
-                //         join co in IWSEntities.Companies on new { CompanyID = ba.CompanyID } equals new { CompanyID = co.id }
-                //         join bs in IWSEntities.BankStatements on new { IBAN = ba.IBAN } equals new { IBAN = bs.Kontonummer }
-                //         where
-                //           bs.IsValidated == false &&
-                //           ba.CompanyID == companyId &&
-                //           bs.id == bankStatementId
-                //         select new StatementDetailViewModel()
-                //         {
-                //             Id = su.id,
-                //             BankAccountID = ba.Account,
-                //             AccountID = co.purchasingclearingaccountid,
-                //             Info = bs.Info,
-                //             Waehrung = bs.Waehrung,
-                //             Betrag = Math.Abs((decimal)bs.Betrag),
-                //             Buchungstag = (DateTime)bs.Buchungstag,
-                //             Valutadatum = (DateTime)bs.Valutadatum,
-                //             Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
-                //                       Convert.ToString((int?)bs.Buchungstag.Value.Month),
-                //             Buchungstext = bs.Buchungstext,
-                //             Verwendungszweck = bs.Verwendungszweck,
-                //             BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger,
-                //             IBAN = ba.IBAN
-                //         }).Single();
+                    //if (itemType.Equals(IWSLookUp.DocsType.CustomerInvoice.ToString()))
+                    //{
+                    //    StatementDetailViewModel sd =
+                    //        (from co in IWSEntities.Companies
+                    //         join bs in IWSEntities.BankStatements on new { id = co.id } equals new { id = bs.CompanyID }
+                    //         join cu in IWSEntities.Customers
+                    //             on new { co.id, bs.Kontonummer }
+                    //         equals new { id = cu.CompanyID, Kontonummer = cu.IBAN }
+                    //         where
+                    //         bs.IsValidated.Equals(false) &&
+                    //         bs.id.Equals(bankStatementId) &&
+                    //         co.id.Equals(companyId)
+                    //         select new StatementDetailViewModel()
+                    //         {
+                    //             Id = cu.id,
+                    //             AccountID = cu.accountid,
+                    //             OAccountID = co.settlementclearingaccountid,//BankAccountID = 
+                    //             Info = bs.Info,
+                    //             Waehrung = bs.Waehrung,
+                    //             Betrag = (decimal)bs.Betrag,
+                    //             Buchungstag = (DateTime)bs.Buchungstag,
+                    //             Valutadatum = (DateTime)bs.Valutadatum,
+                    //             Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
+                    //                         Convert.ToString((int?)bs.Buchungstag.Value.Month),
+                    //             Buchungstext = bs.Buchungstext,
+                    //             Verwendungszweck = bs.Verwendungszweck,
+                    //             BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger,
+                    //             IBAN = cu.IBAN
+                    //         }).Single();
+                    //    return sd;
+                    //}
 
-                //    return sd;
-                //}
+                    //if (itemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
+                    //{
 
-                #endregion
+                    //    StatementDetailViewModel sd =
+                    //        (from su in IWSEntities.Suppliers
+                    //         join ba in IWSEntities.BankAccounts on new { id = su.id } equals new { id = ba.Owner }
+                    //         join co in IWSEntities.Companies on new { CompanyID = ba.CompanyID } equals new { CompanyID = co.id }
+                    //         join bs in IWSEntities.BankStatements on new { IBAN = ba.IBAN } equals new { IBAN = bs.Kontonummer }
+                    //         where
+                    //           bs.IsValidated == false &&
+                    //           ba.CompanyID == companyId &&
+                    //           bs.id == bankStatementId
+                    //         select new StatementDetailViewModel()
+                    //         {
+                    //             Id = su.id,
+                    //             BankAccountID = ba.Account,
+                    //             AccountID = co.purchasingclearingaccountid,
+                    //             Info = bs.Info,
+                    //             Waehrung = bs.Waehrung,
+                    //             Betrag = Math.Abs((decimal)bs.Betrag),
+                    //             Buchungstag = (DateTime)bs.Buchungstag,
+                    //             Valutadatum = (DateTime)bs.Valutadatum,
+                    //             Periode = Convert.ToString((int?)bs.Buchungstag.Value.Year) +
+                    //                       Convert.ToString((int?)bs.Buchungstag.Value.Month),
+                    //             Buchungstext = bs.Buchungstext,
+                    //             Verwendungszweck = bs.Verwendungszweck,
+                    //             BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger,
+                    //             IBAN = ba.IBAN
+                    //         }).Single();
 
-            }
+                    //    return sd;
+                    //}
+
+                    #endregion
+
+                }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);

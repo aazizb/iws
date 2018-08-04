@@ -1,0 +1,70 @@
+﻿@using IWSProject.Models
+@using IWSProject.Content
+@model List<DocumentsViewModel>
+
+<script type="text/javascript">
+    var selectedIDs = null;
+    function OnBeginCallback(s, e) {
+        ///passes selected row data to GridView callback action
+        e.customArgs["selectedIDs"] = selectedIDs;
+    }
+    function OnSelectionChanged(s, e) {
+        s.GetSelectedFieldValues("ItemID;ItemType", GetSelectedFieldValuesCallback);
+    }
+    function GetSelectedFieldValuesCallback(values) {
+        //joins selected keys
+        selectedIDs = values.join(';');
+    }
+    function OnSubmitClick(s, e) {
+        //collects selected row data to hidden input then throw it to post action
+        $("#selectedIDsHF").val(selectedIDs);
+        callbackPanelPartialView.PerformCallback();
+    }
+
+    function OnButtonClick() {
+        if (ValidateBLGridView.IsCustomizationWindowVisible()) {
+
+            ValidateBLGridView.HideCustomizationWindow();
+        }
+        else {
+            ValidateBLGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = ValidateBLGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+</script>
+
+@using (Html.BeginForm("Index", "Accounting"))
+{
+    @Html.Hidden("selectedIDsHF");
+
+    @Html.DevExpress().Button(
+        settings =>
+        {
+            settings.Name = "btnSubmit";
+            settings.ControlStyle.CssClass = "button";
+            settings.Text = IWSLocalResource.Validate;
+            settings.Width = Unit.Pixel(150);
+            settings.UseSubmitBehavior = false;
+            settings.ClientSideEvents.Click = "OnSubmitClick";
+        }
+        ).GetHtml()
+
+    @Html.DevExpress().Button(settings =>
+    {
+        settings.Name = "btShowCustomizationWindow";
+        settings.Text = IWSLocalResource.WindowCustomization;
+        settings.Width = Unit.Pixel(100);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnButtonClick";
+    }).GetHtml()
+    @Html.Partial("CallbackPanelPartialView", Model)
+}
+
+

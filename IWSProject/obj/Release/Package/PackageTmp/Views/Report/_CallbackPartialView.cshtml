@@ -1,0 +1,14 @@
+﻿
+@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPartialView";
+    settings.CallbackRouteValues = new { Controller = "Report", Action = "CallbackPanelPartial" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("PivotGridPartial");
+
+    });
+    settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+}).GetHtml()
+

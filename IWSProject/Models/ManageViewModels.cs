@@ -364,6 +364,7 @@ namespace IWSProject.Models
         public string Text { get; set; }
         public string AccountId { get; set; }
         public string VatAccountId { get; set; }
+        public int Modelid { get; set; }
     }
     public class DebitViewModel
     {

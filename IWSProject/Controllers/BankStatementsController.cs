@@ -42,13 +42,15 @@
 
             string selectedItems = selectedIDs;
 
+            int modelId = 0;
+
             try
             {
-                if (!string.IsNullOrEmpty(selectedItems))
+                if (!string.IsNullOrWhiteSpace(selectedItems))
                 {
-                    int ItemID = 0;
+                    int itemId = 0;
 
-                    int oid = 0;
+                    int OID = 0;
                     bool results = false;
 
                     Decimal amount;
@@ -62,9 +64,9 @@
 
                         var list = item.Split(new string[] { "," }, StringSplitOptions.None);
 
-                        ItemID = Convert.ToInt32(list[0]);
+                        itemId = Convert.ToInt32(list[0]);
 
-                        IEnumerable<AccountAmountViewModel> accountAmount = IWSLookUp.GetAccountAmounts(ItemID).Cast<AccountAmountViewModel>();
+                        IEnumerable<AccountAmountViewModel> accountAmount = IWSLookUp.GetAccountAmounts(itemId).Cast<AccountAmountViewModel>();
 
                         List<tempAccountAmount> ls = db.tempAccountAmounts.ToList();
                         foreach (var l in ls)
@@ -96,7 +98,7 @@
                             msg = IWSLocalResource.GenericError;
                             throw new Exception(msg);
                         }
-                        if (!IfExist(ItemID))
+                        if (!IfExist(itemId))
                         {
                             msg = IWSLocalResource.GenericError;
                             throw new Exception(msg);
@@ -107,21 +109,48 @@
                         {
                             if (owner.OwnerType == "Customer")
                             {
-                            oid = MakeSettlement(ItemID, 0);
-                            if (oid != 0)
-                                results = MakeCustomerInvoice(oid);
+                                modelId = (int)IWSLookUp.ComptaMasterModelId.Settlement;
+                                OID = MakeComptaMaster(itemId, 0, modelId,
+                                        IWSLookUp.ComptaMasterModelId.Settlement.ToString());
+                                if (OID != 0)
+                                {
+                                    modelId = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice;
+                                    results = MakeComptaMaster(itemId, OID, modelId,
+                                            IWSLookUp.ComptaMasterModelId.CustomerInvoice.ToString()) != 0;
+                                }
+
+
+                            //OID = MakeSettlement(itemId, 0);
+                            //if (OID != 0)
+                            //    results = MakeCustomerInvoice(OID);
                             }
                             if (owner.OwnerType == "Supplier")
                             {
-                                oid = MakeGeneralLedger(ItemID, 0);
-                                results = (oid != 0);
+                                modelId = (int)IWSLookUp.ComptaMasterModelId.GeneralLedger;
+                                results = MakeComptaMaster(itemId, 0, modelId,
+                                            IWSLookUp.ComptaMasterModelId.GeneralLedger.ToString()) != 0;
+
+
+                            //OID = MakeGeneralLedger(itemId, 0);
+                            //results = (OID != 0);
                             }
                         }
                         if (amount < 0)
                         {
-                            oid = MakePayment(ItemID, 0);
-                            if (oid != 0)
-                                results = MakeVendorInvoice(oid);
+                            modelId = (int)IWSLookUp.ComptaMasterModelId.Payment;
+                            OID = MakeComptaMaster(itemId, OID, modelId,
+                                        IWSLookUp.ComptaMasterModelId.Payment.ToString());
+                            if (OID != 0)
+                            {
+                                modelId = (int)IWSLookUp.ComptaMasterModelId.VendorInvoice;
+                                results = MakeComptaMaster(itemId, OID, modelId,
+                                        IWSLookUp.ComptaMasterModelId.VendorInvoice.ToString()) != 0;
+                            }
+
+
+                            //OID = MakePayment(itemId, 0);
+                            //if (OID != 0)
+                            //    results = MakeVendorInvoice(OID);
                         }
 
                         if (!results)
@@ -130,7 +159,7 @@
                             throw new Exception(msg);
                         }
 
-                        results = ValidateBankStatement(ItemID);
+                        results = ValidateBankStatement(itemId);
 
                         if (!results)
                         {
@@ -230,7 +259,7 @@
                     IWSLookUp.GetBankStatements((string)Session["CompanyID"], false)); 
         }
 
-        private object RootFolder = "~/Content/Uploads";
+        private readonly object RootFolder = "~/Content/Uploads";
 
         public ActionResult ImportCSV()
         {
@@ -899,38 +928,139 @@
             return countLineID;
         }
 
-        private int MakeComptaMaster(int bankStatementId, int OID, int modelId)
+        private int MakeComptaMaster(int bankStatementId, int OID, int modelId, string itemtype)
         {
-            string companyId = (string)Session["CompanyID"];
-
-            StatementDetailViewModel bankStatement = IWSLookUp.GetStatementDetail(bankStatementId,
-                                                IWSLookUp.DocsType.Settlement.ToString(), companyId);
             int itemID = 0;
+            string companyId = (string)Session["CompanyID"];
+            string account = String.Empty;
+            MasterCompta masterCompta = new MasterCompta();
+            List<DetailCompta> detailCompta = new List<DetailCompta>();
+            StatementDetailViewModel bankStatement = new StatementDetailViewModel();
+            InvoiceViewModel invoice = new InvoiceViewModel();
 
-            if (bankStatement.Equals(null))
-                return itemID;
-            string accountingAccount = IWSLookUp.GetCompteTier(bankStatement.Id, IWSLookUp.DocsType.Settlement.ToString());
-            MasterCompta masterCompta = new MasterCompta
+            if (!modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice) &&
+                !modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice))
             {
-                oid = OID,
-                CostCenter = "100", // to be confirmed
-                account = bankStatement.Id,
-                HeaderText = bankStatement.Verwendungszweck,
-                TransDate = bankStatement.Valutadatum,
-                ItemDate = bankStatement.Buchungstag,
-                EntryDate = DateTime.Today,
-                CompanyId = companyId,
-                ModelId = modelId,
-                IsValidated = false
-            };
-            //itemID = new AccountingController().MakeSettlementHeader(masterCompta);
+                bankStatement = IWSLookUp.GetStatementDetail(bankStatementId, itemtype, companyId);
+                if (bankStatement == null)
+                    return itemID;
+            }
 
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment))
+            {
+                account = IWSLookUp.GetCompteTier(bankStatement.Id,
+                             IWSLookUp.ComptaMasterModelId.Payment.ToString());
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement))
+            {
+                account = IWSLookUp.GetCompteTier(bankStatement.Id,
+                            IWSLookUp.ComptaMasterModelId.Settlement.ToString());
+            }
+
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment) ||
+                modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement))
+            {
+                masterCompta = new MasterCompta
+                {
+                    oid = OID,
+                    CostCenter = modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement)? "100": "200",
+                    account = account,
+                    HeaderText = bankStatement.Verwendungszweck,
+                    TransDate = bankStatement.Valutadatum,
+                    ItemDate = bankStatement.Buchungstag,
+                    EntryDate = DateTime.Today,
+                    CompanyId = companyId,
+                    ModelId = modelId,
+                    IsValidated = false
+                };
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.GeneralLedger))
+            {
+                masterCompta = new MasterCompta
+                {
+                    oid = OID,
+                    CostCenter = "100",
+                    HeaderText = bankStatement.Verwendungszweck,
+                    TransDate = bankStatement.Valutadatum,
+                    ItemDate = bankStatement.Buchungstag,
+                    EntryDate = DateTime.Today,
+                    CompanyId = companyId,
+                    ModelId = modelId,
+                    IsValidated = false
+                };
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice))
+            {
+                invoice = GetInvoiceDetail(OID, bankStatementId,
+                            IWSLookUp.ComptaMasterModelId.VendorInvoice.ToString(), companyId);
+
+                if (invoice != null)
+                {
+                    masterCompta = new MasterCompta
+                    {
+                        oid = 0,
+                        CostCenter = invoice.CostCenter,
+                        account = invoice.AccountId,
+                        HeaderText = invoice.HeaderText,
+                        TransDate = invoice.TransDate,
+                        ItemDate = invoice.ItemDate,
+                        EntryDate = invoice.EntryDate,
+                        CompanyId = invoice.CompanyId,
+                        ModelId = (int)IWSLookUp.ComptaMasterModelId.VendorInvoice,
+                        IsValidated = false
+                    };
+                }
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice))
+            {
+                invoice = GetInvoiceDetail(OID, bankStatementId,
+                            IWSLookUp.ComptaMasterModelId.CustomerInvoice.ToString(), companyId);
+
+                if (invoice != null)
+                {
+                    masterCompta = new MasterCompta
+                    {
+                        oid = 0,
+                        CostCenter = invoice.CostCenter,
+                        account = invoice.AccountId,
+                        HeaderText = invoice.HeaderText,
+                        TransDate = invoice.TransDate,
+                        ItemDate = invoice.ItemDate,
+                        EntryDate = invoice.EntryDate,
+                        CompanyId = invoice.CompanyId,
+                        ModelId = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice,
+                        IsValidated = false
+                    };
+                }
+            }
+
+            itemID = MakeHeader(masterCompta);
             if (!(itemID > 0))
                 return itemID;
 
-            List<LineSettlement> lineSettlement = new List<LineSettlement>
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment))
+            {
+                detailCompta = new List<DetailCompta>
                 {
-                    new LineSettlement
+                    new DetailCompta
+                    {
+                        transid = itemID,
+                        account =  IWSLookUp.GetPaymentDebitAcount(bankStatementId),
+                        side = true,
+                        oaccount = IWSLookUp.GetPaymentCreditAcount(bankStatementId),
+                        amount = bankStatement.Betrag,
+                        Currency = bankStatement.Waehrung,
+                        duedate = bankStatement.Valutadatum,
+                        ModelId = modelId,
+                        text = bankStatement.Buchungstext
+                    }
+                };
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement))
+            {
+                detailCompta = new List<DetailCompta>
+                {
+                    new DetailCompta
                     {
                         transid = itemID,
                         account = IWSLookUp.GetSettlementDebitAcount(bankStatementId),
@@ -939,17 +1069,376 @@
                         amount = bankStatement.Betrag,
                         Currency = bankStatement.Waehrung,
                         duedate = bankStatement.Valutadatum,
+                        ModelId = modelId,
                         text = bankStatement.Buchungstext
                     }
                 };
-            int countLineID = new AccountingController().MakeSettlementLine(lineSettlement);
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.GeneralLedger))
+            {
+                detailCompta = new List<DetailCompta>
+                     {
+                         new DetailCompta
+                         {
+                             transid = itemID,
+                             account = bankStatement.AccountID,
+                             side = true,
+                             oaccount = bankStatement.OAccountID,
+                             amount = bankStatement.Betrag,
+                             Currency = bankStatement.Waehrung,
+                             duedate = bankStatement.Valutadatum,
+                             ModelId = modelId,
+                             text = bankStatement.Buchungstext
+                         }
+                     };
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice))
+            {
+                DetailCompta temp = new DetailCompta();
+
+                if (db.tempAccountAmounts.Any())
+                {
+                    List<tempAccountAmount> ls = db.tempAccountAmounts.ToList();
+
+                    foreach (var l in ls)
+                    {
+                        temp = new DetailCompta
+                        {
+                            transid = itemID,
+                            account = l.AccountCode,
+                            side = true,
+                            oaccount = invoice.OAccount,
+                            amount = l.AccountAmount,
+                            Currency = invoice.OCurrency,
+                            duedate = invoice.DueDate,
+                            text = invoice.HeaderText
+                        };
+                        detailCompta.Add(temp);
+                    }
+                }
+                else
+                {
+                    detailCompta = new List<DetailCompta>
+                    {
+                        new DetailCompta
+                        {
+                            transid = itemID,
+                            account = invoice.Account,
+                            side = true,
+                            oaccount = invoice.OAccount,
+                            amount = (decimal)invoice.Amount,
+                            Currency = invoice.OCurrency,
+                            duedate = invoice.DueDate,
+                            ModelId = invoice.Modelid,
+                            text = invoice.HeaderText
+                        },
+                        new DetailCompta
+                        {
+                            transid = itemID,
+                            account = invoice.VatAccountId,
+                            side = true,
+                            oaccount = invoice.OAccount,
+                            amount = (decimal)invoice.VatAmount,
+                            Currency = invoice.OCurrency,
+                            duedate = invoice.DueDate,
+                            ModelId = invoice.Modelid,
+                            text = invoice.HeaderText
+                        }
+                    };
+                }
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice))
+            {
+                detailCompta = new List<DetailCompta>
+                {
+                    new DetailCompta
+                    {
+                        transid = itemID,
+                        account = invoice.Account,
+                        side = true,
+                        oaccount = invoice.OAccount,
+                        amount = (decimal)invoice.Amount,
+                        Currency = invoice.OCurrency,
+                        duedate = invoice.DueDate,
+                        ModelId = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice,
+                        text = invoice.Text
+                    },
+                    new DetailCompta
+                    {
+                        transid = itemID,
+                        account = invoice.Account,
+                        side = true,
+                        oaccount = invoice.VatAccountId,
+                        amount = (decimal)invoice.VatAmount,
+                        Currency = invoice.OCurrency,
+                        duedate = invoice.DueDate,
+                        ModelId = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice,
+                        text = invoice.Text
+                    }
+                };
+            }
+
+            int countLineID = MakeDetail(detailCompta);
             if (countLineID > 0)
             {
-                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Settlement.ToString(), lineSettlement.First().transid);
+                IWSLookUp.SetJournal(detailCompta.First().transid);
                 return itemID;
-
             }
             return countLineID;
+        }
+
+        private bool MakeVendorInvoice(int paymentId, int bankStatementId)
+        {
+            string companyId = (string)Session["CompanyID"];
+
+            InvoiceViewModel invoice = GetInvoiceDetail(paymentId, bankStatementId,
+                                            IWSLookUp.ComptaMasterModelId.VendorInvoice.ToString(), companyId);
+            int itemID = 0;
+
+            if (invoice.Equals(null))
+                return false;
+
+            MasterCompta vendorInvoice = new MasterCompta
+            {
+                oid = 0,
+                CostCenter = invoice.CostCenter,
+                account = invoice.AccountId,
+                HeaderText = invoice.HeaderText,
+                TransDate = invoice.TransDate,
+                ItemDate = invoice.ItemDate,
+                EntryDate = invoice.EntryDate,
+                CompanyId = invoice.CompanyId,
+                ModelId = (int)IWSLookUp.ComptaMasterModelId.VendorInvoice,
+                IsValidated = false
+            };
+            itemID = MakeHeader(vendorInvoice);
+
+            if (itemID == 0)
+                return false;
+
+            List<DetailCompta> detailCompta = new List<DetailCompta>();
+
+            DetailCompta temp = new DetailCompta();
+
+            if (db.tempAccountAmounts.Any())
+            {
+                List<tempAccountAmount> ls = db.tempAccountAmounts.ToList();
+
+                foreach (var l in ls)
+                {
+                    temp = new DetailCompta
+                    {
+                        transid = itemID,
+                        account = l.AccountCode,
+                        side = true,
+                        oaccount = invoice.OAccount,
+                        amount = l.AccountAmount,
+                        Currency = invoice.OCurrency,
+                        duedate = invoice.DueDate,
+                        text = invoice.HeaderText
+                    };
+                    detailCompta.Add(temp);
+                }
+            }
+            else
+            {
+                detailCompta = new List<DetailCompta>
+                {
+                    new DetailCompta
+                    {
+                        transid = itemID,
+                        account = invoice.Account,
+                        side = true,
+                        oaccount = invoice.OAccount,
+                        amount = (decimal)invoice.Amount,
+                        Currency = invoice.OCurrency,
+                        duedate = invoice.DueDate,
+                        ModelId = invoice.Modelid,
+                        text = invoice.HeaderText
+                    },
+                    new DetailCompta
+                    {
+                        transid = itemID,
+                        account = invoice.VatAccountId,
+                        side = true,
+                        oaccount = invoice.OAccount,
+                        amount = (decimal)invoice.VatAmount,
+                        Currency = invoice.OCurrency,
+                        duedate = invoice.DueDate,
+                        ModelId = invoice.Modelid,
+                        text = invoice.HeaderText
+                    }
+                };
+            }
+
+            int countLineID = MakeDetail(detailCompta);
+            if (countLineID != 0)
+            {
+                IWSLookUp.SetJournal(paymentId);
+                return UpdateOid(IWSLookUp.DocsType.Payment.ToString(), paymentId, itemID);
+            }
+            return false;
+        }
+
+        private InvoiceViewModel GetInvoiceDetail(int itemId, int bankStatementId, string itemType, string companyId)
+        {
+            try
+            {
+                if (itemType.Equals(IWSLookUp.ComptaMasterModelId.CustomerInvoice.ToString()))
+                {
+                    var owner = from Vats in db.Vats
+                                join Customers in db.Customers on new { Vats.id } equals new { id = Customers.VatCode }
+                                where
+                                  Customers.id ==
+                                    ((from BankAccounts in db.BankAccounts
+                                      where
+                                 BankAccounts.IBAN ==
+                                 ((from BankStatements in db.BankStatements
+                                   where
+                                   BankStatements.id == bankStatementId &&
+                                   BankStatements.CompanyID == companyId
+                                   select new
+                                   {
+                                       BankStatements.Kontonummer
+                                   }).First().Kontonummer)
+                                      select new
+                                      {
+                                          BankAccounts.Owner
+                                      }).First().Owner)
+                                select new
+                                {
+                                    Vats.PVat,
+                                    Vats.outputvataccountid,
+                                    Customers.accountid,
+                                    Customers.IBAN,
+                                    Customers.Produit
+                                };
+                    var vat = owner.SingleOrDefault().PVat;
+                    InvoiceViewModel invoice = (from l in db.DetailComptas
+                                                where
+                                                    l.MasterCompta.id == itemId &&
+                                                    l.MasterCompta.CompanyId == companyId
+                                                select new InvoiceViewModel()
+                                                {
+                                                    Account = l.oaccount,
+                                                    OAccount = owner.SingleOrDefault().Produit,
+                                                    PVat = vat,
+                                                    CostCenter = l.MasterCompta.CostCenter,
+                                                    HeaderText = l.MasterCompta.HeaderText,
+                                                    TransDate = l.MasterCompta.TransDate,
+                                                    ItemDate = l.MasterCompta.ItemDate,
+                                                    EntryDate = l.MasterCompta.EntryDate,
+                                                    OTotal = l.MasterCompta.oTotal,
+                                                    Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                    VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                    OPeriode = l.MasterCompta.oPeriode,
+                                                    OCurrency = l.MasterCompta.oCurrency,
+                                                    DueDate = l.duedate,
+                                                    Text = l.text,
+                                                    CompanyId = l.MasterCompta.CompanyId,
+                                                    AccountId = l.MasterCompta.account,
+                                                    VatAccountId = owner.SingleOrDefault().outputvataccountid,
+                                                    Modelid = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice
+                                                }).Single();
+                    return invoice;
+                }
+                if (itemType.Equals(IWSLookUp.ComptaMasterModelId.VendorInvoice.ToString()))
+                {
+                    var owner = from Vats in db.Vats
+                                join Suppliers in db.Suppliers on new { Vats.id } equals new { id = Suppliers.VatCode }
+                                where
+                                  Suppliers.id ==
+                                    ((from BankAccounts in db.BankAccounts
+                                      where
+                                 BankAccounts.IBAN ==
+                                 ((from BankStatements in db.BankStatements
+                                   where
+                                      BankStatements.id == bankStatementId &&
+                                      BankStatements.CompanyID == companyId
+                                   select new
+                                   {
+                                       BankStatements.Kontonummer
+                                   }).First().Kontonummer)
+                                      select new
+                                      {
+                                          BankAccounts.Owner
+                                      }).First().Owner)
+                                select new
+                                {
+                                    Vats.PVat,
+                                    Vats.inputvataccountid,
+                                    Suppliers.accountid,
+                                    Suppliers.IBAN,
+                                    Suppliers.Charge
+                                };
+                    var vat = owner.SingleOrDefault().PVat;
+                    InvoiceViewModel invoice = (from l in db.DetailComptas
+                                                where
+                                                    l.MasterCompta.id == itemId &&
+                                                    l.MasterCompta.CompanyId == companyId
+                                                select new InvoiceViewModel()
+                                                {
+                                                    Account = owner.SingleOrDefault().Charge,
+                                                    OAccount = l.account,
+                                                    PVat = vat,
+                                                    CostCenter = l.MasterCompta.CostCenter,
+                                                    HeaderText = l.MasterCompta.HeaderText,
+                                                    TransDate = l.MasterCompta.TransDate,
+                                                    ItemDate = l.MasterCompta.ItemDate,
+                                                    EntryDate = l.MasterCompta.EntryDate,
+                                                    OTotal = l.MasterCompta.oTotal,
+                                                    Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                    VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                    OPeriode = l.MasterCompta.oPeriode,
+                                                    OCurrency = l.MasterCompta.oCurrency,
+                                                    DueDate = l.duedate,
+                                                    Text = l.text,
+                                                    CompanyId = l.MasterCompta.CompanyId,
+                                                    AccountId = l.MasterCompta.account,
+                                                    VatAccountId = owner.SingleOrDefault().inputvataccountid,
+                                                    Modelid = (int)IWSLookUp.ComptaMasterModelId.VendorInvoice
+                                                }).Single();
+                    return invoice;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+            return null;
+        }
+        private int MakeHeader(MasterCompta masterCompta)
+        {
+            int id = 0;
+            try
+            {
+                db.MasterComptas.InsertOnSubmit(masterCompta);
+                db.SubmitChanges(ConflictMode.ContinueOnConflict);
+                id = db.MasterComptas.Max(i => i.id);
+            }
+            catch (Exception ex)
+            {
+                IWSLookUp.LogException(ex);
+            }
+            return id;
+        }
+        private int MakeDetail(List<DetailCompta> detailCompta)
+        {
+            int id = 0;
+            try
+            {
+                foreach (var item in detailCompta)
+                {
+                    db.DetailComptas.InsertOnSubmit(item);
+                    id++;
+                }
+                db.SubmitChanges(ConflictMode.FailOnFirstConflict);
+            }
+            catch (Exception ex)
+            {
+                IWSLookUp.LogException(ex);
+            }
+            return id;
         }
 
         private StatementDetailViewModel GetDetailCompta(int bankStatementId, string itemType, string companyId)
@@ -1092,7 +1581,7 @@
         {
             try
             { 
-                var docs = db.BankStatements.Single(item => item.id == ItemID);
+                var docs = db.BankStatements.SingleOrDefault(item => item.id == ItemID);
 
                 if (docs.Equals(null))
                     return false;
@@ -1103,7 +1592,6 @@
             }
             catch (Exception ex)
             {
-                ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
                 return false;
             }
@@ -1133,7 +1621,7 @@
         {
             try
             {
-                if (itemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
+                if (itemType.Equals(IWSLookUp.ComptaMasterModelId.Payment.ToString()))
                 {
                     var docs = db.Payments.Single(item => item.id == itemId);
                     if (docs != null)
@@ -1142,7 +1630,7 @@
                         return true;
                     }
                 }
-                if (itemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
+                if (itemType.Equals(IWSLookUp.ComptaMasterModelId.Settlement.ToString()))
                 {
                     var docs = db.Settlements.Single(item => item.id == itemId);
                     if (docs != null)
@@ -1154,7 +1642,6 @@
             }
             catch (Exception ex)
             {
-                ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
             }
             return false;
@@ -1168,7 +1655,7 @@
             public static string[] AllowedFileExtensions = new string[] { ".csv", ".txt", ".xls", ".xlsx" };
         }
 
-        #endregion
+     #endregion
 
     }
 

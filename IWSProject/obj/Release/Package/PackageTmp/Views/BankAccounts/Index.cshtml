@@ -1,0 +1,13 @@
+﻿<script type="text/javascript">
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutBA").text(layout)
+    }
+</script>        
+@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.bankaccount;
+}
+@Html.Action("BankAccountsGridViewPartial")
