@@ -32,6 +32,7 @@ namespace IWSProject.Controllers
         {
             var model = db.CostCenters;
             item.CompanyID = (string)Session["CompanyID"];
+            item.ModelId = (int)IWSLookUp.MetaModelId.CostCenter;
             item.Posted = DateTime.Now.Date;
             item.Updated = DateTime.Now.Date;
             ViewData["costCenters"] = item;

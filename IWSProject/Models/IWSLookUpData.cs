@@ -10,7 +10,7 @@
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Web;
-
+    using IWSProject.Content;
     public static class IWSLookUp
     {
 
@@ -1367,33 +1367,61 @@
             }
             return (List<Menu>)HttpContext.Current.Session["Menus"];
         }
-        public static IEnumerable GetSuppliers()        ///string companyId
+        public static IEnumerable GetSuppliers()
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
+            var supplier = from Accounts in IWSEntities.Accounts
+                           where
+                                 ((from Suppliers in IWSEntities.Suppliers
+                                   where
+                                      Suppliers.CompanyID == companyId
+                                   select new
+                                   {
+                                       Suppliers.accountid
+                                   }).Distinct()).Contains(new { accountid = Accounts.id })
+                           select new
+                           {
+                               Accounts.id,
+                               Accounts.name
+                           };
 
-            var supplier = IWSEntities.Suppliers.AsEnumerable().Select(item => new
-            {
-                Id = item.id,
-                Name = item.name,
-                Account = item.accountid,
-                item.CompanyID
-            })
-            .Where(c => c.CompanyID == companyId)
-            .OrderBy(o => o.Id);
+            //var supplier = IWSEntities.Suppliers.AsEnumerable().Select(item => new
+            //{
+            //    Id = item.id,
+            //    Name = item.name,
+            //    Account = item.accountid,
+            //    item.CompanyID
+            //})
+            //.Where(c => c.CompanyID == companyId)
+            //.OrderBy(o => o.Id);
             return supplier;
         }
-        public static IEnumerable GetCustomers()        //string companyId
+        public static IEnumerable GetCustomers()
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
-            var customer = IWSEntities.Customers.AsEnumerable().Select(item => new
-            {
-                Id = item.id,
-                Name = item.name,
-                Account = item.accountid,
-                item.CompanyID
-            })
-            .Where(c => c.CompanyID == companyId)
-            .OrderBy(o => o.Id);
+            var customer = from Accounts in IWSEntities.Accounts
+                           where
+                                 ((from Customers in IWSEntities.Customers
+                                   where
+                                      Customers.CompanyID == companyId
+                                   select new
+                                   {
+                                       Customers.accountid
+                                   }).Distinct()).Contains(new { accountid = Accounts.id })
+                           select new
+                           {
+                               Accounts.id,
+                               Accounts.name
+                           };
+            //var customer = IWSEntities.Customers.AsEnumerable().Select(item => new
+            //{
+            //    Id = item.id,
+            //    Name = item.name,
+            //    Account = item.accountid,
+            //    item.CompanyID
+            //})
+            //.Where(c => c.CompanyID == companyId)
+            //.OrderBy(o => o.Id);
             return customer;
         }
         //public static IEnumerable GetSupplierOrCustomer(string isVending)
@@ -1422,6 +1450,10 @@
             }
             return null;
         }
+        //public static IEnumerable GetTypeJournal() => IWSEntities.TypeJournals.Where(c =>
+        //c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
+        //Select(s => new { s.Id, s.Name }).
+        //OrderBy(o => o.Id).AsEnumerable();
         public static IEnumerable GetVAT()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -2792,7 +2824,7 @@
                      Side = j.Side,
                      Currency = j.Currency,
                      CompanyID = j.CompanyID,
-                     TypeJournal = j.TypeJournal
+                     TypeJournal = j.TypeJournal,
                  }).OrderBy(o=>o.pk).ToList();
             }
             else
@@ -3020,7 +3052,7 @@
                       {
                           Account = j.Account,
                           Owner = j.CustSupplierID,
-                          ItemType = j.LocalName,
+                          ItemType = "N/A",// j.LocalName,
                           TransDate = j.TransDate,
                           Amount = j.Amount,
                           Currency = j.Currency,
@@ -3669,54 +3701,58 @@
 
         public enum MetaModelId
         {
-            Article = 2000,
-            Banks = 2005,
-            Customer = 2010,
-            Account = 2015,
-            Company = 2020,
-            CostCenter = 2025,
-            QuantityUnit = 2030,
-            Store = 2035,
-            Supplier = 2040,
+            Article = 7,
+            Banks = 11,
+            Customer = 3,
+            Account = 9,
+            Company = 10,
+            CostCenter = 6,
+            QuantityUnit = 4,
+            Store = 2,
+            Supplier = 1,
             VAT = 2045,
             Currency = 2050,
+            TypeJournal = 2060,
+            Stock = 107,
+            BankAccount =12,
+            PeriodicAccountBalance,
             Default = 0000
         }
         public enum LogisticMasterModelId
         {
-            PurchaseOrder = 3000,
-            GoodReceiving = 3005,
-            InventoryInvoice = 3010,
-            SalesOrder = 3500,
-            BillOfDelivery = 3505,
-            SalesInvoice = 3510,
+            PurchaseOrder = 101,
+            GoodReceiving = 104,
+            InventoryInvoice = 110,
+            SalesOrder = 116,
+            BillOfDelivery = 118,
+            SalesInvoice = 120,
             Default=0000
         }
         public enum LogisticDetailModelId
         {
-            LinePurchaseOrder = 4000,
-            LineGoodReceiving = 4005,
-            LineInventoryInvoice = 4010,
-            LineSalesOrder = 4500,
-            LineBillOfDelivery = 4505,
-            LineSalesInvoice = 4010,
+            LinePurchaseOrder = 102,
+            LineGoodReceiving = 105,
+            LineInventoryInvoice = 111,
+            LineSalesOrder = 117,
+            LineBillOfDelivery = 119,
+            LineSalesInvoice = 121,
             Default = 0000
         }
         public enum ComptaMasterModelId
         {
-            VendorInvoice = 5000,
-            Payment = 5005,
-            CustomerInvoice = 5500,
-            Settlement = 5505,
+            VendorInvoice = 112,
+            Payment = 114,
+            CustomerInvoice = 122,
+            Settlement = 124,
             GeneralLedger = 5800,
             Default = 0000
         }
         public enum ComptaDetailModelId
         {
-            LineVendorInvoice = 6000,
-            LineCustomerInvoice = 6005,
-            LinePayment = 6010,
-            LineSettlement = 6015,
+            LineVendorInvoice = 113,
+            LineCustomerInvoice = 123,
+            LinePayment = 115,
+            LineSettlement = 125,
             LineGeneralLedger = 6020,
             Default = 0000
         }
@@ -3738,7 +3774,7 @@
             Supplier
         }
 
-        private static DateTime StringToDate(string stringDate)
+    private static DateTime StringToDate(string stringDate)
         {
             string y = "20" + stringDate.Substring(4, 2);
             string m = stringDate.Substring(2, 2);

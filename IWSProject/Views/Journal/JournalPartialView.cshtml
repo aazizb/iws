@@ -95,14 +95,14 @@
     settings.Columns.Add(column =>
     {
         column.FieldName = "CustSupplierID";
-        column.Caption = IWSLocalResource.Owner;
+        column.Caption = IWSLocalResource.account;
         column.Width = Unit.Percentage(15);
         column.EditorProperties().ComboBox(combo =>
         {
             combo.TextField = "Name";
             combo.ValueField = "id";
             combo.ValueType = typeof(string);
-            combo.DataSource = IWSLookUp.GetCustSuppliers();
+            combo.DataSource = IWSLookUp.GetAccounts();//           GetCustSuppliers();
             combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
             combo.Columns.Add("name", IWSLocalResource.Owner, Unit.Percentage(75));
             combo.TextFormatString = "{0}-{1}";

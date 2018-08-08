@@ -718,7 +718,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.GoodReceiving.ToString(),
+                                ItemType = IWSLookUp.LogisticMasterModelId.GoodReceiving.ToString(),
                                 CustSupplierID =doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -738,7 +738,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.GoodReceiving.ToString(),
+                                ItemType = IWSLookUp.LogisticMasterModelId.GoodReceiving.ToString(),
                                 CustSupplierID=doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -895,7 +895,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.BillOfDelivery.ToString(),
+                                ItemType = IWSLookUp.LogisticMasterModelId.BillOfDelivery.ToString(),
                                 CustSupplierID =doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -915,7 +915,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.BillOfDelivery.ToString(),
+                                ItemType = IWSLookUp.LogisticMasterModelId.BillOfDelivery.ToString(),
                                 CustSupplierID=doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -1025,7 +1025,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.VendorInvoice.ToString(),
+                                ItemType = IWSLookUp.ComptaMasterModelId.VendorInvoice.ToString(),
                                 CustSupplierID =doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -1047,7 +1047,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.VendorInvoice.ToString(),
+                                ItemType = IWSLookUp.ComptaMasterModelId.VendorInvoice.ToString(),
                                 CustSupplierID=doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -1158,7 +1158,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.Payment.ToString(),
+                                ItemType = IWSLookUp.ComptaMasterModelId.Payment.ToString(),
                                 CustSupplierID =doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -1180,7 +1180,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.Payment.ToString(),
+                                ItemType = IWSLookUp.ComptaMasterModelId.Payment.ToString(),
                                 CustSupplierID=doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -1290,7 +1290,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.CustomerInvoice.ToString(),
+                                ItemType = IWSLookUp.ComptaMasterModelId.CustomerInvoice.ToString(),
                                 CustSupplierID =doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -1312,7 +1312,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.CustomerInvoice.ToString(),
+                                ItemType = IWSLookUp.ComptaMasterModelId.CustomerInvoice.ToString(),
                                 CustSupplierID=doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -1422,7 +1422,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.Settlement.ToString(),
+                                ItemType = IWSLookUp.ComptaMasterModelId.Settlement.ToString(),
                                 CustSupplierID =doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -1444,7 +1444,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.Settlement.ToString(),
+                                ItemType = IWSLookUp.ComptaMasterModelId.Settlement.ToString(),
                                 CustSupplierID=doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -1555,7 +1555,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.GeneralLedger.ToString(),
+                                ItemType = IWSLookUp.ComptaMasterModelId.GeneralLedger.ToString(),
                                 CustSupplierID =doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -1577,7 +1577,7 @@ namespace IWSProject.Controllers
                             new Journal {
                                 ItemID =doc.ItemID,
                                 OID =doc.OID,
-                                ItemType = IWSLookUp.DocsType.GeneralLedger.ToString(),
+                                ItemType = IWSLookUp.ComptaMasterModelId.GeneralLedger.ToString(),
                                 CustSupplierID=doc.CustSupplierID,
                                 StoreID =doc.StoreID,
                                 TransDate =doc.TransDate,
@@ -2053,7 +2053,7 @@ namespace IWSProject.Controllers
                  {
                      ItemID = g.Key.id,
                      OID = (int)g.Key.oid,
-                     ItemType = IWSLookUp.DocsType.GoodReceiving.ToString(),
+                     ItemType = IWSLookUp.LogisticMasterModelId.GoodReceiving.ToString(),
                      CustSupplierID = g.Key.SupplierID,
                      StoreID = g.Key.CostCenter,
                      TransDate = g.Key.ItemDate,
@@ -2077,7 +2077,7 @@ namespace IWSProject.Controllers
                             OAccount =item.OAccount,
                             Amount =item.Amount,
                             Currency=item.Currency,
-                            ItemType = IWSLookUp. DocsType.VendorInvoice.ToString(),
+                            ItemType = IWSLookUp.ComptaMasterModelId.VendorInvoice.ToString(),
                             Side = IWSLookUp. Side.Debit.ToString(),
                             CompanyID=(string)Session["CompanyID"]},
                         new Journal { ItemID=item.ItemID,
@@ -2090,7 +2090,7 @@ namespace IWSProject.Controllers
                             OAccount =item.Account,
                             Amount =item.Amount,
                             Currency=item.Currency,
-                            ItemType = IWSLookUp. DocsType.VendorInvoice.ToString(),
+                            ItemType = IWSLookUp.ComptaMasterModelId.VendorInvoice.ToString(),
                             Side = IWSLookUp. Side.Credit.ToString(),
                             CompanyID=(string)Session["CompanyID"]} };
 
@@ -2240,7 +2240,7 @@ namespace IWSProject.Controllers
                       {
                           ItemID = g.Key.id,
                           OID = (int)g.Key.oid,
-                          ItemType = IWSLookUp.DocsType.CustomerInvoice.ToString(),
+                          ItemType = IWSLookUp.ComptaMasterModelId.CustomerInvoice.ToString(),
                           CustSupplierID = g.Key.SupplierID,
                           StoreID = g.Key.CostCenter,
                           TransDate = g.Key.ItemDate,
@@ -2264,7 +2264,7 @@ namespace IWSProject.Controllers
                             OAccount =item.OAccount,
                             Amount =item.Amount,
                             Currency=item.Currency,
-                            ItemType = IWSLookUp. DocsType.CustomerInvoice.ToString(),
+                            ItemType = IWSLookUp.ComptaMasterModelId.CustomerInvoice.ToString(),
                             Side = IWSLookUp. Side.Debit.ToString(),
                             CompanyID=(string)Session["CompanyID"]},
                         new Journal { ItemID=item.ItemID,
@@ -2277,7 +2277,7 @@ namespace IWSProject.Controllers
                             OAccount =item.Account,
                             Amount =item.Amount,
                             Currency=item.Currency,
-                            ItemType = IWSLookUp. DocsType.CustomerInvoice.ToString(),
+                            ItemType = IWSLookUp.ComptaMasterModelId.CustomerInvoice.ToString(),
                             Side = IWSLookUp. Side.Credit.ToString(),
                             CompanyID=(string)Session["CompanyID"]} };
                     results = SendToJournal(journal);
@@ -2370,9 +2370,10 @@ namespace IWSProject.Controllers
                 {
                     foreach (Journal item in journal)
                     {
+
                         db.Journals.InsertOnSubmit(item);
 
-                        //UpdateMetaFiles(item);
+                        UpdateMetaFiles(item);
 
                     }
                     results = true;

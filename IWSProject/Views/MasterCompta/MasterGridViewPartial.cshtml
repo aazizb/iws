@@ -173,8 +173,6 @@
         });
         settings.Columns.Add(column =>
         {
-
-
             column.FieldName = "TypeJournal";
             column.Caption = IWSLocalResource.TypeJournal;
             column.Width = Unit.Percentage(10);
@@ -476,25 +474,25 @@
                         s.Properties.ValueField = "Account";
                         s.Properties.ValueType = typeof(string);
                         s.Properties.DataSource = IWSLookUp.GetAccounts((string)Session["IsVending"]);
-                        s.Properties.Columns.Add(a =>
-                        {
-                            a.FieldName = "Account";
-                            a.Caption = IWSLocalResource.id;
-                            a.Width = Unit.Percentage(20);
-                        });
+                        //s.Properties.Columns.Add(a =>
+                        //{
+                        //    a.FieldName = "Account";
+                        //    a.Caption = IWSLocalResource.id;
+                        //    a.Width = Unit.Percentage(20);
+                        //});
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "Name";
                             a.Caption = IWSLocalResource.Owner;
-                            a.Width = Unit.Percentage(65);
+                            a.Width = Unit.Percentage(75);
                         });
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "Id";
                             a.Caption = IWSLocalResource.id;
-                            a.Width = Unit.Percentage(15);
+                            a.Width = Unit.Percentage(25);
                         });
-                        s.Properties.TextFormatString = "{0}-{1}-{2}";
+                        s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);

@@ -34,6 +34,7 @@ namespace IWSProject.Controllers
         {
             var model = db.Stores;
             item.CompanyID = (string)Session["CompanyID"];
+            item.ModelId = (int)IWSLookUp.MetaModelId.Store;
             item.Posted = DateTime.Now.Date;
             item.Updated = DateTime.Now.Date;
             ViewData["stores"] = item;

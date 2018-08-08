@@ -35,6 +35,7 @@ namespace IWSProject.Controllers
         {
             var model = db.Vats;
             item.CompanyID = (string)Session["CompanyID"];
+            item.ModelId = (int)IWSLookUp.MetaModelId.VAT;
             item.Posted = DateTime.Now.Date;
             item.Updated = DateTime.Now.Date;
             ViewData["vats"] = item;

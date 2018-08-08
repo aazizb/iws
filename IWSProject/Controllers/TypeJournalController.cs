@@ -52,6 +52,7 @@ namespace IWSProject.Controllers
         {
             var model = db.TypeJournals;
             item.CompanyId = (string)Session["CompanyID"];
+            item.ModelId = (int)IWSLookUp.MetaModelId.TypeJournal;
             item.Posted = DateTime.Now.Date;
             item.Updated = DateTime.Now.Date;
             ViewData["typeDraft"] = item;

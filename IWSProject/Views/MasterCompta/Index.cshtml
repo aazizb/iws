@@ -184,15 +184,15 @@
     @Html.DevExpress().ComboBox(settings =>
 {
     settings.Name = "ComboBoxModelId";
-    settings.Width = Unit.Pixel(211);
+    settings.Width = Unit.Pixel(185);
     settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
     settings.Properties.DropDownStyle = DropDownStyle.DropDown;
-    settings.Properties.Items.Add("Default",0000);
-    settings.Properties.Items.Add("VendorInvoice", 5000);
-    settings.Properties.Items.Add("Payment", 5005);
-    settings.Properties.Items.Add("CustomerInvoice", 5500);
-    settings.Properties.Items.Add("Settlement", 5505);
-    settings.Properties.Items.Add("GeneralLedger", 5800);
+    settings.Properties.Items.Add("",0000);
+    settings.Properties.Items.Add(IWSLocalResource.vendorinvoice, 5000);
+    settings.Properties.Items.Add(IWSLocalResource.payment, 5005);
+    settings.Properties.Items.Add(IWSLocalResource.CustomerInvoice, 5500);
+    settings.Properties.Items.Add(IWSLocalResource.Settlement, 5505);
+    settings.Properties.Items.Add(IWSLocalResource.GeneralLedger, 5800);
     //settings.Properties.TextField = "ParentName";
     //settings.Properties.ValueField = "ParentId";
     //settings.Properties.ClientSideEvents.ValueChanged = "function(s, e) { OnComboBoxModelIdValueChanged(); }";

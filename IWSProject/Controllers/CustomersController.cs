@@ -59,6 +59,7 @@ namespace IWSProject.Controllers
         {
             var model = db.Customers;
             item.CompanyID = (string)Session["CompanyID"];
+            item.ModelId = (int)IWSLookUp.MetaModelId.Customer;
             item.Posted = DateTime.Now.Date;
             item.Updated = DateTime.Now.Date;
             ViewData["customer"] = item;

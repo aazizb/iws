@@ -93,6 +93,7 @@ namespace IWSProject.Controllers
         {
             var model = db.Companies;
             ViewData["company"] = item;
+            item.ModelId = (int)IWSLookUp.MetaModelId.Company;
             if (ModelState.IsValid)
             {
                 try

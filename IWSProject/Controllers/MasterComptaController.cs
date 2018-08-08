@@ -291,18 +291,31 @@ namespace IWSProject.Controllers
         }
         private string IsVending(int modelId)
         {
-            if (Math.Round(modelId * 0.01) == 50)
-            {
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice) ||
+                (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment))){
                 return "SU";
             }
-            if (Math.Round(modelId * 0.01) == 55)
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice) ||
+                (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement)))
             {
                 return "CU";
             }
-            if (Math.Round(modelId * 0.01) == 58)
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice))
             {
                 return "GL";
             }
+            //if (Math.Round(modelId * 0.01) == 50)
+            //{
+            //    return "SU";
+            //}
+            //if (Math.Round(modelId * 0.01) == 55)
+            //{
+            //    return "CU";
+            //}
+            //if (Math.Round(modelId * 0.01) == 58)
+            //{
+            //    return "GL";
+            //}
             return null;
         }
         #endregion

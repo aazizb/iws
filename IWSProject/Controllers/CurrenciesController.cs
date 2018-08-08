@@ -30,6 +30,7 @@ namespace IWSProject.Controllers
         {
             var model = db.Currencies;
             item.CompanyID = (string)Session["CompanyID"];
+            item.ModelId = (int)IWSLookUp.MetaModelId.Currency;
             item.Posted = DateTime.Now.Date;
             item.Updated = DateTime.Now.Date;
             ViewData["Currencies"] = item;

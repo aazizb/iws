@@ -231,16 +231,16 @@
     @Html.DevExpress().ComboBox(settings =>
 {
     settings.Name = "ComboBoxModelId";
-    settings.Width = Unit.Pixel(211);
+    settings.Width = Unit.Pixel(185);
     settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
     settings.Properties.DropDownStyle = DropDownStyle.DropDown;
-    settings.Properties.Items.Add("Default",0000);
-    settings.Properties.Items.Add("PurchaseOrder", 3000);
-    settings.Properties.Items.Add("GoodReceiving", 3005);
-    settings.Properties.Items.Add("InventoryInvoice", 3010);
-    settings.Properties.Items.Add("SalesOrder", 3500);
-    settings.Properties.Items.Add("BillOfDelivery", 3505);
-    settings.Properties.Items.Add("SalesInvoice", 3510);
+    settings.Properties.Items.Add("",0000);
+    settings.Properties.Items.Add(IWSLocalResource.PurchaseOrder, 3000);
+    settings.Properties.Items.Add(IWSLocalResource.GoodReceiving, 3005);
+    settings.Properties.Items.Add(IWSLocalResource.InventoryInvoice, 3010);
+    settings.Properties.Items.Add(IWSLocalResource.SalesOrder, 3500);
+    settings.Properties.Items.Add(IWSLocalResource.BillOfDelivery, 3505);
+    settings.Properties.Items.Add(IWSLocalResource.SalesInvoice, 3510);
     //settings.Properties.TextField = "ParentName";
     //settings.Properties.ValueField = "ParentId";
     //settings.Properties.ClientSideEvents.ValueChanged = "function(s, e) { OnComboBoxModelIdValueChanged(); }";

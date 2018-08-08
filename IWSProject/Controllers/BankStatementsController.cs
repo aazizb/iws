@@ -649,40 +649,20 @@
                         break;
                 }
 
-                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                db.SubmitChanges(ConflictMode.FailOnFirstConflict);
 
                 if (Headers.Equals(bankStatement))
                 {
-                    var items =
-                        from s in db.BankStatements
-                        where
-                          s.Buchungstext.ToUpper() == "ABSCHLUSS" &&
-                          s.Kontonummer.Length == 0
-                        select s;
-                        foreach (var item in items)
-                        {
-                        item.Kontonummer = "DE4748050161XXXXXXXXXX";//("DE47" + item.BLZ + "00" + item.Auftragskonto);
-                    }
 
-                    var ibans =
-                        from b in db.BankStatements
-                        where
-                          b.Auftragskonto == "43006329" && b.CompanyIBAN.Length == 0
-                        select b;
-                        foreach (var iban in ibans)
-                        {
-                        iban.CompanyIBAN = "DE47480501610043006329";
-                    }
-                    var ibanx =
-                        from b in db.BankStatements
-                        where
-                          b.Auftragskonto.Length == 22 && b.CompanyIBAN.Length == 0
-                        select b;
-                        foreach (var iban in ibanx)
-                        {
-                        iban.CompanyIBAN = iban.Auftragskonto;
-                        }
-                    db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                    db.BankStatements.Where(o => o.Auftragskonto == "43006329" && o.CompanyIBAN == null).ToList()
+                                     .ForEach(i => i.CompanyIBAN = "DE47480501610043006329");
+                    db.SubmitChanges(ConflictMode.FailOnFirstConflict);
+                    db.BankStatements.Where(o => o.Auftragskonto.Length == 22 && o.CompanyIBAN == null).ToList()
+                                     .ForEach(i => i.CompanyIBAN = i.Auftragskonto);
+                    db.SubmitChanges(ConflictMode.FailOnFirstConflict);
+                    db.BankStatements.Where(o => o.Buchungstext.ToUpper() == "ABSCHLUSS" && o.Kontonummer.Length == 0).ToList()
+                                     .ForEach(i => i.Kontonummer = "DE4748050161XXXXXXXXXX");
+                    db.SubmitChanges(ConflictMode.FailOnFirstConflict);
 
                     //AddNewAccount();
                 }
