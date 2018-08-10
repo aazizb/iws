@@ -1409,8 +1409,11 @@
             {
                 foreach (var item in detailCompta)
                 {
-                    db.DetailComptas.InsertOnSubmit(item);
-                    id++;
+                    if (item.amount != 0)
+                    {
+                        db.DetailComptas.InsertOnSubmit(item);
+                        id++;
+                    }
                 }
                 db.SubmitChanges(ConflictMode.FailOnFirstConflict);
             }

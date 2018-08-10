@@ -1381,8 +1381,8 @@
                                    }).Distinct()).Contains(new { accountid = Accounts.id })
                            select new
                            {
-                               Accounts.id,
-                               Accounts.name
+                               Id = Accounts.id,
+                               Name = Accounts.name
                            };
 
             //var supplier = IWSEntities.Suppliers.AsEnumerable().Select(item => new
@@ -1410,8 +1410,8 @@
                                    }).Distinct()).Contains(new { accountid = Accounts.id })
                            select new
                            {
-                               Accounts.id,
-                               Accounts.name
+                               Id = Accounts.id,
+                               Name = Accounts.name
                            };
             //var customer = IWSEntities.Customers.AsEnumerable().Select(item => new
             //{

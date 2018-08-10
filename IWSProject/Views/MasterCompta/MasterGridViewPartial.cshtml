@@ -471,15 +471,9 @@
                     i.NestedExtension().ComboBox(s =>
                     {
                         s.Properties.TextField = "Name";
-                        s.Properties.ValueField = "Account";
+                        s.Properties.ValueField = "Id";
                         s.Properties.ValueType = typeof(string);
                         s.Properties.DataSource = IWSLookUp.GetAccounts((string)Session["IsVending"]);
-                        //s.Properties.Columns.Add(a =>
-                        //{
-                        //    a.FieldName = "Account";
-                        //    a.Caption = IWSLocalResource.id;
-                        //    a.Width = Unit.Percentage(20);
-                        //});
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "Name";

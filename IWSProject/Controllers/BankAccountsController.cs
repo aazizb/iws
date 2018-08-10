@@ -32,6 +32,7 @@ namespace IWSProject.Controllers
         {
             var model = db.BankAccounts;
             item.CompanyID = (string)Session["CompanyID"];
+            item.ModelId = (int)IWSLookUp.MetaModelId.BankAccount;
             ViewData["bankAccount"] = item;
             if (ModelState.IsValid)
             {
