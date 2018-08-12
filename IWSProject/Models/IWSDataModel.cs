@@ -1,5 +1,4 @@
-﻿
-namespace IWSProject.Models
+﻿namespace IWSProject.Models
 {
     using System;
     using System.ComponentModel;
@@ -8,8 +7,7 @@ namespace IWSProject.Models
     using System.Linq;
     using System.Reflection;
 
-
-    [global::System.Data.Linq.Mapping.DatabaseAttribute(Name = "consolidation")]
+    [global::System.Data.Linq.Mapping.DatabaseAttribute(Name = "consolid")]
     public partial class IWSDataContext : System.Data.Linq.DataContext
     {
 
@@ -20,6 +18,9 @@ namespace IWSProject.Models
         partial void InsertAccount(Account instance);
         partial void UpdateAccount(Account instance);
         partial void DeleteAccount(Account instance);
+        partial void InsertVendorInvoice(VendorInvoice instance);
+        partial void UpdateVendorInvoice(VendorInvoice instance);
+        partial void DeleteVendorInvoice(VendorInvoice instance);
         partial void InsertAffectationJournal(AffectationJournal instance);
         partial void UpdateAffectationJournal(AffectationJournal instance);
         partial void DeleteAffectationJournal(AffectationJournal instance);
@@ -203,9 +204,6 @@ namespace IWSProject.Models
         partial void InsertVat(Vat instance);
         partial void UpdateVat(Vat instance);
         partial void DeleteVat(Vat instance);
-        partial void InsertVendorInvoice(VendorInvoice instance);
-        partial void UpdateVendorInvoice(VendorInvoice instance);
-        partial void DeleteVendorInvoice(VendorInvoice instance);
         #endregion
 
         public IWSDataContext() :
@@ -243,6 +241,14 @@ namespace IWSProject.Models
             get
             {
                 return this.GetTable<Account>();
+            }
+        }
+
+        public System.Data.Linq.Table<VendorInvoice> VendorInvoices
+        {
+            get
+            {
+                return this.GetTable<VendorInvoice>();
             }
         }
 
@@ -734,14 +740,6 @@ namespace IWSProject.Models
             }
         }
 
-        public System.Data.Linq.Table<VendorInvoice> VendorInvoices
-        {
-            get
-            {
-                return this.GetTable<VendorInvoice>();
-            }
-        }
-
         [global::System.Data.Linq.Mapping.FunctionAttribute(Name = "dbo.account1To7")]
         public ISingleResult<account1To7Result> account1To7([global::System.Data.Linq.Mapping.ParameterAttribute(DbType = "NVarChar(6)")] string start, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType = "NVarChar(6)")] string end, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType = "NVarChar(6)")] string companyid)
         {
@@ -916,7 +914,7 @@ namespace IWSProject.Models
 
         private string _TypeJournal;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private bool _IsResultAccount;
 
@@ -935,6 +933,8 @@ namespace IWSProject.Models
         private EntitySet<Journal> _Journals;
 
         private EntitySet<Journal> _Journals1;
+
+        private EntitySet<MasterCompta> _MasterComptas;
 
         private EntitySet<PeriodicAccountBalance> _PeriodicAccountBalances;
 
@@ -972,7 +972,7 @@ namespace IWSProject.Models
         partial void OnUpdatedChanged();
         partial void OnTypeJournalChanging(string value);
         partial void OnTypeJournalChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         partial void OnIsResultAccountChanging(bool value);
         partial void OnIsResultAccountChanged();
@@ -988,6 +988,7 @@ namespace IWSProject.Models
             this._DetailComptas1 = new EntitySet<DetailCompta>(new Action<DetailCompta>(this.attach_DetailComptas1), new Action<DetailCompta>(this.detach_DetailComptas1));
             this._Journals = new EntitySet<Journal>(new Action<Journal>(this.attach_Journals), new Action<Journal>(this.detach_Journals));
             this._Journals1 = new EntitySet<Journal>(new Action<Journal>(this.attach_Journals1), new Action<Journal>(this.detach_Journals1));
+            this._MasterComptas = new EntitySet<MasterCompta>(new Action<MasterCompta>(this.attach_MasterComptas), new Action<MasterCompta>(this.detach_MasterComptas));
             this._PeriodicAccountBalances = new EntitySet<PeriodicAccountBalance>(new Action<PeriodicAccountBalance>(this.attach_PeriodicAccountBalances), new Action<PeriodicAccountBalance>(this.detach_PeriodicAccountBalances));
             this._Stores = new EntitySet<Store>(new Action<Store>(this.attach_Stores), new Action<Store>(this.detach_Stores));
             this._TypeJournal1 = default(EntityRef<TypeJournal>);
@@ -1014,7 +1015,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_name", DbType = "NVarChar(255)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_name", DbType = "NVarChar(255) NOT NULL", CanBeNull = false)]
         public string name
         {
             get
@@ -1258,8 +1259,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -1399,6 +1400,19 @@ namespace IWSProject.Models
             set
             {
                 this._Journals1.Assign(value);
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Account_MasterCompta", Storage = "_MasterComptas", ThisKey = "id", OtherKey = "account")]
+        public EntitySet<MasterCompta> MasterComptas
+        {
+            get
+            {
+                return this._MasterComptas;
+            }
+            set
+            {
+                this._MasterComptas.Assign(value);
             }
         }
 
@@ -1578,6 +1592,18 @@ namespace IWSProject.Models
             entity.Account2 = null;
         }
 
+        private void attach_MasterComptas(MasterCompta entity)
+        {
+            this.SendPropertyChanging();
+            entity.Account1 = this;
+        }
+
+        private void detach_MasterComptas(MasterCompta entity)
+        {
+            this.SendPropertyChanging();
+            entity.Account1 = null;
+        }
+
         private void attach_PeriodicAccountBalances(PeriodicAccountBalance entity)
         {
             this.SendPropertyChanging();
@@ -1600,6 +1626,668 @@ namespace IWSProject.Models
         {
             this.SendPropertyChanging();
             entity.Account = null;
+        }
+    }
+
+    [global::System.Data.Linq.Mapping.TableAttribute(Name = "dbo.VendorInvoice")]
+    public partial class VendorInvoice : INotifyPropertyChanging, INotifyPropertyChanged
+    {
+
+        private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+
+        private int _id;
+
+        private int _oid;
+
+        private string _CostCenter;
+
+        private string _account;
+
+        private string _HeaderText;
+
+        private System.DateTime _TransDate;
+
+        private System.DateTime _ItemDate;
+
+        private System.DateTime _EntryDate;
+
+        private string _CompanyId;
+
+        private System.Nullable<bool> _IsValidated;
+
+        private System.Nullable<decimal> _oTotal;
+
+        private string _oCurrency;
+
+        private string _oPeriode;
+
+        private string _oYear;
+
+        private string _oMonth;
+
+        private string _TypeJournal;
+
+        private System.Nullable<int> _ModelId;
+
+        private string _AccountingAccount;
+
+        private EntitySet<LineVendorInvoice> _LineVendorInvoices;
+
+        private EntityRef<Company> _Company;
+
+        private EntityRef<CostCenter> _CostCenter1;
+
+        private EntityRef<Supplier> _Supplier;
+
+        private EntityRef<TypeJournal> _TypeJournal1;
+
+        #region Extensibility Method Definitions
+        partial void OnLoaded();
+        partial void OnValidate(System.Data.Linq.ChangeAction action);
+        partial void OnCreated();
+        partial void OnidChanging(int value);
+        partial void OnidChanged();
+        partial void OnoidChanging(int value);
+        partial void OnoidChanged();
+        partial void OnCostCenterChanging(string value);
+        partial void OnCostCenterChanged();
+        partial void OnaccountChanging(string value);
+        partial void OnaccountChanged();
+        partial void OnHeaderTextChanging(string value);
+        partial void OnHeaderTextChanged();
+        partial void OnTransDateChanging(System.DateTime value);
+        partial void OnTransDateChanged();
+        partial void OnItemDateChanging(System.DateTime value);
+        partial void OnItemDateChanged();
+        partial void OnEntryDateChanging(System.DateTime value);
+        partial void OnEntryDateChanged();
+        partial void OnCompanyIdChanging(string value);
+        partial void OnCompanyIdChanged();
+        partial void OnIsValidatedChanging(System.Nullable<bool> value);
+        partial void OnIsValidatedChanged();
+        partial void OnoTotalChanging(System.Nullable<decimal> value);
+        partial void OnoTotalChanged();
+        partial void OnoCurrencyChanging(string value);
+        partial void OnoCurrencyChanged();
+        partial void OnoPeriodeChanging(string value);
+        partial void OnoPeriodeChanged();
+        partial void OnoYearChanging(string value);
+        partial void OnoYearChanged();
+        partial void OnoMonthChanging(string value);
+        partial void OnoMonthChanged();
+        partial void OnTypeJournalChanging(string value);
+        partial void OnTypeJournalChanged();
+        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanged();
+        partial void OnAccountingAccountChanging(string value);
+        partial void OnAccountingAccountChanged();
+        #endregion
+
+        public VendorInvoice()
+        {
+            this._LineVendorInvoices = new EntitySet<LineVendorInvoice>(new Action<LineVendorInvoice>(this.attach_LineVendorInvoices), new Action<LineVendorInvoice>(this.detach_LineVendorInvoices));
+            this._Company = default(EntityRef<Company>);
+            this._CostCenter1 = default(EntityRef<CostCenter>);
+            this._Supplier = default(EntityRef<Supplier>);
+            this._TypeJournal1 = default(EntityRef<TypeJournal>);
+            OnCreated();
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_id", AutoSync = AutoSync.OnInsert, DbType = "Int NOT NULL IDENTITY", IsPrimaryKey = true, IsDbGenerated = true)]
+        public int id
+        {
+            get
+            {
+                return this._id;
+            }
+            set
+            {
+                if ((this._id != value))
+                {
+                    this.OnidChanging(value);
+                    this.SendPropertyChanging();
+                    this._id = value;
+                    this.SendPropertyChanged("id");
+                    this.OnidChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oid", DbType = "Int NOT NULL")]
+        public int oid
+        {
+            get
+            {
+                return this._oid;
+            }
+            set
+            {
+                if ((this._oid != value))
+                {
+                    this.OnoidChanging(value);
+                    this.SendPropertyChanging();
+                    this._oid = value;
+                    this.SendPropertyChanged("oid");
+                    this.OnoidChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_CostCenter", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        public string CostCenter
+        {
+            get
+            {
+                return this._CostCenter;
+            }
+            set
+            {
+                if ((this._CostCenter != value))
+                {
+                    if (this._CostCenter1.HasLoadedOrAssignedValue)
+                    {
+                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+                    }
+                    this.OnCostCenterChanging(value);
+                    this.SendPropertyChanging();
+                    this._CostCenter = value;
+                    this.SendPropertyChanged("CostCenter");
+                    this.OnCostCenterChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_account", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        public string account
+        {
+            get
+            {
+                return this._account;
+            }
+            set
+            {
+                if ((this._account != value))
+                {
+                    if (this._Supplier.HasLoadedOrAssignedValue)
+                    {
+                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+                    }
+                    this.OnaccountChanging(value);
+                    this.SendPropertyChanging();
+                    this._account = value;
+                    this.SendPropertyChanged("account");
+                    this.OnaccountChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_HeaderText", DbType = "NVarChar(250)")]
+        public string HeaderText
+        {
+            get
+            {
+                return this._HeaderText;
+            }
+            set
+            {
+                if ((this._HeaderText != value))
+                {
+                    this.OnHeaderTextChanging(value);
+                    this.SendPropertyChanging();
+                    this._HeaderText = value;
+                    this.SendPropertyChanged("HeaderText");
+                    this.OnHeaderTextChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_TransDate", DbType = "Date NOT NULL")]
+        public System.DateTime TransDate
+        {
+            get
+            {
+                return this._TransDate;
+            }
+            set
+            {
+                if ((this._TransDate != value))
+                {
+                    this.OnTransDateChanging(value);
+                    this.SendPropertyChanging();
+                    this._TransDate = value;
+                    this.SendPropertyChanged("TransDate");
+                    this.OnTransDateChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ItemDate", DbType = "Date NOT NULL")]
+        public System.DateTime ItemDate
+        {
+            get
+            {
+                return this._ItemDate;
+            }
+            set
+            {
+                if ((this._ItemDate != value))
+                {
+                    this.OnItemDateChanging(value);
+                    this.SendPropertyChanging();
+                    this._ItemDate = value;
+                    this.SendPropertyChanged("ItemDate");
+                    this.OnItemDateChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_EntryDate", DbType = "Date NOT NULL")]
+        public System.DateTime EntryDate
+        {
+            get
+            {
+                return this._EntryDate;
+            }
+            set
+            {
+                if ((this._EntryDate != value))
+                {
+                    this.OnEntryDateChanging(value);
+                    this.SendPropertyChanging();
+                    this._EntryDate = value;
+                    this.SendPropertyChanged("EntryDate");
+                    this.OnEntryDateChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_CompanyId", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        public string CompanyId
+        {
+            get
+            {
+                return this._CompanyId;
+            }
+            set
+            {
+                if ((this._CompanyId != value))
+                {
+                    if (this._Company.HasLoadedOrAssignedValue)
+                    {
+                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+                    }
+                    this.OnCompanyIdChanging(value);
+                    this.SendPropertyChanging();
+                    this._CompanyId = value;
+                    this.SendPropertyChanged("CompanyId");
+                    this.OnCompanyIdChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IsValidated", DbType = "Bit")]
+        public System.Nullable<bool> IsValidated
+        {
+            get
+            {
+                return this._IsValidated;
+            }
+            set
+            {
+                if ((this._IsValidated != value))
+                {
+                    this.OnIsValidatedChanging(value);
+                    this.SendPropertyChanging();
+                    this._IsValidated = value;
+                    this.SendPropertyChanged("IsValidated");
+                    this.OnIsValidatedChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oTotal", AutoSync = AutoSync.Always, DbType = "Money", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
+        public System.Nullable<decimal> oTotal
+        {
+            get
+            {
+                return this._oTotal;
+            }
+            set
+            {
+                if ((this._oTotal != value))
+                {
+                    this.OnoTotalChanging(value);
+                    this.SendPropertyChanging();
+                    this._oTotal = value;
+                    this.SendPropertyChanged("oTotal");
+                    this.OnoTotalChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oCurrency", AutoSync = AutoSync.Always, DbType = "NVarChar(10)", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
+        public string oCurrency
+        {
+            get
+            {
+                return this._oCurrency;
+            }
+            set
+            {
+                if ((this._oCurrency != value))
+                {
+                    this.OnoCurrencyChanging(value);
+                    this.SendPropertyChanging();
+                    this._oCurrency = value;
+                    this.SendPropertyChanged("oCurrency");
+                    this.OnoCurrencyChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oPeriode", AutoSync = AutoSync.Always, DbType = "NVarChar(6)", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
+        public string oPeriode
+        {
+            get
+            {
+                return this._oPeriode;
+            }
+            set
+            {
+                if ((this._oPeriode != value))
+                {
+                    this.OnoPeriodeChanging(value);
+                    this.SendPropertyChanging();
+                    this._oPeriode = value;
+                    this.SendPropertyChanged("oPeriode");
+                    this.OnoPeriodeChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oYear", AutoSync = AutoSync.Always, DbType = "Char(4)", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
+        public string oYear
+        {
+            get
+            {
+                return this._oYear;
+            }
+            set
+            {
+                if ((this._oYear != value))
+                {
+                    this.OnoYearChanging(value);
+                    this.SendPropertyChanging();
+                    this._oYear = value;
+                    this.SendPropertyChanged("oYear");
+                    this.OnoYearChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oMonth", AutoSync = AutoSync.Always, DbType = "Char(2)", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
+        public string oMonth
+        {
+            get
+            {
+                return this._oMonth;
+            }
+            set
+            {
+                if ((this._oMonth != value))
+                {
+                    this.OnoMonthChanging(value);
+                    this.SendPropertyChanging();
+                    this._oMonth = value;
+                    this.SendPropertyChanged("oMonth");
+                    this.OnoMonthChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_TypeJournal", DbType = "VarChar(50)")]
+        public string TypeJournal
+        {
+            get
+            {
+                return this._TypeJournal;
+            }
+            set
+            {
+                if ((this._TypeJournal != value))
+                {
+                    if (this._TypeJournal1.HasLoadedOrAssignedValue)
+                    {
+                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+                    }
+                    this.OnTypeJournalChanging(value);
+                    this.SendPropertyChanging();
+                    this._TypeJournal = value;
+                    this.SendPropertyChanged("TypeJournal");
+                    this.OnTypeJournalChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
+        public System.Nullable<int> ModelId
+        {
+            get
+            {
+                return this._ModelId;
+            }
+            set
+            {
+                if ((this._ModelId != value))
+                {
+                    this.OnModelIdChanging(value);
+                    this.SendPropertyChanging();
+                    this._ModelId = value;
+                    this.SendPropertyChanged("ModelId");
+                    this.OnModelIdChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_AccountingAccount", DbType = "VarChar(50)")]
+        public string AccountingAccount
+        {
+            get
+            {
+                return this._AccountingAccount;
+            }
+            set
+            {
+                if ((this._AccountingAccount != value))
+                {
+                    this.OnAccountingAccountChanging(value);
+                    this.SendPropertyChanging();
+                    this._AccountingAccount = value;
+                    this.SendPropertyChanged("AccountingAccount");
+                    this.OnAccountingAccountChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "VendorInvoice_LineVendorInvoice", Storage = "_LineVendorInvoices", ThisKey = "id", OtherKey = "transid")]
+        public EntitySet<LineVendorInvoice> LineVendorInvoices
+        {
+            get
+            {
+                return this._LineVendorInvoices;
+            }
+            set
+            {
+                this._LineVendorInvoices.Assign(value);
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Company_VendorInvoice", Storage = "_Company", ThisKey = "CompanyId", OtherKey = "id", IsForeignKey = true)]
+        public Company Company
+        {
+            get
+            {
+                return this._Company.Entity;
+            }
+            set
+            {
+                Company previousValue = this._Company.Entity;
+                if (((previousValue != value)
+                            || (this._Company.HasLoadedOrAssignedValue == false)))
+                {
+                    this.SendPropertyChanging();
+                    if ((previousValue != null))
+                    {
+                        this._Company.Entity = null;
+                        previousValue.VendorInvoices.Remove(this);
+                    }
+                    this._Company.Entity = value;
+                    if ((value != null))
+                    {
+                        value.VendorInvoices.Add(this);
+                        this._CompanyId = value.id;
+                    }
+                    else
+                    {
+                        this._CompanyId = default(string);
+                    }
+                    this.SendPropertyChanged("Company");
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "CostCenter_VendorInvoice", Storage = "_CostCenter1", ThisKey = "CostCenter", OtherKey = "id", IsForeignKey = true)]
+        public CostCenter CostCenter1
+        {
+            get
+            {
+                return this._CostCenter1.Entity;
+            }
+            set
+            {
+                CostCenter previousValue = this._CostCenter1.Entity;
+                if (((previousValue != value)
+                            || (this._CostCenter1.HasLoadedOrAssignedValue == false)))
+                {
+                    this.SendPropertyChanging();
+                    if ((previousValue != null))
+                    {
+                        this._CostCenter1.Entity = null;
+                        previousValue.VendorInvoices.Remove(this);
+                    }
+                    this._CostCenter1.Entity = value;
+                    if ((value != null))
+                    {
+                        value.VendorInvoices.Add(this);
+                        this._CostCenter = value.id;
+                    }
+                    else
+                    {
+                        this._CostCenter = default(string);
+                    }
+                    this.SendPropertyChanged("CostCenter1");
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Supplier_VendorInvoice", Storage = "_Supplier", ThisKey = "account", OtherKey = "id", IsForeignKey = true)]
+        public Supplier Supplier
+        {
+            get
+            {
+                return this._Supplier.Entity;
+            }
+            set
+            {
+                Supplier previousValue = this._Supplier.Entity;
+                if (((previousValue != value)
+                            || (this._Supplier.HasLoadedOrAssignedValue == false)))
+                {
+                    this.SendPropertyChanging();
+                    if ((previousValue != null))
+                    {
+                        this._Supplier.Entity = null;
+                        previousValue.VendorInvoices.Remove(this);
+                    }
+                    this._Supplier.Entity = value;
+                    if ((value != null))
+                    {
+                        value.VendorInvoices.Add(this);
+                        this._account = value.id;
+                    }
+                    else
+                    {
+                        this._account = default(string);
+                    }
+                    this.SendPropertyChanged("Supplier");
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "TypeJournal_VendorInvoice", Storage = "_TypeJournal1", ThisKey = "TypeJournal", OtherKey = "Id", IsForeignKey = true)]
+        public TypeJournal TypeJournal1
+        {
+            get
+            {
+                return this._TypeJournal1.Entity;
+            }
+            set
+            {
+                TypeJournal previousValue = this._TypeJournal1.Entity;
+                if (((previousValue != value)
+                            || (this._TypeJournal1.HasLoadedOrAssignedValue == false)))
+                {
+                    this.SendPropertyChanging();
+                    if ((previousValue != null))
+                    {
+                        this._TypeJournal1.Entity = null;
+                        previousValue.VendorInvoices.Remove(this);
+                    }
+                    this._TypeJournal1.Entity = value;
+                    if ((value != null))
+                    {
+                        value.VendorInvoices.Add(this);
+                        this._TypeJournal = value.Id;
+                    }
+                    else
+                    {
+                        this._TypeJournal = default(string);
+                    }
+                    this.SendPropertyChanged("TypeJournal1");
+                }
+            }
+        }
+
+        public event PropertyChangingEventHandler PropertyChanging;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void SendPropertyChanging()
+        {
+            if ((this.PropertyChanging != null))
+            {
+                this.PropertyChanging(this, emptyChangingEventArgs);
+            }
+        }
+
+        protected virtual void SendPropertyChanged(String propertyName)
+        {
+            if ((this.PropertyChanged != null))
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void attach_LineVendorInvoices(LineVendorInvoice entity)
+        {
+            this.SendPropertyChanging();
+            entity.VendorInvoice = this;
+        }
+
+        private void detach_LineVendorInvoices(LineVendorInvoice entity)
+        {
+            this.SendPropertyChanging();
+            entity.VendorInvoice = null;
         }
     }
 
@@ -2039,7 +2727,7 @@ namespace IWSProject.Models
 
         private System.DateTime _Updated;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntitySet<DetailLogistic> _DetailLogistics;
 
@@ -2099,7 +2787,7 @@ namespace IWSProject.Models
         partial void OnPostedChanged();
         partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -2277,7 +2965,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_VatCode", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_VatCode", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string VatCode
         {
             get
@@ -2341,7 +3029,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_StockAccount", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_StockAccount", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string StockAccount
         {
             get
@@ -2361,7 +3049,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ExpenseAccount", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ExpenseAccount", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string ExpenseAccount
         {
             get
@@ -2381,7 +3069,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Currency", DbType = "NVarChar(10)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Currency", DbType = "NVarChar(10) NOT NULL", CanBeNull = false)]
         public string Currency
         {
             get
@@ -2421,7 +3109,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_RevenuAccountId", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_RevenuAccountId", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string RevenuAccountId
         {
             get
@@ -2481,8 +3169,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -3912,7 +4600,7 @@ namespace IWSProject.Models
 
         private System.DateTime _Updated;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntitySet<BankAccount> _BankAccounts;
 
@@ -3932,7 +4620,7 @@ namespace IWSProject.Models
         partial void OnPostedChanged();
         partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -3962,7 +4650,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_name", DbType = "NVarChar(250)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_name", DbType = "NVarChar(250) NOT NULL", CanBeNull = false)]
         public string name
         {
             get
@@ -4062,8 +4750,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -4150,7 +4838,7 @@ namespace IWSProject.Models
 
         private string _CompanyID;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntityRef<Bank> _Bank;
 
@@ -4174,7 +4862,7 @@ namespace IWSProject.Models
         partial void OnCurrencyChanged();
         partial void OnCompanyIDChanging(string value);
         partial void OnCompanyIDChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -4348,8 +5036,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -6922,7 +7610,9 @@ namespace IWSProject.Models
 
         private string _ClassBank;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
+
+        private EntitySet<VendorInvoice> _VendorInvoices;
 
         private EntitySet<AffectationJournal> _AffectationJournals;
 
@@ -6949,8 +7639,6 @@ namespace IWSProject.Models
         private EntitySet<SalesOrder> _SalesOrders;
 
         private EntitySet<Settlement> _Settlements;
-
-        private EntitySet<VendorInvoice> _VendorInvoices;
 
         #region Extensibility Method Definitions
         partial void OnLoaded();
@@ -7002,12 +7690,13 @@ namespace IWSProject.Models
         partial void OnClassCashChanged();
         partial void OnClassBankChanging(string value);
         partial void OnClassBankChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
         public Company()
         {
+            this._VendorInvoices = new EntitySet<VendorInvoice>(new Action<VendorInvoice>(this.attach_VendorInvoices), new Action<VendorInvoice>(this.detach_VendorInvoices));
             this._AffectationJournals = new EntitySet<AffectationJournal>(new Action<AffectationJournal>(this.attach_AffectationJournals), new Action<AffectationJournal>(this.detach_AffectationJournals));
             this._BillOfDeliveries = new EntitySet<BillOfDelivery>(new Action<BillOfDelivery>(this.attach_BillOfDeliveries), new Action<BillOfDelivery>(this.detach_BillOfDeliveries));
             this._CustomerInvoices = new EntitySet<CustomerInvoice>(new Action<CustomerInvoice>(this.attach_CustomerInvoices), new Action<CustomerInvoice>(this.detach_CustomerInvoices));
@@ -7021,7 +7710,6 @@ namespace IWSProject.Models
             this._SalesInvoices = new EntitySet<SalesInvoice>(new Action<SalesInvoice>(this.attach_SalesInvoices), new Action<SalesInvoice>(this.detach_SalesInvoices));
             this._SalesOrders = new EntitySet<SalesOrder>(new Action<SalesOrder>(this.attach_SalesOrders), new Action<SalesOrder>(this.detach_SalesOrders));
             this._Settlements = new EntitySet<Settlement>(new Action<Settlement>(this.attach_Settlements), new Action<Settlement>(this.detach_Settlements));
-            this._VendorInvoices = new EntitySet<VendorInvoice>(new Action<VendorInvoice>(this.attach_VendorInvoices), new Action<VendorInvoice>(this.detach_VendorInvoices));
             OnCreated();
         }
 
@@ -7225,7 +7913,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_settlementclearingaccountid", DbType = "NVarChar(255)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_settlementclearingaccountid", DbType = "NVarChar(255) NOT NULL", CanBeNull = false)]
         public string settlementclearingaccountid
         {
             get
@@ -7245,7 +7933,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_taxcode", DbType = "NVarChar(255)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_taxcode", DbType = "NVarChar(255) NOT NULL", CanBeNull = false)]
         public string taxcode
         {
             get
@@ -7265,7 +7953,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_vatcode", DbType = "NVarChar(255)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_vatcode", DbType = "NVarChar(255) NOT NULL", CanBeNull = false)]
         public string vatcode
         {
             get
@@ -7285,7 +7973,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Currency", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Currency", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string Currency
         {
             get
@@ -7305,7 +7993,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string IBAN
         {
             get
@@ -7325,7 +8013,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_CIF", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_CIF", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string CIF
         {
             get
@@ -7345,7 +8033,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_BalanceSheet", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_BalanceSheet", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string BalanceSheet
         {
             get
@@ -7365,7 +8053,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IncomesStatement", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IncomesStatement", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string IncomesStatement
         {
             get
@@ -7385,7 +8073,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_CashAccountId", DbType = "NVarChar(255)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_CashAccountId", DbType = "NVarChar(255) NOT NULL", CanBeNull = false)]
         public string CashAccountId
         {
             get
@@ -7445,7 +8133,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ClassCash", DbType = "VarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ClassCash", DbType = "VarChar(50) NOT NULL", CanBeNull = false)]
         public string ClassCash
         {
             get
@@ -7465,7 +8153,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ClassBank", DbType = "VarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ClassBank", DbType = "VarChar(50) NOT NULL", CanBeNull = false)]
         public string ClassBank
         {
             get
@@ -7485,8 +8173,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -7502,6 +8190,19 @@ namespace IWSProject.Models
                     this.SendPropertyChanged("ModelId");
                     this.OnModelIdChanged();
                 }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Company_VendorInvoice", Storage = "_VendorInvoices", ThisKey = "id", OtherKey = "CompanyId")]
+        public EntitySet<VendorInvoice> VendorInvoices
+        {
+            get
+            {
+                return this._VendorInvoices;
+            }
+            set
+            {
+                this._VendorInvoices.Assign(value);
             }
         }
 
@@ -7674,19 +8375,6 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Company_VendorInvoice", Storage = "_VendorInvoices", ThisKey = "id", OtherKey = "CompanyId")]
-        public EntitySet<VendorInvoice> VendorInvoices
-        {
-            get
-            {
-                return this._VendorInvoices;
-            }
-            set
-            {
-                this._VendorInvoices.Assign(value);
-            }
-        }
-
         public event PropertyChangingEventHandler PropertyChanging;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -7705,6 +8393,18 @@ namespace IWSProject.Models
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void attach_VendorInvoices(VendorInvoice entity)
+        {
+            this.SendPropertyChanging();
+            entity.Company = this;
+        }
+
+        private void detach_VendorInvoices(VendorInvoice entity)
+        {
+            this.SendPropertyChanging();
+            entity.Company = null;
         }
 
         private void attach_AffectationJournals(AffectationJournal entity)
@@ -7862,18 +8562,6 @@ namespace IWSProject.Models
             this.SendPropertyChanging();
             entity.Company = null;
         }
-
-        private void attach_VendorInvoices(VendorInvoice entity)
-        {
-            this.SendPropertyChanging();
-            entity.Company = this;
-        }
-
-        private void detach_VendorInvoices(VendorInvoice entity)
-        {
-            this.SendPropertyChanging();
-            entity.Company = null;
-        }
     }
 
     [global::System.Data.Linq.Mapping.TableAttribute(Name = "dbo.CostCenter")]
@@ -7896,11 +8584,13 @@ namespace IWSProject.Models
 
         private System.DateTime _Updated;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
+
+        private EntitySet<VendorInvoice> _VendorInvoices;
 
         private EntitySet<CustomerInvoice> _CustomerInvoices;
 
-        private EntitySet<VendorInvoice> _VendorInvoices;
+        private EntitySet<MasterCompta> _MasterComptas;
 
         private EntityRef<Account> _Account;
 
@@ -7922,14 +8612,15 @@ namespace IWSProject.Models
         partial void OnPostedChanged();
         partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
         public CostCenter()
         {
-            this._CustomerInvoices = new EntitySet<CustomerInvoice>(new Action<CustomerInvoice>(this.attach_CustomerInvoices), new Action<CustomerInvoice>(this.detach_CustomerInvoices));
             this._VendorInvoices = new EntitySet<VendorInvoice>(new Action<VendorInvoice>(this.attach_VendorInvoices), new Action<VendorInvoice>(this.detach_VendorInvoices));
+            this._CustomerInvoices = new EntitySet<CustomerInvoice>(new Action<CustomerInvoice>(this.attach_CustomerInvoices), new Action<CustomerInvoice>(this.detach_CustomerInvoices));
+            this._MasterComptas = new EntitySet<MasterCompta>(new Action<MasterCompta>(this.attach_MasterComptas), new Action<MasterCompta>(this.detach_MasterComptas));
             this._Account = default(EntityRef<Account>);
             OnCreated();
         }
@@ -7994,7 +8685,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string accountid
         {
             get
@@ -8078,8 +8769,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -8098,6 +8789,19 @@ namespace IWSProject.Models
             }
         }
 
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "CostCenter_VendorInvoice", Storage = "_VendorInvoices", ThisKey = "id", OtherKey = "CostCenter")]
+        public EntitySet<VendorInvoice> VendorInvoices
+        {
+            get
+            {
+                return this._VendorInvoices;
+            }
+            set
+            {
+                this._VendorInvoices.Assign(value);
+            }
+        }
+
         [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "CostCenter_CustomerInvoice", Storage = "_CustomerInvoices", ThisKey = "id", OtherKey = "CostCenter")]
         public EntitySet<CustomerInvoice> CustomerInvoices
         {
@@ -8111,16 +8815,16 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "CostCenter_VendorInvoice", Storage = "_VendorInvoices", ThisKey = "id", OtherKey = "CostCenter")]
-        public EntitySet<VendorInvoice> VendorInvoices
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "CostCenter_MasterCompta", Storage = "_MasterComptas", ThisKey = "id", OtherKey = "CostCenter")]
+        public EntitySet<MasterCompta> MasterComptas
         {
             get
             {
-                return this._VendorInvoices;
+                return this._MasterComptas;
             }
             set
             {
-                this._VendorInvoices.Assign(value);
+                this._MasterComptas.Assign(value);
             }
         }
 
@@ -8178,6 +8882,18 @@ namespace IWSProject.Models
             }
         }
 
+        private void attach_VendorInvoices(VendorInvoice entity)
+        {
+            this.SendPropertyChanging();
+            entity.CostCenter1 = this;
+        }
+
+        private void detach_VendorInvoices(VendorInvoice entity)
+        {
+            this.SendPropertyChanging();
+            entity.CostCenter1 = null;
+        }
+
         private void attach_CustomerInvoices(CustomerInvoice entity)
         {
             this.SendPropertyChanging();
@@ -8190,13 +8906,13 @@ namespace IWSProject.Models
             entity.CostCenter1 = null;
         }
 
-        private void attach_VendorInvoices(VendorInvoice entity)
+        private void attach_MasterComptas(MasterCompta entity)
         {
             this.SendPropertyChanging();
             entity.CostCenter1 = this;
         }
 
-        private void detach_VendorInvoices(VendorInvoice entity)
+        private void detach_MasterComptas(MasterCompta entity)
         {
             this.SendPropertyChanging();
             entity.CostCenter1 = null;
@@ -8403,7 +9119,7 @@ namespace IWSProject.Models
 
         private System.DateTime _Updated;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         #region Extensibility Method Definitions
         partial void OnLoaded();
@@ -8421,7 +9137,7 @@ namespace IWSProject.Models
         partial void OnPostedChanged();
         partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -8550,8 +9266,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -8631,7 +9347,7 @@ namespace IWSProject.Models
 
         private System.DateTime _Updated;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntitySet<BillOfDelivery> _BillOfDeliveries;
 
@@ -8679,7 +9395,7 @@ namespace IWSProject.Models
         partial void OnPostedChanged();
         partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -8852,7 +9568,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string accountid
         {
             get
@@ -8892,7 +9608,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string IBAN
         {
             get
@@ -8912,7 +9628,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Bank", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Bank", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string Bank
         {
             get
@@ -8932,7 +9648,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_BIC", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_BIC", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string BIC
         {
             get
@@ -8952,7 +9668,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_VatCode", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_VatCode", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string VatCode
         {
             get
@@ -8972,7 +9688,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Produit", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Produit", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string Produit
         {
             get
@@ -9032,8 +9748,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -9857,11 +10573,11 @@ namespace IWSProject.Models
 
         private string _text;
 
-        private string _Terms;
-
         private string _Currency;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
+
+        private string _Terms;
 
         private EntityRef<Account> _Account1;
 
@@ -9889,12 +10605,12 @@ namespace IWSProject.Models
         partial void OnduedateChanged();
         partial void OntextChanging(string value);
         partial void OntextChanged();
-        partial void OnTermsChanging(string value);
-        partial void OnTermsChanged();
         partial void OnCurrencyChanging(string value);
         partial void OnCurrencyChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
+        partial void OnTermsChanging(string value);
+        partial void OnTermsChanged();
         #endregion
 
         public DetailCompta()
@@ -10077,26 +10793,6 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Terms", DbType = "NVarChar(250)")]
-        public string Terms
-        {
-            get
-            {
-                return this._Terms;
-            }
-            set
-            {
-                if ((this._Terms != value))
-                {
-                    this.OnTermsChanging(value);
-                    this.SendPropertyChanging();
-                    this._Terms = value;
-                    this.SendPropertyChanged("Terms");
-                    this.OnTermsChanged();
-                }
-            }
-        }
-
         [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Currency", DbType = "NVarChar(10) NOT NULL", CanBeNull = false)]
         public string Currency
         {
@@ -10117,8 +10813,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -10133,6 +10829,26 @@ namespace IWSProject.Models
                     this._ModelId = value;
                     this.SendPropertyChanged("ModelId");
                     this.OnModelIdChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Terms", DbType = "VarChar(250)")]
+        public string Terms
+        {
+            get
+            {
+                return this._Terms;
+            }
+            set
+            {
+                if ((this._Terms != value))
+                {
+                    this.OnTermsChanging(value);
+                    this.SendPropertyChanging();
+                    this._Terms = value;
+                    this.SendPropertyChanged("Terms");
+                    this.OnTermsChanged();
                 }
             }
         }
@@ -10284,15 +11000,15 @@ namespace IWSProject.Models
 
         private string _text;
 
-        private string _Terms;
-
         private System.Nullable<decimal> _lineNet;
 
         private System.Nullable<decimal> _lineVAT;
 
         private string _Currency;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
+
+        private string _Terms;
 
         private EntityRef<Article> _Article;
 
@@ -10320,16 +11036,16 @@ namespace IWSProject.Models
         partial void OnduedateChanged();
         partial void OntextChanging(string value);
         partial void OntextChanged();
-        partial void OnTermsChanging(string value);
-        partial void OnTermsChanged();
         partial void OnlineNetChanging(System.Nullable<decimal> value);
         partial void OnlineNetChanged();
         partial void OnlineVATChanging(System.Nullable<decimal> value);
         partial void OnlineVATChanged();
         partial void OnCurrencyChanging(string value);
         partial void OnCurrencyChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
+        partial void OnTermsChanging(string value);
+        partial void OnTermsChanged();
         #endregion
 
         public DetailLogistic()
@@ -10527,26 +11243,6 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Terms", DbType = "NVarChar(250)")]
-        public string Terms
-        {
-            get
-            {
-                return this._Terms;
-            }
-            set
-            {
-                if ((this._Terms != value))
-                {
-                    this.OnTermsChanging(value);
-                    this.SendPropertyChanging();
-                    this._Terms = value;
-                    this.SendPropertyChanged("Terms");
-                    this.OnTermsChanged();
-                }
-            }
-        }
-
         [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_lineNet", AutoSync = AutoSync.Always, DbType = "Money", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
         public System.Nullable<decimal> lineNet
         {
@@ -10607,8 +11303,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -10623,6 +11319,26 @@ namespace IWSProject.Models
                     this._ModelId = value;
                     this.SendPropertyChanged("ModelId");
                     this.OnModelIdChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Terms", DbType = "VarChar(250)")]
+        public string Terms
+        {
+            get
+            {
+                return this._Terms;
+            }
+            set
+            {
+                if ((this._Terms != value))
+                {
+                    this.OnTermsChanging(value);
+                    this.SendPropertyChanging();
+                    this._Terms = value;
+                    this.SendPropertyChanged("Terms");
+                    this.OnTermsChanged();
                 }
             }
         }
@@ -10910,6 +11626,8 @@ namespace IWSProject.Models
 
         private string _CostCenter;
 
+        private string _Area;
+
         private string _HeaderText;
 
         private System.DateTime _TransDate;
@@ -10952,6 +11670,8 @@ namespace IWSProject.Models
         partial void OnoidChanged();
         partial void OnCostCenterChanging(string value);
         partial void OnCostCenterChanged();
+        partial void OnAreaChanging(string value);
+        partial void OnAreaChanged();
         partial void OnHeaderTextChanging(string value);
         partial void OnHeaderTextChanged();
         partial void OnTransDateChanging(System.DateTime value);
@@ -11044,6 +11764,26 @@ namespace IWSProject.Models
                     this._CostCenter = value;
                     this.SendPropertyChanged("CostCenter");
                     this.OnCostCenterChanged();
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Area", DbType = "NVarChar(15)")]
+        public string Area
+        {
+            get
+            {
+                return this._Area;
+            }
+            set
+            {
+                if ((this._Area != value))
+                {
+                    this.OnAreaChanging(value);
+                    this.SendPropertyChanging();
+                    this._Area = value;
+                    this.SendPropertyChanged("Area");
+                    this.OnAreaChanged();
                 }
             }
         }
@@ -12879,7 +13619,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ItemType", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ItemType", DbType = "NVarChar(50)")]
         public string ItemType
         {
             get
@@ -18753,11 +19493,15 @@ namespace IWSProject.Models
 
         private string _TypeJournal;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntitySet<DetailCompta> _DetailComptas;
 
+        private EntityRef<Account> _Account1;
+
         private EntityRef<Company> _Company;
+
+        private EntityRef<CostCenter> _CostCenter1;
 
         private EntityRef<TypeJournal> _TypeJournal1;
 
@@ -18797,14 +19541,16 @@ namespace IWSProject.Models
         partial void OnoMonthChanged();
         partial void OnTypeJournalChanging(string value);
         partial void OnTypeJournalChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
         public MasterCompta()
         {
             this._DetailComptas = new EntitySet<DetailCompta>(new Action<DetailCompta>(this.attach_DetailComptas), new Action<DetailCompta>(this.detach_DetailComptas));
+            this._Account1 = default(EntityRef<Account>);
             this._Company = default(EntityRef<Company>);
+            this._CostCenter1 = default(EntityRef<CostCenter>);
             this._TypeJournal1 = default(EntityRef<TypeJournal>);
             OnCreated();
         }
@@ -18860,6 +19606,10 @@ namespace IWSProject.Models
             {
                 if ((this._CostCenter != value))
                 {
+                    if (this._CostCenter1.HasLoadedOrAssignedValue)
+                    {
+                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+                    }
                     this.OnCostCenterChanging(value);
                     this.SendPropertyChanging();
                     this._CostCenter = value;
@@ -18880,6 +19630,10 @@ namespace IWSProject.Models
             {
                 if ((this._account != value))
                 {
+                    if (this._Account1.HasLoadedOrAssignedValue)
+                    {
+                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+                    }
                     this.OnaccountChanging(value);
                     this.SendPropertyChanging();
                     this._account = value;
@@ -19137,8 +19891,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -19167,6 +19921,40 @@ namespace IWSProject.Models
             set
             {
                 this._DetailComptas.Assign(value);
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Account_MasterCompta", Storage = "_Account1", ThisKey = "account", OtherKey = "id", IsForeignKey = true)]
+        public Account Account1
+        {
+            get
+            {
+                return this._Account1.Entity;
+            }
+            set
+            {
+                Account previousValue = this._Account1.Entity;
+                if (((previousValue != value)
+                            || (this._Account1.HasLoadedOrAssignedValue == false)))
+                {
+                    this.SendPropertyChanging();
+                    if ((previousValue != null))
+                    {
+                        this._Account1.Entity = null;
+                        previousValue.MasterComptas.Remove(this);
+                    }
+                    this._Account1.Entity = value;
+                    if ((value != null))
+                    {
+                        value.MasterComptas.Add(this);
+                        this._account = value.id;
+                    }
+                    else
+                    {
+                        this._account = default(string);
+                    }
+                    this.SendPropertyChanged("Account1");
+                }
             }
         }
 
@@ -19200,6 +19988,40 @@ namespace IWSProject.Models
                         this._CompanyId = default(string);
                     }
                     this.SendPropertyChanged("Company");
+                }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "CostCenter_MasterCompta", Storage = "_CostCenter1", ThisKey = "CostCenter", OtherKey = "id", IsForeignKey = true)]
+        public CostCenter CostCenter1
+        {
+            get
+            {
+                return this._CostCenter1.Entity;
+            }
+            set
+            {
+                CostCenter previousValue = this._CostCenter1.Entity;
+                if (((previousValue != value)
+                            || (this._CostCenter1.HasLoadedOrAssignedValue == false)))
+                {
+                    this.SendPropertyChanging();
+                    if ((previousValue != null))
+                    {
+                        this._CostCenter1.Entity = null;
+                        previousValue.MasterComptas.Remove(this);
+                    }
+                    this._CostCenter1.Entity = value;
+                    if ((value != null))
+                    {
+                        value.MasterComptas.Add(this);
+                        this._CostCenter = value.id;
+                    }
+                    else
+                    {
+                        this._CostCenter = default(string);
+                    }
+                    this.SendPropertyChanged("CostCenter1");
                 }
             }
         }
@@ -19311,7 +20133,7 @@ namespace IWSProject.Models
 
         private string _oMonth;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntitySet<DetailLogistic> _DetailLogistics;
 
@@ -19357,7 +20179,7 @@ namespace IWSProject.Models
         partial void OnoYearChanged();
         partial void OnoMonthChanging(string value);
         partial void OnoMonthChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -19717,8 +20539,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -20804,7 +21626,7 @@ namespace IWSProject.Models
 
         private string _oMonth;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntityRef<Account> _Account;
 
@@ -20836,7 +21658,7 @@ namespace IWSProject.Models
         partial void OnoYearChanged();
         partial void OnoMonthChanging(string value);
         partial void OnoMonthChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -20910,7 +21732,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Periode", DbType = "NChar(6) NOT NULL", CanBeNull = false)]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Periode", DbType = "NVarChar(6) NOT NULL", CanBeNull = false)]
         public string Periode
         {
             get
@@ -21090,8 +21912,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -21722,7 +22544,7 @@ namespace IWSProject.Models
 
         private System.DateTime _Updated;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         #region Extensibility Method Definitions
         partial void OnLoaded();
@@ -21740,7 +22562,7 @@ namespace IWSProject.Models
         partial void OnPostedChanged();
         partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -21869,8 +22691,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -23715,7 +24537,7 @@ namespace IWSProject.Models
 
         private string _Currency;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntityRef<Article> _Article;
 
@@ -23743,7 +24565,7 @@ namespace IWSProject.Models
         partial void OnCompanyIDChanged();
         partial void OnCurrencyChanging(string value);
         partial void OnCurrencyChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -23942,8 +24764,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -24077,7 +24899,7 @@ namespace IWSProject.Models
 
         private System.DateTime _Updated;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntitySet<BillOfDelivery> _BillOfDeliveries;
 
@@ -24117,7 +24939,7 @@ namespace IWSProject.Models
         partial void OnPostedChanged();
         partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -24253,7 +25075,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string accountid
         {
             get
@@ -24337,8 +25159,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -24602,15 +25424,15 @@ namespace IWSProject.Models
 
         private System.DateTime _Updated;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
+
+        private EntitySet<VendorInvoice> _VendorInvoices;
 
         private EntitySet<GoodReceiving> _GoodReceivings;
 
         private EntitySet<InventoryInvoice> _InventoryInvoices;
 
         private EntitySet<Payment> _Payments;
-
-        private EntitySet<VendorInvoice> _VendorInvoices;
 
         #region Extensibility Method Definitions
         partial void OnLoaded();
@@ -24650,16 +25472,16 @@ namespace IWSProject.Models
         partial void OnPostedChanged();
         partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
         public Supplier()
         {
+            this._VendorInvoices = new EntitySet<VendorInvoice>(new Action<VendorInvoice>(this.attach_VendorInvoices), new Action<VendorInvoice>(this.detach_VendorInvoices));
             this._GoodReceivings = new EntitySet<GoodReceiving>(new Action<GoodReceiving>(this.attach_GoodReceivings), new Action<GoodReceiving>(this.detach_GoodReceivings));
             this._InventoryInvoices = new EntitySet<InventoryInvoice>(new Action<InventoryInvoice>(this.attach_InventoryInvoices), new Action<InventoryInvoice>(this.detach_InventoryInvoices));
             this._Payments = new EntitySet<Payment>(new Action<Payment>(this.attach_Payments), new Action<Payment>(this.detach_Payments));
-            this._VendorInvoices = new EntitySet<VendorInvoice>(new Action<VendorInvoice>(this.attach_VendorInvoices), new Action<VendorInvoice>(this.detach_VendorInvoices));
             OnCreated();
         }
 
@@ -24823,7 +25645,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string accountid
         {
             get
@@ -24863,7 +25685,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string IBAN
         {
             get
@@ -24883,7 +25705,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Bank", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Bank", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string Bank
         {
             get
@@ -24903,7 +25725,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_BIC", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_BIC", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string BIC
         {
             get
@@ -24923,7 +25745,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_VatCode", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_VatCode", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string VatCode
         {
             get
@@ -24943,7 +25765,7 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Charge", DbType = "NVarChar(50)")]
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Charge", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string Charge
         {
             get
@@ -25003,8 +25825,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -25020,6 +25842,19 @@ namespace IWSProject.Models
                     this.SendPropertyChanged("ModelId");
                     this.OnModelIdChanged();
                 }
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Supplier_VendorInvoice", Storage = "_VendorInvoices", ThisKey = "id", OtherKey = "account")]
+        public EntitySet<VendorInvoice> VendorInvoices
+        {
+            get
+            {
+                return this._VendorInvoices;
+            }
+            set
+            {
+                this._VendorInvoices.Assign(value);
             }
         }
 
@@ -25062,19 +25897,6 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Supplier_VendorInvoice", Storage = "_VendorInvoices", ThisKey = "id", OtherKey = "account")]
-        public EntitySet<VendorInvoice> VendorInvoices
-        {
-            get
-            {
-                return this._VendorInvoices;
-            }
-            set
-            {
-                this._VendorInvoices.Assign(value);
-            }
-        }
-
         public event PropertyChangingEventHandler PropertyChanging;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -25093,6 +25915,18 @@ namespace IWSProject.Models
             {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void attach_VendorInvoices(VendorInvoice entity)
+        {
+            this.SendPropertyChanging();
+            entity.Supplier = this;
+        }
+
+        private void detach_VendorInvoices(VendorInvoice entity)
+        {
+            this.SendPropertyChanging();
+            entity.Supplier = null;
         }
 
         private void attach_GoodReceivings(GoodReceiving entity)
@@ -25126,18 +25960,6 @@ namespace IWSProject.Models
         }
 
         private void detach_Payments(Payment entity)
-        {
-            this.SendPropertyChanging();
-            entity.Supplier = null;
-        }
-
-        private void attach_VendorInvoices(VendorInvoice entity)
-        {
-            this.SendPropertyChanging();
-            entity.Supplier = this;
-        }
-
-        private void detach_VendorInvoices(VendorInvoice entity)
         {
             this.SendPropertyChanging();
             entity.Supplier = null;
@@ -25382,9 +26204,11 @@ namespace IWSProject.Models
 
         private string _CompanyId;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntitySet<Account> _Accounts;
+
+        private EntitySet<VendorInvoice> _VendorInvoices;
 
         private EntitySet<AffectationJournal> _AffectationJournals;
 
@@ -25397,8 +26221,6 @@ namespace IWSProject.Models
         private EntitySet<Payment> _Payments;
 
         private EntitySet<Settlement> _Settlements;
-
-        private EntitySet<VendorInvoice> _VendorInvoices;
 
         #region Extensibility Method Definitions
         partial void OnLoaded();
@@ -25416,20 +26238,20 @@ namespace IWSProject.Models
         partial void OnUpdatedChanged();
         partial void OnCompanyIdChanging(string value);
         partial void OnCompanyIdChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
         public TypeJournal()
         {
             this._Accounts = new EntitySet<Account>(new Action<Account>(this.attach_Accounts), new Action<Account>(this.detach_Accounts));
+            this._VendorInvoices = new EntitySet<VendorInvoice>(new Action<VendorInvoice>(this.attach_VendorInvoices), new Action<VendorInvoice>(this.detach_VendorInvoices));
             this._AffectationJournals = new EntitySet<AffectationJournal>(new Action<AffectationJournal>(this.attach_AffectationJournals), new Action<AffectationJournal>(this.detach_AffectationJournals));
             this._CustomerInvoices = new EntitySet<CustomerInvoice>(new Action<CustomerInvoice>(this.attach_CustomerInvoices), new Action<CustomerInvoice>(this.detach_CustomerInvoices));
             this._GeneralLedgers = new EntitySet<GeneralLedger>(new Action<GeneralLedger>(this.attach_GeneralLedgers), new Action<GeneralLedger>(this.detach_GeneralLedgers));
             this._MasterComptas = new EntitySet<MasterCompta>(new Action<MasterCompta>(this.attach_MasterComptas), new Action<MasterCompta>(this.detach_MasterComptas));
             this._Payments = new EntitySet<Payment>(new Action<Payment>(this.attach_Payments), new Action<Payment>(this.detach_Payments));
             this._Settlements = new EntitySet<Settlement>(new Action<Settlement>(this.attach_Settlements), new Action<Settlement>(this.detach_Settlements));
-            this._VendorInvoices = new EntitySet<VendorInvoice>(new Action<VendorInvoice>(this.attach_VendorInvoices), new Action<VendorInvoice>(this.detach_VendorInvoices));
             OnCreated();
         }
 
@@ -25553,8 +26375,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -25583,6 +26405,19 @@ namespace IWSProject.Models
             set
             {
                 this._Accounts.Assign(value);
+            }
+        }
+
+        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "TypeJournal_VendorInvoice", Storage = "_VendorInvoices", ThisKey = "Id", OtherKey = "TypeJournal")]
+        public EntitySet<VendorInvoice> VendorInvoices
+        {
+            get
+            {
+                return this._VendorInvoices;
+            }
+            set
+            {
+                this._VendorInvoices.Assign(value);
             }
         }
 
@@ -25664,19 +26499,6 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "TypeJournal_VendorInvoice", Storage = "_VendorInvoices", ThisKey = "Id", OtherKey = "TypeJournal")]
-        public EntitySet<VendorInvoice> VendorInvoices
-        {
-            get
-            {
-                return this._VendorInvoices;
-            }
-            set
-            {
-                this._VendorInvoices.Assign(value);
-            }
-        }
-
         public event PropertyChangingEventHandler PropertyChanging;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -25704,6 +26526,18 @@ namespace IWSProject.Models
         }
 
         private void detach_Accounts(Account entity)
+        {
+            this.SendPropertyChanging();
+            entity.TypeJournal1 = null;
+        }
+
+        private void attach_VendorInvoices(VendorInvoice entity)
+        {
+            this.SendPropertyChanging();
+            entity.TypeJournal1 = this;
+        }
+
+        private void detach_VendorInvoices(VendorInvoice entity)
         {
             this.SendPropertyChanging();
             entity.TypeJournal1 = null;
@@ -25780,18 +26614,6 @@ namespace IWSProject.Models
             this.SendPropertyChanging();
             entity.TypeJournal1 = null;
         }
-
-        private void attach_VendorInvoices(VendorInvoice entity)
-        {
-            this.SendPropertyChanging();
-            entity.TypeJournal1 = this;
-        }
-
-        private void detach_VendorInvoices(VendorInvoice entity)
-        {
-            this.SendPropertyChanging();
-            entity.TypeJournal1 = null;
-        }
     }
 
     [global::System.Data.Linq.Mapping.TableAttribute(Name = "dbo.Vat")]
@@ -25820,7 +26642,7 @@ namespace IWSProject.Models
 
         private System.DateTime _Updated;
 
-        private System.Nullable<int> _ModelId;
+        private int _ModelId;
 
         private EntitySet<Article> _Articles;
 
@@ -25848,7 +26670,7 @@ namespace IWSProject.Models
         partial void OnPostedChanged();
         partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
+        partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
 
@@ -26058,8 +26880,8 @@ namespace IWSProject.Models
             }
         }
 
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
         {
             get
             {
@@ -26121,668 +26943,6 @@ namespace IWSProject.Models
         {
             this.SendPropertyChanging();
             entity.Vat = null;
-        }
-    }
-
-    [global::System.Data.Linq.Mapping.TableAttribute(Name = "dbo.VendorInvoice")]
-    public partial class VendorInvoice : INotifyPropertyChanging, INotifyPropertyChanged
-    {
-
-        private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-
-        private int _id;
-
-        private int _oid;
-
-        private string _CostCenter;
-
-        private string _account;
-
-        private string _HeaderText;
-
-        private System.DateTime _TransDate;
-
-        private System.DateTime _ItemDate;
-
-        private System.DateTime _EntryDate;
-
-        private string _CompanyId;
-
-        private System.Nullable<bool> _IsValidated;
-
-        private System.Nullable<decimal> _oTotal;
-
-        private string _oCurrency;
-
-        private string _oPeriode;
-
-        private string _oYear;
-
-        private string _oMonth;
-
-        private string _TypeJournal;
-
-        private System.Nullable<int> _ModelId;
-
-        private string _AccountingAccount;
-
-        private EntitySet<LineVendorInvoice> _LineVendorInvoices;
-
-        private EntityRef<Company> _Company;
-
-        private EntityRef<CostCenter> _CostCenter1;
-
-        private EntityRef<Supplier> _Supplier;
-
-        private EntityRef<TypeJournal> _TypeJournal1;
-
-        #region Extensibility Method Definitions
-        partial void OnLoaded();
-        partial void OnValidate(System.Data.Linq.ChangeAction action);
-        partial void OnCreated();
-        partial void OnidChanging(int value);
-        partial void OnidChanged();
-        partial void OnoidChanging(int value);
-        partial void OnoidChanged();
-        partial void OnCostCenterChanging(string value);
-        partial void OnCostCenterChanged();
-        partial void OnaccountChanging(string value);
-        partial void OnaccountChanged();
-        partial void OnHeaderTextChanging(string value);
-        partial void OnHeaderTextChanged();
-        partial void OnTransDateChanging(System.DateTime value);
-        partial void OnTransDateChanged();
-        partial void OnItemDateChanging(System.DateTime value);
-        partial void OnItemDateChanged();
-        partial void OnEntryDateChanging(System.DateTime value);
-        partial void OnEntryDateChanged();
-        partial void OnCompanyIdChanging(string value);
-        partial void OnCompanyIdChanged();
-        partial void OnIsValidatedChanging(System.Nullable<bool> value);
-        partial void OnIsValidatedChanged();
-        partial void OnoTotalChanging(System.Nullable<decimal> value);
-        partial void OnoTotalChanged();
-        partial void OnoCurrencyChanging(string value);
-        partial void OnoCurrencyChanged();
-        partial void OnoPeriodeChanging(string value);
-        partial void OnoPeriodeChanged();
-        partial void OnoYearChanging(string value);
-        partial void OnoYearChanged();
-        partial void OnoMonthChanging(string value);
-        partial void OnoMonthChanged();
-        partial void OnTypeJournalChanging(string value);
-        partial void OnTypeJournalChanged();
-        partial void OnModelIdChanging(System.Nullable<int> value);
-        partial void OnModelIdChanged();
-        partial void OnAccountingAccountChanging(string value);
-        partial void OnAccountingAccountChanged();
-        #endregion
-
-        public VendorInvoice()
-        {
-            this._LineVendorInvoices = new EntitySet<LineVendorInvoice>(new Action<LineVendorInvoice>(this.attach_LineVendorInvoices), new Action<LineVendorInvoice>(this.detach_LineVendorInvoices));
-            this._Company = default(EntityRef<Company>);
-            this._CostCenter1 = default(EntityRef<CostCenter>);
-            this._Supplier = default(EntityRef<Supplier>);
-            this._TypeJournal1 = default(EntityRef<TypeJournal>);
-            OnCreated();
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_id", AutoSync = AutoSync.OnInsert, DbType = "Int NOT NULL IDENTITY", IsPrimaryKey = true, IsDbGenerated = true)]
-        public int id
-        {
-            get
-            {
-                return this._id;
-            }
-            set
-            {
-                if ((this._id != value))
-                {
-                    this.OnidChanging(value);
-                    this.SendPropertyChanging();
-                    this._id = value;
-                    this.SendPropertyChanged("id");
-                    this.OnidChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oid", DbType = "Int NOT NULL")]
-        public int oid
-        {
-            get
-            {
-                return this._oid;
-            }
-            set
-            {
-                if ((this._oid != value))
-                {
-                    this.OnoidChanging(value);
-                    this.SendPropertyChanging();
-                    this._oid = value;
-                    this.SendPropertyChanged("oid");
-                    this.OnoidChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_CostCenter", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
-        public string CostCenter
-        {
-            get
-            {
-                return this._CostCenter;
-            }
-            set
-            {
-                if ((this._CostCenter != value))
-                {
-                    if (this._CostCenter1.HasLoadedOrAssignedValue)
-                    {
-                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-                    }
-                    this.OnCostCenterChanging(value);
-                    this.SendPropertyChanging();
-                    this._CostCenter = value;
-                    this.SendPropertyChanged("CostCenter");
-                    this.OnCostCenterChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_account", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
-        public string account
-        {
-            get
-            {
-                return this._account;
-            }
-            set
-            {
-                if ((this._account != value))
-                {
-                    if (this._Supplier.HasLoadedOrAssignedValue)
-                    {
-                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-                    }
-                    this.OnaccountChanging(value);
-                    this.SendPropertyChanging();
-                    this._account = value;
-                    this.SendPropertyChanged("account");
-                    this.OnaccountChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_HeaderText", DbType = "NVarChar(250)")]
-        public string HeaderText
-        {
-            get
-            {
-                return this._HeaderText;
-            }
-            set
-            {
-                if ((this._HeaderText != value))
-                {
-                    this.OnHeaderTextChanging(value);
-                    this.SendPropertyChanging();
-                    this._HeaderText = value;
-                    this.SendPropertyChanged("HeaderText");
-                    this.OnHeaderTextChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_TransDate", DbType = "Date NOT NULL")]
-        public System.DateTime TransDate
-        {
-            get
-            {
-                return this._TransDate;
-            }
-            set
-            {
-                if ((this._TransDate != value))
-                {
-                    this.OnTransDateChanging(value);
-                    this.SendPropertyChanging();
-                    this._TransDate = value;
-                    this.SendPropertyChanged("TransDate");
-                    this.OnTransDateChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ItemDate", DbType = "Date NOT NULL")]
-        public System.DateTime ItemDate
-        {
-            get
-            {
-                return this._ItemDate;
-            }
-            set
-            {
-                if ((this._ItemDate != value))
-                {
-                    this.OnItemDateChanging(value);
-                    this.SendPropertyChanging();
-                    this._ItemDate = value;
-                    this.SendPropertyChanged("ItemDate");
-                    this.OnItemDateChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_EntryDate", DbType = "Date NOT NULL")]
-        public System.DateTime EntryDate
-        {
-            get
-            {
-                return this._EntryDate;
-            }
-            set
-            {
-                if ((this._EntryDate != value))
-                {
-                    this.OnEntryDateChanging(value);
-                    this.SendPropertyChanging();
-                    this._EntryDate = value;
-                    this.SendPropertyChanged("EntryDate");
-                    this.OnEntryDateChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_CompanyId", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
-        public string CompanyId
-        {
-            get
-            {
-                return this._CompanyId;
-            }
-            set
-            {
-                if ((this._CompanyId != value))
-                {
-                    if (this._Company.HasLoadedOrAssignedValue)
-                    {
-                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-                    }
-                    this.OnCompanyIdChanging(value);
-                    this.SendPropertyChanging();
-                    this._CompanyId = value;
-                    this.SendPropertyChanged("CompanyId");
-                    this.OnCompanyIdChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IsValidated", DbType = "Bit")]
-        public System.Nullable<bool> IsValidated
-        {
-            get
-            {
-                return this._IsValidated;
-            }
-            set
-            {
-                if ((this._IsValidated != value))
-                {
-                    this.OnIsValidatedChanging(value);
-                    this.SendPropertyChanging();
-                    this._IsValidated = value;
-                    this.SendPropertyChanged("IsValidated");
-                    this.OnIsValidatedChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oTotal", AutoSync = AutoSync.Always, DbType = "Money", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
-        public System.Nullable<decimal> oTotal
-        {
-            get
-            {
-                return this._oTotal;
-            }
-            set
-            {
-                if ((this._oTotal != value))
-                {
-                    this.OnoTotalChanging(value);
-                    this.SendPropertyChanging();
-                    this._oTotal = value;
-                    this.SendPropertyChanged("oTotal");
-                    this.OnoTotalChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oCurrency", AutoSync = AutoSync.Always, DbType = "NVarChar(10)", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
-        public string oCurrency
-        {
-            get
-            {
-                return this._oCurrency;
-            }
-            set
-            {
-                if ((this._oCurrency != value))
-                {
-                    this.OnoCurrencyChanging(value);
-                    this.SendPropertyChanging();
-                    this._oCurrency = value;
-                    this.SendPropertyChanged("oCurrency");
-                    this.OnoCurrencyChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oPeriode", AutoSync = AutoSync.Always, DbType = "NVarChar(6)", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
-        public string oPeriode
-        {
-            get
-            {
-                return this._oPeriode;
-            }
-            set
-            {
-                if ((this._oPeriode != value))
-                {
-                    this.OnoPeriodeChanging(value);
-                    this.SendPropertyChanging();
-                    this._oPeriode = value;
-                    this.SendPropertyChanged("oPeriode");
-                    this.OnoPeriodeChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oYear", AutoSync = AutoSync.Always, DbType = "Char(4)", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
-        public string oYear
-        {
-            get
-            {
-                return this._oYear;
-            }
-            set
-            {
-                if ((this._oYear != value))
-                {
-                    this.OnoYearChanging(value);
-                    this.SendPropertyChanging();
-                    this._oYear = value;
-                    this.SendPropertyChanged("oYear");
-                    this.OnoYearChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_oMonth", AutoSync = AutoSync.Always, DbType = "Char(2)", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
-        public string oMonth
-        {
-            get
-            {
-                return this._oMonth;
-            }
-            set
-            {
-                if ((this._oMonth != value))
-                {
-                    this.OnoMonthChanging(value);
-                    this.SendPropertyChanging();
-                    this._oMonth = value;
-                    this.SendPropertyChanged("oMonth");
-                    this.OnoMonthChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_TypeJournal", DbType = "VarChar(50)")]
-        public string TypeJournal
-        {
-            get
-            {
-                return this._TypeJournal;
-            }
-            set
-            {
-                if ((this._TypeJournal != value))
-                {
-                    if (this._TypeJournal1.HasLoadedOrAssignedValue)
-                    {
-                        throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-                    }
-                    this.OnTypeJournalChanging(value);
-                    this.SendPropertyChanging();
-                    this._TypeJournal = value;
-                    this.SendPropertyChanged("TypeJournal");
-                    this.OnTypeJournalChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ModelId", DbType = "Int")]
-        public System.Nullable<int> ModelId
-        {
-            get
-            {
-                return this._ModelId;
-            }
-            set
-            {
-                if ((this._ModelId != value))
-                {
-                    this.OnModelIdChanging(value);
-                    this.SendPropertyChanging();
-                    this._ModelId = value;
-                    this.SendPropertyChanged("ModelId");
-                    this.OnModelIdChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_AccountingAccount", DbType = "VarChar(50)")]
-        public string AccountingAccount
-        {
-            get
-            {
-                return this._AccountingAccount;
-            }
-            set
-            {
-                if ((this._AccountingAccount != value))
-                {
-                    this.OnAccountingAccountChanging(value);
-                    this.SendPropertyChanging();
-                    this._AccountingAccount = value;
-                    this.SendPropertyChanged("AccountingAccount");
-                    this.OnAccountingAccountChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "VendorInvoice_LineVendorInvoice", Storage = "_LineVendorInvoices", ThisKey = "id", OtherKey = "transid")]
-        public EntitySet<LineVendorInvoice> LineVendorInvoices
-        {
-            get
-            {
-                return this._LineVendorInvoices;
-            }
-            set
-            {
-                this._LineVendorInvoices.Assign(value);
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Company_VendorInvoice", Storage = "_Company", ThisKey = "CompanyId", OtherKey = "id", IsForeignKey = true)]
-        public Company Company
-        {
-            get
-            {
-                return this._Company.Entity;
-            }
-            set
-            {
-                Company previousValue = this._Company.Entity;
-                if (((previousValue != value)
-                            || (this._Company.HasLoadedOrAssignedValue == false)))
-                {
-                    this.SendPropertyChanging();
-                    if ((previousValue != null))
-                    {
-                        this._Company.Entity = null;
-                        previousValue.VendorInvoices.Remove(this);
-                    }
-                    this._Company.Entity = value;
-                    if ((value != null))
-                    {
-                        value.VendorInvoices.Add(this);
-                        this._CompanyId = value.id;
-                    }
-                    else
-                    {
-                        this._CompanyId = default(string);
-                    }
-                    this.SendPropertyChanged("Company");
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "CostCenter_VendorInvoice", Storage = "_CostCenter1", ThisKey = "CostCenter", OtherKey = "id", IsForeignKey = true)]
-        public CostCenter CostCenter1
-        {
-            get
-            {
-                return this._CostCenter1.Entity;
-            }
-            set
-            {
-                CostCenter previousValue = this._CostCenter1.Entity;
-                if (((previousValue != value)
-                            || (this._CostCenter1.HasLoadedOrAssignedValue == false)))
-                {
-                    this.SendPropertyChanging();
-                    if ((previousValue != null))
-                    {
-                        this._CostCenter1.Entity = null;
-                        previousValue.VendorInvoices.Remove(this);
-                    }
-                    this._CostCenter1.Entity = value;
-                    if ((value != null))
-                    {
-                        value.VendorInvoices.Add(this);
-                        this._CostCenter = value.id;
-                    }
-                    else
-                    {
-                        this._CostCenter = default(string);
-                    }
-                    this.SendPropertyChanged("CostCenter1");
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "Supplier_VendorInvoice", Storage = "_Supplier", ThisKey = "account", OtherKey = "id", IsForeignKey = true)]
-        public Supplier Supplier
-        {
-            get
-            {
-                return this._Supplier.Entity;
-            }
-            set
-            {
-                Supplier previousValue = this._Supplier.Entity;
-                if (((previousValue != value)
-                            || (this._Supplier.HasLoadedOrAssignedValue == false)))
-                {
-                    this.SendPropertyChanging();
-                    if ((previousValue != null))
-                    {
-                        this._Supplier.Entity = null;
-                        previousValue.VendorInvoices.Remove(this);
-                    }
-                    this._Supplier.Entity = value;
-                    if ((value != null))
-                    {
-                        value.VendorInvoices.Add(this);
-                        this._account = value.id;
-                    }
-                    else
-                    {
-                        this._account = default(string);
-                    }
-                    this.SendPropertyChanged("Supplier");
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.AssociationAttribute(Name = "TypeJournal_VendorInvoice", Storage = "_TypeJournal1", ThisKey = "TypeJournal", OtherKey = "Id", IsForeignKey = true)]
-        public TypeJournal TypeJournal1
-        {
-            get
-            {
-                return this._TypeJournal1.Entity;
-            }
-            set
-            {
-                TypeJournal previousValue = this._TypeJournal1.Entity;
-                if (((previousValue != value)
-                            || (this._TypeJournal1.HasLoadedOrAssignedValue == false)))
-                {
-                    this.SendPropertyChanging();
-                    if ((previousValue != null))
-                    {
-                        this._TypeJournal1.Entity = null;
-                        previousValue.VendorInvoices.Remove(this);
-                    }
-                    this._TypeJournal1.Entity = value;
-                    if ((value != null))
-                    {
-                        value.VendorInvoices.Add(this);
-                        this._TypeJournal = value.Id;
-                    }
-                    else
-                    {
-                        this._TypeJournal = default(string);
-                    }
-                    this.SendPropertyChanged("TypeJournal1");
-                }
-            }
-        }
-
-        public event PropertyChangingEventHandler PropertyChanging;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void SendPropertyChanging()
-        {
-            if ((this.PropertyChanging != null))
-            {
-                this.PropertyChanging(this, emptyChangingEventArgs);
-            }
-        }
-
-        protected virtual void SendPropertyChanged(String propertyName)
-        {
-            if ((this.PropertyChanged != null))
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        private void attach_LineVendorInvoices(LineVendorInvoice entity)
-        {
-            this.SendPropertyChanging();
-            entity.VendorInvoice = this;
-        }
-
-        private void detach_LineVendorInvoices(LineVendorInvoice entity)
-        {
-            this.SendPropertyChanging();
-            entity.VendorInvoice = null;
         }
     }
 

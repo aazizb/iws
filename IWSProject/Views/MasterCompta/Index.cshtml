@@ -1,5 +1,4 @@
-﻿
-@using IWSProject.Content
+﻿@using IWSProject.Content
 <script type="text/javascript">
     function OnOIDSelectedIndexChanged(s, e) {
     $.ajax({
@@ -43,7 +42,7 @@
     var ndxDetail = 0;
     var command;
     var isDetailRowExpanded = new Array();
-    var modelId = null;
+    var currentModelId = null;
     function OnMRowClick(s, e) {
         expanded = true;
         ndxMaster = e.visibleIndex;
@@ -67,8 +66,8 @@
     }
     function OnMBeginCallback(s, e) {
         e.customArgs["selectedIDs"] = selectedIDs;
-        e.customArgs["ModelId"] = modelId;
-        modelId = null;
+        e.customArgs["currentModelId"] = currentModelId;
+        currentModelId = null;
         command = e.command;
     }
     function OnMSelectionChanged(s, e) {
@@ -88,7 +87,7 @@
                 s.CollapseDetailRow(ndxMaster);
             }
         }
-        if (modelId != null) {
+        if (currentModelId != null) {
             callbackPanelPartialView.PerformCallback();
         }
     }
@@ -96,7 +95,7 @@
         selectedIDs = values.join(';');
     }
     function OnSubmitClick(s, e) {
-        modelId = ComboBoxModelId.GetValue();
+        currentModelId = ComboBoxModelId.GetValue();
         callbackPanelPartialView.PerformCallback();
     }
     function OnMInit(s, e) {
@@ -168,7 +167,7 @@
     }
     function OnModelIdSelectionChanged() {
         selectedIDs = null;
-        modelId = ComboBoxModelId.GetValue();
+        currentModelId = ComboBoxModelId.GetValue();
         if (!callbackPanelPartialView.InCallback()) {
             callbackPanelPartialView.PerformCallback();
         }

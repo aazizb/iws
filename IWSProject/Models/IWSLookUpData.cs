@@ -497,14 +497,15 @@
             return article;
         }
 
-        public static IEnumerable GetMasterLogistic(LogisticMasterModelId modelId) => IWSEntities.MasterLogistics.Where(c =>
-                                c.CompanyId == (string)HttpContext.Current.Session["CompanyID"] &&
-                                c.ModelId == (int)modelId).
-                                OrderByDescending(o => o.id).AsEnumerable();
-        public static IEnumerable GetMasterCompta(ComptaMasterModelId modelId) => IWSEntities.MasterComptas.Where(c =>
+        public static IEnumerable GetMasterLogistic(LogisticMasterModelId modelId) => 
+                        IWSEntities.MasterLogistics.Where(c =>
                         c.CompanyId == (string)HttpContext.Current.Session["CompanyID"] &&
-                        c.ModelId == (int)modelId).
-                        OrderByDescending(o => o.id).AsEnumerable();
+                        c.ModelId == (int)modelId).OrderByDescending(o => o.id).AsEnumerable();
+
+        public static IEnumerable GetMasterCompta(ComptaMasterModelId modelId) => 
+                        IWSEntities.MasterComptas.Where(c =>
+                        c.CompanyId == (string)HttpContext.Current.Session["CompanyID"] &&
+                        c.ModelId == (int)modelId).OrderByDescending(o => o.id).AsEnumerable();
 
         public static IEnumerable GetDetailLogistic(int transId) => IWSEntities.DetailLogistics.Where(c =>
                                 c.transid == transId).
@@ -3710,12 +3711,12 @@
             QuantityUnit = 4,
             Store = 2,
             Supplier = 1,
-            VAT = 2045,
-            Currency = 2050,
-            TypeJournal = 2060,
+            VAT = 14,       //2045,
+            Currency = 5,   //2050,
+            TypeJournal = 8,    //2060,
             Stock = 107,
             BankAccount =12,
-            PeriodicAccountBalance,
+            PeriodicAccountBalance =13,
             Default = 0000
         }
         public enum LogisticMasterModelId

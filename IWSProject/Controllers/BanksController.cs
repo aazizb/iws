@@ -31,7 +31,6 @@ namespace IWSProject.Controllers
             }
             return View();
         }
-
         [ValidateInput(false)]
         public ActionResult BanksGridViewPartial()
         {
@@ -44,7 +43,6 @@ namespace IWSProject.Controllers
 
             return PartialView("BanksGridViewPartial", ViewBag.BankX);
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult BanksGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Bank item)
         {
@@ -76,7 +74,7 @@ namespace IWSProject.Controllers
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult BanksGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Bank item)
-        {
+        {                                               
             var model = db.Banks;
             ViewData["bank"] = item;
             if (ModelState.IsValid)

@@ -274,7 +274,6 @@
             column.Caption = IWSLocalResource.text;
             column.Width = Unit.Percentage(20);
         });
-
         settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oTotal").DisplayFormat = "N";
 
         settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oTotal").DisplayFormat = "N";
@@ -565,7 +564,6 @@
         settings.SetDetailRowTemplateContent(c =>
         {
             Session["transid"] = DataBinder.Eval(c.DataItem, "ID");
-            Session["supplierId"] = DataBinder.Eval(c.DataItem, "account");
             Session["IsValidated"] = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
             Html.RenderAction("DetailGridViewPartial", new
             {

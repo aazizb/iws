@@ -62,6 +62,7 @@ namespace IWSProject.Controllers
                 var model = db.VendorInvoices;
                 item.IsValidated = false;
                 item.CompanyId = (string)Session["CompanyID"];
+                item.ModelId = (int)IWSLookUp.ComptaMasterModelId.VendorInvoice;
                 int itemOID = item.oid;
                 ViewData["item"] = item;
                 bool result = false;

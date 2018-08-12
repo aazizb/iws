@@ -2,19 +2,15 @@
 using IWSProject.Content;
 using IWSProject.Models;
 using System;
-using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Web.Mvc;
-
 namespace IWSProject.Controllers
 {
     [Authorize]
     public class MasterComptaController : IWSBaseController
     {
-        public MasterComptaController()
-        {
-            db = new IWSDataContext();
-        }
+
         // GET: 
         public ActionResult Index()
         {
@@ -27,43 +23,38 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult MasterGridViewPartial()
         {
-            int modelId = 0;
-
+            int modelId = (int)IWSLookUp.ComptaMasterModelId.Default;
             if (Session["ModelId"] != null)
             {
                 modelId = (int)Session["ModelId"];
-
             }
             if (Session["IsVending"] == null)
             {
                 Session["IsVending"] = "SU";
             }
-            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            return PartialView("MasterGridViewPartial", 
+                        IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult CallbackPanelPartialView(string selectedIDs, int modelId)
+        public ActionResult CallbackPanelPartialView(string selectedIDs, int currentModelId)
         {
-
-            Session["ModelId"] = modelId;
-
-            Session["IsVending"] = IsVending(modelId);
-
-            if (!String.IsNullOrWhiteSpace(selectedIDs) && (modelId > 0))
+            Session["ModelId"] = currentModelId;
+            Session["IsVending"] = IsVending(currentModelId);
+            if (!String.IsNullOrWhiteSpace(selectedIDs) && (currentModelId > 0))
             {
                 string companyID = (string)Session["CompanyID"];
-
-                ProcessData(selectedIDs, companyID, false, modelId);
+                ProcessData(selectedIDs, companyID, false, currentModelId);
             }
-            return PartialView("CallbackPanelPartialView", IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            return PartialView("CallbackPanelPartialView", 
+                    IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)currentModelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] MasterCompta item)
         {
             int modelId = (int)Session["Modelid"];
-
+            var model = db.MasterComptas;
             if (ModelState.IsValid)
             {
-                var model = db.MasterComptas;
                 item.IsValidated = false;
                 item.CompanyId = (string)Session["CompanyID"];
                 int itemOID = item.oid;
@@ -84,7 +75,7 @@ namespace IWSProject.Controllers
                             result = InsertLines(itemId, itemOID, modelId);
                             if (result)
                             {
-                                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+                                db.SubmitChanges(ConflictMode.FailOnFirstConflict);
                             }
                         }
                     }
@@ -103,7 +94,8 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            return PartialView("MasterGridViewPartial", 
+                        IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] MasterCompta item)
@@ -116,7 +108,7 @@ namespace IWSProject.Controllers
                 try
                 {
                     var modelItem = model.FirstOrDefault(it => it.id == item.id);
-                    if (modelItem != null)
+                    if (model != null)
                     {
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
@@ -129,9 +121,10 @@ namespace IWSProject.Controllers
             }
             else
             {
-                ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
+              ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            return PartialView("MasterGridViewPartial",
+                                IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialDelete(int id)
@@ -150,14 +143,14 @@ namespace IWSProject.Controllers
                         model.DeleteOnSubmit(item);
                         db.SubmitChanges();
                     }
-
                 }
                 catch (Exception e)
                 {
                     ViewData["GenericError"] = e.Message;
                 }
             }
-            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            return PartialView("MasterGridViewPartial",
+                                IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(int transId, object newKeyValue)
