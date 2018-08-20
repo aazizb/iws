@@ -1,5 +1,4 @@
-﻿
-@using IWSProject.Content
+﻿@using IWSProject.Content
 @using IWSProject.Models
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -565,6 +564,7 @@
         {
             Session["transid"] = DataBinder.Eval(c.DataItem, "ID");
             Session["IsValidated"] = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
+         
             Html.RenderAction("DetailGridViewPartial", new
             {
                 transid = Session["transid"],

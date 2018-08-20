@@ -105,6 +105,9 @@ namespace IWSProject.Models.MsSql
     partial void InsertDetailCompta(DetailCompta instance);
     partial void UpdateDetailCompta(DetailCompta instance);
     partial void DeleteDetailCompta(DetailCompta instance);
+    partial void InsertDetailDetailCompta(DetailDetailCompta instance);
+    partial void UpdateDetailDetailCompta(DetailDetailCompta instance);
+    partial void DeleteDetailDetailCompta(DetailDetailCompta instance);
     partial void InsertDetailLogistic(DetailLogistic instance);
     partial void UpdateDetailLogistic(DetailLogistic instance);
     partial void DeleteDetailLogistic(DetailLogistic instance);
@@ -219,15 +222,15 @@ namespace IWSProject.Models.MsSql
     partial void InsertVat(Vat instance);
     partial void UpdateVat(Vat instance);
     partial void DeleteVat(Vat instance);
-    #endregion
-		
-		public IWSDataProviderDataContext() : 
-				base(global::System.Configuration.ConfigurationManager.ConnectionStrings["IWSConnectionString"].ConnectionString, mappingSource)
-		{
-			OnCreated();
-		}
-		
-		public IWSDataProviderDataContext(string connection) : 
+        #endregion
+
+        public IWSDataProviderDataContext() :
+         base(global::System.Configuration.ConfigurationManager.ConnectionStrings["IWSConnectionString"].ConnectionString, mappingSource)
+        {
+            OnCreated();
+        }
+
+        public IWSDataProviderDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
@@ -448,6 +451,14 @@ namespace IWSProject.Models.MsSql
 			get
 			{
 				return this.GetTable<DetailCompta>();
+			}
+		}
+		
+		public System.Data.Linq.Table<DetailDetailCompta> DetailDetailComptas
+		{
+			get
+			{
+				return this.GetTable<DetailDetailCompta>();
 			}
 		}
 		
@@ -10594,6 +10605,8 @@ namespace IWSProject.Models.MsSql
 		
 		private string _Terms;
 		
+		private bool _Balanced;
+		
 		private EntityRef<Account> _Account1;
 		
 		private EntityRef<Account> _Account2;
@@ -10626,6 +10639,8 @@ namespace IWSProject.Models.MsSql
     partial void OnModelIdChanged();
     partial void OnTermsChanging(string value);
     partial void OnTermsChanged();
+    partial void OnBalancedChanging(bool value);
+    partial void OnBalancedChanged();
     #endregion
 		
 		public DetailCompta()
@@ -10868,6 +10883,26 @@ namespace IWSProject.Models.MsSql
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Balanced", DbType="Bit NOT NULL")]
+		public bool Balanced
+		{
+			get
+			{
+				return this._Balanced;
+			}
+			set
+			{
+				if ((this._Balanced != value))
+				{
+					this.OnBalancedChanging(value);
+					this.SendPropertyChanging();
+					this._Balanced = value;
+					this.SendPropertyChanged("Balanced");
+					this.OnBalancedChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_DetailCompta", Storage="_Account1", ThisKey="account", OtherKey="id", IsForeignKey=true)]
 		public Account Account1
 		{
@@ -10966,6 +11001,212 @@ namespace IWSProject.Models.MsSql
 						this._transid = default(int);
 					}
 					this.SendPropertyChanged("MasterCompta");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.DetailDetailCompta")]
+	public partial class DetailDetailCompta : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private int _TransId;
+		
+		private int _OID;
+		
+		private decimal _Amount;
+		
+		private string _Currency;
+		
+		private string _Text;
+		
+		private int _ModelId;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnTransIdChanging(int value);
+    partial void OnTransIdChanged();
+    partial void OnOIDChanging(int value);
+    partial void OnOIDChanged();
+    partial void OnAmountChanging(decimal value);
+    partial void OnAmountChanged();
+    partial void OnCurrencyChanging(string value);
+    partial void OnCurrencyChanged();
+    partial void OnTextChanging(string value);
+    partial void OnTextChanged();
+    partial void OnModelIdChanging(int value);
+    partial void OnModelIdChanged();
+    #endregion
+		
+		public DetailDetailCompta()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TransId", DbType="Int NOT NULL")]
+		public int TransId
+		{
+			get
+			{
+				return this._TransId;
+			}
+			set
+			{
+				if ((this._TransId != value))
+				{
+					this.OnTransIdChanging(value);
+					this.SendPropertyChanging();
+					this._TransId = value;
+					this.SendPropertyChanged("TransId");
+					this.OnTransIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OID", DbType="Int NOT NULL")]
+		public int OID
+		{
+			get
+			{
+				return this._OID;
+			}
+			set
+			{
+				if ((this._OID != value))
+				{
+					this.OnOIDChanging(value);
+					this.SendPropertyChanging();
+					this._OID = value;
+					this.SendPropertyChanged("OID");
+					this.OnOIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Amount", DbType="Money NOT NULL")]
+		public decimal Amount
+		{
+			get
+			{
+				return this._Amount;
+			}
+			set
+			{
+				if ((this._Amount != value))
+				{
+					this.OnAmountChanging(value);
+					this.SendPropertyChanging();
+					this._Amount = value;
+					this.SendPropertyChanged("Amount");
+					this.OnAmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Currency", DbType="NVarChar(10) NOT NULL", CanBeNull=false)]
+		public string Currency
+		{
+			get
+			{
+				return this._Currency;
+			}
+			set
+			{
+				if ((this._Currency != value))
+				{
+					this.OnCurrencyChanging(value);
+					this.SendPropertyChanging();
+					this._Currency = value;
+					this.SendPropertyChanged("Currency");
+					this.OnCurrencyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Text", DbType="NVarChar(50)")]
+		public string Text
+		{
+			get
+			{
+				return this._Text;
+			}
+			set
+			{
+				if ((this._Text != value))
+				{
+					this.OnTextChanging(value);
+					this.SendPropertyChanging();
+					this._Text = value;
+					this.SendPropertyChanged("Text");
+					this.OnTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModelId", DbType="Int NOT NULL")]
+		public int ModelId
+		{
+			get
+			{
+				return this._ModelId;
+			}
+			set
+			{
+				if ((this._ModelId != value))
+				{
+					this.OnModelIdChanging(value);
+					this.SendPropertyChanging();
+					this._ModelId = value;
+					this.SendPropertyChanged("ModelId");
+					this.OnModelIdChanged();
 				}
 			}
 		}

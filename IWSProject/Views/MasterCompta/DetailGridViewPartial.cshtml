@@ -1,5 +1,4 @@
-﻿
-@using IWSProject.Content
+﻿@using IWSProject.Content
 @using IWSProject.Models
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -21,15 +20,19 @@
         settings.ClientSideEvents.RowDblClick = "OnDRowClick";
         settings.ClientSideEvents.Init = "OnDInit";
 
-        settings.SettingsBehavior.ConfirmDelete = true;
-        settings.SettingsBehavior.AllowFocusedRow = true;
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
-        settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
         settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+
+        //settings.SettingsBehavior.AllowFocusedRow = true;
+        //settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
+
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
@@ -38,9 +41,28 @@
         settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
         settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
-        settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
+
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
         settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+        settings.Settings.ShowFooter = true;
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowFilterRowMenu = true;
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+        settings.SettingsPager.PageSize = 19;
+
+        settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
+        settings.SettingsDetail.ShowDetailRow = (bool)Session["ShowDetail"];
+
+        settings.Images.DetailCollapsedButton.IconID = IconID.ActionsAdd16x16;
+        settings.Images.DetailExpandedButton.IconID = IconID.ActionsRemove16x16;
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
@@ -387,12 +409,21 @@
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(DetailCompta));
         };
+
+        settings.SetDetailRowTemplateContent(c =>
+        {
+            Session["transid"] = DataBinder.Eval(c.DataItem, "id");
+
+            Html.RenderAction("DetailDetailGridViewPartial", new
+            {
+                transid = Session["transid"]
+            });
+        });
     });
 
     if (ViewData["GenericError"] != null)
     {
         grid.SetEditErrorText((string)ViewData["GenericError"]);
-
     }
 }
 @grid.Bind(Model).GetHtml()

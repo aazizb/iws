@@ -924,4 +924,7 @@
   <data name="Logistic" xml:space="preserve">
     <value>Logistic de/DE</value>
   </data>
+  <data name="LeftToPay" xml:space="preserve">
+    <value>The left to pay is  de-DE </value>
+  </data>
 </root>

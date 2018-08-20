@@ -274,7 +274,6 @@ C:\Users\dogho\Source\IWSProject\IWSProject\bin\de\DevExpress.XtraTreeList.v17.1
 C:\Users\dogho\Source\IWSProject\IWSProject\bin\es\DevExpress.XtraTreeList.v17.1.resources.dll
 C:\Users\dogho\Source\IWSProject\IWSProject\bin\ja\DevExpress.XtraTreeList.v17.1.resources.dll
 C:\Users\dogho\Source\IWSProject\IWSProject\bin\ru\DevExpress.XtraTreeList.v17.1.resources.dll
-C:\Users\dogho\Source\IWSProject\IWSProject\obj\Debug\IWSProject.csprojAssemblyReference.cache
 C:\Users\dogho\Source\IWSProject\IWSProject\obj\Debug\IWSProject.csproj.ResolveComReference.cache
 C:\Users\dogho\Source\IWSProject\IWSProject\obj\Debug\IWSProject.Content.IWSLocalResource.resources
 C:\Users\dogho\Source\IWSProject\IWSProject\obj\Debug\AccountBalance.resources
@@ -295,3 +294,4 @@ C:\Users\dogho\Source\IWSProject\IWSProject\obj\Debug\fr-FR\IWSProject.resources
 C:\Users\dogho\Source\IWSProject\IWSProject\obj\Debug\IWSProject.csproj.CopyComplete
 C:\Users\dogho\Source\IWSProject\IWSProject\obj\Debug\IWSProject.dll
 C:\Users\dogho\Source\IWSProject\IWSProject\obj\Debug\IWSProject.pdb
+C:\Users\dogho\Source\IWSProject\IWSProject\obj\Debug\IWSProject.csprojAssemblyReference.cache

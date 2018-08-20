@@ -286,6 +286,15 @@ namespace IWSProject.Models
         public string CompanyID { get; set; }
         public bool? IsValidated { get; set; }
     }
+    public class LineDetailComptaViewModel
+    {
+        public int Id { get; set; }
+        public int TransId { get; set; }
+        public int OID { get; set; }
+        public decimal Amount { get; set; }
+        public string Currency { get; set; }
+        public string Text { get; set; }
+    }
     public class BrouillardViewModel
     {
         public int OID { get; set; }

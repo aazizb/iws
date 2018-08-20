@@ -34,7 +34,7 @@
             {
                 Id = i.IBAN,
                 Name = i.Owner,
-                 i.CompanyID,
+                i.CompanyID,
             })
             .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Id);
@@ -117,6 +117,19 @@
             //                x.CompanyId == CompanyId).Any();
             #endregion
         }
+        public static decimal GetLeftToPay(int invoiceId)
+        {
+            var initialInvoice = IWSEntities.DetailComptas.FirstOrDefault(o => o.id == invoiceId).amount;
+
+            var cumulatedPaid = IWSEntities.DetailDetailComptas.Where(o => o.OID == invoiceId);
+            if (cumulatedPaid.Any())
+            {
+                return initialInvoice-cumulatedPaid.Sum(o => o.Amount);
+            }
+            return initialInvoice;
+        }
+
+
 
         public static IEnumerable GetAccount()
         {
@@ -514,6 +527,9 @@
                           c.transid == transId).
                           OrderByDescending(o => o.id).AsEnumerable();
 
+        public static IEnumerable GetDetailDetailCompta(int transId, int modeliId) => IWSEntities.DetailDetailComptas.Where(c =>
+                  c.TransId== transId && c.ModelId == modeliId).OrderByDescending(o => o.Id).AsEnumerable();
+
         public static IEnumerable GetMasterLogisticOID()
         {
             int modelId = (int)HttpContext.Current.Session["ModelId"];
@@ -679,7 +695,31 @@
             }
             return null;
         }
-
+        public static IEnumerable GetDetailDetailComptaOID(int modelId)
+        {
+            int model = 0;
+            if (modelId.Equals((int)ComptaMasterModelId.Payment))
+            {
+                model = (int)ComptaMasterModelId.VendorInvoice;
+            }
+            if (modelId.Equals((int)ComptaMasterModelId.Settlement))
+            {
+                model = (int)ComptaMasterModelId.CustomerInvoice;
+            }
+            return IWSEntities.DetailComptas.Where(o => o.ModelId == model && o.amount !=0 && o.Balanced == false)
+                    .Select(i => new
+                    {
+                        OID = i.id,
+                        TransId = i.transid,
+                        Account = i.account,
+                        Side = i.side,
+                        OAccount = i.oaccount,
+                        LineAmount = i.amount.ToString("N2", CultureInfo.GetCultureInfo(Thread.CurrentThread
+                                                                    .CurrentUICulture.Name).NumberFormat),
+                        i.Currency,
+                        Text = i.text
+                    }).OrderBy(o => o.OID);
+        }
         public static IEnumerable GetNewLineDetailLogistic(int itemId, int OID, int modelId)
         {
             List<DetailLogistic> docs = new List<DetailLogistic>();
@@ -1509,129 +1549,129 @@
         }
 
 
-        public static InvoiceViewModel GetInvoiceDetailX(int itemId, int bankStatementId, string itemType, string companyId)
-        {
-            try
-            {
-                if (itemType.Equals(ComptaMasterModelId.CustomerInvoice.ToString()))
-                {
-                    var owner = from Vats in IWSEntities.Vats
-                                join Customers in IWSEntities.Customers on new { Vats.id } equals new { id = Customers.VatCode }
-                                where
-                                  Customers.id ==
-                                    ((from BankAccounts in IWSEntities.BankAccounts
-                                      where
-                                 BankAccounts.IBAN ==
-                                 ((from BankStatements in IWSEntities.BankStatements
-                                   where
-                                   BankStatements.id == bankStatementId
-                                   select new
-                                   {
-                                       BankStatements.Kontonummer
-                                   }).First().Kontonummer)
-                                      select new
-                                      {
-                                          BankAccounts.Owner
-                                      }).First().Owner)
-                                select new
-                                {
-                                    Vats.PVat,
-                                    Vats.outputvataccountid,
-                                    Customers.accountid,
-                                    Customers.IBAN,
-                                    Customers.Produit
-                                };
-                    var vat = owner.SingleOrDefault().PVat;
-                    InvoiceViewModel invoice = (from l in IWSEntities.LineSettlements
-                                                where
-                                                    l.Settlement.id == itemId
-                                                select new InvoiceViewModel()
-                                                {
-                                                    Account = l.oaccount,
-                                                    OAccount = owner.SingleOrDefault().Produit,
-                                                    PVat = vat,
-                                                    CostCenter = l.Settlement.CostCenter,
-                                                    HeaderText = l.Settlement.HeaderText,
-                                                    TransDate = l.Settlement.TransDate,
-                                                    ItemDate = l.Settlement.ItemDate,
-                                                    EntryDate = l.Settlement.EntryDate,
-                                                    OTotal = l.Settlement.oTotal,
-                                                    Amount = Math.Round((decimal)l.Settlement.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
-                                                    VatAmount = Math.Round((decimal)l.Settlement.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
-                                                    OPeriode = l.Settlement.oPeriode,
-                                                    OCurrency = l.Settlement.oCurrency,
-                                                    DueDate = l.duedate,
-                                                    Text = l.text,
-                                                    CompanyId = l.Settlement.CompanyId,
-                                                    AccountId = l.Settlement.account,
-                                                    VatAccountId = owner.SingleOrDefault().outputvataccountid
-                                                }).Single();
-                       return invoice;
-                }
-                if (itemType.Equals(ComptaMasterModelId.VendorInvoice.ToString()))
-                {
-                    var owner = from Vats in IWSEntities.Vats
-                                join Suppliers in IWSEntities.Suppliers on new { Vats.id } equals new { id = Suppliers.VatCode }
-                                where
-                                  Suppliers.id ==
-                                    ((from BankAccounts in IWSEntities.BankAccounts
-                                      where
-                                 BankAccounts.IBAN ==
-                                 ((from BankStatements in IWSEntities.BankStatements
-                                   where
-                                      BankStatements.id == bankStatementId &&
-                                      BankStatements.CompanyID == companyId
-                                   select new
-                                   {
-                                       BankStatements.Kontonummer
-                                   }).First().Kontonummer)
-                                      select new
-                                      {
-                                          BankAccounts.Owner
-                                      }).First().Owner)
-                                select new
-                                {
-                                    Vats.PVat,
-                                    Vats.inputvataccountid,
-                                    Suppliers.accountid,
-                                    Suppliers.IBAN,
-                                    Suppliers.Charge
-                                };
-                    var vat = owner.SingleOrDefault().PVat;
-                    InvoiceViewModel invoice = (from l in IWSEntities.DetailComptas
-                                                where
-                                                    l.MasterCompta.id == itemId &&
-                                                    l.MasterCompta.CompanyId == companyId
-                                                select new InvoiceViewModel()
-                                                {
-                                                    Account = owner.SingleOrDefault().Charge,
-                                                    OAccount = l.account,
-                                                    PVat = vat,
-                                                    CostCenter = l.MasterCompta.CostCenter,
-                                                    HeaderText = l.MasterCompta.HeaderText,
-                                                    TransDate = l.MasterCompta.TransDate,
-                                                    ItemDate = l.MasterCompta.ItemDate,
-                                                    EntryDate = l.MasterCompta.EntryDate,
-                                                    OTotal = l.MasterCompta.oTotal,
-                                                    Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
-                                                    VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
-                                                    OPeriode = l.MasterCompta.oPeriode,
-                                                    OCurrency = l.MasterCompta.oCurrency,
-                                                    DueDate = l.duedate,
-                                                    Text = l.text,
-                                                    CompanyId = l.MasterCompta.CompanyId,
-                                                    AccountId = l.MasterCompta.account,
-                                                    VatAccountId = owner.SingleOrDefault().inputvataccountid
-                                                }).Single();
-                    return invoice;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-            return null;
-        }
+        //public static InvoiceViewModel GetInvoiceDetailX(int itemId, int bankStatementId, string itemType, string companyId)
+        //{
+        //    try
+        //    {
+        //        if (itemType.Equals(ComptaMasterModelId.CustomerInvoice.ToString()))
+        //        {
+        //            var owner = from Vats in IWSEntities.Vats
+        //                        join Customers in IWSEntities.Customers on new { Vats.id } equals new { id = Customers.VatCode }
+        //                        where
+        //                          Customers.id ==
+        //                            ((from BankAccounts in IWSEntities.BankAccounts
+        //                              where
+        //                         BankAccounts.IBAN ==
+        //                         ((from BankStatements in IWSEntities.BankStatements
+        //                           where
+        //                           BankStatements.id == bankStatementId
+        //                           select new
+        //                           {
+        //                               BankStatements.Kontonummer
+        //                           }).First().Kontonummer)
+        //                              select new
+        //                              {
+        //                                  BankAccounts.Owner
+        //                              }).First().Owner)
+        //                        select new
+        //                        {
+        //                            Vats.PVat,
+        //                            Vats.outputvataccountid,
+        //                            Customers.accountid,
+        //                            Customers.IBAN,
+        //                            Customers.Produit
+        //                        };
+        //            var vat = owner.SingleOrDefault().PVat;
+        //            InvoiceViewModel invoice = (from l in IWSEntities.LineSettlements
+        //                                        where
+        //                                            l.Settlement.id == itemId
+        //                                        select new InvoiceViewModel()
+        //                                        {
+        //                                            Account = l.oaccount,
+        //                                            OAccount = owner.SingleOrDefault().Produit,
+        //                                            PVat = vat,
+        //                                            CostCenter = l.Settlement.CostCenter,
+        //                                            HeaderText = l.Settlement.HeaderText,
+        //                                            TransDate = l.Settlement.TransDate,
+        //                                            ItemDate = l.Settlement.ItemDate,
+        //                                            EntryDate = l.Settlement.EntryDate,
+        //                                            OTotal = l.Settlement.oTotal,
+        //                                            Amount = Math.Round((decimal)l.Settlement.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
+        //                                            VatAmount = Math.Round((decimal)l.Settlement.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
+        //                                            OPeriode = l.Settlement.oPeriode,
+        //                                            OCurrency = l.Settlement.oCurrency,
+        //                                            DueDate = l.duedate,
+        //                                            Text = l.text,
+        //                                            CompanyId = l.Settlement.CompanyId,
+        //                                            AccountId = l.Settlement.account,
+        //                                            VatAccountId = owner.SingleOrDefault().outputvataccountid
+        //                                        }).Single();
+        //               return invoice;
+        //        }
+        //        if (itemType.Equals(ComptaMasterModelId.VendorInvoice.ToString()))
+        //        {
+        //            var owner = from Vats in IWSEntities.Vats
+        //                        join Suppliers in IWSEntities.Suppliers on new { Vats.id } equals new { id = Suppliers.VatCode }
+        //                        where
+        //                          Suppliers.id ==
+        //                            ((from BankAccounts in IWSEntities.BankAccounts
+        //                              where
+        //                         BankAccounts.IBAN ==
+        //                         ((from BankStatements in IWSEntities.BankStatements
+        //                           where
+        //                              BankStatements.id == bankStatementId &&
+        //                              BankStatements.CompanyID == companyId
+        //                           select new
+        //                           {
+        //                               BankStatements.Kontonummer
+        //                           }).First().Kontonummer)
+        //                              select new
+        //                              {
+        //                                  BankAccounts.Owner
+        //                              }).First().Owner)
+        //                        select new
+        //                        {
+        //                            Vats.PVat,
+        //                            Vats.inputvataccountid,
+        //                            Suppliers.accountid,
+        //                            Suppliers.IBAN,
+        //                            Suppliers.Charge
+        //                        };
+        //            var vat = owner.SingleOrDefault().PVat;
+        //            InvoiceViewModel invoice = (from l in IWSEntities.DetailComptas
+        //                                        where
+        //                                            l.MasterCompta.id == itemId &&
+        //                                            l.MasterCompta.CompanyId == companyId
+        //                                        select new InvoiceViewModel()
+        //                                        {
+        //                                            Account = owner.SingleOrDefault().Charge,
+        //                                            OAccount = l.account,
+        //                                            PVat = vat,
+        //                                            CostCenter = l.MasterCompta.CostCenter,
+        //                                            HeaderText = l.MasterCompta.HeaderText,
+        //                                            TransDate = l.MasterCompta.TransDate,
+        //                                            ItemDate = l.MasterCompta.ItemDate,
+        //                                            EntryDate = l.MasterCompta.EntryDate,
+        //                                            OTotal = l.MasterCompta.oTotal,
+        //                                            Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
+        //                                            VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
+        //                                            OPeriode = l.MasterCompta.oPeriode,
+        //                                            OCurrency = l.MasterCompta.oCurrency,
+        //                                            DueDate = l.duedate,
+        //                                            Text = l.text,
+        //                                            CompanyId = l.MasterCompta.CompanyId,
+        //                                            AccountId = l.MasterCompta.account,
+        //                                            VatAccountId = owner.SingleOrDefault().inputvataccountid
+        //                                        }).Single();
+        //            return invoice;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception(ex.Message);
+        //    }
+        //    return null;
+        //}
 
 
         public static InvoiceViewModel GetInvoiceDetail(int itemId, string itemType, string companyId)
@@ -3784,6 +3824,12 @@
             return Convert.ToDateTime(x);
          }
 
+    public static IEnumerable<Account> GetChild(string accountId)
+    {
+        return IWSEntities.Accounts.Where(x => x.ParentId == accountId || x.id == accountId)
+                            .Union(IWSEntities.Accounts.Where(x => x.ParentId == accountId)
+                            .SelectMany(x => GetChild(x.id)));
+    }
         private static Decimal StringToDecimal(string amount)
         {
             if (string.IsNullOrEmpty(amount))

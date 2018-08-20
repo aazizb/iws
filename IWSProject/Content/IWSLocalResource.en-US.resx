@@ -927,4 +927,7 @@
   <data name="Logistic" xml:space="preserve">
     <value>Logistics</value>
   </data>
+  <data name="LeftToPay" xml:space="preserve">
+    <value>The left to pay is </value>
+  </data>
 </root>

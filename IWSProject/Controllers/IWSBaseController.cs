@@ -1272,503 +1272,503 @@ namespace IWSProject.Controllers
         #endregion
 
         #region Bank Statement
-        protected static int MakeSettlementX(int bankStatementId, int oid)
-        {
-            string companyId = String.Empty;
+        //protected static int MakeSettlementX(int bankStatementId, int oid)
+        //{
+        //    string companyId = String.Empty;
 
-            StatementDetailViewModel bankStatement = IWSLookUp.GetStatementDetail(bankStatementId,
-                                                IWSLookUp.DocsType.Settlement.ToString(), companyId);
-            int itemID = 0;
+        //    StatementDetailViewModel bankStatement = IWSLookUp.GetStatementDetail(bankStatementId,
+        //                                        IWSLookUp.DocsType.Settlement.ToString(), companyId);
+        //    int itemID = 0;
 
-            if (bankStatement.Equals(null))
-                return itemID;
-            string accountingAccount = IWSLookUp.GetCompteTier(bankStatement.Id, IWSLookUp.DocsType.Settlement.ToString());
-            MasterCompta masterCompta = new MasterCompta
-            {
-                oid = oid,
-                CostCenter = "100",
-                account = bankStatement.Id,
-                HeaderText = bankStatement.Verwendungszweck,
-                TransDate = bankStatement.Valutadatum,
-                ItemDate = bankStatement.Buchungstag,
-                EntryDate = DateTime.Today,
-                CompanyId = companyId,
-                IsValidated = false
-            };
-            itemID = MakeSettlementHeaderX(masterCompta);
+        //    if (bankStatement.Equals(null))
+        //        return itemID;
+        //    string accountingAccount = IWSLookUp.GetCompteTier(bankStatement.Id, IWSLookUp.DocsType.Settlement.ToString());
+        //    MasterCompta masterCompta = new MasterCompta
+        //    {
+        //        oid = oid,
+        //        CostCenter = "100",
+        //        account = bankStatement.Id,
+        //        HeaderText = bankStatement.Verwendungszweck,
+        //        TransDate = bankStatement.Valutadatum,
+        //        ItemDate = bankStatement.Buchungstag,
+        //        EntryDate = DateTime.Today,
+        //        CompanyId = companyId,
+        //        IsValidated = false
+        //    };
+        //    itemID = MakeSettlementHeaderX(masterCompta);
 
-            if (!(itemID > 0))
-                return itemID;
+        //    if (!(itemID > 0))
+        //        return itemID;
 
-            List<DetailCompta> detailCompta = new List<DetailCompta>
-                {
-                    new DetailCompta
-                    {
-                        transid = itemID,
-                        account = IWSLookUp.GetSettlementDebitAcount(bankStatementId),
-                        side = true,
-                        oaccount = IWSLookUp.GetSettlementCreditAcount(bankStatementId),
-                        amount = bankStatement.Betrag,
-                        Currency = bankStatement.Waehrung,
-                        duedate = bankStatement.Valutadatum,
-                        text = bankStatement.Buchungstext
-                    }
-                };
-            int countLineID = MakeSettlementLineX(detailCompta);
-            if (countLineID > 0)
-            {
-                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Settlement.ToString(), detailCompta.First().transid);
-                return itemID;
+        //    List<DetailCompta> detailCompta = new List<DetailCompta>
+        //        {
+        //            new DetailCompta
+        //            {
+        //                transid = itemID,
+        //                account = IWSLookUp.GetSettlementDebitAcount(bankStatementId),
+        //                side = true,
+        //                oaccount = IWSLookUp.GetSettlementCreditAcount(bankStatementId),
+        //                amount = bankStatement.Betrag,
+        //                Currency = bankStatement.Waehrung,
+        //                duedate = bankStatement.Valutadatum,
+        //                text = bankStatement.Buchungstext
+        //            }
+        //        };
+        //    int countLineID = MakeSettlementLineX(detailCompta);
+        //    if (countLineID > 0)
+        //    {
+        //        IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Settlement.ToString(), detailCompta.First().transid);
+        //        return itemID;
 
-            }
-            return countLineID;
-        }
-        protected static int MakeSettlementHeaderX(MasterCompta masterCompta)
-        {
-            int id = 0;
-            try
-            {
-                db.MasterComptas.InsertOnSubmit(masterCompta);
-                db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
-                id = db.MasterComptas.Max(i => i.id);
-                return id;
-            }
-            catch (Exception ex)
-            {
-                IWSLookUp.LogException(ex);
-                return id;
-            }
-        }
-        protected static int MakeSettlementLineX(List<DetailCompta> detailCompta)
-        {
-            int id = 0;
-            try
-            {
-                foreach (var item in detailCompta)
-                {
-                    db.DetailComptas.InsertOnSubmit(item);
-                    id++;
-                }
-                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                return id;
-            }
-            catch (Exception ex)
-            {
-                IWSLookUp.LogException(ex);
-                return 0;
-            }
-        }
+        //    }
+        //    return countLineID;
+        //}
+        //protected static int MakeSettlementHeaderX(MasterCompta masterCompta)
+        //{
+        //    int id = 0;
+        //    try
+        //    {
+        //        db.MasterComptas.InsertOnSubmit(masterCompta);
+        //        db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
+        //        id = db.MasterComptas.Max(i => i.id);
+        //        return id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IWSLookUp.LogException(ex);
+        //        return id;
+        //    }
+        //}
+        //protected static int MakeSettlementLineX(List<DetailCompta> detailCompta)
+        //{
+        //    int id = 0;
+        //    try
+        //    {
+        //        foreach (var item in detailCompta)
+        //        {
+        //            db.DetailComptas.InsertOnSubmit(item);
+        //            id++;
+        //        }
+        //        db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+        //        return id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IWSLookUp.LogException(ex);
+        //        return 0;
+        //    }
+        //}
 
-        protected static bool MakeCustomerInvoiceX(int settlementId)
-        {
-            string companyId = String.Empty;
+        //protected static bool MakeCustomerInvoiceX(int settlementId)
+        //{
+        //    string companyId = String.Empty;
 
-            InvoiceViewModel invoice = IWSLookUp.GetInvoiceDetail(settlementId,
-                                            IWSLookUp.DocsType.CustomerInvoice.ToString(), companyId);
+        //    InvoiceViewModel invoice = IWSLookUp.GetInvoiceDetail(settlementId,
+        //                                    IWSLookUp.DocsType.CustomerInvoice.ToString(), companyId);
 
-            int itemID = 0;
+        //    int itemID = 0;
 
-            if (invoice.Equals(null))
-                return false;
-            string accountingAccount = IWSLookUp.GetCompteTier(invoice.AccountId, IWSLookUp.DocsType.CustomerInvoice.ToString());
-            MasterCompta masterCompta = new MasterCompta
-            {
-                oid = 0,
-                CostCenter = invoice.CostCenter,
-                account = invoice.AccountId,
-                HeaderText = invoice.HeaderText,
-                TransDate = invoice.TransDate,
-                ItemDate = invoice.ItemDate,
-                EntryDate = invoice.EntryDate,
-                CompanyId = invoice.CompanyId,
-                IsValidated = false
-            };
-            itemID = MakeCustomerInvoiceHeaderX(masterCompta);
+        //    if (invoice.Equals(null))
+        //        return false;
+        //    string accountingAccount = IWSLookUp.GetCompteTier(invoice.AccountId, IWSLookUp.DocsType.CustomerInvoice.ToString());
+        //    MasterCompta masterCompta = new MasterCompta
+        //    {
+        //        oid = 0,
+        //        CostCenter = invoice.CostCenter,
+        //        account = invoice.AccountId,
+        //        HeaderText = invoice.HeaderText,
+        //        TransDate = invoice.TransDate,
+        //        ItemDate = invoice.ItemDate,
+        //        EntryDate = invoice.EntryDate,
+        //        CompanyId = invoice.CompanyId,
+        //        IsValidated = false
+        //    };
+        //    itemID = MakeCustomerInvoiceHeaderX(masterCompta);
 
-            if (itemID == 0)
-                return false;
+        //    if (itemID == 0)
+        //        return false;
 
-            List<DetailCompta> detailCompta = new List<DetailCompta>
-            {
-                new DetailCompta
-                {
-                    transid = itemID,
-                    account = invoice.Account,
-                    side = true,
-                    oaccount = invoice.OAccount,
-                    amount = (decimal)invoice.Amount,
-                    Currency = invoice.OCurrency,
-                    duedate = invoice.DueDate,
-                    text = invoice.Text
-                },
-                new DetailCompta
-                {
-                    transid = itemID,
-                    account = invoice.Account,
-                    side = true,
-                    oaccount = invoice.VatAccountId,
-                    amount = (decimal)invoice.VatAmount,
-                    Currency = invoice.OCurrency,
-                    duedate = invoice.DueDate,
-                    text = invoice.Text
-                }
-            };
-            int countLineID = MakeCustomerInvoiceLineX(detailCompta);
-            if (countLineID != 0)
-            {
-                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.CustomerInvoice.ToString(), detailCompta.First().transid);
+        //    List<DetailCompta> detailCompta = new List<DetailCompta>
+        //    {
+        //        new DetailCompta
+        //        {
+        //            transid = itemID,
+        //            account = invoice.Account,
+        //            side = true,
+        //            oaccount = invoice.OAccount,
+        //            amount = (decimal)invoice.Amount,
+        //            Currency = invoice.OCurrency,
+        //            duedate = invoice.DueDate,
+        //            text = invoice.Text
+        //        },
+        //        new DetailCompta
+        //        {
+        //            transid = itemID,
+        //            account = invoice.Account,
+        //            side = true,
+        //            oaccount = invoice.VatAccountId,
+        //            amount = (decimal)invoice.VatAmount,
+        //            Currency = invoice.OCurrency,
+        //            duedate = invoice.DueDate,
+        //            text = invoice.Text
+        //        }
+        //    };
+        //    int countLineID = MakeCustomerInvoiceLineX(detailCompta);
+        //    if (countLineID != 0)
+        //    {
+        //        IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.CustomerInvoice.ToString(), detailCompta.First().transid);
 
-                return UpdateOid(IWSLookUp.DocsType.Settlement.ToString(), settlementId, itemID);
-            }
-            return false;
-        }
-        protected static int MakeCustomerInvoiceHeaderX(MasterCompta masterCompta)
-        {
-            int id = 0;
-            try
-            {
-                db.MasterComptas.InsertOnSubmit(masterCompta);
-                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                id = db.MasterComptas.Max(i => i.id);
-                return id;
-            }
-            catch (Exception ex)
-            {
-                IWSLookUp.LogException(ex);
-                return id;
-            }
-        }
-        protected static int MakeCustomerInvoiceLineX(List<DetailCompta> line)
-        {
-            int id = 0;
-            try
-            {
-                foreach (var item in line)
-                {
-                    if (item.amount > 0)
-                    {
-                        db.DetailComptas.InsertOnSubmit(item);
-                        id++;
-                    }
-                }
-                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                return id;
-            }
-            catch (Exception ex)
-            {
-                IWSLookUp.LogException(ex);
-                return 0;
-            }
-        }
+        //        return UpdateOid(IWSLookUp.DocsType.Settlement.ToString(), settlementId, itemID);
+        //    }
+        //    return false;
+        //}
+        //protected static int MakeCustomerInvoiceHeaderX(MasterCompta masterCompta)
+        //{
+        //    int id = 0;
+        //    try
+        //    {
+        //        db.MasterComptas.InsertOnSubmit(masterCompta);
+        //        db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+        //        id = db.MasterComptas.Max(i => i.id);
+        //        return id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IWSLookUp.LogException(ex);
+        //        return id;
+        //    }
+        //}
+        //protected static int MakeCustomerInvoiceLineX(List<DetailCompta> line)
+        //{
+        //    int id = 0;
+        //    try
+        //    {
+        //        foreach (var item in line)
+        //        {
+        //            if (item.amount > 0)
+        //            {
+        //                db.DetailComptas.InsertOnSubmit(item);
+        //                id++;
+        //            }
+        //        }
+        //        db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+        //        return id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IWSLookUp.LogException(ex);
+        //        return 0;
+        //    }
+        //}
 
-        protected static int MakePaymentX(int bankStatementId, int oid)
-        {
-            string companyId = String.Empty;
-            StatementDetailViewModel bankStatement = IWSLookUp.GetStatementDetail(bankStatementId,
-                                            IWSLookUp.DocsType.Payment.ToString(), companyId);
-
-
-            int itemID = 0;
-
-            if (bankStatement == null)
-                return itemID;
-            string account = IWSLookUp.GetCompteTier(bankStatement.Id, IWSLookUp.DocsType.Payment.ToString());
-
-            MasterCompta masterCompta = new MasterCompta
-            {
-                oid = oid,
-                CostCenter = "200",
-                account = account,// bankStatement.Id,
-                HeaderText = bankStatement.Verwendungszweck,
-                TransDate = bankStatement.Valutadatum,
-                ItemDate = bankStatement.Buchungstag,
-                EntryDate = DateTime.Today,
-                CompanyId = companyId,
-                IsValidated = false
-            };
-
-            itemID = MakePaymentHeaderX(masterCompta);
-
-            if (!(itemID > 0))
-                return itemID;
-
-            List<DetailCompta> detailCompta = new List<DetailCompta>
-            {
-                new DetailCompta
-                {
-                    transid = itemID,
-                    account =  IWSLookUp.GetPaymentDebitAcount(bankStatementId),
-                    side = true,
-                    oaccount = IWSLookUp.GetPaymentCreditAcount(bankStatementId),
-                    amount = bankStatement.Betrag,
-                    Currency = bankStatement.Waehrung,
-                    duedate = bankStatement.Valutadatum,
-                    text = bankStatement.Buchungstext
-                }
-            };
-            int countLineID = MakePaymentLineX(detailCompta);
-            if (countLineID > 0)
-            {
-                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Payment.ToString(), detailCompta.First().transid);
-                return itemID;
-
-            }
-            return countLineID;
-        }
-        protected static int MakePaymentHeaderX(MasterCompta masterCompta)
-        {
-            int id = 0;
-            try
-            {
-                db.MasterComptas.InsertOnSubmit(masterCompta);
-                db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
-                id = db.MasterComptas.Max(i => i.id);
-                return id;
-            }
-            catch (Exception ex)
-            {
-                IWSLookUp.LogException(ex);
-                return id;
-            }
-        }
-        protected static int MakePaymentLineX(List<DetailCompta> detailCompta)
-        {
-            int id = 0;
-
-            try
-            {
-                foreach (var item in detailCompta)
-                {
-                    db.DetailComptas.InsertOnSubmit(item);
-                    id++;
-                }
-                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-
-                return id;
-            }
-            catch (Exception ex)
-            {
-                IWSLookUp.LogException(ex);
-                return 0;
-            }
-        }
-
-        protected static bool MakeVendorInvoiceX(int paymentId)
-        {
-            string companyId = String.Empty;
-
-            InvoiceViewModel invoice = IWSLookUp.GetInvoiceDetail(paymentId,
-                                            IWSLookUp.DocsType.VendorInvoice.ToString(), companyId);
-            int itemID = 0;
-
-            if (invoice.Equals(null))
-                return false;
-
-            string account = IWSLookUp.GetCompteTier(invoice.AccountId, IWSLookUp.DocsType.VendorInvoice.ToString());
-
-            MasterCompta masterCompta = new MasterCompta
-            {
-                oid = 0,
-                CostCenter = invoice.CostCenter,
-                account = account,              // invoice.AccountId,
-                HeaderText = invoice.HeaderText,
-                TransDate = invoice.TransDate,
-                ItemDate = invoice.ItemDate,
-                EntryDate = invoice.EntryDate,
-                CompanyId = invoice.CompanyId,
-                IsValidated = false
-            };
-            itemID = MakeVendorInvoiceHeaderX(masterCompta);
-
-            if (itemID == 0)
-                return false;
+        //protected static int MakePaymentX(int bankStatementId, int oid)
+        //{
+        //    string companyId = String.Empty;
+        //    StatementDetailViewModel bankStatement = IWSLookUp.GetStatementDetail(bankStatementId,
+        //                                    IWSLookUp.DocsType.Payment.ToString(), companyId);
 
 
-            List<DetailCompta> detailCompta = new List<DetailCompta>();
+        //    int itemID = 0;
 
-            DetailCompta temp = new DetailCompta();
+        //    if (bankStatement == null)
+        //        return itemID;
+        //    string account = IWSLookUp.GetCompteTier(bankStatement.Id, IWSLookUp.DocsType.Payment.ToString());
 
-            if (db.tempAccountAmounts.Any())
-            {
-                List<tempAccountAmount> ls = db.tempAccountAmounts.ToList();
+        //    MasterCompta masterCompta = new MasterCompta
+        //    {
+        //        oid = oid,
+        //        CostCenter = "200",
+        //        account = account,// bankStatement.Id,
+        //        HeaderText = bankStatement.Verwendungszweck,
+        //        TransDate = bankStatement.Valutadatum,
+        //        ItemDate = bankStatement.Buchungstag,
+        //        EntryDate = DateTime.Today,
+        //        CompanyId = companyId,
+        //        IsValidated = false
+        //    };
 
-                foreach (var l in ls)
-                {
-                    temp = new DetailCompta
-                    {
-                        transid = itemID,
-                        account = l.AccountCode,
-                        side = true,
-                        oaccount = invoice.OAccount,
-                        amount = l.AccountAmount,
-                        Currency = invoice.OCurrency,
-                        duedate = invoice.DueDate,
-                        text = invoice.HeaderText
-                    };
-                    detailCompta.Add(temp);
-                }
-            }
-            else
-            {
-                detailCompta = new List<DetailCompta>
-                {
-                    new DetailCompta
-                    {
-                        transid = itemID,
-                        account = invoice.Account,
-                        side = true,
-                        oaccount = invoice.OAccount,
-                        amount = (decimal)invoice.Amount,
-                        Currency = invoice.OCurrency,
-                        duedate = invoice.DueDate,
-                        text = invoice.HeaderText
-                    },
-                    new DetailCompta
-                    {
-                        transid = itemID,
-                        account = invoice.VatAccountId,
-                        side = true,
-                        oaccount = invoice.OAccount,
-                        amount = (decimal)invoice.VatAmount,
-                        Currency = invoice.OCurrency,
-                        duedate = invoice.DueDate,
-                        text = invoice.HeaderText
-                    }
-                };
-            }
+        //    itemID = MakePaymentHeaderX(masterCompta);
+
+        //    if (!(itemID > 0))
+        //        return itemID;
+
+        //    List<DetailCompta> detailCompta = new List<DetailCompta>
+        //    {
+        //        new DetailCompta
+        //        {
+        //            transid = itemID,
+        //            account =  IWSLookUp.GetPaymentDebitAcount(bankStatementId),
+        //            side = true,
+        //            oaccount = IWSLookUp.GetPaymentCreditAcount(bankStatementId),
+        //            amount = bankStatement.Betrag,
+        //            Currency = bankStatement.Waehrung,
+        //            duedate = bankStatement.Valutadatum,
+        //            text = bankStatement.Buchungstext
+        //        }
+        //    };
+        //    int countLineID = MakePaymentLineX(detailCompta);
+        //    if (countLineID > 0)
+        //    {
+        //        IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.Payment.ToString(), detailCompta.First().transid);
+        //        return itemID;
+
+        //    }
+        //    return countLineID;
+        //}
+        //protected static int MakePaymentHeaderX(MasterCompta masterCompta)
+        //{
+        //    int id = 0;
+        //    try
+        //    {
+        //        db.MasterComptas.InsertOnSubmit(masterCompta);
+        //        db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
+        //        id = db.MasterComptas.Max(i => i.id);
+        //        return id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IWSLookUp.LogException(ex);
+        //        return id;
+        //    }
+        //}
+        //protected static int MakePaymentLineX(List<DetailCompta> detailCompta)
+        //{
+        //    int id = 0;
+
+        //    try
+        //    {
+        //        foreach (var item in detailCompta)
+        //        {
+        //            db.DetailComptas.InsertOnSubmit(item);
+        //            id++;
+        //        }
+        //        db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+
+        //        return id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IWSLookUp.LogException(ex);
+        //        return 0;
+        //    }
+        //}
+
+        //protected static bool MakeVendorInvoiceX(int paymentId)
+        //{
+        //    string companyId = String.Empty;
+
+        //    InvoiceViewModel invoice = IWSLookUp.GetInvoiceDetail(paymentId,
+        //                                    IWSLookUp.DocsType.VendorInvoice.ToString(), companyId);
+        //    int itemID = 0;
+
+        //    if (invoice.Equals(null))
+        //        return false;
+
+        //    string account = IWSLookUp.GetCompteTier(invoice.AccountId, IWSLookUp.DocsType.VendorInvoice.ToString());
+
+        //    MasterCompta masterCompta = new MasterCompta
+        //    {
+        //        oid = 0,
+        //        CostCenter = invoice.CostCenter,
+        //        account = account,              // invoice.AccountId,
+        //        HeaderText = invoice.HeaderText,
+        //        TransDate = invoice.TransDate,
+        //        ItemDate = invoice.ItemDate,
+        //        EntryDate = invoice.EntryDate,
+        //        CompanyId = invoice.CompanyId,
+        //        IsValidated = false
+        //    };
+        //    itemID = MakeVendorInvoiceHeaderX(masterCompta);
+
+        //    if (itemID == 0)
+        //        return false;
 
 
-            int countLineID = MakeVendorInvoiceLineX(detailCompta);
-            if (countLineID != 0)
-            {
-                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.VendorInvoice.ToString(), detailCompta.First().transid);
-                return UpdateOid(IWSLookUp.DocsType.Payment.ToString(), paymentId, itemID);
-            }
-            return false;
-        }
-        protected static int MakeVendorInvoiceHeaderX(MasterCompta invoice)
-        {
-            int id = 0;
-            try
-            {
-                db.MasterComptas.InsertOnSubmit(invoice);
-                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                id = db.MasterComptas.Max(i => i.id);
-                return id;
-            }
-            catch (Exception ex)
-            {
-                IWSLookUp.LogException(ex);
-                return id;
-            }
-        }
-        protected static int MakeVendorInvoiceLineX(List<DetailCompta> line)
-        {
-            int id = 0;
-            try
-            {
-                foreach (var item in line)
-                {
-                    if (item.amount > 0)
-                    {
-                        db.DetailComptas.InsertOnSubmit(item);
-                        id++;
-                    }
-                }
-                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                return id;
-            }
-            catch (Exception ex)
-            {
-                IWSLookUp.LogException(ex);
-                return 0;
-            }
-        }
+        //    List<DetailCompta> detailCompta = new List<DetailCompta>();
 
-        protected static int MakeGeneralLedgerX(int bankStatementID, int oid)
-        {
-            string companyId = String.Empty;
+        //    DetailCompta temp = new DetailCompta();
 
-            StatementDetailViewModel bankStatement = IWSLookUp.GetStatementDetail(bankStatementID,
-                                                IWSLookUp.DocsType.GeneralLedger.ToString(), companyId);
-            int itemID = 0;
+        //    if (db.tempAccountAmounts.Any())
+        //    {
+        //        List<tempAccountAmount> ls = db.tempAccountAmounts.ToList();
 
-            if (bankStatement.Equals(null))
-                return itemID;
+        //        foreach (var l in ls)
+        //        {
+        //            temp = new DetailCompta
+        //            {
+        //                transid = itemID,
+        //                account = l.AccountCode,
+        //                side = true,
+        //                oaccount = invoice.OAccount,
+        //                amount = l.AccountAmount,
+        //                Currency = invoice.OCurrency,
+        //                duedate = invoice.DueDate,
+        //                text = invoice.HeaderText
+        //            };
+        //            detailCompta.Add(temp);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        detailCompta = new List<DetailCompta>
+        //        {
+        //            new DetailCompta
+        //            {
+        //                transid = itemID,
+        //                account = invoice.Account,
+        //                side = true,
+        //                oaccount = invoice.OAccount,
+        //                amount = (decimal)invoice.Amount,
+        //                Currency = invoice.OCurrency,
+        //                duedate = invoice.DueDate,
+        //                text = invoice.HeaderText
+        //            },
+        //            new DetailCompta
+        //            {
+        //                transid = itemID,
+        //                account = invoice.VatAccountId,
+        //                side = true,
+        //                oaccount = invoice.OAccount,
+        //                amount = (decimal)invoice.VatAmount,
+        //                Currency = invoice.OCurrency,
+        //                duedate = invoice.DueDate,
+        //                text = invoice.HeaderText
+        //            }
+        //        };
+        //    }
 
-            MasterCompta masterCompta = new MasterCompta
-            {
-                oid = oid,
-                CostCenter = "100",
-                HeaderText = bankStatement.Verwendungszweck,
-                TransDate = bankStatement.Valutadatum,
-                ItemDate = bankStatement.Buchungstag,
-                EntryDate = DateTime.Today,
-                CompanyId = companyId,
-                IsValidated = false
-            };
-            itemID = MakeGeneralLedgerHeaderX(masterCompta);
 
-            if (!(itemID > 0))
-                return itemID;
+        //    int countLineID = MakeVendorInvoiceLineX(detailCompta);
+        //    if (countLineID != 0)
+        //    {
+        //        IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.VendorInvoice.ToString(), detailCompta.First().transid);
+        //        return UpdateOid(IWSLookUp.DocsType.Payment.ToString(), paymentId, itemID);
+        //    }
+        //    return false;
+        //}
+        //protected static int MakeVendorInvoiceHeaderX(MasterCompta invoice)
+        //{
+        //    int id = 0;
+        //    try
+        //    {
+        //        db.MasterComptas.InsertOnSubmit(invoice);
+        //        db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+        //        id = db.MasterComptas.Max(i => i.id);
+        //        return id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IWSLookUp.LogException(ex);
+        //        return id;
+        //    }
+        //}
+        //protected static int MakeVendorInvoiceLineX(List<DetailCompta> line)
+        //{
+        //    int id = 0;
+        //    try
+        //    {
+        //        foreach (var item in line)
+        //        {
+        //            if (item.amount > 0)
+        //            {
+        //                db.DetailComptas.InsertOnSubmit(item);
+        //                id++;
+        //            }
+        //        }
+        //        db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+        //        return id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IWSLookUp.LogException(ex);
+        //        return 0;
+        //    }
+        //}
 
-            List<DetailCompta> detailCompta = new List<DetailCompta>
-                {
-                    new DetailCompta
-                    {
-                        transid = itemID,
-                        account = bankStatement.AccountID,
-                        side = true,
-                        oaccount = bankStatement.OAccountID,
-                        amount = bankStatement.Betrag,
-                        Currency = bankStatement.Waehrung,
-                        duedate = bankStatement.Valutadatum,
-                        text = bankStatement.Buchungstext
-                    }
-                };
-            int countLineID = MakeGeneralLedgerLineX(detailCompta);
-            if (countLineID > 0)
-            {
-                IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.GeneralLedger.ToString(), detailCompta.First().transid);
-                return itemID;
-            }
-            return countLineID;
-        }
-        protected static int MakeGeneralLedgerHeaderX(MasterCompta masterCompta)
-        {
-            int id = 0;
-            try
-            {
-                db.MasterComptas.InsertOnSubmit(masterCompta);
-                db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
-                id = db.MasterComptas.Max(i => i.id);
-                return id;
-            }
-            catch (Exception ex)
-            {
-                IWSLookUp.LogException(ex);
-                return id;
-            }
-        }
-        protected static int MakeGeneralLedgerLineX(List<DetailCompta> detailCompta)
-        {
-            int id = 0;
-            try
-            {
-                foreach (var item in detailCompta)
-                {
-                    db.DetailComptas.InsertOnSubmit(item);
-                    id++;
-                }
-                db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
-                return id;
-            }
-            catch (Exception ex)
-            {
-                IWSLookUp.LogException(ex);
-                return 0;
-            }
-        }
+        //protected static int MakeGeneralLedgerX(int bankStatementID, int oid)
+        //{
+        //    string companyId = String.Empty;
+
+        //    StatementDetailViewModel bankStatement = IWSLookUp.GetStatementDetail(bankStatementID,
+        //                                        IWSLookUp.DocsType.GeneralLedger.ToString(), companyId);
+        //    int itemID = 0;
+
+        //    if (bankStatement.Equals(null))
+        //        return itemID;
+
+        //    MasterCompta masterCompta = new MasterCompta
+        //    {
+        //        oid = oid,
+        //        CostCenter = "100",
+        //        HeaderText = bankStatement.Verwendungszweck,
+        //        TransDate = bankStatement.Valutadatum,
+        //        ItemDate = bankStatement.Buchungstag,
+        //        EntryDate = DateTime.Today,
+        //        CompanyId = companyId,
+        //        IsValidated = false
+        //    };
+        //    itemID = MakeGeneralLedgerHeaderX(masterCompta);
+
+        //    if (!(itemID > 0))
+        //        return itemID;
+
+        //    List<DetailCompta> detailCompta = new List<DetailCompta>
+        //        {
+        //            new DetailCompta
+        //            {
+        //                transid = itemID,
+        //                account = bankStatement.AccountID,
+        //                side = true,
+        //                oaccount = bankStatement.OAccountID,
+        //                amount = bankStatement.Betrag,
+        //                Currency = bankStatement.Waehrung,
+        //                duedate = bankStatement.Valutadatum,
+        //                text = bankStatement.Buchungstext
+        //            }
+        //        };
+        //    int countLineID = MakeGeneralLedgerLineX(detailCompta);
+        //    if (countLineID > 0)
+        //    {
+        //        IWSLookUp.SetTypeJournal(IWSLookUp.DocsType.GeneralLedger.ToString(), detailCompta.First().transid);
+        //        return itemID;
+        //    }
+        //    return countLineID;
+        //}
+        //protected static int MakeGeneralLedgerHeaderX(MasterCompta masterCompta)
+        //{
+        //    int id = 0;
+        //    try
+        //    {
+        //        db.MasterComptas.InsertOnSubmit(masterCompta);
+        //        db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
+        //        id = db.MasterComptas.Max(i => i.id);
+        //        return id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IWSLookUp.LogException(ex);
+        //        return id;
+        //    }
+        //}
+        //protected static int MakeGeneralLedgerLineX(List<DetailCompta> detailCompta)
+        //{
+        //    int id = 0;
+        //    try
+        //    {
+        //        foreach (var item in detailCompta)
+        //        {
+        //            db.DetailComptas.InsertOnSubmit(item);
+        //            id++;
+        //        }
+        //        db.SubmitChanges(System.Data.Linq.ConflictMode.FailOnFirstConflict);
+        //        return id;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IWSLookUp.LogException(ex);
+        //        return 0;
+        //    }
+        //}
 
         protected static bool UpdateOid(string itemType, int itemId, int itemOid)
         {
@@ -3349,15 +3349,15 @@ namespace IWSProject.Controllers
             }
         }
 
-        protected static string SetDocType(string selectedItems, string docType)
-        {
+        //protected static string SetDocType(string selectedItems, string docType)
+        //{
 
-            string[] items = selectedItems.Split(new string[] { ";" },
-                                        StringSplitOptions.RemoveEmptyEntries);
+        //    string[] items = selectedItems.Split(new string[] { ";" },
+        //                                StringSplitOptions.RemoveEmptyEntries);
 
-            items = items.Select(x => x + "," + docType).ToArray();
+        //    items = items.Select(x => x + "," + docType).ToArray();
 
-            return String.Join(";", items);
-        }
+        //    return String.Join(";", items);
+        //}
     }
 }

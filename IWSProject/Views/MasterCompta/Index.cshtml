@@ -172,6 +172,13 @@
             callbackPanelPartialView.PerformCallback();
         }
     }
+
+    function OnAmountValidation(s, e) {
+        if (e.value < 0) {
+            e.IsValid = false;
+            e.value = 0;
+        }
+    }
 </script>
 
 @{

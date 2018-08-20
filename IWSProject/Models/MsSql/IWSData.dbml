@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="consolid" Class="IWSDataProviderDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=consolid;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="IWSConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=consolid;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False" SettingsObjectName="IWSProject.Properties.Settings" SettingsPropertyName="IWSConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Account" Member="Accounts">
     <Type Name="Account">
       <Column Name="id" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -448,9 +448,21 @@
       <Column Name="Currency" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
       <Column Name="ModelId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Terms" Type="System.String" DbType="VarChar(250)" CanBeNull="true" />
+      <Column Name="Balanced" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="Account_DetailCompta" Member="Account1" ThisKey="account" OtherKey="id" Type="Account" IsForeignKey="true" />
       <Association Name="Account_DetailCompta1" Member="Account2" ThisKey="oaccount" OtherKey="id" Type="Account" IsForeignKey="true" />
       <Association Name="MasterCompta_DetailCompta" Member="MasterCompta" ThisKey="transid" OtherKey="id" Type="MasterCompta" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DetailDetailCompta" Member="DetailDetailComptas">
+    <Type Name="DetailDetailCompta">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TransId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Currency" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ModelId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
   <Table Name="dbo.DetailLogistic" Member="DetailLogistics">

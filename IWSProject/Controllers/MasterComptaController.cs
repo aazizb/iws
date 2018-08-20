@@ -3,7 +3,9 @@ using IWSProject.Content;
 using IWSProject.Models;
 using System;
 using System.Data.Linq;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Web.Mvc;
 namespace IWSProject.Controllers
 {
@@ -27,6 +29,10 @@ namespace IWSProject.Controllers
             if (Session["ModelId"] != null)
             {
                 modelId = (int)Session["ModelId"];
+
+                bool show = (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment) ||
+                                          modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement)) ? true : false;
+                Session["ShowDetail"] = show;
             }
             if (Session["IsVending"] == null)
             {
@@ -249,7 +255,99 @@ namespace IWSProject.Controllers
             }
             return PartialView("DetailGridViewPartial", IWSLookUp.GetDetailCompta(transId));
         }
+        [ValidateInput(false)]
+        public ActionResult DetailDetailGridViewPartial(int transId)
+        {
+            int modelId = (int)Session["Modelid"];
+            return PartialView("DetailDetailGridViewPartial", IWSLookUp.GetDetailDetailCompta(transId, modelId));
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult DetailDetailGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] DetailDetailCompta line, int transId)
+        {
+            decimal leftToPay = IWSLookUp.GetLeftToPay(line.OID);
+            int modelId = (int)Session["Modelid"];
+            var model = db.DetailDetailComptas;
+            line.TransId = transId;
+            line.ModelId = modelId;
+            ViewData["lineDetail"] = line;
+            if (leftToPay >= line.Amount)
+            {
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        model.InsertOnSubmit(line);
+                        if (line.Amount>0)
+                            db.SubmitChanges();
+                    }
+                    catch (Exception e)
+                    {
+                        ViewData["GenericError"] = e.Message;
+                    }
+                }
+                else
+                {
+                    ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
+                }
 
+            }
+            else
+            {
+                ViewData["GenericError"] = IWSLocalResource.LeftToPay + leftToPay.ToString("N2", CultureInfo.GetCultureInfo(Thread.CurrentThread
+                                                                    .CurrentUICulture.Name).NumberFormat);
+            }
+            return PartialView("DetailDetailGridViewPartial", IWSLookUp.GetDetailDetailCompta(transId, modelId));
+
+        }
+
+        [HttpPost, ValidateInput(false)]
+        public ActionResult DetailDetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] DetailDetailCompta line, int transId)
+        {
+            var model = db.DetailDetailComptas;
+            //line.TransId = transId;
+            ViewData["lineDetail"] = line;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var modelItem = model.FirstOrDefault(p => p.Id == line.Id);
+                    if (modelItem != null)
+                    {
+                        this.UpdateModel(modelItem);
+                        db.SubmitChanges();
+                    }
+                }
+                catch (Exception e)
+                {
+                    ViewData["GenericError"] = e.Message;
+                }
+            }
+            else
+            {
+                ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
+            }
+            return PartialView("DetailDetailGridViewPartial", IWSLookUp.GetDetailDetailCompta(transId, (int)Session["Modelid"]));
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult DetailDetailGridViewPartialDelete(int Id, int transId)
+        {
+            var model = db.DetailDetailComptas;
+            if (Id >= 0)
+            {
+                try
+                {
+                    var item = model.FirstOrDefault(i => i.Id == Id);
+                    if (item != null)
+                        model.DeleteOnSubmit(item);
+                    db.SubmitChanges();
+                }
+                catch (Exception e)
+                {
+                    ViewData["GenericError"] = e.Message;
+                }
+            }
+            return PartialView("DetailDetailGridViewPartial", IWSLookUp.GetDetailDetailCompta(transId, (int)Session["Modelid"]));
+        }
         #region Helper
         public ActionResult HeaderText(int selectedOIDIndex)
         {
