@@ -81,7 +81,7 @@
             {
                 combo.ValueField = "OID";
                 combo.ValueType = typeof(int);
-                combo.DataSource = IWSLookUp.GetDetailDetailComptaOID((int)Session["ModelId"]);
+                combo.DataSource = IWSLookUp.GetDetailDetailComptaOID((int)Session["ModelId"],true);
                 combo.Columns.Add("Account").Caption = IWSLocalResource.account;
                 combo.Columns.Add("Side").Caption = IWSLocalResource.side;
                 combo.Columns.Add("OAccount").Caption = IWSLocalResource.oaccount;
@@ -187,7 +187,7 @@
                     {
                         s.Properties.ValueField = "OID";
                         s.Properties.ValueType = typeof(int);
-                        s.Properties.DataSource = IWSLookUp.GetDetailDetailComptaOID((int)Session["ModelId"]);
+                        s.Properties.DataSource = IWSLookUp.GetDetailDetailComptaOID((int)Session["ModelId"], false);
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "Account";
@@ -211,14 +211,12 @@
                             column.FieldName = "LineAmount";
                             column.Caption = IWSLocalResource.amount;
                             column.Width = Unit.Percentage(20);
-
                         });
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "Currency";
                             column.Caption = IWSLocalResource.amount;
                             column.Width = Unit.Percentage(10);
-
                         });
                         s.Properties.TextFormatString = "{0}|{1}|{2}|{3}|{4}";
                         s.Properties.CallbackPageSize = 15;
@@ -281,7 +279,7 @@
                         s.ShowModelErrors = true;
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.Width = Unit.Percentage(100);
-                        s.TabIndex = 8;
+                        s.TabIndex = 4;
                     });
                 });
             })

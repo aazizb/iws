@@ -939,4 +939,7 @@
   <data name="LeftToPay" xml:space="preserve">
     <value>Le reste à payer est de </value>
   </data>
+  <data name="LeftToPayEnd" xml:space="preserve">
+    <value>pour cette ligne de facture</value>
+  </data>
 </root>

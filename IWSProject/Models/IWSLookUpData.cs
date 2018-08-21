@@ -128,7 +128,14 @@
             }
             return initialInvoice;
         }
+        public static bool CheckIfBalanced(int invoiceId)
+        {
+            var initialInvoice = IWSEntities.DetailComptas.FirstOrDefault(o => o.id == invoiceId).amount;
 
+            var cumulatedPaid = IWSEntities.DetailDetailComptas.Where(o => o.OID == invoiceId);
+
+            return initialInvoice == cumulatedPaid.Sum(o => o.Amount);
+        }
 
 
         public static IEnumerable GetAccount()
@@ -695,8 +702,19 @@
             }
             return null;
         }
-        public static IEnumerable GetDetailDetailComptaOID(int modelId)
+        public static int GetMasterComptaOID(int detailComptaTransId)//1597 OK
         {
+            var result = IWSEntities.MasterComptas.Join(IWSEntities.DetailComptas,
+                                           c => c.id, a => a.transid, (c, a) => new
+                                           {
+                                               OID = c.oid,
+                                               Id = c.id
+                                           }).SingleOrDefault(o => o.Id == detailComptaTransId).OID;
+            return result;
+        }
+        public static IEnumerable GetDetailDetailComptaOID(int modelId, bool balanced)
+        {
+            int oid = (int)HttpContext.Current.Session["MasterComptaOID"];
             int model = 0;
             if (modelId.Equals((int)ComptaMasterModelId.Payment))
             {
@@ -706,19 +724,28 @@
             {
                 model = (int)ComptaMasterModelId.CustomerInvoice;
             }
-            return IWSEntities.DetailComptas.Where(o => o.ModelId == model && o.amount !=0 && o.Balanced == false)
-                    .Select(i => new
-                    {
-                        OID = i.id,
-                        TransId = i.transid,
-                        Account = i.account,
-                        Side = i.side,
-                        OAccount = i.oaccount,
-                        LineAmount = i.amount.ToString("N2", CultureInfo.GetCultureInfo(Thread.CurrentThread
-                                                                    .CurrentUICulture.Name).NumberFormat),
-                        i.Currency,
-                        Text = i.text
-                    }).OrderBy(o => o.OID);
+            var result = IWSEntities.DetailComptas.Where(o => o.ModelId == model && o.amount != 0).Select(i => new
+                            {
+                                OID = i.id,
+                                TransId = i.transid,
+                                Account = i.account,
+                                Side = i.side,
+                                OAccount = i.oaccount,
+                                LineAmount = i.amount.ToString("N2", CultureInfo.GetCultureInfo(Thread.CurrentThread
+                                                        .CurrentUICulture.Name).NumberFormat),
+                                i.Currency,
+                                Text = i.text,
+                                i.Balanced
+                            }).OrderBy(o => o.OID);
+            if (oid > 0)
+            {
+                if (!balanced)
+                    return result.Where(b => b.Balanced == balanced && b.OID==oid);
+                return result.Where(b=>b.OID==oid);
+            }
+            if (!balanced)
+                return result.Where(b => b.Balanced == balanced);
+            return result;
         }
         public static IEnumerable GetNewLineDetailLogistic(int itemId, int OID, int modelId)
         {
@@ -3708,6 +3735,7 @@
                                        .SelectMany(x => x.Errors)
                                        .Select(x => x.ErrorMessage));
         }
+
         public static List<string> GetModelSateErrorsList(System.Web.Mvc.ModelStateDictionary modelState)
         {
             var errors = from state in modelState.Values

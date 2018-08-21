@@ -161,6 +161,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(int transId, object newKeyValue)
         {
+            Session["MasterComptaOID"] = IWSLookUp.GetMasterComptaOID(transId);
             if (newKeyValue != null)
             {
                 ViewData["IsNewDetailRow"] = true;
@@ -277,8 +278,14 @@ namespace IWSProject.Controllers
                     try
                     {
                         model.InsertOnSubmit(line);
-                        if (line.Amount>0)
+                        if (line.Amount > 0)
+                        {
                             db.SubmitChanges();
+                            if (IWSLookUp.CheckIfBalanced(line.OID))
+                            {
+                                SetToBalanced(line);
+                            }
+                        }
                     }
                     catch (Exception e)
                     {
@@ -294,37 +301,50 @@ namespace IWSProject.Controllers
             else
             {
                 ViewData["GenericError"] = IWSLocalResource.LeftToPay + leftToPay.ToString("N2", CultureInfo.GetCultureInfo(Thread.CurrentThread
-                                                                    .CurrentUICulture.Name).NumberFormat);
+                                                                    .CurrentUICulture.Name).NumberFormat) + " " +
+                                           IWSLocalResource.LeftToPayEnd;
             }
             return PartialView("DetailDetailGridViewPartial", IWSLookUp.GetDetailDetailCompta(transId, modelId));
 
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailDetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] DetailDetailCompta line, int transId)
         {
+            decimal leftToPay = IWSLookUp.GetLeftToPay(line.OID);
             var model = db.DetailDetailComptas;
-            //line.TransId = transId;
             ViewData["lineDetail"] = line;
-            if (ModelState.IsValid)
+            if (leftToPay >= line.Amount)
             {
-                try
+                if (ModelState.IsValid)
                 {
-                    var modelItem = model.FirstOrDefault(p => p.Id == line.Id);
-                    if (modelItem != null)
+                    try
                     {
-                        this.UpdateModel(modelItem);
-                        db.SubmitChanges();
+                        var modelItem = model.FirstOrDefault(p => p.Id == line.Id);
+                        if (modelItem != null && line.Amount > 0)
+                        {
+                            this.UpdateModel(modelItem);
+                            db.SubmitChanges();
+                            if (IWSLookUp.CheckIfBalanced(line.OID))
+                            {
+                                SetToBalanced(line);
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        ViewData["GenericError"] = e.Message;
                     }
                 }
-                catch (Exception e)
+                else
                 {
-                    ViewData["GenericError"] = e.Message;
+                    ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
                 }
             }
             else
             {
-                ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
+                ViewData["GenericError"] = IWSLocalResource.LeftToPay + leftToPay.ToString("N2", CultureInfo.GetCultureInfo(Thread.CurrentThread
+                                                                   .CurrentUICulture.Name).NumberFormat) + " " +
+                                           IWSLocalResource.LeftToPayEnd;
             }
             return PartialView("DetailDetailGridViewPartial", IWSLookUp.GetDetailDetailCompta(transId, (int)Session["Modelid"]));
         }
@@ -338,8 +358,20 @@ namespace IWSProject.Controllers
                 {
                     var item = model.FirstOrDefault(i => i.Id == Id);
                     if (item != null)
+                    {
                         model.DeleteOnSubmit(item);
-                    db.SubmitChanges();
+                        db.SubmitChanges();
+
+                        var details = from detail in db.DetailComptas
+                                    where
+                                      detail.id ==  item.OID
+                                    select detail;
+                        foreach (var detail in details)
+                        {
+                            detail.Balanced = false;
+                        }
+                        db.SubmitChanges();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -349,6 +381,18 @@ namespace IWSProject.Controllers
             return PartialView("DetailDetailGridViewPartial", IWSLookUp.GetDetailDetailCompta(transId, (int)Session["Modelid"]));
         }
         #region Helper
+        private static void SetToBalanced(DetailDetailCompta line)
+        {
+            var items = from detail in db.DetailComptas
+                        where
+                          detail.id == line.OID
+                        select detail;
+            foreach (var item in items)
+            {
+                item.Balanced = true;
+            }
+            db.SubmitChanges();
+        }
         public ActionResult HeaderText(int selectedOIDIndex)
         {
             return Json(IWSLookUp.GetHeaderText(selectedOIDIndex, (int)Session["ModelId"]));

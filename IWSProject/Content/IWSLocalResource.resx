@@ -931,6 +931,9 @@
     <value>Logistics</value>
   </data>
   <data name="LeftToPay" xml:space="preserve">
-    <value>The left to pay is </value>
+    <value>The rest to pay is </value>
+  </data>
+  <data name="LeftToPayEnd" xml:space="preserve">
+    <value>for this line of invoice</value>
   </data>
 </root>

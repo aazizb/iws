@@ -925,6 +925,9 @@
     <value>Logistic de/DE</value>
   </data>
   <data name="LeftToPay" xml:space="preserve">
-    <value>The left to pay is  de-DE </value>
+    <value>The rest to pay is  de-DE </value>
+  </data>
+  <data name="LeftToPayEnd" xml:space="preserve">
+    <value>for this line of invoice de-DE</value>
   </data>
 </root>

@@ -1303,11 +1303,20 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The left to pay is .
+        ///   Looks up a localized string similar to The rest to pay is .
         /// </summary>
         public static string LeftToPay {
             get {
                 return ResourceManager.GetString("LeftToPay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to for this line of invoice.
+        /// </summary>
+        public static string LeftToPayEnd {
+            get {
+                return ResourceManager.GetString("LeftToPayEnd", resourceCulture);
             }
         }
         
