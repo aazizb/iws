@@ -110,7 +110,7 @@
                             if (owner.OwnerType == "Customer")
                             {
                                 modelId = (int)IWSLookUp.ComptaMasterModelId.Settlement;
-                                OID = MakeComptaMaster(itemId, 0, modelId,
+                                OID = MakeComptaMaster(itemId, OID, modelId,
                                         IWSLookUp.ComptaMasterModelId.Settlement.ToString());
                                 if (OID != 0)
                                 {
@@ -118,21 +118,12 @@
                                     results = MakeComptaMaster(itemId, OID, modelId,
                                             IWSLookUp.ComptaMasterModelId.CustomerInvoice.ToString()) != 0;
                                 }
-
-
-                            //OID = MakeSettlement(itemId, 0);
-                            //if (OID != 0)
-                            //    results = MakeCustomerInvoice(OID);
                             }
                             if (owner.OwnerType == "Supplier")
                             {
                                 modelId = (int)IWSLookUp.ComptaMasterModelId.GeneralLedger;
                                 results = MakeComptaMaster(itemId, 0, modelId,
                                             IWSLookUp.ComptaMasterModelId.GeneralLedger.ToString()) != 0;
-
-
-                            //OID = MakeGeneralLedger(itemId, 0);
-                            //results = (OID != 0);
                             }
                         }
                         if (amount < 0)
@@ -146,11 +137,6 @@
                                 results = MakeComptaMaster(itemId, OID, modelId,
                                         IWSLookUp.ComptaMasterModelId.VendorInvoice.ToString()) != 0;
                             }
-
-
-                            //OID = MakePayment(itemId, 0);
-                            //if (OID != 0)
-                            //    results = MakeVendorInvoice(OID);
                         }
 
                         if (!results)
@@ -166,7 +152,10 @@
                             msg = IWSLocalResource.GenericError;
                             throw new Exception(msg);
                         }
-                        db.SubmitChanges(ConflictMode.FailOnFirstConflict);
+
+                        results = ReferenceInvoice(OID);
+                        if (results)
+                            db.SubmitChanges(ConflictMode.FailOnFirstConflict);
                     }
                 }
             }
@@ -388,6 +377,7 @@
                                 if (u == null)
                                 {
                                     n.IsValidated = false;
+                                    n.ModelId = (int)IWSLookUp.MetaModelId.BankStatement;
                                     db.BankStatements.InsertOnSubmit(n);
                                     count += 1;
                                 }
@@ -911,12 +901,18 @@
         private int MakeComptaMaster(int bankStatementId, int OID, int modelId, string itemtype)
         {
             int itemID = 0;
+            int newOID = 2;
             string companyId = (string)Session["CompanyID"];
             string account = String.Empty;
             MasterCompta masterCompta = new MasterCompta();
             List<DetailCompta> detailCompta = new List<DetailCompta>();
             StatementDetailViewModel bankStatement = new StatementDetailViewModel();
             InvoiceViewModel invoice = new InvoiceViewModel();
+
+            var maxId = db.MasterComptas.Count(i => i.id > 0);
+            if (maxId != 0)
+                newOID += db.MasterComptas.Max(i => i.id);
+
 
             if (!modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice) &&
                 !modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice))
@@ -925,7 +921,6 @@
                 if (bankStatement == null)
                     return itemID;
             }
-
             if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment))
             {
                 account = IWSLookUp.GetCompteTier(bankStatement.Id,
@@ -936,13 +931,17 @@
                 account = IWSLookUp.GetCompteTier(bankStatement.Id,
                             IWSLookUp.ComptaMasterModelId.Settlement.ToString());
             }
-
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.GeneralLedger))
+            {
+                account = IWSLookUp.GetCompteTier(bankStatement.Id,
+                            IWSLookUp.ComptaMasterModelId.GeneralLedger.ToString());
+            }
             if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment) ||
                 modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement))
             {
                 masterCompta = new MasterCompta
                 {
-                    oid = OID,
+                    oid = newOID,
                     CostCenter = modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement)? "100": "200",
                     account = account,
                     HeaderText = bankStatement.Verwendungszweck,
@@ -958,8 +957,9 @@
             {
                 masterCompta = new MasterCompta
                 {
-                    oid = OID,
+                    oid = 0,
                     CostCenter = "100",
+                    account = account,
                     HeaderText = bankStatement.Verwendungszweck,
                     TransDate = bankStatement.Valutadatum,
                     ItemDate = bankStatement.Buchungstag,
@@ -986,7 +986,7 @@
                         ItemDate = invoice.ItemDate,
                         EntryDate = invoice.EntryDate,
                         CompanyId = invoice.CompanyId,
-                        ModelId = (int)IWSLookUp.ComptaMasterModelId.VendorInvoice,
+                        ModelId = modelId,
                         IsValidated = false
                     };
                 }
@@ -1008,7 +1008,7 @@
                         ItemDate = invoice.ItemDate,
                         EntryDate = invoice.EntryDate,
                         CompanyId = invoice.CompanyId,
-                        ModelId = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice,
+                        ModelId = modelId, 
                         IsValidated = false
                     };
                 }
@@ -1091,6 +1091,7 @@
                             amount = l.AccountAmount,
                             Currency = invoice.OCurrency,
                             duedate = invoice.DueDate,
+                            ModelId = modelId,
                             text = invoice.HeaderText
                         };
                         detailCompta.Add(temp);
@@ -1140,7 +1141,7 @@
                         amount = (decimal)invoice.Amount,
                         Currency = invoice.OCurrency,
                         duedate = invoice.DueDate,
-                        ModelId = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice,
+                        ModelId = modelId,
                         text = invoice.Text
                     },
                     new DetailCompta
@@ -1152,7 +1153,7 @@
                         amount = (decimal)invoice.VatAmount,
                         Currency = invoice.OCurrency,
                         duedate = invoice.DueDate,
-                        ModelId = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice,
+                        ModelId = modelId,
                         text = invoice.Text
                     }
                 };
@@ -1262,123 +1263,262 @@
 
         private InvoiceViewModel GetInvoiceDetail(int itemId, int bankStatementId, string itemType, string companyId)
         {
+            string id;
             try
             {
                 if (itemType.Equals(IWSLookUp.ComptaMasterModelId.CustomerInvoice.ToString()))
                 {
-                    var owner = from Vats in db.Vats
-                                join Customers in db.Customers on new { Vats.id } equals new { id = Customers.VatCode }
-                                where
-                                  Customers.id ==
-                                    ((from BankAccounts in db.BankAccounts
-                                      where
-                                 BankAccounts.IBAN ==
-                                 ((from BankStatements in db.BankStatements
+                    var OwnerId = (from ba in db.BankAccounts
                                    where
-                                   BankStatements.id == bankStatementId &&
-                                   BankStatements.CompanyID == companyId
+                                     ba.IBAN ==
+                                       ((from bs in db.BankStatements
+                                         where
+                                            bs.id == bankStatementId &&
+                                            bs.CompanyID == companyId
+                                         select new
+                                         {
+                                             bs.Kontonummer
+                                         }).First().Kontonummer)
                                    select new
                                    {
-                                       BankStatements.Kontonummer
-                                   }).First().Kontonummer)
-                                      select new
-                                      {
-                                          BankAccounts.Owner
-                                      }).First().Owner)
-                                select new
-                                {
-                                    Vats.PVat,
-                                    Vats.outputvataccountid,
-                                    Customers.accountid,
-                                    Customers.IBAN,
-                                    Customers.Produit
-                                };
-                    var vat = owner.SingleOrDefault().PVat;
-                    InvoiceViewModel invoice = (from l in db.DetailComptas
-                                                where
-                                                    l.MasterCompta.id == itemId &&
-                                                    l.MasterCompta.CompanyId == companyId
-                                                select new InvoiceViewModel()
-                                                {
-                                                    Account = l.oaccount,
-                                                    OAccount = owner.SingleOrDefault().Produit,
-                                                    PVat = vat,
-                                                    CostCenter = l.MasterCompta.CostCenter,
-                                                    HeaderText = l.MasterCompta.HeaderText,
-                                                    TransDate = l.MasterCompta.TransDate,
-                                                    ItemDate = l.MasterCompta.ItemDate,
-                                                    EntryDate = l.MasterCompta.EntryDate,
-                                                    OTotal = l.MasterCompta.oTotal,
-                                                    Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
-                                                    VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
-                                                    OPeriode = l.MasterCompta.oPeriode,
-                                                    OCurrency = l.MasterCompta.oCurrency,
-                                                    DueDate = l.duedate,
-                                                    Text = l.text,
-                                                    CompanyId = l.MasterCompta.CompanyId,
-                                                    AccountId = l.MasterCompta.account,
-                                                    VatAccountId = owner.SingleOrDefault().outputvataccountid,
-                                                    Modelid = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice
-                                                }).Single();
-                    return invoice;
+                                       ba.Owner
+                                   }).Take(2).OrderBy(o => o.Owner);
+                    if (OwnerId.Count() > 1)
+                    {
+                        id = OwnerId.First().Owner;
+                        var owner = from v in db.Vats
+                                    join cu in db.Customers on new { v.id } equals new { id = cu.VatCode }
+                                    where
+                                      cu.id == id
+                                    select new
+                                    {
+                                        v.PVat,
+                                        v.outputvataccountid,
+                                        cu.accountid,
+                                        cu.IBAN,
+                                        cu.Produit
+                                    };
+                        if (!owner.Any())
+                        {
+                            OwnerId = OwnerId.OrderByDescending(o => o.Owner);
+                            id = OwnerId.First().Owner;
+                            owner = from v in db.Vats
+                                    join cu in db.Customers on new { v.id } equals new { id = cu.VatCode }
+                                    where
+                                        cu.id == id
+                                    select new
+                                    {
+                                        v.PVat,
+                                        v.outputvataccountid,
+                                        cu.accountid,
+                                        cu.IBAN,
+                                        cu.Produit
+                                    };
+
+                        }
+                        var vat = owner.SingleOrDefault().PVat;
+                        InvoiceViewModel invoice = (from l in db.DetailComptas
+                                                    where
+                                                        l.MasterCompta.id == itemId &&
+                                                        l.MasterCompta.CompanyId == companyId
+                                                    select new InvoiceViewModel()
+                                                    {
+                                                        Account = l.oaccount,
+                                                        OAccount = owner.SingleOrDefault().Produit,
+                                                        PVat = vat,
+                                                        CostCenter = l.MasterCompta.CostCenter,
+                                                        HeaderText = l.MasterCompta.HeaderText,
+                                                        TransDate = l.MasterCompta.TransDate,
+                                                        ItemDate = l.MasterCompta.ItemDate,
+                                                        EntryDate = l.MasterCompta.EntryDate,
+                                                        OTotal = l.MasterCompta.oTotal,
+                                                        Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                        VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                        OPeriode = l.MasterCompta.oPeriode,
+                                                        OCurrency = l.MasterCompta.oCurrency,
+                                                        DueDate = l.duedate,
+                                                        Text = l.text,
+                                                        CompanyId = l.MasterCompta.CompanyId,
+                                                        AccountId = l.MasterCompta.account,
+                                                        VatAccountId = owner.SingleOrDefault().outputvataccountid,
+                                                        Modelid = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice
+                                                    }).Single();
+                        return invoice;
+
+                    }
+                    if (OwnerId.Count() == 1)
+                    {
+                        id = OwnerId.First().Owner;
+                        var owner = from v in db.Vats
+                                    join cu in db.Customers on new { v.id } equals new { id = cu.VatCode }
+                                    where
+                                      cu.id == id
+                                    select new
+                                    {
+                                        v.PVat,
+                                        v.outputvataccountid,
+                                        cu.accountid,
+                                        cu.IBAN,
+                                        cu.Produit
+                                    };
+                        if (owner.Any())
+                        {
+                            var vat = owner.SingleOrDefault().PVat;
+                            InvoiceViewModel invoice = (from l in db.DetailComptas
+                                                        where
+                                                            l.MasterCompta.id == itemId &&
+                                                            l.MasterCompta.CompanyId == companyId
+                                                        select new InvoiceViewModel()
+                                                        {
+                                                            Account = l.oaccount,
+                                                            OAccount = owner.SingleOrDefault().Produit,
+                                                            PVat = vat,
+                                                            CostCenter = l.MasterCompta.CostCenter,
+                                                            HeaderText = l.MasterCompta.HeaderText,
+                                                            TransDate = l.MasterCompta.TransDate,
+                                                            ItemDate = l.MasterCompta.ItemDate,
+                                                            EntryDate = l.MasterCompta.EntryDate,
+                                                            OTotal = l.MasterCompta.oTotal,
+                                                            Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                            VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                            OPeriode = l.MasterCompta.oPeriode,
+                                                            OCurrency = l.MasterCompta.oCurrency,
+                                                            DueDate = l.duedate,
+                                                            Text = l.text,
+                                                            CompanyId = l.MasterCompta.CompanyId,
+                                                            AccountId = l.MasterCompta.account,
+                                                            VatAccountId = owner.SingleOrDefault().outputvataccountid,
+                                                            Modelid = (int)IWSLookUp.ComptaMasterModelId.CustomerInvoice
+                                                        }).Single();
+                            return invoice;
+                        }
+                    }
                 }
                 if (itemType.Equals(IWSLookUp.ComptaMasterModelId.VendorInvoice.ToString()))
                 {
-                    var owner = from Vats in db.Vats
-                                join Suppliers in db.Suppliers on new { Vats.id } equals new { id = Suppliers.VatCode }
-                                where
-                                  Suppliers.id ==
-                                    ((from BankAccounts in db.BankAccounts
-                                      where
-                                 BankAccounts.IBAN ==
-                                 ((from BankStatements in db.BankStatements
+                    var OwnerId = (from ba in db.BankAccounts
                                    where
-                                      BankStatements.id == bankStatementId &&
-                                      BankStatements.CompanyID == companyId
+                                     ba.IBAN ==
+                                       ((from bs in db.BankStatements
+                                         where
+                                            bs.id == bankStatementId &&
+                                            bs.CompanyID == companyId
+                                         select new
+                                         {
+                                             bs.Kontonummer
+                                         }).First().Kontonummer)
                                    select new
                                    {
-                                       BankStatements.Kontonummer
-                                   }).First().Kontonummer)
-                                      select new
-                                      {
-                                          BankAccounts.Owner
-                                      }).First().Owner)
-                                select new
-                                {
-                                    Vats.PVat,
-                                    Vats.inputvataccountid,
-                                    Suppliers.accountid,
-                                    Suppliers.IBAN,
-                                    Suppliers.Charge
-                                };
-                    var vat = owner.SingleOrDefault().PVat;
-                    InvoiceViewModel invoice = (from l in db.DetailComptas
-                                                where
-                                                    l.MasterCompta.id == itemId &&
-                                                    l.MasterCompta.CompanyId == companyId
-                                                select new InvoiceViewModel()
-                                                {
-                                                    Account = owner.SingleOrDefault().Charge,
-                                                    OAccount = l.account,
-                                                    PVat = vat,
-                                                    CostCenter = l.MasterCompta.CostCenter,
-                                                    HeaderText = l.MasterCompta.HeaderText,
-                                                    TransDate = l.MasterCompta.TransDate,
-                                                    ItemDate = l.MasterCompta.ItemDate,
-                                                    EntryDate = l.MasterCompta.EntryDate,
-                                                    OTotal = l.MasterCompta.oTotal,
-                                                    Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
-                                                    VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
-                                                    OPeriode = l.MasterCompta.oPeriode,
-                                                    OCurrency = l.MasterCompta.oCurrency,
-                                                    DueDate = l.duedate,
-                                                    Text = l.text,
-                                                    CompanyId = l.MasterCompta.CompanyId,
-                                                    AccountId = l.MasterCompta.account,
-                                                    VatAccountId = owner.SingleOrDefault().inputvataccountid,
-                                                    Modelid = (int)IWSLookUp.ComptaMasterModelId.VendorInvoice
-                                                }).Single();
-                    return invoice;
+                                       ba.Owner
+                                   }).Take(2).OrderBy(o=>o.Owner);
+                    if (OwnerId.Count()>1)
+                    {
+                        id = OwnerId.First().Owner;
+                        var owner = from v in db.Vats
+                                    join su in db.Suppliers on new { v.id } equals new { id = su.VatCode }
+                                    where
+                                      su.id == id
+                                    select new
+                                    {
+                                        v.PVat,
+                                        v.inputvataccountid,
+                                        su.accountid,
+                                        su.IBAN,
+                                        su.Charge
+                                    };
+                        if (!owner.Any())
+                        {
+                            OwnerId = OwnerId.OrderByDescending(o => o.Owner);
+                            id = OwnerId.First().Owner;
+                            owner = from v in db.Vats
+                                    join su in db.Suppliers on new { v.id } equals new { id = su.VatCode }
+                                    where
+                                      su.id == id
+                                    select new
+                                    {
+                                        v.PVat,
+                                        v.inputvataccountid,
+                                        su.accountid,
+                                        su.IBAN,
+                                        su.Charge
+                                    };
+                        }
+                        var vat = owner.SingleOrDefault().PVat;
+                        InvoiceViewModel invoice = (from l in db.DetailComptas
+                                                    where
+                                                        l.MasterCompta.id == itemId &&
+                                                        l.MasterCompta.CompanyId == companyId
+                                                    select new InvoiceViewModel()
+                                                    {
+                                                        Account = owner.SingleOrDefault().Charge,
+                                                        OAccount = l.account,
+                                                        PVat = vat,
+                                                        CostCenter = l.MasterCompta.CostCenter,
+                                                        HeaderText = l.MasterCompta.HeaderText,
+                                                        TransDate = l.MasterCompta.TransDate,
+                                                        ItemDate = l.MasterCompta.ItemDate,
+                                                        EntryDate = l.MasterCompta.EntryDate,
+                                                        OTotal = l.MasterCompta.oTotal,
+                                                        Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                        VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                        OPeriode = l.MasterCompta.oPeriode,
+                                                        OCurrency = l.MasterCompta.oCurrency,
+                                                        DueDate = l.duedate,
+                                                        Text = l.text,
+                                                        CompanyId = l.MasterCompta.CompanyId,
+                                                        AccountId = l.MasterCompta.account,
+                                                        VatAccountId = owner.SingleOrDefault().inputvataccountid,
+                                                        Modelid = (int)IWSLookUp.ComptaMasterModelId.VendorInvoice
+                                                    }).Single();
+                        return invoice;
+                    }
+                    if (OwnerId.Count() == 1)
+                    {
+                        id = OwnerId.First().Owner;
+                        var owner = from v in db.Vats
+                                    join su in db.Suppliers on new { v.id } equals new { id = su.VatCode }
+                                    where
+                                      su.id == id
+                                    select new
+                                    {
+                                        v.PVat,
+                                        v.inputvataccountid,
+                                        su.accountid,
+                                        su.IBAN,
+                                        su.Charge
+                                    };
+                        if (owner.Any())
+                        {
+                            var vat = owner.SingleOrDefault().PVat;
+                            InvoiceViewModel invoice = (from l in db.DetailComptas
+                                                        where
+                                                            l.MasterCompta.id == itemId &&
+                                                            l.MasterCompta.CompanyId == companyId
+                                                        select new InvoiceViewModel()
+                                                        {
+                                                            Account = owner.SingleOrDefault().Charge,
+                                                            OAccount = l.account,
+                                                            PVat = vat,
+                                                            CostCenter = l.MasterCompta.CostCenter,
+                                                            HeaderText = l.MasterCompta.HeaderText,
+                                                            TransDate = l.MasterCompta.TransDate,
+                                                            ItemDate = l.MasterCompta.ItemDate,
+                                                            EntryDate = l.MasterCompta.EntryDate,
+                                                            OTotal = l.MasterCompta.oTotal,
+                                                            Amount = Math.Round((decimal)l.MasterCompta.oTotal / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                            VatAmount = Math.Round((decimal)l.MasterCompta.oTotal * vat / (1 + vat), 2, MidpointRounding.AwayFromZero),
+                                                            OPeriode = l.MasterCompta.oPeriode,
+                                                            OCurrency = l.MasterCompta.oCurrency,
+                                                            DueDate = l.duedate,
+                                                            Text = l.text,
+                                                            CompanyId = l.MasterCompta.CompanyId,
+                                                            AccountId = l.MasterCompta.account,
+                                                            VatAccountId = owner.SingleOrDefault().inputvataccountid,
+                                                            Modelid = (int)IWSLookUp.ComptaMasterModelId.VendorInvoice
+                                                        }).Single();
+                            return invoice;
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -1387,6 +1527,7 @@
             }
             return null;
         }
+
         private int MakeHeader(MasterCompta masterCompta)
         {
             int id = 0;
@@ -1579,7 +1720,54 @@
                 return false;
             }
         }
+        private bool ReferenceInvoice(int itemId)
+        {
+          
+            var Master = db.MasterComptas.Join(db.DetailComptas,
+                            m => m.id, d => d.transid, (m, d) => new
+                            {
+                                Id = d.id,
+                                TransId = d.transid,
+                                OID = m.oid,
+                                m.ModelId
+                            }).Where(x => x.TransId.Equals(itemId));
+            int OID = Master.FirstOrDefault().OID;
+            var Detail = db.DetailComptas.Where(o => o.transid.Equals(OID)).Select(n => new
+                            {
+                                Id = n.id,
+                                TransId = n.transid,
+                                Amount = n.amount
+                            });
+            try
+            {
+                foreach (var master in Master)
+                {
+                    foreach (var detail in Detail)
+                    {
+                        DetailDetailCompta detailDetailCompta = new DetailDetailCompta
+                        {
+                            TransId= master.Id,
+                            OID = detail.Id,
+                            Amount = detail.Amount,
+                            ModelId = master.ModelId
+                        };
+                        db.DetailDetailComptas.InsertOnSubmit(detailDetailCompta);
 
+                        var invoiceLine = db.DetailComptas.Where(i => i.id.Equals(detail.Id));
+
+                        foreach (var line in invoiceLine)
+                        {
+                            line.Balanced = true;
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
         private bool IfExist(int ItemID)
         {
 

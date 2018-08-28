@@ -397,6 +397,10 @@ namespace IWSProject.Controllers
         {
             return Json(IWSLookUp.GetHeaderText(selectedOIDIndex, (int)Session["ModelId"]));
         }
+        public ActionResult Amount(int selectedDetailOIDIndex)
+        {
+            return Json(IWSLookUp.GetAmount(selectedDetailOIDIndex, (int)Session["ModelId"]));
+        }
         public ActionResult CostCenter(int selectedOIDIndex)
         {
             return Json(IWSLookUp.GetCostCenter(selectedOIDIndex, (int)Session["ModelId"]));

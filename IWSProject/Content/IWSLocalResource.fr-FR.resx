@@ -942,4 +942,7 @@
   <data name="LeftToPayEnd" xml:space="preserve">
     <value>pour cette ligne de facture</value>
   </data>
+  <data name="BalancedAmount" xml:space="preserve">
+    <value>Les montants en entête et en détail ne correspondent pas</value>
+  </data>
 </root>

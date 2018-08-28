@@ -165,7 +165,7 @@
                 return IWSEntities.Customers.SingleOrDefault(i => i.id == account &&
                                                                     i.CompanyID.Equals(companyID)).accountid;
             }
-            return null;
+            return "9999";
         }
 
         public static IEnumerable GetAccount(string TransType)
@@ -702,20 +702,40 @@
             }
             return null;
         }
-        public static int GetMasterComptaOID(int detailComptaTransId)//1597 OK
+        public static int GetMasterComptaOID(int detailComptaTransId)
         {
             var result = IWSEntities.MasterComptas.Join(IWSEntities.DetailComptas,
                                            c => c.id, a => a.transid, (c, a) => new
                                            {
                                                OID = c.oid,
                                                Id = c.id
-                                           }).SingleOrDefault(o => o.Id == detailComptaTransId).OID;
+                                           }).FirstOrDefault(o => o.Id == detailComptaTransId).OID;
             return result;
+        }
+        public static decimal? CkeckIfAmountsBalanced(int masterId)
+        {
+            int model = (int)HttpContext.Current.Session["ModelId"];
+            if(model.Equals((int)ComptaMasterModelId.Payment) || model.Equals((int)ComptaMasterModelId.Settlement))
+            {
+                return (from d in IWSEntities.DetailComptas
+                        join dc in IWSEntities.DetailDetailComptas on new { d.id } equals new { id = dc.TransId }
+                        where
+                        d.MasterCompta.id == masterId
+                        group new { d.MasterCompta, dc } by new
+                        {
+                            oTotal = (decimal?)d.MasterCompta.oTotal
+                        } into g
+                        select new
+                        {
+                            Cummule = g.Key.oTotal - g.Sum(p => p.dc.Amount)
+                        }).FirstOrDefault().Cummule.Value;
+            }
+            return 0;
         }
         public static IEnumerable GetDetailDetailComptaOID(int modelId, bool balanced)
         {
-            int oid = (int)HttpContext.Current.Session["MasterComptaOID"];
             int model = 0;
+            int oid = (int)HttpContext.Current.Session["MasterComptaOID"];
             if (modelId.Equals((int)ComptaMasterModelId.Payment))
             {
                 model = (int)ComptaMasterModelId.VendorInvoice;
@@ -740,8 +760,8 @@
             if (oid > 0)
             {
                 if (!balanced)
-                    return result.Where(b => b.Balanced == balanced && b.OID==oid);
-                return result.Where(b=>b.OID==oid);
+                    return result.Where(b => b.Balanced == balanced && b.TransId==oid);
+                return result.Where(b=>b.TransId==oid);
             }
             if (!balanced)
                 return result.Where(b => b.Balanced == balanced);
@@ -1779,7 +1799,7 @@
         {
             try
             {
-                if (itemType.Equals(IWSLookUp.DocsType.Settlement.ToString()))
+                if (itemType.Equals(IWSLookUp.ComptaMasterModelId.Settlement.ToString()))
                 {
                     StatementDetailViewModel sd =
                   (from bs in IWSEntities.BankStatements
@@ -1810,7 +1830,7 @@
                     return sd;
                 }
 
-                if (itemType.Equals(IWSLookUp.DocsType.Payment.ToString()))
+                if (itemType.Equals(IWSLookUp.ComptaMasterModelId.Payment.ToString()))
                 {
                     StatementDetailViewModel sd =
                             (from bs in IWSEntities.BankStatements
@@ -1841,7 +1861,7 @@
                     return sd;
                 }
 
-                if (itemType.Equals(IWSLookUp.DocsType.GeneralLedger.ToString()))
+                if (itemType.Equals(IWSLookUp.ComptaMasterModelId.GeneralLedger.ToString()))
                 {
                     StatementDetailViewModel sd =
                             (from bs in IWSEntities.BankStatements
@@ -1870,11 +1890,6 @@
                                  BeguenstigterZahlungspflichtiger = bs.BeguenstigterZahlungspflichtiger
                              }).Single();
                     return sd;
-                }
-
-                if (itemType.Equals(IWSLookUp.DocsType.VendorInvoice.ToString()))
-                {
-
                 }
 
                     #region keepit
@@ -3335,6 +3350,18 @@
             }
             return headerText;
         }
+        public static decimal GetAmount(int itemId, int modelId)
+        {
+
+            if (modelId.Equals((int)ComptaMasterModelId.Payment) ||
+                modelId.Equals((int)ComptaMasterModelId.Settlement)) 
+            {
+                var amount = IWSEntities.DetailComptas.FirstOrDefault(item =>
+                                                item.id.Equals(itemId)).amount;
+                return amount;
+            }
+            return 0;
+        }
         public static string GetCostCenter(int itemId, int modelId)
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
@@ -3779,11 +3806,12 @@
             QuantityUnit = 4,
             Store = 2,
             Supplier = 1,
-            VAT = 14,       //2045,
-            Currency = 5,   //2050,
-            TypeJournal = 8,    //2060,
+            VAT = 14, 
+            Currency = 5,
+            TypeJournal = 8,
             Stock = 107,
             BankAccount =12,
+            BankStatement =18,
             PeriodicAccountBalance =13,
             Default = 0000
         }
@@ -3813,7 +3841,7 @@
             Payment = 114,
             CustomerInvoice = 122,
             Settlement = 124,
-            GeneralLedger = 5800,
+            GeneralLedger = 134,
             Default = 0000
         }
         public enum ComptaDetailModelId

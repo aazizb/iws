@@ -1,14 +1,12 @@
 ﻿namespace IWSProject.Models
 {
+    using System;
+    using System.ComponentModel;
     using System.Data.Linq;
     using System.Data.Linq.Mapping;
-    using System.Data;
-    using System.Collections.Generic;
-    using System.Reflection;
     using System.Linq;
-    using System.Linq.Expressions;
-    using System.ComponentModel;
-    using System;
+    using System.Reflection;
+
 
     [global::System.Data.Linq.Mapping.DatabaseAttribute(Name = "consolid")]
     public partial class IWSDataContext : System.Data.Linq.DataContext
@@ -213,10 +211,11 @@
         #endregion
 
         public IWSDataContext() :
-         base(global::System.Configuration.ConfigurationManager.ConnectionStrings["IWSConnectionString"].ConnectionString, mappingSource)
+                base(global::System.Configuration.ConfigurationManager.ConnectionStrings["IWSConnectionString"].ConnectionString, mappingSource)
         {
             OnCreated();
         }
+
 
         public IWSDataContext(string connection) :
                 base(connection, mappingSource)
@@ -11028,10 +11027,6 @@
 
         private decimal _Amount;
 
-        private string _Currency;
-
-        private string _Text;
-
         private int _ModelId;
 
         #region Extensibility Method Definitions
@@ -11046,10 +11041,6 @@
         partial void OnOIDChanged();
         partial void OnAmountChanging(decimal value);
         partial void OnAmountChanged();
-        partial void OnCurrencyChanging(string value);
-        partial void OnCurrencyChanged();
-        partial void OnTextChanging(string value);
-        partial void OnTextChanged();
         partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
         #endregion
@@ -11135,46 +11126,6 @@
                     this._Amount = value;
                     this.SendPropertyChanged("Amount");
                     this.OnAmountChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Currency", DbType = "NVarChar(10) NOT NULL", CanBeNull = false)]
-        public string Currency
-        {
-            get
-            {
-                return this._Currency;
-            }
-            set
-            {
-                if ((this._Currency != value))
-                {
-                    this.OnCurrencyChanging(value);
-                    this.SendPropertyChanging();
-                    this._Currency = value;
-                    this.SendPropertyChanged("Currency");
-                    this.OnCurrencyChanged();
-                }
-            }
-        }
-
-        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_Text", DbType = "NVarChar(50)")]
-        public string Text
-        {
-            get
-            {
-                return this._Text;
-            }
-            set
-            {
-                if ((this._Text != value))
-                {
-                    this.OnTextChanging(value);
-                    this.SendPropertyChanging();
-                    this._Text = value;
-                    this.SendPropertyChanged("Text");
-                    this.OnTextChanged();
                 }
             }
         }

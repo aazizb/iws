@@ -930,4 +930,7 @@
   <data name="LeftToPayEnd" xml:space="preserve">
     <value>for this line of invoice de-DE</value>
   </data>
+  <data name="BalancedAmount" xml:space="preserve">
+    <value>Not balanced amount between master and detail de-DE</value>
+  </data>
 </root>

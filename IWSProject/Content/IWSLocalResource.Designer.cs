@@ -214,6 +214,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not balanced amount between master and detail.
+        /// </summary>
+        public static string BalancedAmount {
+            get {
+                return ResourceManager.GetString("BalancedAmount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Balance Report.
         /// </summary>
         public static string BalanceReport {

@@ -639,7 +639,7 @@ namespace IWSProject.Controllers
                                         accountID = g.Key.OAccount,
                                         amount = g.Sum(p => p.doc.Amount),
                                         currency = g.Key.Currency
-                                    }).SingleOrDefault();
+                                    }).FirstOrDefault();
 
                         results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
 
@@ -3314,7 +3314,11 @@ namespace IWSProject.Controllers
                     //    string msg = IWSLocalResource.CheckPeriod;
                     //    throw new Exception(msg);
                     //}
-
+                    if (IWSLookUp.CkeckIfAmountsBalanced(itemId) !=0)
+                    {
+                        msg = IWSLocalResource.BalancedAmount;
+                        throw new Exception(msg);
+                    }
                     results = UpdateEntryDate(itemId, modelId);
                     if (!results)
                     {
@@ -3341,6 +3345,7 @@ namespace IWSProject.Controllers
                         throw new Exception(msg);
                     }
                     db.SubmitChanges(System.Data.Linq.ConflictMode.ContinueOnConflict);
+                    
                 }
                 catch (Exception ex)
                 {
@@ -3348,16 +3353,5 @@ namespace IWSProject.Controllers
                 }
             }
         }
-
-        //protected static string SetDocType(string selectedItems, string docType)
-        //{
-
-        //    string[] items = selectedItems.Split(new string[] { ";" },
-        //                                StringSplitOptions.RemoveEmptyEntries);
-
-        //    items = items.Select(x => x + "," + docType).ToArray();
-
-        //    return String.Join(";", items);
-        //}
     }
 }

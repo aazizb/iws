@@ -933,4 +933,7 @@
   <data name="LeftToPayEnd" xml:space="preserve">
     <value>for this line of invoice</value>
   </data>
+  <data name="BalancedAmount" xml:space="preserve">
+    <value>Not balanced amount between master and detail</value>
+  </data>
 </root>

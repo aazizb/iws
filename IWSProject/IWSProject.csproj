@@ -228,15 +228,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Models\MsSql\IWSData.dbml">
-      <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>IWSData.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Content\Web.config" />
-    <None Include="Models\MsSql\IWSData.dbml.layout">
-      <DependentUpon>IWSData.dbml</DependentUpon>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\iwsproject.pubxml" />
     <Content Include="Views\CustomerInvoices\CallbackPanelPartialView.cshtml" />
@@ -434,10 +426,7 @@
     <Content Include="Views\MasterCompta\DetailGridViewPartial.cshtml" />
     <Content Include="Views\MasterCompta\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\MasterCompta\DetailDetailGridViewPartial.cshtml" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
+    <None Include="Properties\PublishProfiles\IWSWeb.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -537,20 +526,7 @@
     <Compile Include="Models\IWSLookUpData.cs" />
     <Compile Include="Models\IWSUserRole.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
-    <Compile Include="Models\MsSql\IWSData.cs">
-      <DependentUpon>IWSData.dbml</DependentUpon>
-    </Compile>
-    <Compile Include="Models\MsSql\IWSData.designer.cs">
-      <DependentUpon>IWSData.dbml</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Reports\AccountBalance.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -574,6 +550,7 @@
     <Folder Include="App_Data\" />
     <Folder Include="Content\Uploads\" />
     <Folder Include="Models\data\" />
+    <Folder Include="Models\MsSql\" />
     <Folder Include="Views\IWSBase\" />
   </ItemGroup>
   <ItemGroup>
