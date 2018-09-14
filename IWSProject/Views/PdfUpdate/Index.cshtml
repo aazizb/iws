@@ -1,0 +1,119 @@
+﻿@using IWSProject.Content
+<script type="text/javascript">
+    var currentModelId = null;
+    function OnMBeginCallback(s, e) {
+        if (currentModelId !== null) {
+            e.customArgs["currentModelId"] = currentModelId;
+            currentModelId = null;
+        }
+    }
+    function OnModelIdSelectionChanged() {
+        currentModelId = ComboBoxModelId.GetValue();
+        if (!callbackPanelPartialView.InCallback()) {
+            callbackPanelPartialView.PerformCallback();
+        }
+    }
+    function OnMEndCallback(s, e) {
+        if (currentModelId !== null) {
+            callbackPanelPartialView.PerformCallback();
+        }
+    }
+    function OnSubmitClick(s, e) {
+        currentModelId = ComboBoxModelId.GetValue();
+        callbackPanelPartialView.PerformCallback();
+    }
+    function OnButtonClick() {
+        if (PdfUpdateGridView.IsCustomizationWindowVisible()) {
+
+            PdfUpdateGridView.HideCustomizationWindow();
+        }
+        else {
+            PdfUpdateGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = PdfUpdateGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function OnFileUploadComplete(s, e) {
+        if (e.callbackData) { 
+            //alert(e.callbackData);
+        }
+        else {
+            alert("The selected file was not uploaded.");
+        }
+    }
+
+    function ShowPopup(itemId) {
+                $.ajax({
+            url: '@Url.Action("UploadFile", "PdfUpdate")',
+            type: "POST",
+                    data: { documentId: itemId },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        popupControl.Show();
+
+    }
+</script>
+
+@{
+    ViewBag.Title = IWSLocalResource.Accounting;
+}
+
+@using (Html.BeginForm("Index", "PdfUpdate"))
+{
+
+    @Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "ComboBoxModelId";
+    settings.Width = Unit.Pixel(185);
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+    settings.Properties.Items.Add("",0000);
+    settings.Properties.Items.Add(IWSLocalResource.vendorinvoice, 112);
+    settings.Properties.Items.Add(IWSLocalResource.CustomerInvoice, 122);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s, e) { OnModelIdSelectionChanged(); }";
+    settings.SelectedIndex = 0;
+}).GetHtml()
+
+    @Html.DevExpress().Button(
+        settings =>
+        {
+            settings.Name = "btnSubmit";
+            settings.ControlStyle.CssClass = "button";
+            settings.Text = "";
+            settings.ToolTip = IWSLocalResource.Validate;
+            settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+            settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
+            settings.Width = Unit.Pixel(80);
+            settings.UseSubmitBehavior = false;
+            settings.ClientSideEvents.Click = "OnSubmitClick";
+        }).GetHtml()
+
+    @Html.DevExpress().Button(
+        settings =>
+    {
+        settings.Name = "btShowCustomizationWindow";
+        settings.Text = IWSLocalResource.WindowCustomization;
+        settings.Width = Unit.Pixel(100);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnButtonClick";
+            }).GetHtml()
+
+    @Html.Partial("CallbackPanelPartialView")
+
+    @Html.DevExpress().PopupControl(popup => {
+    popup.Name = "popupControl";
+    popup.HeaderText = "Choose a file to upload";
+    popup.SetContent(() => {
+        Html.RenderPartial("UploadControlPartial");
+    });
+}).GetHtml()
+
+}

@@ -259,6 +259,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bank Reconciliation.
+        /// </summary>
+        public static string BankReconciliation {
+            get {
+                return ResourceManager.GetString("BankReconciliation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Banks.
         /// </summary>
         public static string banks {
@@ -1654,6 +1663,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Paid Bill.
+        /// </summary>
+        public static string PaidBill {
+            get {
+                return ResourceManager.GetString("PaidBill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Menu Parent.
         /// </summary>
         public static string parent {
@@ -2010,6 +2028,15 @@ namespace IWSProject.Content {
         public static string sdebit {
             get {
                 return ResourceManager.GetString("sdebit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        public static string Select {
+            get {
+                return ResourceManager.GetString("Select", resourceCulture);
             }
         }
         
@@ -2455,7 +2482,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Vending.
+        ///   Looks up a localized string similar to Selling.
         /// </summary>
         public static string Vending {
             get {

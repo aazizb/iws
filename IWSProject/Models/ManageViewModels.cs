@@ -5,6 +5,7 @@ namespace IWSProject.Models
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using System.Web;
     using Microsoft.AspNet.Identity;
     using Microsoft.Owin.Security;
     public class IndexViewModel
@@ -189,6 +190,18 @@ namespace IWSProject.Models
         public string AccountCode { get; set; }
         public decimal AccountAmount { get; set; }
     }
+    //public class FileDetailsViewModel
+    //{
+    //    public int Id { get; set; }
+    //    public string FileName { get; set; }
+    //    public byte[] FileContent { get; set; }
+    //}
+    //public class FilesModel
+    //{
+    //    [Required]
+    //    [DataType(DataType.Upload)]
+    //    public HttpPostedFileBase Files { get; set; }
+    //}
     public class ValidateInvoiceViewModel
     {
         [Key]

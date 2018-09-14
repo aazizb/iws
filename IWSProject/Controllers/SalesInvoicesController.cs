@@ -15,7 +15,7 @@ namespace IWSProject.Controllers
         {
             db = new IWSDataContext();
         }
-        // GET: BuyerInvoices
+
         public ActionResult Index(string MenuID)
         {
             Session["MenuID"] = MenuID;

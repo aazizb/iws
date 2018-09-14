@@ -1,0 +1,15 @@
+﻿
+@using (Html.BeginForm("UploadControlUpload", "PdfUpdate", FormMethod.Post))
+{
+    @Html.DevExpress().UploadControl(settings =>
+{
+    settings.Name = "uploadControl";
+    settings.CallbackRouteValues = new { Controller = "PdfUpdate", Action = "UploadControlCallbackAction" };
+    settings.ClientSideEvents.FileUploadComplete = "OnFileUploadComplete";
+    settings.ShowUploadButton = true;
+    settings.ShowProgressPanel = true;
+    settings.UploadMode = UploadControlUploadMode.Auto;
+    settings.ValidationSettings.Assign(IWSProject.Controllers.UploadControlSettings.UploadValidationSettings);
+}).GetHtml();
+}
+

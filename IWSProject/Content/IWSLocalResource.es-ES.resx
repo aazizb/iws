@@ -945,4 +945,13 @@
   <data name="BalancedAmount" xml:space="preserve">
     <value>Las cantidades en encabezado y en detalle no corresponden</value>
   </data>
+  <data name="Select" xml:space="preserve">
+    <value>Seleccionar</value>
+  </data>
+  <data name="PaidBill" xml:space="preserve">
+    <value>Factura Pagada</value>
+  </data>
+  <data name="BankReconciliation" xml:space="preserve">
+    <value>Reconciliacón Bancaria</value>
+  </data>
 </root>

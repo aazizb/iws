@@ -5,7 +5,7 @@
     {
         settings.Name = "DetailGridView";
         settings.Width = Unit.Percentage(100);
-        settings.Caption = IWSLocalResource.linevendorinvoice;
+        settings.Caption = IWSLookUp.GetComptaDetailCaption((int)Session["ModelId"]);
         settings.SettingsDetail.MasterGridName = "MasterGridViewPartial";
         settings.CallbackRouteValues = new { Controller = "MasterCompta", Action = "DetailGridViewPartial", transid = Session["transid"] };
 
@@ -27,12 +27,8 @@
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
 
-        //settings.SettingsBehavior.AllowFocusedRow = true;
-        //settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
-
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
-
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");

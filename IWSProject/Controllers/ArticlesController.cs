@@ -141,5 +141,7 @@ namespace IWSProject.Controllers
             }
             return PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
         }
+
     }
+
 }

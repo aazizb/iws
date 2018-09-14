@@ -38,6 +38,7 @@
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(string selectedIDs)
         {
+            #region MyRegion
             string msg = string.Empty;
 
             string selectedItems = selectedIDs;
@@ -164,6 +165,9 @@
                 ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
             }
+
+            #endregion
+
             List<BankStatementViewModel> model=IWSLookUp.GetBankStatements((string)Session["CompanyID"], false);
             return PartialView("CallbackPanelPartialView", model); 
         }
@@ -247,7 +251,12 @@
             return PartialView("BankStatementsGridViewPartial", 
                     IWSLookUp.GetBankStatements((string)Session["CompanyID"], false)); 
         }
-
+        public ActionResult CustomGridViewCallback(bool isChecked)
+        {
+            Session["select"] = isChecked;
+            List<BankStatementViewModel> model = IWSLookUp.GetBankStatements((string)Session["CompanyID"], false);
+            return PartialView("BankStatementsGridViewPartial", model);
+        }
         private readonly object RootFolder = "~/Content/Uploads";
 
         public ActionResult ImportCSV()

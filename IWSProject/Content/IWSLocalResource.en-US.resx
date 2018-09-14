@@ -910,7 +910,7 @@
     <value>Company IBAN</value>
   </data>
   <data name="Vending" xml:space="preserve">
-    <value>Vending</value>
+    <value>Selling</value>
   </data>
   <data name="ViewAccountingBooks" xml:space="preserve">
     <value>View Accounting Books</value>
@@ -935,5 +935,14 @@
   </data>
   <data name="BalancedAmount" xml:space="preserve">
     <value>Not balanced amount between master and detail</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="PaidBill" xml:space="preserve">
+    <value>Paid Bill</value>
+  </data>
+  <data name="BankReconciliation" xml:space="preserve">
+    <value>Bank Reconciliation</value>
   </data>
 </root>

@@ -49,7 +49,7 @@
         });
     }
 
-    
+
 
     var selectedIDs = null;
     var expanded = false;
@@ -65,7 +65,7 @@
         isDetailRowExpanded[ndxMaster] = true;
     }
     function OnDRowClick(s, e) {
-        ndxDetail = e.visibleIndex
+        ndxDetail = e.visibleIndex;
         s.SetFocusedRowIndex(ndxDetail);
         s.StartEditRow(ndxDetail);
     }
@@ -89,20 +89,20 @@
         s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
     }
     function OnMEndCallback(s, e) {
-        if (expanded == true) {
+        if (expanded === true) {
             expanded = false;
             s.ExpandDetailRow(ndxMaster);
         }
-        if (command == "HIDEDETAILROW") {
+        if (command === "HIDEDETAILROW") {
             if (s.IsEditing || s.IsNewRowEditing)
                 s.CancelEdit();
         }
-        if (command == 'CANCELEDIT') {
-            if (isDetailRowExpanded[ndxMaster] == true) {
+        if (command === 'CANCELEDIT') {
+            if (isDetailRowExpanded[ndxMaster] === true) {
                 s.CollapseDetailRow(ndxMaster);
             }
         }
-        if (currentModelId != null) {
+        if (currentModelId !== null) {
             callbackPanelPartialView.PerformCallback();
         }
     }
@@ -122,7 +122,7 @@
                     case 13://ENTER
                         var isValidated = IsValidated.GetValue();
                         if (s.IsEditing()) {
-                            if (isValidated == false) {
+                            if (isValidated === false) {
                                 s.UpdateEdit();
                             }
                             else {
@@ -194,6 +194,7 @@
             e.value = 0;
         }
     }
+
 </script>
 
 @{
@@ -213,35 +214,38 @@
     settings.Properties.Items.Add(IWSLocalResource.payment, 114);
     settings.Properties.Items.Add(IWSLocalResource.CustomerInvoice, 122);
     settings.Properties.Items.Add(IWSLocalResource.Settlement, 124);
-    settings.Properties.Items.Add(IWSLocalResource.GeneralLedger, 5800);
+    settings.Properties.Items.Add(IWSLocalResource.GeneralLedger, 134);
     //settings.Properties.TextField = "ParentName";
     //settings.Properties.ValueField = "ParentId";
     settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s, e) { OnModelIdSelectionChanged(); }";
     settings.SelectedIndex = 0;
-}).GetHtml()//.BindList(ViewData["ModelId"]).GetHtml()
+}).GetHtml()
 
     @Html.DevExpress().Button(
-            settings =>
-            {
-                settings.Name = "btnSubmit";
-                settings.ControlStyle.CssClass = "button";
-                settings.Text = "";
-                settings.ToolTip = IWSLocalResource.Validate;
-                settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-                settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
-                settings.Width = Unit.Pixel(80);
-                settings.UseSubmitBehavior = false;
-                settings.ClientSideEvents.Click = "OnSubmitClick";
-            }
-            ).GetHtml()
+        settings =>
+        {
+            settings.Name = "btnSubmit";
+            settings.ControlStyle.CssClass = "button";
+            settings.Text = "";
+            settings.ToolTip = IWSLocalResource.Validate;
+            settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+            settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
+            settings.Width = Unit.Pixel(80);
+            settings.UseSubmitBehavior = false;
+            settings.ClientSideEvents.Click = "OnSubmitClick";
+        }).GetHtml()
 
-    @Html.DevExpress().Button(settings =>
+    @Html.DevExpress().Button(
+        settings =>
     {
         settings.Name = "btShowCustomizationWindow";
         settings.Text = IWSLocalResource.WindowCustomization;
         settings.Width = Unit.Pixel(100);
         settings.UseSubmitBehavior = false;
         settings.ClientSideEvents.Click = "OnButtonClick";
-    }).GetHtml()
+            }).GetHtml()
+
+
     @Html.Partial("CallbackPanelPartialView")
 }
+

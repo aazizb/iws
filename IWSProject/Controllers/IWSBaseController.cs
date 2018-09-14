@@ -518,7 +518,7 @@ namespace IWSProject.Controllers
             if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice))
             {
                 results = false;
-
+                
                 iban = db.MasterComptas.Join(db.Suppliers,
                         m => m.account, s => s.accountid, (m, s) => new
                         {

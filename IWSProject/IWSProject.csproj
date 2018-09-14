@@ -220,6 +220,11 @@
     <Content Include="Content\jquery-ui.min.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
+    <Content Include="Models\MsSql\IWSData.dbml">
+      <SubType>Designer</SubType>
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>IWSData.designer.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\jquery-1.11.3.js" />
     <Content Include="Scripts\jquery-1.11.3.min.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.js" />
@@ -229,6 +234,9 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Content\Web.config" />
+    <None Include="Models\MsSql\IWSData.dbml.layout">
+      <DependentUpon>IWSData.dbml</DependentUpon>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\PublishProfiles\iwsproject.pubxml" />
     <Content Include="Views\CustomerInvoices\CallbackPanelPartialView.cshtml" />
@@ -427,6 +435,15 @@
     <Content Include="Views\MasterCompta\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\MasterCompta\DetailDetailGridViewPartial.cshtml" />
     <None Include="Properties\PublishProfiles\IWSWeb.pubxml" />
+    <Content Include="Views\UnpaidBill\Index.cshtml" />
+    <Content Include="Views\UnpaidBill\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\UnpaidBill\MaterGridViewPartial.cshtml" />
+    <Content Include="Views\MasterCompta\UploadControlPartial.cshtml" />
+    <Content Include="Views\PdfUpdate\Index.cshtml" />
+    <Content Include="Views\PdfUpdate\_GridViewPartial.cshtml" />
+    <Content Include="Views\PdfUpdate\_DocumenturlPartialView.cshtml" />
+    <Content Include="Views\PdfUpdate\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\PdfUpdate\UploadControlPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -499,6 +516,7 @@
     <Compile Include="Controllers\MenuUIController.cs" />
     <Compile Include="Controllers\MVCxGridViewState.cs" />
     <Compile Include="Controllers\PaymentsController.cs" />
+    <Compile Include="Controllers\PdfUpdateController.cs" />
     <Compile Include="Controllers\PurchaseOrdersController.cs" />
     <Compile Include="Controllers\QuantityUnitsController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
@@ -512,6 +530,7 @@
     <Compile Include="Controllers\StoresController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
     <Compile Include="Controllers\TypeJournalController.cs" />
+    <Compile Include="Controllers\UnpaidBillController.cs" />
     <Compile Include="Controllers\VatsController.cs" />
     <Compile Include="Controllers\VendorInvoicesController.cs" />
     <Compile Include="GlimpseSecurityPolicy.cs" />
@@ -520,12 +539,18 @@
     </Compile>
     <Compile Include="IWSHelper.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\CustomUploadControlValidationSettings.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IWSDataModel.cs" />
     <Compile Include="Models\IWSComboHelper.cs" />
     <Compile Include="Models\IWSLookUpData.cs" />
     <Compile Include="Models\IWSUserRole.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\MsSql\IWSData.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IWSData.dbml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reports\AccountBalance.cs">
       <SubType>Component</SubType>
@@ -548,9 +573,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\UploadControl\UploadFolder\" />
     <Folder Include="Content\Uploads\" />
+    <Folder Include="Documents\" />
     <Folder Include="Models\data\" />
-    <Folder Include="Models\MsSql\" />
     <Folder Include="Views\IWSBase\" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,15 @@
+﻿@*@using (Html.BeginForm("UploadControlUpload", "MasterCompta", FormMethod.Post))
+{
+    Html.DevExpress().UploadControl(settings =>
+    {
+        settings.Name = "UploadControl";
+        settings.CallbackRouteValues = new { Controller = "MasterCompta", Action = "UploadControlUpload", masterComptaId= Session["MasterComptaId"] };
+        settings.ShowUploadButton = true;
+        settings.ShowProgressPanel = true;
+        settings.UploadMode = UploadControlUploadMode.Auto;
+        settings.ValidationSettings.Assign(IWSProject.Models.CustomUploadControlValidationSettings.Settings);
+        settings.ClientSideEvents.FilesUploadComplete = "OnFileUploadComplete";//"function(s, e) { MasterCompta.Refresh(); }";// "function(s, e) { alert(e.callbackData); }";
+        settings.ValidationSettings.Assign(IWSProject.Models.CustomUploadControlValidationSettings.Settings);
+    }).GetHtml();
+}*@
+

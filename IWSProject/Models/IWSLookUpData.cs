@@ -40,7 +40,57 @@
             .OrderBy(o => o.Id);
             return account;
         }
-
+        public static IEnumerable GetUnPaidBill(ComptaMasterModelId modelId, bool balanced)
+        {
+            int cashing = 0;
+            if (modelId.Equals(ComptaMasterModelId.VendorInvoice))
+            {
+                cashing = (int)ComptaMasterModelId.Payment;
+            }
+            if (modelId.Equals(ComptaMasterModelId.CustomerInvoice))
+            {
+                cashing = (int)ComptaMasterModelId.Settlement;
+            }
+            #region VI/CI
+            var bill = (from d in IWSEntities.DetailComptas
+                        where
+                          d.Balanced == balanced &&
+                          d.ModelId == (int)modelId
+                        select new
+                        {
+                            d.id, d.transid, d.account, d.side, d.oaccount, d.amount,
+                            d.duedate, d.text, d.Currency, d.ModelId, d.Terms
+                        }).ToList();
+            #endregion
+            #region PT/ST
+            var paid = (from m in IWSEntities.DetailComptas
+                        join d in IWSEntities.DetailDetailComptas on new { m.id } equals new { id = d.TransId }
+                        where
+                          d.ModelId == cashing
+                        group new { m, d } by new
+                        {
+                            m.transid,
+                            d.OID
+                        } into g
+                        select new
+                        {
+                            g.Key.transid,
+                            g.Key.OID,
+                            paid = (decimal?)g.Sum(p => p.d.Amount)??0
+                        }).ToList();
+            #endregion
+            var unpaid = from m in bill
+                         join d in paid on new { m.id } equals new { id = d.OID } into djoin
+                         from ds in djoin.DefaultIfEmpty()
+                         select new
+                         {
+                             m.id,m.transid, m.account, m.side, m.oaccount, m.duedate, m.text, m.amount,
+                             paid = Convert.ToDecimal(ds?.paid ?? 0, CultureInfo.GetCultureInfo(Thread.CurrentThread.CurrentUICulture.Name).NumberFormat),
+                             topay= m.amount - Convert.ToDecimal(ds?.paid ?? 0, CultureInfo.GetCultureInfo(Thread.CurrentThread.CurrentUICulture.Name).NumberFormat),
+                             m.Currency, m.ModelId
+                         };
+            return unpaid;
+        }
         public static IEnumerable GetBIC()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -183,7 +233,12 @@
             return IWSEntities.ClassChild(accountid, companyID).Select(i => 
                                                 new { id = i.ChildId, name = i.ChildName });
         }
+        public static string GetComptaDetailCaption(int ModeliD)
+        {
+            ComptaMasterModelId caption = (ComptaMasterModelId)ModeliD;
 
+            return caption.ToString();
+        }
         public static IEnumerable GetAccounts()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -651,7 +706,7 @@
                 join master in IWSEntities.MasterComptas on new { center.id } equals new { id = master.CostCenter }
                 join account in IWSEntities.Accounts on new { master.account } equals new { account = account.id }
                 where
-                  master.CompanyId == companyId &&
+                  master.CompanyId == companyId && 
                   master.ModelId == (int)ComptaMasterModelId.VendorInvoice
                 orderby
                   master.id
@@ -702,16 +757,10 @@
             }
             return null;
         }
-        public static int GetMasterComptaOID(int detailComptaTransId)
-        {
-            var result = IWSEntities.MasterComptas.Join(IWSEntities.DetailComptas,
-                                           c => c.id, a => a.transid, (c, a) => new
-                                           {
-                                               OID = c.oid,
-                                               Id = c.id
-                                           }).FirstOrDefault(o => o.Id == detailComptaTransId).OID;
-            return result;
-        }
+
+        public static int GetMasterComptaOID(int detailComptaTransId) => 
+            IWSEntities.MasterComptas.FirstOrDefault(o => o.id.Equals(detailComptaTransId)).oid;
+
         public static decimal? CkeckIfAmountsBalanced(int masterId)
         {
             int model = (int)HttpContext.Current.Session["ModelId"];
@@ -1973,8 +2022,8 @@
             List<BankStatementViewModel> doc = 
                 (from b in IWSEntities.BankStatements
                 where
-                    b.IsValidated.Equals(isValidated) && b.CompanyID.Equals(companyID)
-                orderby
+                    b.CompanyID.Equals(companyID)//b.IsValidated.Equals(isValidated) && 
+                 orderby
                     b.id
                 select new BankStatementViewModel()
                 {
@@ -1984,7 +2033,7 @@
                     BeguenstigterZahlungspflichtiger = b.BeguenstigterZahlungspflichtiger,
                     Kontonummer = b.Kontonummer, BLZ = b.BLZ, Betrag = b.Betrag,
                     Waehrung = b.Waehrung, Info = b.Info, CompanyID = b.CompanyID,
-                    CompanyIBAN = b.CompanyIBAN, IsValidated = b.IsValidated
+                    CompanyIBAN = b.CompanyIBAN, IsValidated = (bool)b.IsValidated
                 }).ToList();
             return doc;
         }
@@ -3850,7 +3899,7 @@
             LineCustomerInvoice = 123,
             LinePayment = 115,
             LineSettlement = 125,
-            LineGeneralLedger = 6020,
+            LineGeneralLedger = 135,
             Default = 0000
         }
         public enum Side

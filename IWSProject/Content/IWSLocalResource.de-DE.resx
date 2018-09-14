@@ -933,4 +933,13 @@
   <data name="BalancedAmount" xml:space="preserve">
     <value>Not balanced amount between master and detail de-DE</value>
   </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select de-DE</value>
+  </data>
+  <data name="PaidBill" xml:space="preserve">
+    <value>Paid Bill</value>
+  </data>
+  <data name="BankReconciliation" xml:space="preserve">
+    <value>Bank Reconciliation</value>
+  </data>
 </root>

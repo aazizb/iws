@@ -1,18 +1,29 @@
-﻿using DevExpress.Web.Mvc;
+﻿using DevExpress.Web;
+using DevExpress.Web.Mvc;
 using IWSProject.Content;
 using IWSProject.Models;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
 using System.Data.Linq;
+using System.Data.SqlClient;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
+
 namespace IWSProject.Controllers
 {
+
     [Authorize]
     public class MasterComptaController : IWSBaseController
     {
-
+        #region Master
         // GET: 
         public ActionResult Index()
         {
@@ -158,6 +169,9 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial",
                                 IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
+        #endregion
+
+        #region Detail
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(int transId, object newKeyValue)
         {
@@ -256,6 +270,9 @@ namespace IWSProject.Controllers
             }
             return PartialView("DetailGridViewPartial", IWSLookUp.GetDetailCompta(transId));
         }
+        #endregion
+
+        #region DetailDetail
         [ValidateInput(false)]
         public ActionResult DetailDetailGridViewPartial(int transId)
         {
@@ -380,6 +397,8 @@ namespace IWSProject.Controllers
             }
             return PartialView("DetailDetailGridViewPartial", IWSLookUp.GetDetailDetailCompta(transId, (int)Session["Modelid"]));
         }
+        #endregion
+
         #region Helper
         private static void SetToBalanced(DetailDetailCompta line)
         {
@@ -393,6 +412,7 @@ namespace IWSProject.Controllers
             }
             db.SubmitChanges();
         }
+ 
         public ActionResult HeaderText(int selectedOIDIndex)
         {
             return Json(IWSLookUp.GetHeaderText(selectedOIDIndex, (int)Session["ModelId"]));
@@ -443,20 +463,10 @@ namespace IWSProject.Controllers
             {
                 return "GL";
             }
-            //if (Math.Round(modelId * 0.01) == 50)
-            //{
-            //    return "SU";
-            //}
-            //if (Math.Round(modelId * 0.01) == 55)
-            //{
-            //    return "CU";
-            //}
-            //if (Math.Round(modelId * 0.01) == 58)
-            //{
-            //    return "GL";
-            //}
             return null;
         }
         #endregion
+
     }
+
 }

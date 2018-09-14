@@ -12,6 +12,8 @@
         settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartialUpdate" };
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartialDelete" };
 
+        settings.CustomActionRouteValues = new { Controller = "BankStatements", Action = "CustomGridViewCallback" };
+
         settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
         settings.SettingsContextMenu.Enabled = true;
 
@@ -34,15 +36,63 @@
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
-
         settings.ClientSideEvents.SelectionChanged = "OnSelectionChanged";
         settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
 
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
+        settings.CommandColumn.SetHeaderTemplateContent(c =>
+        {
+            Html.DevExpress().CheckBox(selectAll =>
+            {
+                selectAll.Name = "cbAll";
+                selectAll.Text = IWSLocalResource.Select;
+                selectAll.Properties.ClientSideEvents.CheckedChanged = "CheckedChanged";
+            }).Render();
+        });
+        settings.BeforeGetCallbackResult = (s, e) =>
+        {
+            MVCxGridView gridView = (MVCxGridView)s;
+
+            int startIndex = gridView.VisibleStartIndex;
+
+            int visibleRowCount = gridView.GetCurrentPageRowValues("id").Count;
+
+            int endIndex = startIndex + visibleRowCount - 1;
+            bool select =false;
+            bool isRowSeleted;
+            bool isValidated;
+            if (Session["select"] != null)
+            {
+                select = (bool)Session["select"];
+            }
+
+            Session["select"] = false;
+
+            for (int i = startIndex; i <= endIndex; i++)
+            {
+
+                isValidated = (bool)gridView.GetRowValues(i, "IsValidated");
+
+                isRowSeleted = gridView.Selection.IsRowSelected(i);
+
+                if (select && !isValidated)
+                {
+                    gridView.Selection.SelectRow(i);
+
+                }
+                else
+                {
+                    if (isRowSeleted)
+                        gridView.Selection.UnselectRow(i);
+                }
+                if (isRowSeleted && !select)
+                    gridView.Selection.SelectRow(i);
+            }
+        };
 
         settings.CommandColumn.Visible = true;
-        settings.CommandColumn.ShowSelectCheckbox = true;
+
         settings.CommandColumn.Width = Unit.Percentage(8);
         settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
 
@@ -71,6 +121,7 @@
         {
             MVCxGridView g = (MVCxGridView)s;
             e.Properties["cpClientLayout"] = g.SaveClientLayout();
+            e.Properties["cpIndexesSelected"] = g.Selection.Count;
         };
         settings.ClientLayout = (s, e) =>
         {
@@ -85,6 +136,17 @@
                 case ClientLayoutMode.Saving:
                     Session["Layout"] = e.LayoutData;
                     break;
+            }
+        };
+
+        settings.CommandButtonInitialize = (s, e) =>
+        {
+            MVCxGridView Grid = s as MVCxGridView;
+            if (e.ButtonType == ColumnCommandButtonType.SelectCheckbox)
+            {
+
+                bool value = (bool)Grid.GetRowValues(e.VisibleIndex, "IsValidated");
+                if (value == true) e.Enabled = e.Visible = false;
             }
         };
 
@@ -241,6 +303,16 @@
             column.FieldName = "Waehrung";
             column.Caption = IWSLocalResource.Currency;
             column.Width = Unit.Percentage(6);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "IsValidated";
+            column.Caption = IWSLocalResource.IsValidated;
+            column.Width = Unit.Percentage(6);
+            column.EditorProperties().CheckBox(c =>
+            {
+
+            });
         });
 
         #region Template Edit
