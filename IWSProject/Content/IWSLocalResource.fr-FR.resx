@@ -799,7 +799,7 @@
     <value>Importer Caisse</value>
   </data>
   <data name="ImportData" xml:space="preserve">
-    <value>Importer Donnée</value>
+    <value>Importer Meta Donnée</value>
   </data>
   <data name="LogException" xml:space="preserve">
     <value>Journal des Exceptions</value>
@@ -829,7 +829,7 @@
     <value>Report de Solde</value>
   </data>
   <data name="Draft" xml:space="preserve">
-    <value>Brouillard</value>
+    <value>Brouillard SAGE</value>
   </data>
   <data name="ImportedSage" xml:space="preserve">
     <value>L'importation s'est déroulée avec succès</value>
@@ -953,5 +953,20 @@
   </data>
   <data name="BankReconciliation" xml:space="preserve">
     <value>Rapprochement</value>
+  </data>
+  <data name="ChooseFile" xml:space="preserve">
+    <value>Sélectionner un fichier</value>
+  </data>
+  <data name="HardCopy" xml:space="preserve">
+    <value>Copie Papier</value>
+  </data>
+  <data name="AmountBill" xml:space="preserve">
+    <value>Montant Facture</value>
+  </data>
+  <data name="AmountPaid" xml:space="preserve">
+    <value>Montant Payé</value>
+  </data>
+  <data name="AmountToPay" xml:space="preserve">
+    <value>Reste à payer</value>
   </data>
 </root>

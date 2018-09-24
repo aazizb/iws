@@ -178,6 +178,33 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bill Amount.
+        /// </summary>
+        public static string AmountBill {
+            get {
+                return ResourceManager.GetString("AmountBill", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paid Amount.
+        /// </summary>
+        public static string AmountPaid {
+            get {
+                return ResourceManager.GetString("AmountPaid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rest to Pay.
+        /// </summary>
+        public static string AmountToPay {
+            get {
+                return ResourceManager.GetString("AmountToPay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Article.
         /// </summary>
         public static string articles {
@@ -426,6 +453,15 @@ namespace IWSProject.Content {
         public static string CheckPeriodKeyIn {
             get {
                 return ResourceManager.GetString("CheckPeriodKeyIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose a file to upload.
+        /// </summary>
+        public static string ChooseFile {
+            get {
+                return ResourceManager.GetString("ChooseFile", resourceCulture);
             }
         }
         
@@ -763,7 +799,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Draft.
+        ///   Looks up a localized string similar to Draft SAGE.
         /// </summary>
         public static string Draft {
             get {
@@ -1033,6 +1069,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hard Copy.
+        /// </summary>
+        public static string HardCopy {
+            get {
+                return ResourceManager.GetString("HardCopy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Is Header.
         /// </summary>
         public static string HasAccess {
@@ -1096,7 +1141,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Import Data.
+        ///   Looks up a localized string similar to Import Master File.
         /// </summary>
         public static string ImportData {
             get {

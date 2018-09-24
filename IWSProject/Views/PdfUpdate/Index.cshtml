@@ -40,12 +40,10 @@
         btShowCustomizationWindow.SetText(text);
     }
     function OnFileUploadComplete(s, e) {
-        if (e.callbackData) { 
-            //alert(e.callbackData);
-        }
-        else {
+        if (!e.callbackData) { 
             alert("The selected file was not uploaded.");
         }
+        PdfUpdateGridView.Refresh();
     }
 
     function ShowPopup(itemId) {
@@ -78,6 +76,7 @@
     settings.Properties.Items.Add("",0000);
     settings.Properties.Items.Add(IWSLocalResource.vendorinvoice, 112);
     settings.Properties.Items.Add(IWSLocalResource.CustomerInvoice, 122);
+    settings.Properties.Items.Add(IWSLocalResource.GeneralLedger, 134);
     settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s, e) { OnModelIdSelectionChanged(); }";
     settings.SelectedIndex = 0;
 }).GetHtml()
@@ -110,7 +109,7 @@
 
     @Html.DevExpress().PopupControl(popup => {
     popup.Name = "popupControl";
-    popup.HeaderText = "Choose a file to upload";
+    popup.HeaderText = IWSLocalResource.ChooseFile;
     popup.SetContent(() => {
         Html.RenderPartial("UploadControlPartial");
     });

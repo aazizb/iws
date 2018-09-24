@@ -6,7 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-
+using IWSProject.Models;
 namespace IWSProject
 {
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
@@ -37,6 +37,7 @@ namespace IWSProject
         protected void Application_Error(object sender, EventArgs e) 
         {
             Exception exception = System.Web.HttpContext.Current.Server.GetLastError();
+            IWSLookUp.LogException(exception);
             //TODO: Handle Exception
         }
         //how to specify culture & uiculture in Global.asax

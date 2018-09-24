@@ -18,6 +18,10 @@ namespace IWSProject.Controllers
         // GET: Home
         public ActionResult Index()
         {
+            if (Session["IsVending"] == null)
+            {
+                Session["IsVending"] = "SU";
+            }
             return View();
         }
 
@@ -35,10 +39,28 @@ namespace IWSProject.Controllers
         public ActionResult CallbackPanelPartialView(int currentModelId)
         {
             Session["ModelId"] = currentModelId;
+            Session["IsVending"] = IsVending(currentModelId);
             return PartialView("CallbackPanelPartialView",
                     IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)currentModelId));
         }
-
+        private string IsVending(int modelId)
+        {
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice) ||
+                (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment)))
+            {
+                return "SU";
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice) ||
+                (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement)))
+            {
+                return "CU";
+            }
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice))
+            {
+                return "GL";
+            }
+            return null;
+        }
         public ActionResult UploadFile(string documentId)
         {
             Session["documentId"] = documentId;
@@ -47,7 +69,7 @@ namespace IWSProject.Controllers
 
         public FileResult DownloadFile(int itemId, string fileName)
         {
-            List<FileDetailsViewModel> files = GetFileDetail(itemId);
+            List<UploadedFileInfo> files = GetFileDetail(itemId);
 
             var file = (from f in files
                             where f.Id.Equals(itemId)
@@ -96,11 +118,11 @@ namespace IWSProject.Controllers
 
         #endregion
 
-        private List<FileDetailsViewModel> GetFileDetailX(int Id)
+        private List<UploadedFileInfo> GetFileDetailx(int Id)
         {
-            List<FileDetailsViewModel> filesDetail = new List<FileDetailsViewModel>();
+            List<UploadedFileInfo> filesDetail = new List<UploadedFileInfo>();
 
-            FileDetailsViewModel fileDetail = new FileDetailsViewModel();
+            UploadedFileInfo fileDetail = new UploadedFileInfo();
 
             string query = "Select id, FileName, FileContent, ContentType From MasterCompta Where Id= @Id";
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString()))
@@ -118,7 +140,7 @@ namespace IWSProject.Controllers
                         dataTable.Load(reader);
                         List<DataRow> dataRows = dataTable.Select().ToList();
                         filesDetail = (from DataRow dr in dataTable.Rows
-                                   select new FileDetailsViewModel()
+                                   select new UploadedFileInfo()
                                    {
                                        Id = Convert.ToInt32(dr["Id"]),
                                        FileName = dr["FileName"].ToString(),
@@ -134,31 +156,32 @@ namespace IWSProject.Controllers
             }
             return filesDetail;
         }
-        private static List<FileDetailsViewModel> GetFileDetail(int Id)
+        private static List<UploadedFileInfo> GetFileDetail(int Id)
         {
-            List<FileDetailsViewModel> files = new List<FileDetailsViewModel>();
+            List<UploadedFileInfo> files = new List<UploadedFileInfo>();
             string constr = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
             string query = "Select id, FileName, FileContent, ContentType From MasterCompta Where Id= @Id";
-            using (SqlConnection con = new SqlConnection(constr))
+            using (SqlConnection connection = new SqlConnection(constr))
             {
-                using (SqlCommand cmd = new SqlCommand(query))
+                using (SqlCommand command = new SqlCommand(query))
                 {
                     try
                     {
                         SqlParameter p = new SqlParameter("@Id", Id);
-                        cmd.Parameters.Add(p);
-                        cmd.Connection = con;
-                        con.Open();
-                        using (SqlDataReader sdr = cmd.ExecuteReader())
+                        command.Parameters.Add(p);
+                        command.Connection = connection;
+                        if (!connection.State.Equals(ConnectionState.Open))
+                            connection.Open();
+                        using (SqlDataReader sqlDatareader = command.ExecuteReader())
                         {
-                            while (sdr.Read())
+                            while (sqlDatareader.Read())
                             {
-                                files.Add(new FileDetailsViewModel
+                                files.Add(new UploadedFileInfo
                                 {
-                                    Id = Convert.ToInt32(sdr["Id"]),
-                                    FileName = sdr["FileName"].ToString(),
-                                    FileContent = ObjectToByteArray(sdr["FileContent"]),
-                                    ContentType = sdr["ContentType"].ToString()
+                                    Id = Convert.ToInt32(sqlDatareader["Id"]),
+                                    FileName = sqlDatareader["FileName"].ToString(),
+                                    FileContent = ObjectToByteArray(sqlDatareader["FileContent"]),
+                                    ContentType = sqlDatareader["ContentType"].ToString()
                                 });
                             }
                         }
@@ -167,7 +190,12 @@ namespace IWSProject.Controllers
                     {
                         IWSLookUp.LogException(ex);
                     }
-                    con.Close();
+                    finally
+                    {
+                        if(connection.State.Equals(ConnectionState.Open))
+                            connection.Close();
+
+                    }
                 }
             }
             return files;
@@ -196,9 +224,8 @@ namespace IWSProject.Controllers
 
         public static DevExpress.Web.UploadControlValidationSettings UploadValidationSettings = new DevExpress.Web.UploadControlValidationSettings()
         {
-            AllowedFileExtensions = new string[] { ".jpg", ".jpeg", ".pdf" },
+            AllowedFileExtensions = new string[] { ".pdf" },
             MaxFileSize = 3072000
-            // { ".jpg", ".jpeg", ".png", ".bmp", ".pdf", ".xml", ".rtf", ".docx", ".xls", ".xlsx" }
         };
 
         public static void FileUploadComplete(object sender, DevExpress.Web.FileUploadCompleteEventArgs e)
@@ -210,7 +237,7 @@ namespace IWSProject.Controllers
 
 
 
-                FileDetailsViewModel fileInfo = new FileDetailsViewModel()
+                UploadedFileInfo fileInfo = new UploadedFileInfo()
                 {
                     Id = itemId,
                     FileName = e.UploadedFile.FileName,
@@ -234,10 +261,11 @@ namespace IWSProject.Controllers
         {
             return Path.Combine("~/Documents", file.FileName);
         }
-        private static void SaveFileDetails(FileDetailsViewModel fileDetails)
+        private static void SaveFileDetails(UploadedFileInfo fileDetails)
         {
             string query = "Update MasterCompta Set FileName = @FileName, FileContent = @FileContent, ContentType = @ContentType Where Id= @Id;";
-            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString()))
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.
+                            ConnectionStrings["DefaultConnection"].ToString()))
             {
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -254,12 +282,17 @@ namespace IWSProject.Controllers
 
                         connection.Open();
                         AddParameters(command, p.ToArray());
-                        command.ExecuteScalar();            //.ExecuteNonQuery();
+                        command.ExecuteScalar();
                         command.Parameters.Clear();
                     }
                     catch (Exception ex)
                     {
                         IWSLookUp.LogException(ex);
+                    }
+                    finally
+                    {
+                        if (connection.State.Equals(ConnectionState.Open))
+                            connection.Close();
                     }
                 }
             }
@@ -276,12 +309,6 @@ namespace IWSProject.Controllers
     }
 
     public class UploadedFileInfo
-    {
-        public string FileName { get; set; }
-        public byte[] FileContent { get; set; }
-    }
-
-    public class FileDetailsViewModel
     {
         public int Id { get; set; }
         public string FileName { get; set; }

@@ -5,29 +5,27 @@
     var balanced = true;
 
     function OnMBeginCallback(s, e) {
-        e.customArgs["currentModelId"] = currentModelId;
-        e.customArgs["balanced"] = balanced;
-        currentModelId = null;
+        if (currentModelId !== null) {
+            e.customArgs["currentModelId"] = currentModelId;
+            e.customArgs["balanced"] = balanced;
+            currentModelId = null;
+        }
     }
     function OnMEndCallback(s, e) {
-        //TrackLayout(s.cpClientLayout);
         if (currentModelId !== null) {
             callbackPanelPartialView.PerformCallback();
         }
     }
-    //function TrackLayout(layout) {
-    //    $("#LastLayoutUnpaid").text(layout);
-    //}
     function CheckedChanged(s, e) {
         callbackPanelPartialView.PerformCallback({ currentModelId: ComboBoxModelId.GetValue(), balanced: s.GetChecked() });
     }
     function OnButtonClick() {
-        if (UnpaidBill.IsCustomizationWindowVisible()) {
+        if (unpaid.IsCustomizationWindowVisible()) {
 
-            UnpaidBill.HideCustomizationWindow();
+            unpaid.HideCustomizationWindow();
         }
         else {
-            UnpaidBill.ShowCustomizationWindow();
+            unpaid.ShowCustomizationWindow();
         }
         UpdateButtonText();
     }
@@ -35,11 +33,10 @@
         UpdateButtonText();
     }
     function UpdateButtonText() {
-        var text = UnpaidBill.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        var text = unpaid.IsCustomizationWindowVisible() ? "Hide" : "Show";
         btShowCustomizationWindow.SetText(text);
     }
     function OnModelIdSelectionChanged() {
-        selectedIDs = null;
         currentModelId = ComboBoxModelId.GetValue();
         if (!callbackPanelPartialView.InCallback()) {
             callbackPanelPartialView.PerformCallback();
@@ -47,7 +44,7 @@
     }
     function OnSubmitClick(s, e) {
         currentModelId = ComboBoxModelId.GetValue();
-        balanced = true;
+        balanced = CheckBoxBalanced.GetValue();
         callbackPanelPartialView.PerformCallback();
     }
 </script>

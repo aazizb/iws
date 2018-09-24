@@ -790,7 +790,7 @@
     <value>Import Cash</value>
   </data>
   <data name="ImportData" xml:space="preserve">
-    <value>Import Data</value>
+    <value>Import Master File</value>
   </data>
   <data name="LogException" xml:space="preserve">
     <value>Exceptions Log</value>
@@ -820,7 +820,7 @@
     <value>Balance Report</value>
   </data>
   <data name="Draft" xml:space="preserve">
-    <value>Draft</value>
+    <value>Draft SAGE</value>
   </data>
   <data name="ImportedSage" xml:space="preserve">
     <value>The import was successful</value>
@@ -944,5 +944,20 @@
   </data>
   <data name="BankReconciliation" xml:space="preserve">
     <value>Bank Reconciliation</value>
+  </data>
+  <data name="ChooseFile" xml:space="preserve">
+    <value>Choose a file to upload</value>
+  </data>
+  <data name="HardCopy" xml:space="preserve">
+    <value>Hard Copy</value>
+  </data>
+  <data name="AmountBill" xml:space="preserve">
+    <value>Bill Amount</value>
+  </data>
+  <data name="AmountPaid" xml:space="preserve">
+    <value>Paid Amount</value>
+  </data>
+  <data name="AmountToPay" xml:space="preserve">
+    <value>Rest to Pay</value>
   </data>
 </root>

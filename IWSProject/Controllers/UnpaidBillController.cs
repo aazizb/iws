@@ -1,8 +1,4 @@
 ﻿using IWSProject.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace IWSProject.Controllers
@@ -22,16 +18,15 @@ namespace IWSProject.Controllers
             {
                 modelId = (int)Session["ModelId"];
             }
-            return PartialView("MasterGridViewPartial",
-                        IWSLookUp.GetUnPaidBill((IWSLookUp.ComptaMasterModelId)modelId, true));
+            return PartialView("MasterGridViewPartial", //IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+                            IWSLookUp.GetUnPaidBill((IWSLookUp.ComptaMasterModelId)modelId, true));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(int currentModelId, bool balanced)
         {
             Session["ModelId"] = currentModelId;
-            
-            return PartialView("CallbackPanelPartialView",
-                    IWSLookUp.GetUnPaidBill((IWSLookUp.ComptaMasterModelId)currentModelId, balanced));
+            return PartialView("CallbackPanelPartialView", //IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)currentModelId));
+                            IWSLookUp.GetUnPaidBill((IWSLookUp.ComptaMasterModelId)currentModelId, balanced));
         }
     }
 }

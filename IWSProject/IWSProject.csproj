@@ -437,11 +437,9 @@
     <None Include="Properties\PublishProfiles\IWSWeb.pubxml" />
     <Content Include="Views\UnpaidBill\Index.cshtml" />
     <Content Include="Views\UnpaidBill\CallbackPanelPartialView.cshtml" />
-    <Content Include="Views\UnpaidBill\MaterGridViewPartial.cshtml" />
-    <Content Include="Views\MasterCompta\UploadControlPartial.cshtml" />
+    <Content Include="Views\UnpaidBill\MasterGridViewPartial.cshtml" />
     <Content Include="Views\PdfUpdate\Index.cshtml" />
     <Content Include="Views\PdfUpdate\_GridViewPartial.cshtml" />
-    <Content Include="Views\PdfUpdate\_DocumenturlPartialView.cshtml" />
     <Content Include="Views\PdfUpdate\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\PdfUpdate\UploadControlPartial.cshtml" />
     <None Include="Web.Debug.config">

@@ -58,7 +58,7 @@
                           d.ModelId == (int)modelId
                         select new
                         {
-                            d.id, d.transid, d.account, d.side, d.oaccount, d.amount,
+                            d.id, d.transid, d.account, d.side, d.oaccount, d.amount, paid=0, topay=0,
                             d.duedate, d.text, d.Currency, d.ModelId, d.Terms
                         }).ToList();
             #endregion
@@ -69,17 +69,15 @@
                           d.ModelId == cashing
                         group new { m, d } by new
                         {
-                            m.transid,
-                            d.OID
+                            m.transid, d.OID
                         } into g
                         select new
                         {
-                            g.Key.transid,
-                            g.Key.OID,
-                            paid = (decimal?)g.Sum(p => p.d.Amount)??0
+                            g.Key.transid, g.Key.OID,
+                            paid = (decimal?)g.Sum(p => p.d.Amount) ?? 0
                         }).ToList();
             #endregion
-            var unpaid = from m in bill
+            var unpaid = (from m in bill
                          join d in paid on new { m.id } equals new { id = d.OID } into djoin
                          from ds in djoin.DefaultIfEmpty()
                          select new
@@ -88,7 +86,7 @@
                              paid = Convert.ToDecimal(ds?.paid ?? 0, CultureInfo.GetCultureInfo(Thread.CurrentThread.CurrentUICulture.Name).NumberFormat),
                              topay= m.amount - Convert.ToDecimal(ds?.paid ?? 0, CultureInfo.GetCultureInfo(Thread.CurrentThread.CurrentUICulture.Name).NumberFormat),
                              m.Currency, m.ModelId
-                         };
+                         }).ToList();
             return unpaid;
         }
         public static IEnumerable GetBIC()
@@ -1507,19 +1505,19 @@
         public static IEnumerable GetSuppliers()
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
-            var supplier = from Accounts in IWSEntities.Accounts
+            var supplier = from a in IWSEntities.Accounts
                            where
-                                 ((from Suppliers in IWSEntities.Suppliers
+                                 ((from s in IWSEntities.Suppliers
                                    where
-                                      Suppliers.CompanyID == companyId
+                                      s.CompanyID == companyId
                                    select new
                                    {
-                                       Suppliers.accountid
-                                   }).Distinct()).Contains(new { accountid = Accounts.id })
+                                       s.accountid
+                                   }).Distinct()).Contains(new { accountid = a.id })
                            select new
                            {
-                               Id = Accounts.id,
-                               Name = Accounts.name
+                               Id = a.id,
+                               Name = a.name
                            };
 
             //var supplier = IWSEntities.Suppliers.AsEnumerable().Select(item => new
@@ -1536,19 +1534,19 @@
         public static IEnumerable GetCustomers()
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
-            var customer = from Accounts in IWSEntities.Accounts
+            var customer = from a in IWSEntities.Accounts
                            where
-                                 ((from Customers in IWSEntities.Customers
+                                 ((from c in IWSEntities.Customers
                                    where
-                                      Customers.CompanyID == companyId
+                                      c.CompanyID == companyId
                                    select new
                                    {
-                                       Customers.accountid
-                                   }).Distinct()).Contains(new { accountid = Accounts.id })
+                                       c.accountid
+                                   }).Distinct()).Contains(new { accountid = a.id })
                            select new
                            {
-                               Id = Accounts.id,
-                               Name = Accounts.name
+                               Id = a.id,
+                               Name = a.name
                            };
             //var customer = IWSEntities.Customers.AsEnumerable().Select(item => new
             //{

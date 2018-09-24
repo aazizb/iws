@@ -799,7 +799,7 @@
     <value>Importar Efectivo</value>
   </data>
   <data name="ImportData" xml:space="preserve">
-    <value>Importar Datos</value>
+    <value>Importar Meta Datos</value>
   </data>
   <data name="LogException" xml:space="preserve">
     <value>Registro de Exceptiones</value>
@@ -829,7 +829,7 @@
     <value>Balance Report  es-ES</value>
   </data>
   <data name="Draft" xml:space="preserve">
-    <value>Borrador</value>
+    <value>Borrador SAGE</value>
   </data>
   <data name="ImportedSage" xml:space="preserve">
     <value>La importación fue exitosa</value>
@@ -953,5 +953,20 @@
   </data>
   <data name="BankReconciliation" xml:space="preserve">
     <value>Reconciliacón Bancaria</value>
+  </data>
+  <data name="ChooseFile" xml:space="preserve">
+    <value>Elige un archivo para subir</value>
+  </data>
+  <data name="HardCopy" xml:space="preserve">
+    <value>Copia Impresa</value>
+  </data>
+  <data name="AmountBill" xml:space="preserve">
+    <value>Importe Factura</value>
+  </data>
+  <data name="AmountPaid" xml:space="preserve">
+    <value>Cantidad Pagada</value>
+  </data>
+  <data name="AmountToPay" xml:space="preserve">
+    <value>Queda por Pagar</value>
   </data>
 </root>
