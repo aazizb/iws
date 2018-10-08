@@ -47,6 +47,7 @@
         balanced = CheckBoxBalanced.GetValue();
         callbackPanelPartialView.PerformCallback();
     }
+
 </script>
 
 @{
@@ -76,8 +77,6 @@
     settings.Properties.ClientSideEvents.CheckedChanged = "CheckedChanged";
     settings.Properties.AllowGrayed = false;
 }).GetHtml()
-
-
 
     @Html.DevExpress().Button( settings =>
 {

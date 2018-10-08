@@ -18,14 +18,14 @@ namespace IWSProject.Controllers
             {
                 modelId = (int)Session["ModelId"];
             }
-            return PartialView("MasterGridViewPartial", //IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            return PartialView("MasterGridViewPartial",
                             IWSLookUp.GetUnPaidBill((IWSLookUp.ComptaMasterModelId)modelId, true));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(int currentModelId, bool balanced)
         {
             Session["ModelId"] = currentModelId;
-            return PartialView("CallbackPanelPartialView", //IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)currentModelId));
+            return PartialView("CallbackPanelPartialView",
                             IWSLookUp.GetUnPaidBill((IWSLookUp.ComptaMasterModelId)currentModelId, balanced));
         }
     }

@@ -21,7 +21,7 @@ namespace IWSProject.Controllers
             string companyID = (string)Session["CompanyID"];
             ViewBag.Store = IWSLookUp.GetStore();
 
-            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers(false);
 
             return View(IWSLookUp.GetInventoryInvoice());
         }
@@ -31,7 +31,7 @@ namespace IWSProject.Controllers
             string companyID = (string)Session["CompanyID"];
             ViewBag.Store = IWSLookUp.GetStore();
 
-            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers(false);
 
             ViewBag.InventoryInvoiceOID = IWSLookUp.GetInventoryInvoiceOID();
 

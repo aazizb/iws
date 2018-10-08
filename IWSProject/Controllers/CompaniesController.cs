@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 using DevExpress.Web.Mvc;
 using IWSProject.Content;
 using IWSProject.Models;
@@ -14,6 +19,7 @@ namespace IWSProject.Controllers
     public class CompaniesController : Controller
     {
         IWSDataContext db;
+
         public CompaniesController()
         {
             db = new IWSDataContext();
@@ -33,43 +39,43 @@ namespace IWSProject.Controllers
             sw.Stop();
 
             string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            //if(Session["DurationCom"] == null)
-            //{
+            if (Session["DurationCom"] == null)
+            {
                 Session["DurationCom"] = $"Data reading time: {elapsedTime} ms";
 
-            //}
-            return View();
-        }
-        [ValidateInput(false)]
-        public ActionResult SetLogo()
-        {
-            return View();
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult SetLogo(SetLogoViewModel logo)
-        {
-            if (ModelState.IsValid)
-            {
-                byte[] imageData = null;
-                if (Request.Files.Count > 0)
-                {
-                    HttpPostedFileBase poImgFile = Request.Files["Logo"];
-
-                    using (var binary = new BinaryReader(poImgFile.InputStream))
-                    {
-                        imageData = binary.ReadBytes(poImgFile.ContentLength);
-                        logo.Logo = imageData;
-                    }
-                }
-                var logoImage = new SetLogoViewModel
-                {
-                    CompanyID = logo.CompanyID,
-                    Logo = logo.Logo
-                };
             }
             return View();
         }
+        //[ValidateInput(false)]
+        //public ActionResult SetLogo()
+        //{
+        //    return View();
+        //}
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult SetLogo(SetLogoViewModel logo)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        byte[] imageData = null;
+        //        if (Request.Files.Count > 0)
+        //        {
+        //            HttpPostedFileBase poImgFile = Request.Files["Logo"];
+
+        //            using (var binary = new BinaryReader(poImgFile.InputStream))
+        //            {
+        //                imageData = binary.ReadBytes(poImgFile.ContentLength);
+        //                logo.Logo = imageData;
+        //            }
+        //        }
+        //        var logoImage = new SetLogoViewModel
+        //        {
+        //            CompanyID = logo.CompanyID,
+        //            Logo = logo.Logo
+        //        };
+        //    }
+        //    return View();
+        //}
         
         [ValidateInput(false)]
         public ActionResult CompaniesGridViewPartial()
@@ -163,6 +169,25 @@ namespace IWSProject.Controllers
                 }
             }
             return PartialView("CompaniesGridViewPartial", IWSLookUp.GetCompany());
+        }
+
+        [HttpPost, ValidateInput(false)]
+        public ActionResult CallbackPanelPartialView()
+        {
+            return PartialView("CallbackPanelPartialView", IWSLookUp.GetCompany());
+                    
+        }
+        public ActionResult UploadFile(string compId)
+        {
+            Session["compId"] = compId;
+
+            return null;
+        }
+        public ActionResult UploadControlLogoUpload()
+        {
+            UploadControlExtension.GetUploadedFiles("UploadControlLogo", CompaniesControllerUploadControlLogoSettings.UploadValidationSettings,
+                                                        CompaniesControllerUploadControlLogoSettings.FileUploadComplete);
+            return null;
         }
 
         [ValidateInput(false)]
@@ -259,5 +284,95 @@ namespace IWSProject.Controllers
             }
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
+
+
     }
+    public class CompaniesControllerUploadControlLogoSettings
+    {
+        private const string UploadDirectory = "~/Documents/";
+
+        public static DevExpress.Web.UploadControlValidationSettings UploadValidationSettings = new DevExpress.Web.UploadControlValidationSettings()
+        {
+            AllowedFileExtensions = new string[] { ".jpg", ".jpeg", ".png" },
+            MaxFileSize = 4000000
+        };
+        public static void FileUploadComplete(object sender, DevExpress.Web.FileUploadCompleteEventArgs e)
+        {
+            if (e.UploadedFile.IsValid)
+            {
+                string itemId = (string)(HttpContext.Current.Session["compId"]);
+                string resultFilePath = HttpContext.Current.Request.MapPath(UploadDirectory + e.UploadedFile.FileName);
+                IUrlResolutionService urlResolver = (IUrlResolutionService)sender;
+                if (urlResolver != null)
+                {
+                    UploadedLogoInfo fileInfo = new UploadedLogoInfo()
+                    {
+
+                        Id = itemId,
+                        FileName = e.UploadedFile.FileName,
+                        FileContent = e.UploadedFile.FileBytes,
+                        ContentType = e.UploadedFile.ContentType
+                    };
+
+                    SaveFileDetails(fileInfo);
+
+                    e.CallbackData += fileInfo.FileName;
+                }
+            }
+        }
+
+        private static void SaveFileDetails(UploadedLogoInfo fileDetails)
+        {
+            
+            string query = "Update Company set LogoName=@FileName, LogoContent=@FileContent, ContentType=@ContentType where id = @Id;";
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.
+                            ConnectionStrings["DefaultConnection"].ToString()))
+            {
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    try
+                    {
+                        List<SqlParameter> p = new List<SqlParameter>
+                        {
+                            new SqlParameter("@Id", fileDetails.Id),
+                            new SqlParameter("@FileName", fileDetails.FileName),
+                            new SqlParameter("@FileContent", fileDetails.FileContent),
+                            new SqlParameter("@ContentType", fileDetails.ContentType)
+                        };
+
+                        connection.Open();
+                        AddParameters(command, p.ToArray());
+                        command.ExecuteScalar();
+                        command.Parameters.Clear();
+                    }
+                    catch (Exception ex)
+                    {
+                        IWSLookUp.LogException(ex);
+                    }
+                    finally
+                    {
+                        if (connection.State.Equals(ConnectionState.Open))
+                            connection.Close();
+                    }
+                }
+            }
+        }
+
+        private static void AddParameters(SqlCommand command, params SqlParameter[] p)
+        {
+            if (p != null && p.Any())
+            {
+                command.Parameters.AddRange(p);
+            }
+        }
+
+    }
+    public class UploadedLogoInfo
+    {
+        public string Id { get; set; }
+        public string FileName { get; set; }
+        public byte[] FileContent { get; set; }
+        public string ContentType { get; set; }
+    }
+
 }

@@ -40,7 +40,7 @@
         btShowCustomizationWindow.SetText(text);
     }
     function OnFileUploadComplete(s, e) {
-        if (!e.callbackData) { 
+        if (!e.callbackData) {
             alert("The selected file was not uploaded.");
         }
         PdfUpdateGridView.Refresh();
@@ -56,8 +56,21 @@
             }
         });
         popupControl.Show();
-
     }
+
+    function ShowUpdatePdfPopup(s, e) {
+                $.ajax({
+            url: '@Url.Action("UpdatePdf", "PdfUpdate")',
+            type: "POST",
+                    data: { documentId: s.GetRowKey(e.visibleIndex) },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+        updateControl.Show();
+        updateControl.PerformCallback();
+    }
+
 </script>
 
 @{
@@ -107,12 +120,17 @@
 
     @Html.Partial("CallbackPanelPartialView")
 
+    @Html.Partial("UpdatePdfPartial")
+
     @Html.DevExpress().PopupControl(popup => {
     popup.Name = "popupControl";
+    popup.PopupHorizontalAlign = PopupHorizontalAlign.LeftSides;
+    popup.PopupVerticalAlign = PopupVerticalAlign.Below;
     popup.HeaderText = IWSLocalResource.ChooseFile;
     popup.SetContent(() => {
         Html.RenderPartial("UploadControlPartial");
     });
 }).GetHtml()
-
+    
+   
 }

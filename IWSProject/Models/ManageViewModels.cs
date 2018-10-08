@@ -133,13 +133,13 @@ namespace IWSProject.Models
         public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
     }
 
-    public class SetLogoViewModel
-    {
-        public string CompanyID { get; set; }
+    //public class SetLogoViewModel
+    //{
+    //    public string CompanyID { get; set; }
 
-        [NotMapped]
-        public byte[] Logo { get; set; }
-    }
+    //    [NotMapped]
+    //    public byte[] Logo { get; set; }
+    //}
     public class FiscalYearViewModel
     {
         public string CompanyId { get; set; }

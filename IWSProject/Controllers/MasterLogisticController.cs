@@ -301,14 +301,18 @@ namespace IWSProject.Controllers
         }
         private string IsVending(int modelId)
         {
-            if (Math.Round(modelId * 0.01) == 30)
-            {
-                return "SU";
-            }
-            if (Math.Round(modelId * 0.01) == 35)
-            {
+            if (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.SalesOrder) ||
+                modelId.Equals((int)IWSLookUp.LogisticMasterModelId.BillOfDelivery) ||
+                modelId.Equals((int)IWSLookUp.LogisticMasterModelId.SalesInvoice))
+                {
                 return "CU";
-            }
+                }
+            if (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.PurchaseOrder) ||
+                modelId.Equals((int)IWSLookUp.LogisticMasterModelId.GoodReceiving) ||
+                modelId.Equals((int)IWSLookUp.LogisticMasterModelId.InventoryInvoice))
+                {
+                    return "SU";
+                }
             return null;
         }
         #endregion

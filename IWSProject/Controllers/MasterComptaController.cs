@@ -444,6 +444,7 @@ namespace IWSProject.Controllers
             }
             catch (Exception e)
             {
+                IWSLookUp.LogException(e);
                 ViewData["GenericError"] = e.Message;
             }
             return results;
@@ -459,7 +460,7 @@ namespace IWSProject.Controllers
             {
                 return "CU";
             }
-            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice))
+            if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.GeneralLedger))
             {
                 return "GL";
             }

@@ -15,9 +15,9 @@ namespace IWSProject.Models
         }
         public DbSet<UserProfile> UserProfiles { get; set; }
 
-        public System.Data.Entity.DbSet<IWSProject.Models.Article> Articles { get; set; }
+        //public System.Data.Entity.DbSet<IWSProject.Models.Article> Articles { get; set; }
 
-        public System.Data.Entity.DbSet<IWSProject.Models.SetLogoViewModel> SetLogoViewModels { get; set; }
+        //public System.Data.Entity.DbSet<IWSProject.Models.SetLogoViewModel> SetLogoViewModels { get; set; }
     }
     [Table("UserProfile")]
     public class UserProfile

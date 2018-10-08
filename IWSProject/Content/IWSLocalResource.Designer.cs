@@ -952,6 +952,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fax.
+        /// </summary>
+        public static string Fax {
+            get {
+                return ResourceManager.GetString("Fax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Final Balance.
         /// </summary>
         public static string FinalBalance {
@@ -1024,6 +1033,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Footer.
+        /// </summary>
+        public static string FooterText {
+            get {
+                return ResourceManager.GetString("FooterText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to General Ledger.
         /// </summary>
         public static string GeneralLedger {
@@ -1083,6 +1101,15 @@ namespace IWSProject.Content {
         public static string HasAccess {
             get {
                 return ResourceManager.GetString("HasAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Header.
+        /// </summary>
+        public static string HeaderText {
+            get {
+                return ResourceManager.GetString("HeaderText", resourceCulture);
             }
         }
         
@@ -1708,6 +1735,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Page Footer.
+        /// </summary>
+        public static string PageFooterText {
+            get {
+                return ResourceManager.GetString("PageFooterText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Page Header.
+        /// </summary>
+        public static string PageHeaderText {
+            get {
+                return ResourceManager.GetString("PageHeaderText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Paid Bill.
         /// </summary>
         public static string PaidBill {
@@ -1722,6 +1767,15 @@ namespace IWSProject.Content {
         public static string parent {
             get {
                 return ResourceManager.GetString("parent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partner.
+        /// </summary>
+        public static string Partner {
+            get {
+                return ResourceManager.GetString("Partner", resourceCulture);
             }
         }
         
@@ -2095,7 +2149,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Set company&apos;s Logo.
+        ///   Looks up a localized string similar to Company Logo.
         /// </summary>
         public static string SetLogo {
             get {
@@ -2329,6 +2383,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Telephone.
+        /// </summary>
+        public static string Tel {
+            get {
+                return ResourceManager.GetString("Tel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wordings.
         /// </summary>
         public static string text {
@@ -2419,11 +2482,29 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update Content.
+        /// </summary>
+        public static string UpdateContent {
+            get {
+                return ResourceManager.GetString("UpdateContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Date.
         /// </summary>
         public static string Updated {
             get {
                 return ResourceManager.GetString("Updated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update document: .
+        /// </summary>
+        public static string UpdateDoc {
+            get {
+                return ResourceManager.GetString("UpdateDoc", resourceCulture);
             }
         }
         

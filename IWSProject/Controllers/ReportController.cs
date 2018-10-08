@@ -46,6 +46,31 @@ namespace IWSProject.Controllers
             List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, companyId);
             return PivotGridExtension.ExportToXlsx(PivotGridHelper.Settings, model.ToList(), exportOptions);
         }
+        [ValidateInput(false)]
+        public ActionResult AccountBalance()
+        {
+            AccountBalance accountBalance = new AccountBalance();
+
+            accountBalance.Parameters["CompanyID"].Value = (string)Session["CompanyID"];
+
+            return View(accountBalance);
+        }
+        [ValidateInput(false)]
+        public ActionResult PeriodicBalance()
+        {
+            return View();
+        }
+        [ValidateInput(false)]
+        public ActionResult SalesInvoiceXS()
+        {
+
+            return View();
+        }
+        [ValidateInput(false)]
+        public ActionResult PurchaseOrderXS()
+        {
+            return View();
+        }
     }
     public static class PivotGridHelper
     {

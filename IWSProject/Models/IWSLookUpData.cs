@@ -82,7 +82,7 @@
                          from ds in djoin.DefaultIfEmpty()
                          select new
                          {
-                             m.id,m.transid, m.account, m.side, m.oaccount, m.duedate, m.text, m.amount,
+                             id=ds.transid,m.transid, m.account, m.side, m.oaccount, m.duedate, m.text, m.amount,
                              paid = Convert.ToDecimal(ds?.paid ?? 0, CultureInfo.GetCultureInfo(Thread.CurrentThread.CurrentUICulture.Name).NumberFormat),
                              topay= m.amount - Convert.ToDecimal(ds?.paid ?? 0, CultureInfo.GetCultureInfo(Thread.CurrentThread.CurrentUICulture.Name).NumberFormat),
                              m.Currency, m.ModelId
@@ -601,7 +601,7 @@
                 return
                 from store in IWSEntities.Stores
                 join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
-                join supplier in IWSEntities.Suppliers on new { master.account } equals new { account = supplier.id }
+                join Owner in IWSEntities.Suppliers on new { master.account } equals new { account = Owner.id }
                 where
                   master.CompanyId == companyId &&
                   master.ModelId == (int)LogisticMasterModelId.PurchaseOrder
@@ -610,7 +610,7 @@
                 select new
                 {
                     ID = master.id,
-                    Name = supplier.name,
+                    Name = Owner.name,
                     Store = store.name,
                     DueDate = master.ItemDate.ToShortDateString()
                 };
@@ -620,7 +620,7 @@
                 return
                 from store in IWSEntities.Stores
                 join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
-                join supplier in IWSEntities.Suppliers on new { master.account } equals new { account = supplier.id }
+                join Owner     in IWSEntities.Suppliers on new { master.account } equals new { account = Owner.id }
                 where
                   master.CompanyId == companyId &&
                   master.ModelId == (int)LogisticMasterModelId.GoodReceiving
@@ -629,48 +629,46 @@
                 select new
                 {
                     ID = master.id,
-                    Name = supplier.name,
+                    Name = Owner.name,
                     Store = store.name,
                     DueDate = master.ItemDate.ToShortDateString()
                 };
             }
             if (modelId.Equals((int)LogisticMasterModelId.BillOfDelivery))
             {
-                return
-                from store in IWSEntities.Stores
-                join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
-                join customer in IWSEntities.Customers on new { master.account } equals new { account = customer.id }
-                where
-                  master.CompanyId == companyId &&
-                  master.ModelId == (int)LogisticMasterModelId.SalesOrder
-                orderby
-                  master.id
-                select new
-                {
-                    ID = master.id,
-                    Name = customer.name,
-                    Store = store.name,
-                    DueDate = master.ItemDate.ToShortDateString()
-                };
+                return from store in IWSEntities.Stores
+                       join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
+                        join Ownser in IWSEntities.Customers on new { master.account } equals new { account = Ownser.id }
+                        where
+                            master.CompanyId == companyId &&
+                            master.ModelId == (int)LogisticMasterModelId.SalesOrder
+                        orderby
+                            master.id
+                        select new
+                        {
+                            ID = master.id,
+                            Name = Ownser.name,
+                            Store = store.name,
+                            DueDate = master.ItemDate.ToShortDateString()
+                        };
             }
             if (modelId.Equals((int)LogisticMasterModelId.SalesInvoice))
             {
-                return
-                from store in IWSEntities.Stores
-                join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
-                join customer in IWSEntities.Customers on new { master.account } equals new { account = customer.id }
-                where
-                  master.CompanyId == companyId &&
-                  master.ModelId == (int)LogisticMasterModelId.BillOfDelivery
-                orderby
-                  master.id
-                select new
-                {
-                    ID = master.id,
-                    Name = customer.name,
-                    Store = store.name,
-                    DueDate = master.ItemDate.ToShortDateString()
-                };
+                return from store in IWSEntities.Stores
+                       join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
+                        join Ownser in IWSEntities.Customers on new { master.account } equals new { account = Ownser.id }
+                        where
+                          master.CompanyId == companyId &&
+                          master.ModelId == (int)LogisticMasterModelId.BillOfDelivery
+                        orderby
+                          master.id
+                        select new
+                        {
+                            ID = master.id,
+                            Name = Ownser.name,
+                            Store = store.name,
+                            DueDate = master.ItemDate.ToShortDateString()
+                        };
             }
             return null;
         }
@@ -684,7 +682,7 @@
             {
                return from store in IWSEntities.Stores
                 join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
-                join supplier in IWSEntities.Suppliers on new { master.account } equals new { account = supplier.id }
+                join account in IWSEntities.Suppliers on new { master.account } equals new { account = account.id }
                 where
                   master.CompanyId == companyId &&
                   master.ModelId == (int)LogisticMasterModelId.InventoryInvoice
@@ -693,7 +691,7 @@
                 select new
                 {
                     ID = master.id,
-                    Name = supplier.name,
+                    Name = account.name,
                     Store = store.name,
                     DueDate = master.ItemDate.ToShortDateString()
                 };
@@ -702,7 +700,7 @@
             {
                 return from center in IWSEntities.CostCenters
                 join master in IWSEntities.MasterComptas on new { center.id } equals new { id = master.CostCenter }
-                join account in IWSEntities.Accounts on new { master.account } equals new { account = account.id }
+                join account in IWSEntities.Suppliers on new { master.account } equals new { account = account.id }
                 where
                   master.CompanyId == companyId && 
                   master.ModelId == (int)ComptaMasterModelId.VendorInvoice
@@ -721,7 +719,7 @@
                 return
                 from store in IWSEntities.Stores
                 join master in IWSEntities.MasterLogistics on new { store.id } equals new { id = master.store }
-                join customer in IWSEntities.Customers on new { master.account } equals new { account = customer.id }
+                join account in IWSEntities.Customers on new { master.account } equals new { account = account.id }
                 where
                   master.CompanyId == companyId &&
                   master.ModelId == (int)LogisticMasterModelId.SalesInvoice
@@ -730,7 +728,7 @@
                 select new
                 {
                     ID = master.id,
-                    Name = customer.name,
+                    Name = account.name,
                     Store = store.name,
                     DueDate = master.ItemDate.ToShortDateString()
                 };
@@ -739,7 +737,7 @@
             {
                 return from center in IWSEntities.CostCenters
                 join master in IWSEntities.MasterComptas on new { center.id } equals new { id = master.CostCenter }
-                join account in IWSEntities.Accounts on new { master.account } equals new { account = account.id }
+                join account in IWSEntities.Customers on new { master.account } equals new { account = account.id }
                 where
                   master.CompanyId == companyId &&
                   master.ModelId == (int)ComptaMasterModelId.CustomerInvoice
@@ -944,8 +942,8 @@
                 modelId.Equals((int)ComptaMasterModelId.VendorInvoice))
             {
                 lines = new List<DetailCompta>() {
-                    new DetailCompta(){
-                        transid =itemId, account=debit.Single().ODebit, side=debit.Single().Side, oaccount=credit.Single().OCreditVAT,
+                    new DetailCompta(){                                                                         /*  Single(x)*/
+                        transid =itemId, account=debit.Single().ODebit, side=debit.Single().Side, oaccount=credit.First().OCreditVAT,
                         amount=(decimal)debit.Single().OVat, duedate=debit.Single().ItemDate, text=debit.Single().HeaderText,
                         Currency=debit.Single().Currency},
                     new DetailCompta(){
@@ -1502,10 +1500,12 @@
             }
             return (List<Menu>)HttpContext.Current.Session["Menus"];
         }
-        public static IEnumerable GetSuppliers()
+        public static IEnumerable GetSuppliers(bool isCompta)
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
-            var supplier = from a in IWSEntities.Accounts
+            if (isCompta)
+            {
+                return from a in IWSEntities.Accounts
                            where
                                  ((from s in IWSEntities.Suppliers
                                    where
@@ -1519,22 +1519,25 @@
                                Id = a.id,
                                Name = a.name
                            };
-
-            //var supplier = IWSEntities.Suppliers.AsEnumerable().Select(item => new
-            //{
-            //    Id = item.id,
-            //    Name = item.name,
-            //    Account = item.accountid,
-            //    item.CompanyID
-            //})
-            //.Where(c => c.CompanyID == companyId)
-            //.OrderBy(o => o.Id);
-            return supplier;
+            }
+            else { 
+                return IWSEntities.Suppliers.AsEnumerable().Select(item => new
+                    {
+                                Id = item.id,
+                                Name = item.name,
+                                Account = item.accountid,
+                                item.CompanyID
+                    })
+                    .Where(c => c.CompanyID == companyId)
+                    .OrderBy(o => o.Id);
+            }
         }
-        public static IEnumerable GetCustomers()
+        public static IEnumerable GetCustomers(bool isCompta)
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
-            var customer = from a in IWSEntities.Accounts
+            if (isCompta)
+            {
+                return from a in IWSEntities.Accounts
                            where
                                  ((from c in IWSEntities.Customers
                                    where
@@ -1548,17 +1551,35 @@
                                Id = a.id,
                                Name = a.name
                            };
-            //var customer = IWSEntities.Customers.AsEnumerable().Select(item => new
-            //{
-            //    Id = item.id,
-            //    Name = item.name,
-            //    Account = item.accountid,
-            //    item.CompanyID
-            //})
-            //.Where(c => c.CompanyID == companyId)
-            //.OrderBy(o => o.Id);
-            return customer;
+            }
+            else
+            {
+                return IWSEntities.Customers.AsEnumerable().Select(item => new
+                    {
+                        Id = item.id,
+                        Name = item.name,
+                        Account = item.accountid,
+                        item.CompanyID
+                    })
+                    .Where(c => c.CompanyID == companyId)
+                    .OrderBy(o => o.Id);
+            }
         }
+
+        public static IEnumerable GetOwners(string isVending)
+        {
+
+            if (isVending == "SU")
+            {
+                return GetSuppliers(false);
+            }
+            if (isVending == "CU")
+            {
+                return GetCustomers(false);
+            }
+            return null;
+        }
+
         //public static IEnumerable GetSupplierOrCustomer(string isVending)
         //{
         //    string companyId = (string)HttpContext.Current.Session["CompanyID"];
@@ -1572,16 +1593,18 @@
         //    }
         //    return null;
         //}
+
+
         public static IEnumerable GetAccounts(string isVending)
         {
 
             if (isVending == "SU")
             {
-                return GetSuppliers();
+                return GetSuppliers(true);
             }
             if (isVending == "CU")
             {
-                return GetCustomers();
+                return GetCustomers(true);
             }
             return null;
         }

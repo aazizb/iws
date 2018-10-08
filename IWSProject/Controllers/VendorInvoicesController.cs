@@ -31,7 +31,7 @@ namespace IWSProject.Controllers
 
             ViewBag.TypeJournal = IWSLookUp.GetTypeJournal();
 
-            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers(false);
 
             ViewBag.VendorInvoiceOID = IWSLookUp.GetVendorInvoiceOID();
 

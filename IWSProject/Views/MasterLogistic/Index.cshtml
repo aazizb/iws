@@ -120,20 +120,20 @@
         s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
     }
     function OnMEndCallback(s, e) {
-        if (expanded == true) {
+        if (expanded === true) {
             expanded = false;
             s.ExpandDetailRow(ndxMaster);
         }
-        if (command == "HIDEDETAILROW") {
+        if (command === "HIDEDETAILROW") {
             if (s.IsEditing || s.IsNewRowEditing)
                 s.CancelEdit();
         }
-        if (command == 'CANCELEDIT') {
-            if (isDetailRowExpanded[ndxMaster] == true) {
+        if (command === 'CANCELEDIT') {
+            if (isDetailRowExpanded[ndxMaster] === true) {
                 s.CollapseDetailRow(ndxMaster);
             }
         }
-        if (currentModelId != null) {
+        if (currentModelId !== null) {
             callbackPanelPartialView.PerformCallback();
         }
     }
@@ -153,7 +153,7 @@
                     case 13://ENTER
                         var isValidated = IsValidated.GetValue();
                         if (s.IsEditing()) {
-                            if (isValidated == false) {
+                            if (isValidated === false) {
                                 s.UpdateEdit();
                             }
                             else {

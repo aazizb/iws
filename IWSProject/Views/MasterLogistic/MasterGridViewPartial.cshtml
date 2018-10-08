@@ -182,7 +182,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts((string)Session["IsVending"]);
+                combo.DataSource = IWSLookUp.GetOwners((string)Session["IsVending"]);
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("name", IWSLocalResource.Owner, Unit.Percentage(75));
                 combo.TextFormatString = "{0}-{1}";
@@ -479,7 +479,7 @@
                         s.Properties.TextField = "Name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts((string)Session["IsVending"]);
+                        s.Properties.DataSource = IWSLookUp.GetOwners((string)Session["IsVending"]);
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";

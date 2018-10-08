@@ -571,7 +571,7 @@
     <value>Choose company's Logo</value>
   </data>
   <data name="SetLogo" xml:space="preserve">
-    <value>Set company's Logo</value>
+    <value>Company Logo</value>
   </data>
   <data name="CustomerOrder" xml:space="preserve">
     <value>Customer Order</value>
@@ -959,5 +959,32 @@
   </data>
   <data name="AmountToPay" xml:space="preserve">
     <value>Rest to Pay</value>
+  </data>
+  <data name="UpdateContent" xml:space="preserve">
+    <value>Update Content</value>
+  </data>
+  <data name="UpdateDoc" xml:space="preserve">
+    <value>Update document: </value>
+  </data>
+  <data name="FooterText" xml:space="preserve">
+    <value>Footer</value>
+  </data>
+  <data name="HeaderText" xml:space="preserve">
+    <value>Header</value>
+  </data>
+  <data name="PageFooterText" xml:space="preserve">
+    <value>Page Footer</value>
+  </data>
+  <data name="PageHeaderText" xml:space="preserve">
+    <value>Page Header</value>
+  </data>
+  <data name="Fax" xml:space="preserve">
+    <value>Fax</value>
+  </data>
+  <data name="Partner" xml:space="preserve">
+    <value>Partner</value>
+  </data>
+  <data name="Tel" xml:space="preserve">
+    <value>Telephone</value>
   </data>
 </root>

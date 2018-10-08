@@ -8,29 +8,29 @@ namespace IWSProject.Controllers
         {
             return View();
         }
-        [ValidateInput(false)]
-        public ActionResult AccountBalance()
-        {
-            AccountBalance accountBalance = new AccountBalance();
+        //[ValidateInput(false)]
+        //public ActionResult AccountBalance()
+        //{
+        //    AccountBalance accountBalance = new AccountBalance();
  
-            accountBalance.Parameters["CompanyID"].Value = (string)Session["CompanyID"];
+        //    accountBalance.Parameters["CompanyID"].Value = (string)Session["CompanyID"];
 
-            return View(accountBalance);
-        }
-        [ValidateInput(false)]
-        public ActionResult PeriodicBalance()
-        {
-            return View();
-        }
-        [ValidateInput(false)]
-        public ActionResult SalesInvoiceXS()
-        {
-            return View();
-        }
-        [ValidateInput(false)]
-        public ActionResult PurchaseOrderXS()
-        {
-            return View();
-        }
+        //    return View(accountBalance);
+        //}
+        //[ValidateInput(false)]
+        //public ActionResult PeriodicBalance()
+        //{
+        //    return View();
+        //}
+        //[ValidateInput(false)]
+        //public ActionResult SalesInvoiceXS()
+        //{
+        //    return View();
+        //}
+        //[ValidateInput(false)]
+        //public ActionResult PurchaseOrderXS()
+        //{
+        //    return View();
+        //}
     }
 }

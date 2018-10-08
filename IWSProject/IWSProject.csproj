@@ -442,6 +442,20 @@
     <Content Include="Views\PdfUpdate\_GridViewPartial.cshtml" />
     <Content Include="Views\PdfUpdate\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\PdfUpdate\UploadControlPartial.cshtml" />
+    <Content Include="Views\PdfUpdate\UpdatePdfPartial.cshtml" />
+    <Content Include="Views\Report\AccountBalance.cshtml" />
+    <Content Include="Views\Report\GridViewPartialView.cshtml" />
+    <Content Include="Views\Report\PeriodicBalance.cshtml" />
+    <Content Include="Views\Report\PurchaseOrderXS.cshtml" />
+    <Content Include="Views\Report\SalesInvoiceXS.cshtml" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Content Include="Views\SalesInvoiceXR\Index.cshtml" />
+    <Content Include="Views\SalesInvoiceXR\DocumentViewerPartial.cshtml" />
+    <Content Include="Views\Companies\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\Companies\UploadControlPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -522,6 +536,7 @@
     <Compile Include="Controllers\ResultatController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\SalesInvoicesController.cs" />
+    <Compile Include="Controllers\SalesInvoiceXRController.cs" />
     <Compile Include="Controllers\SalesOrdersController.cs" />
     <Compile Include="Controllers\SettlementsController.cs" />
     <Compile Include="Controllers\StocksController.cs" />
@@ -537,19 +552,24 @@
     </Compile>
     <Compile Include="IWSHelper.cs" />
     <Compile Include="Models\AccountModels.cs" />
-    <Compile Include="Models\CustomUploadControlValidationSettings.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IWSDataModel.cs" />
     <Compile Include="Models\IWSComboHelper.cs" />
     <Compile Include="Models\IWSLookUpData.cs" />
     <Compile Include="Models\IWSUserRole.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\MsSql\conString.cs" />
     <Compile Include="Models\MsSql\IWSData.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>IWSData.dbml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Reports\AccountBalance.cs">
       <SubType>Component</SubType>
     </Compile>

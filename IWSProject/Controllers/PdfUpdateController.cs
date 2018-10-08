@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.UI;
 
 namespace IWSProject.Controllers
 {
@@ -33,6 +34,23 @@ namespace IWSProject.Controllers
                 modelId = (int)Session["ModelId"];
 
             return PartialView("_GridViewPartial", IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+        }
+
+        [HttpPost, ValidateInput(false)]
+        public ActionResult UpdatePdf(int documentId)
+        {
+            Session["documentId"] = documentId;
+            return null;
+        }
+
+        public ActionResult UpdatePdfPartial(bool param)
+        {
+            int id = (int)Session["documentId"];
+            if (param)
+            {
+                UpdatePdfDetails(id);
+            }
+            return PartialView("UpdatePdfPartial");
         }
 
         [HttpPost, ValidateInput(false)]
@@ -67,20 +85,19 @@ namespace IWSProject.Controllers
             return null;
         }
 
-        public FileResult DownloadFile(int itemId, string fileName)
+        public FileResult DownloadFile(int itemId)
         {
             List<UploadedFileInfo> files = GetFileDetail(itemId);
 
             var file = (from f in files
-                            where f.Id.Equals(itemId)
-                            select new { f.FileName, f.FileContent, f.ContentType }).ToList().FirstOrDefault();
+                        where f.Id.Equals(itemId)
+                        select new { f.FileName, f.FileContent, f.ContentType }).ToList().FirstOrDefault();
 
             return File(file.FileContent, file.ContentType, file.FileName);
         }
 
         public ActionResult UploadControlCallbackAction()
         {
-
             UploadControlExtension.GetUploadedFiles("uploadControl", UploadControlSettings.UploadValidationSettings,
                                                                         UploadControlSettings.FileUploadComplete);
             return null;
@@ -118,44 +135,75 @@ namespace IWSProject.Controllers
 
         #endregion
 
-        private List<UploadedFileInfo> GetFileDetailx(int Id)
+        #region delete next
+        //private List<UploadedFileInfo> GetFileDetailx(int Id)
+        //{
+        //    List<UploadedFileInfo> filesDetail = new List<UploadedFileInfo>();
+
+        //    UploadedFileInfo fileDetail = new UploadedFileInfo();
+
+        //    string query = "Select id, FileName, FileContent, ContentType From MasterCompta Where Id= @Id";
+        //    using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString()))
+        //    {
+        //        using (SqlCommand command = new SqlCommand(query, connection))
+        //        {
+        //            try
+        //            {
+
+
+        //                SqlParameter p = new SqlParameter("@Id", Id);
+        //                connection.Open();
+        //                command.Parameters.Add(p);
+        //                SqlDataReader reader = command.ExecuteReader();
+        //                DataTable dataTable = new DataTable();
+        //                dataTable.Load(reader);
+        //                List<DataRow> dataRows = dataTable.Select().ToList();
+        //                filesDetail = (from DataRow dr in dataTable.Rows
+        //                           select new UploadedFileInfo()
+        //                           {
+        //                               Id = Convert.ToInt32(dr["Id"]),
+        //                               FileName = dr["FileName"].ToString(),
+        //                               FileContent = ObjectToByteArray(dr["FileContent"]),
+        //                               ContentType = dr["ContentType"].ToString()
+        //                           }).ToList();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                IWSLookUp.LogException(ex);
+        //            }
+        //        }
+        //    }
+        //    return filesDetail;
+        //}
+        #endregion
+
+        private static void UpdatePdfDetails(int Id)
         {
-            List<UploadedFileInfo> filesDetail = new List<UploadedFileInfo>();
-
-            UploadedFileInfo fileDetail = new UploadedFileInfo();
-
-            string query = "Select id, FileName, FileContent, ContentType From MasterCompta Where Id= @Id";
+            string query = "Update MasterCompta Set FileName = NULL, FileContent = NULL, ContentType = NULL Where Id= @Id;";
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString()))
             {
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
                     try
                     {
-
-                        SqlParameter p = new SqlParameter("@Id", Id);
                         connection.Open();
-                        command.Parameters.Add(p);
-                        SqlDataReader reader = command.ExecuteReader();
-                        DataTable dataTable = new DataTable();
-                        dataTable.Load(reader);
-                        List<DataRow> dataRows = dataTable.Select().ToList();
-                        filesDetail = (from DataRow dr in dataTable.Rows
-                                   select new UploadedFileInfo()
-                                   {
-                                       Id = Convert.ToInt32(dr["Id"]),
-                                       FileName = dr["FileName"].ToString(),
-                                       FileContent = ObjectToByteArray(dr["FileContent"]),
-                                       ContentType = dr["ContentType"].ToString()
-                                   }).ToList();
+                        command.Parameters.Add("@Id", SqlDbType.Int).Value = Id;
+                        command.ExecuteScalar();
+                        command.Parameters.Clear();
                     }
                     catch (Exception ex)
                     {
                         IWSLookUp.LogException(ex);
                     }
+                    finally
+                    {
+                        if (connection.State.Equals(ConnectionState.Open))
+                            connection.Close();
+                    }
                 }
             }
-            return filesDetail;
         }
+
         private static List<UploadedFileInfo> GetFileDetail(int Id)
         {
             List<UploadedFileInfo> files = new List<UploadedFileInfo>();
@@ -218,36 +266,40 @@ namespace IWSProject.Controllers
             System.IO.File.WriteAllBytes(UploadControlSettings.GetFileFullPath(documentUrl), file.FileContent);
         }
     }
+
     public class UploadControlSettings
     {
-        public const string UploadDirectory = "~/Documents/";
+        private const string UploadDirectory = "~/Documents/";
 
         public static DevExpress.Web.UploadControlValidationSettings UploadValidationSettings = new DevExpress.Web.UploadControlValidationSettings()
         {
-            AllowedFileExtensions = new string[] { ".pdf" },
-            MaxFileSize = 3072000
+            AllowedFileExtensions = new string[] { ".png", ".jpg", ".jpeg", ".pdf" },
+            MaxFileSize = 4000000
         };
 
         public static void FileUploadComplete(object sender, DevExpress.Web.FileUploadCompleteEventArgs e)
         {
             if (e.UploadedFile.IsValid)
             {
-                
+
                 int itemId = Convert.ToInt32(HttpContext.Current.Session["documentId"]);
-
-
-
-                UploadedFileInfo fileInfo = new UploadedFileInfo()
+                string resultFilePath = HttpContext.Current.Request.MapPath(UploadDirectory + e.UploadedFile.FileName);
+                IUrlResolutionService urlResolver = (IUrlResolutionService)sender;
+                if (urlResolver != null)
                 {
-                    Id = itemId,
-                    FileName = e.UploadedFile.FileName,
-                    FileContent = e.UploadedFile.FileBytes,
-                    ContentType = e.UploadedFile.ContentType
-                };
+                    UploadedFileInfo fileInfo = new UploadedFileInfo()
+                    {
 
-                SaveFileDetails(fileInfo);
+                        Id = itemId,
+                        FileName = e.UploadedFile.FileName,
+                        FileContent = e.UploadedFile.FileBytes,
+                        ContentType = e.UploadedFile.ContentType
+                    };
 
-                e.CallbackData += fileInfo.FileName;
+                    SaveFileDetails(fileInfo);
+
+                    e.CallbackData += fileInfo.FileName;
+                }
 
             }
         }
@@ -261,9 +313,12 @@ namespace IWSProject.Controllers
         {
             return Path.Combine("~/Documents", file.FileName);
         }
+
+
         private static void SaveFileDetails(UploadedFileInfo fileDetails)
         {
             string query = "Update MasterCompta Set FileName = @FileName, FileContent = @FileContent, ContentType = @ContentType Where Id= @Id;";
+            //string query = "update company set logo=@FileContent where id = '1000';";
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.
                             ConnectionStrings["DefaultConnection"].ToString()))
             {
@@ -271,7 +326,7 @@ namespace IWSProject.Controllers
                 {
                     try
                     {
-
+                        //SqlParameter p = new SqlParameter("@FileContent", fileDetails.FileContent);
                         List<SqlParameter> p = new List<SqlParameter>
                         {
                             new SqlParameter("@Id", fileDetails.Id),
@@ -282,6 +337,7 @@ namespace IWSProject.Controllers
 
                         connection.Open();
                         AddParameters(command, p.ToArray());
+                        //command.Parameters.Add("@FileContent", SqlDbType.VarBinary).Value = fileDetails.FileContent;
                         command.ExecuteScalar();
                         command.Parameters.Clear();
                     }

@@ -92,7 +92,6 @@ namespace IWSProject.Controllers
                 if ((modelId.Equals((int)IWSLookUp.LogisticMasterModelId.GoodReceiving)) || 
                     (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.BillOfDelivery)))
                 {
-                    results = false;
 
                     List<ValidateStockViewModel> validateStock =
                     (from line in db.DetailLogistics

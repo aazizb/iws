@@ -20,7 +20,7 @@ namespace IWSProject.Controllers
             string companyID = (string)Session["CompanyID"];
             ViewBag.Store = IWSLookUp.GetStore();
 
-            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers(false);
 
             return View(IWSLookUp.GetPurchaseOrder());
         }
@@ -30,7 +30,7 @@ namespace IWSProject.Controllers
             string companyID = (string)Session["CompanyID"];
             ViewBag.Store = IWSLookUp.GetStore();
 
-            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers();
+            ViewBag.ComboSupplierId = IWSLookUp.GetSuppliers(false);
 
             return PartialView("MasterGridViewPartial", IWSLookUp.GetPurchaseOrder());
         }

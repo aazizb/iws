@@ -13,7 +13,7 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Companies", Action = "CompaniesGridViewPartialDelete" };
 
         settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
-
+        settings.ClientSideEvents.EndCallback = "OnEndCallback";
         settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
         settings.SettingsContextMenu.Enabled = true;
 
@@ -108,9 +108,33 @@
         });
         settings.Columns.Add(column =>
         {
+            column.Caption = IWSLocalResource.SetLogo;
+            column.FieldName = "LogoName";
+            column.Width = Unit.Percentage(10);
+            column.SetDataItemTemplateContent(container =>
+            {
+                Html.DevExpress().HyperLink(hyperlink =>
+                {
+
+                    hyperlink.Name = "hl" + container.KeyValue.ToString();
+
+                    hyperlink.Properties.Text = (string)DataBinder.Eval(container.DataItem, "LogoName") ?? ".........";
+
+                    hyperlink.NavigateUrl = "javascript:void(0)";
+
+                    @Html.Hidden("compId", (container as GridViewDataItemTemplateContainer).KeyValue);
+                    hyperlink.Properties.ClientSideEvents.Click = string.Format("function(s, e) {{ ShowPopup('{0}');}}",
+                                (container as GridViewDataItemTemplateContainer).KeyValue);
+
+                }).Render();
+            });
+        });
+
+        settings.Columns.Add(column =>
+        {
             column.FieldName = "name";
             column.Caption = IWSLocalResource.name;
-            column.Width = Unit.Percentage(15);
+            column.Width = Unit.Percentage(20);
         });
         settings.Columns.Add(column =>
         {
@@ -561,6 +585,37 @@
                         s.Width = Unit.Percentage(80);
                     });
                 });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "ClassCash";
+                    i.Caption = IWSLocalResource.ClassCash;
+                    i.NestedExtension().ComboBox(s =>
+                    {
+                        s.Properties.TextField = "name";
+                        s.Properties.ValueField = "id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "id";
+                            column.Caption = IWSLocalResource.id;
+                            column.Width = Unit.Percentage(15);
+                        });
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "name";
+                            column.Caption = IWSLocalResource.account;
+                            column.Width = Unit.Percentage(85);
+                        });
+                        s.Properties.TextFormatString = "{0}-{1}";
+                        s.Properties.CallbackPageSize = 15;
+                        s.Properties.FilterMinLength = 2;
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "Currency";
@@ -593,8 +648,8 @@
                 });
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "ClassCash";
-                    i.Caption = IWSLocalResource.ClassCash;
+                    i.FieldName = "ClassBank";
+                    i.Caption = IWSLocalResource.ClassBank;
                     i.NestedExtension().ComboBox(s =>
                     {
                         s.Properties.TextField = "name";
@@ -621,32 +676,89 @@
                         s.Width = Unit.Percentage(80);
                     });
                 });
-                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "ClassBank";
-                    i.Caption = IWSLocalResource.ClassBank;
-                    i.NestedExtension().ComboBox(s =>
+                    i.FieldName = "PageHeaderText";
+                    i.Caption = IWSLocalResource.PageHeaderText;
+                    i.NestedExtension().Memo(s =>
                     {
-                        s.Properties.TextField = "name";
-                        s.Properties.ValueField = "id";
-                        s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
-                        s.Properties.Columns.Add(column =>
-                        {
-                            column.FieldName = "id";
-                            column.Caption = IWSLocalResource.id;
-                            column.Width = Unit.Percentage(15);
-                        });
-                        s.Properties.Columns.Add(column =>
-                        {
-                            column.FieldName = "name";
-                            column.Caption = IWSLocalResource.account;
-                            column.Width = Unit.Percentage(85);
-                        });
-                        s.Properties.TextFormatString = "{0}-{1}";
-                        s.Properties.CallbackPageSize = 15;
-                        s.Properties.FilterMinLength = 2;
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "HeaderText";
+                    i.Caption = IWSLocalResource.HeaderText;
+                    i.NestedExtension().Memo(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "PageFooterText";
+                    i.Caption = IWSLocalResource.PageFooterText;
+                    i.NestedExtension().Memo(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "FooterText";
+                    i.Caption = IWSLocalResource.FooterText;
+                    i.NestedExtension().Memo(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Partner";
+                    i.Caption = IWSLocalResource.Partner;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Tel";
+                    i.Caption = IWSLocalResource.Tel;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Fax";
+                    i.Caption = IWSLocalResource.Fax;
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Email";
+                    i.Caption = IWSLocalResource.Email;
+                    i.NestedExtension().TextBox(s =>
+                    {
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(80);
