@@ -1,13 +1,12 @@
 
 namespace IWSProject.Models
 {
+    using Microsoft.AspNet.Identity;
+    using Microsoft.Owin.Security;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System.Web;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.Owin.Security;
     public class IndexViewModel
     {
         public bool HasPassword { get; set; }
@@ -111,7 +110,7 @@ namespace IWSProject.Models
         public string TypeJournal { get; set; }
         public int ModelId { get; set; }
         public string AccountingAccount { get; set; }
-        //public virtual ICollection<LineJournauxViewModel> LineJournauxViewModels { get; set; }
+       
     }
     public class LineJournauxViewModel
     {
@@ -125,21 +124,13 @@ namespace IWSProject.Models
         public string Text { get; set; }
         public string Currency { get; set; }
         public int? ModelId { get; set; }
-        //public virtual JournauxViewModel JournauxViewModel { get; set; }
+     
     }
     public class ConfigureTwoFactorViewModel
     {
         public string SelectedProvider { get; set; }
         public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
     }
-
-    //public class SetLogoViewModel
-    //{
-    //    public string CompanyID { get; set; }
-
-    //    [NotMapped]
-    //    public byte[] Logo { get; set; }
-    //}
     public class FiscalYearViewModel
     {
         public string CompanyId { get; set; }
@@ -190,18 +181,7 @@ namespace IWSProject.Models
         public string AccountCode { get; set; }
         public decimal AccountAmount { get; set; }
     }
-    //public class FileDetailsViewModel
-    //{
-    //    public int Id { get; set; }
-    //    public string FileName { get; set; }
-    //    public byte[] FileContent { get; set; }
-    //}
-    //public class FilesModel
-    //{
-    //    [Required]
-    //    [DataType(DataType.Upload)]
-    //    public HttpPostedFileBase Files { get; set; }
-    //}
+
     public class ValidateInvoiceViewModel
     {
         [Key]
@@ -399,6 +379,8 @@ namespace IWSProject.Models
         public decimal? OTotal { get; set; }
         public string Currency { get; set; }
         public string HeaderText { get; set; }
+        public int ModelId { get; set; }
+
     }
     public class CreditViewModel
     {
@@ -408,6 +390,13 @@ namespace IWSProject.Models
         public string ExpenseAccount { get; set; }
         public decimal? OTotal { get; set; }
         public decimal? OVAT { get; set; }
+    }
+    public class DetailDetailViewModel
+    {
+        public int TransId { get; set; }
+        public int OID { get; set; }
+        public decimal Amount { get; set; }
+        public int ModelId { get; set; }
     }
     public class LineInvoiceViewModel
     {

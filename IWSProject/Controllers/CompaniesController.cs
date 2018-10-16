@@ -46,36 +46,6 @@ namespace IWSProject.Controllers
             }
             return View();
         }
-        //[ValidateInput(false)]
-        //public ActionResult SetLogo()
-        //{
-        //    return View();
-        //}
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult SetLogo(SetLogoViewModel logo)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        byte[] imageData = null;
-        //        if (Request.Files.Count > 0)
-        //        {
-        //            HttpPostedFileBase poImgFile = Request.Files["Logo"];
-
-        //            using (var binary = new BinaryReader(poImgFile.InputStream))
-        //            {
-        //                imageData = binary.ReadBytes(poImgFile.ContentLength);
-        //                logo.Logo = imageData;
-        //            }
-        //        }
-        //        var logoImage = new SetLogoViewModel
-        //        {
-        //            CompanyID = logo.CompanyID,
-        //            Logo = logo.Logo
-        //        };
-        //    }
-        //    return View();
-        //}
         
         [ValidateInput(false)]
         public ActionResult CompaniesGridViewPartial()

@@ -1,0 +1,84 @@
+﻿@using IWSProject.Content
+
+<script type="text/javascript">
+    var currentModelId = null;
+    function OnButtonClick() {
+        if (CompaniesGridView.IsCustomizationWindowVisible()) {
+
+            CompaniesGridView.HideCustomizationWindow();
+        }
+        else {
+            CompaniesGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = CompaniesGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+
+    function OnFileUploadComplete(s, e) {
+        if (!e.callbackData) {
+            alert("The selected file was not uploaded.");
+        } 
+        
+        CompaniesGridView.Refresh();
+        
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutCo").text(layout);
+    }
+    function ShowPopup(itemId) {
+            $.ajax({
+        url: '@Url.Action("UploadFile", "Companies")',
+        type: "POST",
+                data: { compId: itemId },
+        error: function (xhr, textStatus, errorThrown) {
+            alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+        }
+    });
+    popupControl.Show();
+    }
+</script>
+
+@{
+    ViewBag.Title = IWSLocalResource.company;
+}
+@using (Html.BeginForm("Index", "Companies"))
+{
+
+    @Html.DevExpress().Button(settings =>
+{
+    settings.Name = "btShowCustomizationWindow";
+    settings.Text = IWSLocalResource.WindowCustomization;
+    settings.Width = Unit.Pixel(100);
+    settings.UseSubmitBehavior = false;
+    settings.ClientSideEvents.Click = "OnButtonClick";
+}).GetHtml()
+    <div class="options">
+        <div class="options-item">
+            @Html.Partial("PerformancePartialView")
+        </div>
+    </div>
+    //@{
+    @Session["DurationCom"];
+    //}
+    @*@Html.Action("CompaniesGridViewPartial")*@
+    @Html.Partial("CallbackPanelPartialView")
+
+    @Html.DevExpress().PopupControl(popup => {
+popup.Name = "popupControl";
+popup.PopupHorizontalAlign = PopupHorizontalAlign.LeftSides;
+popup.PopupVerticalAlign = PopupVerticalAlign.Below;
+popup.HeaderText = IWSLocalResource.ChooseFile;
+popup.SetContent(() => {
+    Html.RenderPartial("UploadControlPartial");
+});
+}).GetHtml()
+}

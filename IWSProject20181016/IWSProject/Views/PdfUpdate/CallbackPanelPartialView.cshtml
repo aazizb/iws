@@ -1,0 +1,13 @@
+﻿@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPanelPartialView";
+    settings.CallbackRouteValues = new { Controller = "PdfUpdate", Action = "CallbackPanelPartialView" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("_GridViewPartial");
+
+    });
+    settings.ClientSideEvents.BeginCallback = "OnMBeginCallback";
+    settings.ClientSideEvents.EndCallback = "OnMEndCallback";
+}).GetHtml()

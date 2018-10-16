@@ -1,0 +1,36 @@
+﻿@using IWSProject.Content
+
+@Html.DevExpress().Button(settings => {
+    settings.Name = "buttonOkUpload";
+    settings.Text = " ";
+    settings.ToolTip = IWSLocalResource.btnUpdate;
+    settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+    settings.Images.Image.IconID = IconID.ActionsApply16x16;
+    settings.Width = Unit.Pixel(80);
+    settings.ClientSideEvents.Click = "function(s, e){ uploadControl.Upload(); }";
+}).GetHtml()
+
+@Html.DevExpress().Button(settings => {
+    settings.Text = " ";
+    settings.Name = "buttonCancelUpload";
+    settings.ToolTip = IWSLocalResource.btnCancel;
+    settings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+    settings.Images.Image.IconID = IconID.ActionsCancel16x16;
+    settings.Width = Unit.Pixel(80);
+    settings.ClientSideEvents.Click = "function(s, e){ uploadControl.Cancel(); }";
+}).GetHtml()
+
+@using (Html.BeginForm("UploadControlUpload", "PdfUpdate", FormMethod.Post))
+{
+    @Html.DevExpress().UploadControl(settings => {
+    settings.Name = "uploadControl";
+    settings.Width = Unit.Pixel(400);
+    settings.CallbackRouteValues = new { Controller = "PdfUpdate", Action = "UploadControlCallbackAction" };
+    settings.ClientSideEvents.FileUploadComplete = "OnFileUploadComplete";
+    settings.UploadMode = UploadControlUploadMode.Auto;
+    settings.ShowUploadButton = false;
+    settings.ShowProgressPanel = true;
+    settings.EncodeHtml = false;
+    settings.ValidationSettings.Assign(IWSProject.Controllers.UploadControlSettings.UploadValidationSettings);
+}).GetHtml()
+}

@@ -1,0 +1,15 @@
+﻿@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPanelPartialView";
+    settings.CallbackRouteValues = new { Controller = "Companies", Action = "CallbackPanelPartialView" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("CompaniesGridViewPartial");
+
+    });
+    settings.ClientSideEvents.EndCallback = "OnEndCallback";
+}).GetHtml()
+
+
+

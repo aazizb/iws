@@ -1,0 +1,13 @@
+﻿
+@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPartialView";
+    settings.CallbackRouteValues = new { Controller = "Balance", Action = "CallbackPanelPartial" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("AccountBalancePartialView");
+
+    });
+    settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+}).GetHtml()

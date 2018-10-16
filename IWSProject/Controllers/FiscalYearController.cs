@@ -18,13 +18,7 @@ namespace IWSProject.Controllers
             ViewBag.FiscalYear = IWSLookUp.GetFiscalYears(companyId);
             return View(IWSLookUp.GetCurrentFiscalYear(companyId));
         }
-        //[HttpPost, ValidateInput(false)]
-        //public ActionResult MasterGridViewPartial()
-        //{
-        //    string companyId = (string)Session["CompanyID"];
-        //    ViewBag.FiscalYear = IWSLookUp.GetFiscalYears(companyId);
-        //    return PartialView("MasterGridViewPartial", IWSLookUp.GetCurrentFiscalYear(companyId));
-        //}
+
         public ActionResult CallbackPanel()
         {
 

@@ -135,48 +135,6 @@ namespace IWSProject.Controllers
 
         #endregion
 
-        #region delete next
-        //private List<UploadedFileInfo> GetFileDetailx(int Id)
-        //{
-        //    List<UploadedFileInfo> filesDetail = new List<UploadedFileInfo>();
-
-        //    UploadedFileInfo fileDetail = new UploadedFileInfo();
-
-        //    string query = "Select id, FileName, FileContent, ContentType From MasterCompta Where Id= @Id";
-        //    using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString()))
-        //    {
-        //        using (SqlCommand command = new SqlCommand(query, connection))
-        //        {
-        //            try
-        //            {
-
-
-        //                SqlParameter p = new SqlParameter("@Id", Id);
-        //                connection.Open();
-        //                command.Parameters.Add(p);
-        //                SqlDataReader reader = command.ExecuteReader();
-        //                DataTable dataTable = new DataTable();
-        //                dataTable.Load(reader);
-        //                List<DataRow> dataRows = dataTable.Select().ToList();
-        //                filesDetail = (from DataRow dr in dataTable.Rows
-        //                           select new UploadedFileInfo()
-        //                           {
-        //                               Id = Convert.ToInt32(dr["Id"]),
-        //                               FileName = dr["FileName"].ToString(),
-        //                               FileContent = ObjectToByteArray(dr["FileContent"]),
-        //                               ContentType = dr["ContentType"].ToString()
-        //                           }).ToList();
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                IWSLookUp.LogException(ex);
-        //            }
-        //        }
-        //    }
-        //    return filesDetail;
-        //}
-        #endregion
-
         private static void UpdatePdfDetails(int Id)
         {
             string query = "Update MasterCompta Set FileName = NULL, FileContent = NULL, ContentType = NULL Where Id= @Id;";
@@ -318,7 +276,6 @@ namespace IWSProject.Controllers
         private static void SaveFileDetails(UploadedFileInfo fileDetails)
         {
             string query = "Update MasterCompta Set FileName = @FileName, FileContent = @FileContent, ContentType = @ContentType Where Id= @Id;";
-            //string query = "update company set logo=@FileContent where id = '1000';";
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.
                             ConnectionStrings["DefaultConnection"].ToString()))
             {
@@ -326,7 +283,7 @@ namespace IWSProject.Controllers
                 {
                     try
                     {
-                        //SqlParameter p = new SqlParameter("@FileContent", fileDetails.FileContent);
+
                         List<SqlParameter> p = new List<SqlParameter>
                         {
                             new SqlParameter("@Id", fileDetails.Id),
@@ -337,7 +294,7 @@ namespace IWSProject.Controllers
 
                         connection.Open();
                         AddParameters(command, p.ToArray());
-                        //command.Parameters.Add("@FileContent", SqlDbType.VarBinary).Value = fileDetails.FileContent;
+ 
                         command.ExecuteScalar();
                         command.Parameters.Clear();
                     }
