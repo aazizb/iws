@@ -1,5 +1,6 @@
 ﻿using IWSProject.Content;
 using IWSProject.Models;
+using IWSProject.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1416,7 +1417,7 @@ namespace IWSProject.Controllers
                 {
                     amount = -amount;
                 }
-                var docs = db.Accounts.FirstOrDefault(a => a.id == accountID && a.CompanyID == companyId);
+                var docs = db.GetAccounts().FirstOrDefault(a => a.id == accountID && a.CompanyID == companyId);
                 if (docs != null)
                 {
                     docs.balance += amount;
@@ -1439,7 +1440,7 @@ namespace IWSProject.Controllers
                         && p.CompanyID == companyID);
             if (docs == null)
             {
-                string name = db.Accounts
+                string name = db.GetAccounts()
                     .Where(a => a.id == AccountID && a.CompanyID == companyID)
                     .Select(n => n.name)
                     .Single();

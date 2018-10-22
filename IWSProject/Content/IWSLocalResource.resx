@@ -307,7 +307,7 @@
     <value>Payment Clearing Account</value>
   </data>
   <data name="periode" xml:space="preserve">
-    <value>Periode</value>
+    <value>Period</value>
   </data>
   <data name="purchasingclearingaccountid" xml:space="preserve">
     <value>Purchasing Clearing Account</value>
@@ -989,5 +989,41 @@
   </data>
   <data name="Tel" xml:space="preserve">
     <value>Telephone</value>
+  </data>
+  <data name="Accumulated" xml:space="preserve">
+    <value>Accumulated Depreciation</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Asset</value>
+  </data>
+  <data name="BookValue" xml:space="preserve">
+    <value>Book Value</value>
+  </data>
+  <data name="CostOfAsset" xml:space="preserve">
+    <value>Cost of Asset</value>
+  </data>
+  <data name="Depreciation" xml:space="preserve">
+    <value>Depreciation</value>
+  </data>
+  <data name="FixedAsset" xml:space="preserve">
+    <value>Fixed Aset</value>
+  </data>
+  <data name="LifeSpan" xml:space="preserve">
+    <value>Life Span</value>
+  </data>
+  <data name="Percentage" xml:space="preserve">
+    <value>Percentage</value>
+  </data>
+  <data name="ScrapValue" xml:space="preserve">
+    <value>Scrap Value</value>
+  </data>
+  <data name="StraghtLineDepreciation" xml:space="preserve">
+    <value>Straight Line Depreciation</value>
+  </data>
+  <data name="StraightLineBookValue" xml:space="preserve">
+    <value>Straight Line Book Value</value>
+  </data>
+  <data name="SumOfYears" xml:space="preserve">
+    <value>Sum of Periods</value>
   </data>
 </root>

@@ -3,6 +3,7 @@
     using DevExpress.Web.Mvc;
     using IWSProject.Content;
     using IWSProject.Models;
+    using IWSProject.Models.Entities;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -420,11 +421,11 @@
 
                             foreach (var item in Account)
                             {
-                                var u = db.Accounts.Where(o => o.id.Equals(item.id)
+                                var u = db.GetAccounts().Where(o => o.id.Equals(item.id)
                                            && o.CompanyID.Equals(item.CompanyID)).FirstOrDefault();
                                 if (u == null)
                                 {
-                                    db.Accounts.InsertOnSubmit(item);
+                                    db.GetAccounts().InsertOnSubmit(item);
                                     count += 1;
                                 }
                             }
@@ -558,11 +559,11 @@
 
                             foreach (var n in Accounts)
                             {
-                                var u = db.Accounts.Where(o => o.id.Equals(n.id)
+                                var u = db.GetAccounts().Where(o => o.id.Equals(n.id)
                                            && o.CompanyID.Equals(n.CompanyID)).FirstOrDefault();
                                 if (u == null)
                                 {
-                                    db.Accounts.InsertOnSubmit(n);
+                                    db.GetAccounts().InsertOnSubmit(n);
                                     count += 1;
                                 }
                             }

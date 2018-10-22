@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -70,9 +71,9 @@
             column.Caption = IWSLocalResource.bic;
             column.Width = Unit.Percentage(15);
         });
-        #region Template
+#region Template
 
-        settings.SetEditFormTemplateContent(templateContent =>
+settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -149,9 +150,9 @@
             .Render();
         });
 
-        #endregion
+#endregion
 
-        settings.DataBinding = (sender, e) =>
+settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(BankAccount));
         };

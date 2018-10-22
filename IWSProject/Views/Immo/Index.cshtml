@@ -1,0 +1,58 @@
+﻿@using IWSProject.Content
+
+<script type="text/javascript">
+    function OnButtonClick() {
+        if (ImmoGridView.IsCustomizationWindowVisible()) {
+
+            ImmoGridView.HideCustomizationWindow();
+        }
+        else {
+            ImmoGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = ImmoGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function TrackLayout(layout) {
+        $("#LastImmoLayout").text(layout)
+    }
+</script>
+
+@{
+    ViewBag.Title = IWSLocalResource.FixedAsset;
+}
+
+@using (Html.BeginForm("Index", "Immo"))
+{
+
+    @Html.DevExpress().Button(settings =>
+    {
+        settings.Name = "btShowCustomizationWindow";
+        settings.Text = IWSLocalResource.WindowCustomization;
+        settings.Width = Unit.Pixel(100);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnButtonClick";
+    }).GetHtml()
+
+    <div class="options">
+        <div class="options-item">
+            @Html.Partial("PerformancePartialView")
+        </div>
+    </div>
+
+    @Session["DurationCust"];
+
+    @Html.Action("ImmoGridViewPartial")
+
+}
+
+
+
+
+
+

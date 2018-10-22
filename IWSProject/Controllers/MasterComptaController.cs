@@ -1,6 +1,7 @@
 ﻿using DevExpress.Web.Mvc;
 using IWSProject.Content;
 using IWSProject.Models;
+using IWSProject.Models.Entities;
 using System;
 using System.Data;
 using System.Data.Linq;

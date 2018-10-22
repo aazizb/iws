@@ -3,6 +3,7 @@ using System.Linq;
 using System.Web.Mvc;
 using DevExpress.Web.Mvc;
 using IWSProject.Models;
+using IWSProject.Models.Entities;
 using IWSProject.Content;
 namespace IWSProject.Controllers
 {
@@ -57,7 +58,7 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult AccountsGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Account item)
         {
-            var model = db.Accounts;
+            var model = db.GetAccounts();
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Account;
             item.Posted = DateTime.Now.Date;
@@ -88,7 +89,7 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult AccountsGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))]Account item)
         {
-            var model = db.Accounts;
+            var model = db.GetAccounts();
             ViewData["accounts"] = item;
             if (ModelState.IsValid)
             {
@@ -117,7 +118,7 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult AccountsGridViewPartialDelete(string id)
         {
-            var model = db.Accounts;
+            var model = db.GetAccounts();
             if (id != null)
             {
                 try

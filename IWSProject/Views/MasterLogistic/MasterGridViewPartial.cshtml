@@ -1,6 +1,7 @@
 ﻿
 @using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -283,9 +284,9 @@
         settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oNet").DisplayFormat = "N";
         settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oVat").DisplayFormat = "N";
 
-        #region Template
+#region Template
 
-        settings.SetEditFormTemplateContent(c =>
+settings.SetEditFormTemplateContent(c =>
         {
             var isValidated = DataBinder.Eval(c.DataItem, "IsValidated");
 
@@ -296,9 +297,9 @@
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
 
-                #region Button
+        #region Button
 
-                formLayoutSettings.Items.AddEmptyItem();
+        formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.ShowCaption = DefaultBoolean.False;
@@ -332,9 +333,9 @@
                 }).Render();
                 });
 
-                #endregion
+        #endregion
 
-                formLayoutSettings.Name = "MasterLogisticEdit";
+        formLayoutSettings.Name = "MasterLogisticEdit";
 
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 2;
@@ -533,9 +534,9 @@
             .Render();
         });
 
-        #endregion
+#endregion
 
-        settings.SetDetailRowTemplateContent(c =>
+settings.SetDetailRowTemplateContent(c =>
         {
             Session["transid"] = DataBinder.Eval(c.DataItem, "ID");
             Session["IsValidated"] = (bool)DataBinder.Eval(c.DataItem, "IsValidated");

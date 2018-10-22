@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.Identity;
+using IWSProject.Models.Entities;
 using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace IWSProject.Models
@@ -48,13 +49,13 @@ namespace IWSProject.Models
             return new ApplicationDbContext();
         }
 
-        public System.Data.Entity.DbSet<IWSProject.Models.AffectationJournal> AffectationJournals { get; set; }
+        public System.Data.Entity.DbSet<AffectationJournal> AffectationJournals { get; set; }
 
-        public System.Data.Entity.DbSet<IWSProject.Models.Account> Accounts { get; set; }
+        public System.Data.Entity.DbSet<Account> Accounts { get; set; }
 
-        public System.Data.Entity.DbSet<IWSProject.Models.Company> Companies { get; set; }
+        public System.Data.Entity.DbSet<Company> Companies { get; set; }
 
-        public System.Data.Entity.DbSet<IWSProject.Models.TypeJournal> TypeJournals { get; set; }
+        public System.Data.Entity.DbSet<TypeJournal> TypeJournals { get; set; }
     }
 }
 

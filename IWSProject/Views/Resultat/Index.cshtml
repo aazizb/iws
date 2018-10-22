@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 @model List<ResultsViewModel>
 
 <script type="text/javascript">
@@ -7,10 +8,10 @@
     var vStart = null;
     var vEnd = null;
     function OnButtonClick(s, e) {
-            vClassId = ClassId.GetValue();
-            vStart = Start.GetText();
-            vEnd = End.GetText();
-            callbackPartialView.PerformCallback();
+        vClassId = ClassId.GetValue();
+        vStart = Start.GetText();
+        vEnd = End.GetText();
+        callbackPartialView.PerformCallback();
     }
 
     function OnBeginCallback(s, e) {
@@ -79,6 +80,6 @@
         settings.UseSubmitBehavior = false;
         settings.RouteValues = new { Controller = "Resultat", Action = "Export" };
     }).GetHtml()
-@Html.Partial("_CallbackPartialView")
+    @Html.Partial("_CallbackPartialView")
 }
 

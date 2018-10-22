@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -31,8 +32,8 @@
         settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
 
-        //performance tuning
-        settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
+//performance tuning
+settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
         settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
         settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
 
@@ -183,8 +184,8 @@
             column.Caption = IWSLocalResource.IBAN;
             column.Width = Unit.Percentage(10);
         });
-        #region Template Edit
-        settings.SetEditFormTemplateContent(c =>
+#region Template Edit
+settings.SetEditFormTemplateContent(c =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -486,8 +487,8 @@
             .Bind(ViewData["Supplier"] ?? c.DataItem)
             .Render();
         });
-        #endregion
-        settings.SetDetailRowTemplateContent(c =>
+#endregion
+settings.SetDetailRowTemplateContent(c =>
         {
             Session["owner"] = DataBinder.Eval(c.DataItem, "id");
             Html.RenderAction("DetailGridViewPartial", new { owner = Session["owner"] });

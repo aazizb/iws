@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -92,15 +93,15 @@
                 combo.ValueField = "Id";
                 combo.ValueType = typeof(string);
                 combo.DataSource = ViewBag.BankChildren;// IWSLookUp.GetBankChildren();
-                combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
+        combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("Name", IWSLocalResource.name, Unit.Percentage(75));
                 combo.TextFormatString = "{0}-{1}";
             });
         });
 
-        #region Template
+#region Template
 
-        settings.SetEditFormTemplateContent(templateContent =>
+settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -210,9 +211,9 @@
             .Render();
         });
 
-        #endregion
+#endregion
 
-        settings.DataBinding = (sender, e) =>
+settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(BankAccount));
         };

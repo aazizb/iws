@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -36,8 +37,8 @@
 
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
-        //performance tuning
-        settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
+//performance tuning
+settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
         settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
         settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
 
@@ -243,8 +244,8 @@
             });
         });
 
-        #region Template Edit
-        settings.SetEditFormTemplateContent(templateContent =>
+#region Template Edit
+settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -291,7 +292,7 @@
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
                         s.Properties.DataSource = ViewBag.ComboAccountId;// IWSLookUp.GetAccounts();
-                        s.Properties.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
+                s.Properties.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
                         s.Properties.Columns.Add("name", IWSLocalResource.SubAccountOf, Unit.Percentage(75));
                         s.Properties.TextFormatString = "{0}-{1}";
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
@@ -299,43 +300,43 @@
                         s.Width = Unit.Percentage(75);
                     });
                 });
-                //formLayoutSettings.Items.AddEmptyItem();
-                //formLayoutSettings.Items.AddEmptyItem();
-                //formLayoutSettings.Items.Add(i =>
-                //{
-                //    i.FieldName = "TypeJournal";
-                //    i.Caption = IWSLocalResource.TypeJournal;
-                //    i.NestedExtension().ComboBox(s =>
-                //    {
-                //        s.Properties.TextField = "Name";
-                //        s.Properties.ValueField = "Id";
-                //        s.Properties.ValueType = typeof(string);
-                //        s.Properties.DataSource = ViewBag.Journal;// IWSLookUp.GetTypeJournal();
-                //        s.Properties.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
-                //        s.Properties.Columns.Add("Name", IWSLocalResource.TypeJournal, Unit.Percentage(75));
-                //        s.Properties.TextFormatString = "{0}-{1}";
-                //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                //        s.ShowModelErrors = true;
-                //        s.Width = Unit.Percentage(75);
-                //    });
-                //});
-                //formLayoutSettings.Items.AddEmptyItem();
-                //formLayoutSettings.Items.AddEmptyItem();
-                //formLayoutSettings.Items.Add(i =>
-                //{
-                //    i.FieldName = "balance";
-                //    i.Caption = IWSLocalResource.balance;
-                //    i.Width = Unit.Percentage(50);
-                //    i.NestedExtension().TextBox(s =>
-                //    {
-                //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                //        s.ShowModelErrors = true;
-                //        s.Width = Unit.Percentage(75);
-                //        s.Properties.DisplayFormatString = "N";
-                //        s.ReadOnly = true;
-                //    });
-                //});
-                formLayoutSettings.Items.AddEmptyItem();
+        //formLayoutSettings.Items.AddEmptyItem();
+        //formLayoutSettings.Items.AddEmptyItem();
+        //formLayoutSettings.Items.Add(i =>
+        //{
+        //    i.FieldName = "TypeJournal";
+        //    i.Caption = IWSLocalResource.TypeJournal;
+        //    i.NestedExtension().ComboBox(s =>
+        //    {
+        //        s.Properties.TextField = "Name";
+        //        s.Properties.ValueField = "Id";
+        //        s.Properties.ValueType = typeof(string);
+        //        s.Properties.DataSource = ViewBag.Journal;// IWSLookUp.GetTypeJournal();
+        //        s.Properties.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
+        //        s.Properties.Columns.Add("Name", IWSLocalResource.TypeJournal, Unit.Percentage(75));
+        //        s.Properties.TextFormatString = "{0}-{1}";
+        //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //        s.ShowModelErrors = true;
+        //        s.Width = Unit.Percentage(75);
+        //    });
+        //});
+        //formLayoutSettings.Items.AddEmptyItem();
+        //formLayoutSettings.Items.AddEmptyItem();
+        //formLayoutSettings.Items.Add(i =>
+        //{
+        //    i.FieldName = "balance";
+        //    i.Caption = IWSLocalResource.balance;
+        //    i.Width = Unit.Percentage(50);
+        //    i.NestedExtension().TextBox(s =>
+        //    {
+        //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //        s.ShowModelErrors = true;
+        //        s.Width = Unit.Percentage(75);
+        //        s.Properties.DisplayFormatString = "N";
+        //        s.ReadOnly = true;
+        //    });
+        //});
+        formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
@@ -453,9 +454,9 @@
             .Bind(ViewData["accounts"] ?? templateContent.DataItem)
             .Render();
         });
-        #endregion
+#endregion
 
-        settings.DataBinding = (sender, e) =>
+settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(Account));
         };

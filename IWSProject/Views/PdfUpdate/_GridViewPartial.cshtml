@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -121,7 +122,7 @@
 
                     hyperlink.Properties.Text = (string)DataBinder.Eval(container.DataItem, "FileName") ?? "......";
 
-                    hyperlink.NavigateUrl =(DataBinder.Eval(container.DataItem, "FileName") == null) ? "javascript:void(0)" :
+                    hyperlink.NavigateUrl = (DataBinder.Eval(container.DataItem, "FileName") == null) ? "javascript:void(0)" :
                                             Url.Action("DownloadFile", "PdfUpdate", new { itemId = container.KeyValue });
 
                     if (DataBinder.Eval(container.DataItem, "FileName") == null)

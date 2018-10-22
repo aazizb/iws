@@ -1,6 +1,7 @@
 ﻿using DevExpress.Web.Mvc;
 using IWSProject.Content;
 using IWSProject.Models;
+using IWSProject.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -240,7 +241,7 @@ namespace IWSProject.Controllers
 
                     String[] excelSheets = new String[dataTable.Rows.Count];
 
-                    List<Brouillard> Brouillards = new List<Models.Brouillard>();
+                    List<Brouillard> Brouillards = new List<Brouillard>();
 
                     foreach (DataRow row in dataTable.Rows)
                     {

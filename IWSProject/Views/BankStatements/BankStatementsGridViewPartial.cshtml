@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -59,7 +60,7 @@
             int visibleRowCount = gridView.GetCurrentPageRowValues("id").Count;
 
             int endIndex = startIndex + visibleRowCount - 1;
-            bool select =false;
+            bool select = false;
             bool isRowSeleted;
             bool isValidated;
             if (Session["select"] != null)
@@ -315,9 +316,9 @@
             });
         });
 
-        #region Template Edit
+#region Template Edit
 
-        settings.SetEditFormTemplateContent(templateContent =>
+settings.SetEditFormTemplateContent(templateContent =>
         {
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
@@ -506,8 +507,8 @@
         .Bind(ViewData["BankStatement"] ?? templateContent.DataItem)
         .Render();
         });
-        #endregion
-        settings.DataBinding = (sender, e) =>
+#endregion
+settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(BankStatement));
         };

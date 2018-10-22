@@ -124,6 +124,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accumulated Depreciation.
+        /// </summary>
+        public static string Accumulated {
+            get {
+                return ResourceManager.GetString("Accumulated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Action Method.
         /// </summary>
         public static string action {
@@ -210,6 +219,15 @@ namespace IWSProject.Content {
         public static string articles {
             get {
                 return ResourceManager.GetString("articles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asset.
+        /// </summary>
+        public static string Asset {
+            get {
+                return ResourceManager.GetString("Asset", resourceCulture);
             }
         }
         
@@ -372,6 +390,15 @@ namespace IWSProject.Content {
         public static string BookingText {
             get {
                 return ResourceManager.GetString("BookingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Book Value.
+        /// </summary>
+        public static string BookValue {
+            get {
+                return ResourceManager.GetString("BookValue", resourceCulture);
             }
         }
         
@@ -610,6 +637,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cost of Asset.
+        /// </summary>
+        public static string CostOfAsset {
+            get {
+                return ResourceManager.GetString("CostOfAsset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Count.
         /// </summary>
         public static string Count {
@@ -759,6 +795,15 @@ namespace IWSProject.Content {
         public static string DeliveryTerms {
             get {
                 return ResourceManager.GetString("DeliveryTerms", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Depreciation.
+        /// </summary>
+        public static string Depreciation {
+            get {
+                return ResourceManager.GetString("Depreciation", resourceCulture);
             }
         }
         
@@ -1029,6 +1074,15 @@ namespace IWSProject.Content {
         public static string FiscalYearStart {
             get {
                 return ResourceManager.GetString("FiscalYearStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fixed Aset.
+        /// </summary>
+        public static string FixedAsset {
+            get {
+                return ResourceManager.GetString("FixedAsset", resourceCulture);
             }
         }
         
@@ -1407,6 +1461,15 @@ namespace IWSProject.Content {
         public static string LeftToPayEnd {
             get {
                 return ResourceManager.GetString("LeftToPayEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Life Span.
+        /// </summary>
+        public static string LifeSpan {
+            get {
+                return ResourceManager.GetString("LifeSpan", resourceCulture);
             }
         }
         
@@ -1852,7 +1915,16 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Periode.
+        ///   Looks up a localized string similar to Percentage.
+        /// </summary>
+        public static string Percentage {
+            get {
+                return ResourceManager.GetString("Percentage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Period.
         /// </summary>
         public static string periode {
             get {
@@ -2113,6 +2185,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Scrap Value.
+        /// </summary>
+        public static string ScrapValue {
+            get {
+                return ResourceManager.GetString("ScrapValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Credit Balance.
         /// </summary>
         public static string scredit {
@@ -2293,6 +2374,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Straight Line Depreciation.
+        /// </summary>
+        public static string StraghtLineDepreciation {
+            get {
+                return ResourceManager.GetString("StraghtLineDepreciation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Straight Line Book Value.
+        /// </summary>
+        public static string StraightLineBookValue {
+            get {
+                return ResourceManager.GetString("StraightLineBookValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Street.
         /// </summary>
         public static string street {
@@ -2334,6 +2433,15 @@ namespace IWSProject.Content {
         public static string subtotals {
             get {
                 return ResourceManager.GetString("subtotals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sum of Periods.
+        /// </summary>
+        public static string SumOfYears {
+            get {
+                return ResourceManager.GetString("SumOfYears", resourceCulture);
             }
         }
         

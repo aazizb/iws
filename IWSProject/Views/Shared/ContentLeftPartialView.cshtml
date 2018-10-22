@@ -1,12 +1,11 @@
 @using IWSProject.Content;
-@using IWSProject.Models;
 @using System.Resources;
 @using System.Linq;
 @{
-    List<IWSProject.Models.Menu> menuItems = new List<IWSProject.Models.Menu>();
+    List<IWSProject.Models.Entities.Menu> menuItems = new List<IWSProject.Models.Entities.Menu>();
     if (HttpContext.Current.Session["Menus"] != null)
     {
-        menuItems = (List<IWSProject.Models.Menu>)HttpContext.Current.Session["Menus"];
+        menuItems = (List<IWSProject.Models.Entities.Menu>)HttpContext.Current.Session["Menus"];
     } }
  
 @*Configure the left panel's menu *@

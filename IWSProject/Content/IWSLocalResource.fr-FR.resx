@@ -996,4 +996,40 @@
   <data name="Tel" xml:space="preserve">
     <value>Téléphone</value>
   </data>
+  <data name="Accumulated" xml:space="preserve">
+    <value>Dépréciation Cummulée</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Immobilisation</value>
+  </data>
+  <data name="BookValue" xml:space="preserve">
+    <value>Valeur Actuelle</value>
+  </data>
+  <data name="CostOfAsset" xml:space="preserve">
+    <value>Coût Acquisition</value>
+  </data>
+  <data name="Depreciation" xml:space="preserve">
+    <value>Depreciation</value>
+  </data>
+  <data name="FixedAsset" xml:space="preserve">
+    <value>Immobilisation Inchangée</value>
+  </data>
+  <data name="LifeSpan" xml:space="preserve">
+    <value>Durée de vie</value>
+  </data>
+  <data name="Percentage" xml:space="preserve">
+    <value>Pourcentage</value>
+  </data>
+  <data name="ScrapValue" xml:space="preserve">
+    <value>Valeur Residuelle</value>
+  </data>
+  <data name="StraghtLineDepreciation" xml:space="preserve">
+    <value>Dépréciation Linéaire</value>
+  </data>
+  <data name="StraightLineBookValue" xml:space="preserve">
+    <value>Valeur Nette Linéaire Fin de Période</value>
+  </data>
+  <data name="SumOfYears" xml:space="preserve">
+    <value>Somme Périodes</value>
+  </data>
 </root>

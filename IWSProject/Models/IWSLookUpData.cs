@@ -10,6 +10,7 @@
     using System.Text.RegularExpressions;
     using System.Threading;
     using System.Web;
+    using IWSProject.Models.Entities;
 
 
     public static class IWSLookUp
@@ -167,7 +168,7 @@
         public static IEnumerable GetAccount()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            return IWSEntities.Accounts.Where(c => c.CompanyID == companyID);
+            return IWSEntities.GetAccounts().Where(c => c.CompanyID == companyID);
         }
         /// <summary>
         /// Retourne le compte tier connaissant tier
@@ -218,7 +219,7 @@
         public static IEnumerable GetAccounts()
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
-            var account = IWSEntities.Accounts.AsEnumerable().Select(i => new
+            var account = IWSEntities.GetAccounts().AsEnumerable().Select(i => new
             {
                 Id = i.id,
                 Name = i.name,
@@ -243,7 +244,7 @@
             });
 
             return from b in bankChildren
-                   from a in IWSEntities.Accounts
+                   from a in IWSEntities.GetAccounts()
                    orderby a.name
                    where
                      b.Id == a.id
@@ -278,7 +279,7 @@
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
 
-            return IWSEntities.Suppliers.Join(IWSEntities.Accounts,
+            return IWSEntities.Suppliers.Join(IWSEntities.GetAccounts(),
                                                        c => c.accountid, a => a.id, (c, a) => new
                                                        {
                                                            Id = c.accountid,
@@ -290,7 +291,7 @@
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
 
-            return IWSEntities.Customers.Join(IWSEntities.Accounts,
+            return IWSEntities.Customers.Join(IWSEntities.GetAccounts(),
                                                        c => c.accountid, a => a.id, (c, a) => new
                                                        {
                                                            Id = c.accountid,
@@ -437,6 +438,14 @@
             return account.Single().accountid;
 
         }
+
+        public static IEnumerable GetDepreciation() =>
+            IWSEntities.Depreciations.Where(c => 
+            c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).AsEnumerable();
+        public static IEnumerable GetDepreciationDetail(int transId) => IWSEntities.DepreciationDetails.Where(c =>
+                        c.TransId == transId).
+                        OrderBy(o => o.Id).AsEnumerable();
+
 
         public static IEnumerable GetArticle()
         {
@@ -586,7 +595,7 @@
             {
                 return from center in IWSEntities.CostCenters
                 join master in IWSEntities.MasterComptas on new { center.id } equals new { id = master.CostCenter }
-                join account in IWSEntities.Accounts on new { master.account } equals new { account = account.id }
+                join account in IWSEntities.GetAccounts() on new { master.account } equals new { account = account.id }
                 where
                   master.CompanyId == companyId && 
                   master.ModelId == (int)ComptaMasterModelId.VendorInvoice
@@ -623,7 +632,7 @@
             {
                 return from center in IWSEntities.CostCenters
                 join master in IWSEntities.MasterComptas on new { center.id } equals new { id = master.CostCenter }
-                join account in IWSEntities.Accounts on new { master.account } equals new { account = account.id }
+                join account in IWSEntities.GetAccounts() on new { master.account } equals new { account = account.id }
                 where
                   master.CompanyId == companyId &&
                   master.ModelId == (int)ComptaMasterModelId.CustomerInvoice
@@ -1070,7 +1079,7 @@
             }
             ).Union
             (
-            from ac in IWSEntities.Accounts
+            from ac in IWSEntities.GetAccounts()
             where
               (ac.CompanyID == companyID) && (ac.IsUsed.Equals(true))
             select new
@@ -1326,8 +1335,8 @@
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
             if (isCompta)
             {
-                return from a in IWSEntities.Accounts
-                           where
+                return from a in IWSEntities.GetAccounts()
+                       where
                                  ((from s in IWSEntities.Suppliers
                                    where
                                       s.CompanyID == companyId
@@ -1358,8 +1367,8 @@
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
             if (isCompta)
             {
-                return from a in IWSEntities.Accounts
-                           where
+                return from a in IWSEntities.GetAccounts()
+                       where
                                  ((from c in IWSEntities.Customers
                                    where
                                       c.CompanyID == companyId
@@ -1973,7 +1982,7 @@
             List<ChildViewModel> r =
                 ((
                 from c in IWSEntities.Companies
-                join a in IWSEntities.Accounts on new {  c.BalanceSheet } equals new { BalanceSheet = a.id }
+                join a in IWSEntities.GetAccounts() on new {  c.BalanceSheet } equals new { BalanceSheet = a.id }
                 where
                   c.id == companyID
                 select new ChildViewModel()
@@ -1984,7 +1993,7 @@
                 ).Union
                 (
                     from c in IWSEntities.Companies
-                    join Accounts in IWSEntities.Accounts on new {  c.IncomesStatement } equals new { IncomesStatement = Accounts.id }
+                    join Accounts in IWSEntities.GetAccounts() on new {  c.IncomesStatement } equals new { IncomesStatement = Accounts.id }
                     where
                       c.id == companyID
                     select new ChildViewModel()
@@ -2357,6 +2366,7 @@
             BankAccount =12,
             BankStatement =18,
             PeriodicAccountBalance =13,
+            Immo = 19,
             Default = 0000
         }
         public enum LogisticMasterModelId
@@ -2426,8 +2436,8 @@
 
     public static IEnumerable<Account> GetChild(string accountId)
     {
-        return IWSEntities.Accounts.Where(x => x.ParentId == accountId || x.id == accountId)
-                            .Union(IWSEntities.Accounts.Where(x => x.ParentId == accountId)
+        return IWSEntities.GetAccounts().Where(x => x.ParentId == accountId || x.id == accountId)
+                            .Union(IWSEntities.GetAccounts().Where(x => x.ParentId == accountId)
                             .SelectMany(x => GetChild(x.id)));
     }
         private static Decimal StringToDecimal(string amount)

@@ -4,6 +4,7 @@ using IWSProject.Models;
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using IWSProject.Models.Entities;
 namespace IWSProject.Controllers
 {
     [Authorize]

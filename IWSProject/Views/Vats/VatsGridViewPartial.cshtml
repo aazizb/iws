@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -138,8 +139,8 @@
 
         });
 
-        #region Template Edit
-        settings.SetEditFormTemplateContent(templateContent =>
+#region Template Edit
+settings.SetEditFormTemplateContent(templateContent =>
         {
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
@@ -207,7 +208,7 @@
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
                         s.Properties.DataSource = ViewBag.ComboAccountId;// IWSLookUp.GetAccounts();
-                        s.Properties.Columns.Add(column =>
+                s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
                             column.Caption = IWSLocalResource.id;
@@ -240,7 +241,7 @@
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
                         s.Properties.DataSource = ViewBag.ComboAccountId; // IWSLookUp.GetAccounts();
-                        s.Properties.Columns.Add(column =>
+                s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
                             column.Caption = IWSLocalResource.id;
@@ -273,7 +274,7 @@
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
                         s.Properties.DataSource = ViewBag.ComboAccountId;// IWSLookUp.GetAccounts();
-                        s.Properties.Columns.Add(column =>
+                s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
                             column.Caption = IWSLocalResource.id;
@@ -345,9 +346,9 @@
             .Bind(ViewData["article"] ?? templateContent.DataItem)
             .Render();
         });
-        #endregion
+#endregion
 
-        settings.DataBinding = (sender, e) =>
+settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(Vat));
         };

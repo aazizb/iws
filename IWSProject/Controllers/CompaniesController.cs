@@ -1,16 +1,15 @@
-﻿using System;
+﻿using DevExpress.Web.Mvc;
+using IWSProject.Models;
+using IWSProject.Models.Entities;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
-using DevExpress.Web.Mvc;
-using IWSProject.Content;
-using IWSProject.Models;
 
 namespace IWSProject.Controllers
 {
@@ -255,7 +254,6 @@ namespace IWSProject.Controllers
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
 
-
     }
     public class CompaniesControllerUploadControlLogoSettings
     {
@@ -263,7 +261,7 @@ namespace IWSProject.Controllers
 
         public static DevExpress.Web.UploadControlValidationSettings UploadValidationSettings = new DevExpress.Web.UploadControlValidationSettings()
         {
-            AllowedFileExtensions = new string[] { ".jpg", ".jpeg", ".png" },
+            AllowedFileExtensions = new string[] { ".jpg", ".jpeg", ".png", ".bmp" },
             MaxFileSize = 4000000
         };
         public static void FileUploadComplete(object sender, DevExpress.Web.FileUploadCompleteEventArgs e)

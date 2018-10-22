@@ -1,5 +1,6 @@
 @using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -155,9 +156,9 @@
             column.Width = Unit.Percentage(10);
         });
 
-        #region Template Edit
+#region Template Edit
 
-        settings.SetEditFormTemplateContent(templateContent =>
+settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -318,9 +319,9 @@
             .Bind(ViewData["stores"] ?? templateContent.DataItem)
             .Render();
         });
-        #endregion
+#endregion
 
-        settings.DataBinding = (sender, e) =>
+settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(Store));
         };

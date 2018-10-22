@@ -1,9 +1,9 @@
-﻿using System;
+﻿using DevExpress.Web.Mvc;
+using IWSProject.Models;
+using IWSProject.Models.Entities;
+using System;
 using System.Linq;
 using System.Web.Mvc;
-using DevExpress.Web.Mvc;
-using IWSProject.Models;
-using IWSProject.Content;
 namespace IWSProject.Controllers
 {
     [Authorize]

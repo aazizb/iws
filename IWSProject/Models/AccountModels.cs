@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
+
 namespace IWSProject.Models
 {
     public class UsersContext : DbContext

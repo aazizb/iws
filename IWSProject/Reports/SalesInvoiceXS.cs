@@ -266,10 +266,10 @@ namespace IWSProject.Reports
             // 
             this.xrLabel5.DataBindings.AddRange(new DevExpress.XtraReports.UI.XRBinding[] {
             new DevExpress.XtraReports.UI.XRBinding("Text", null, "Master.Email")});
-            this.xrLabel5.LocationFloat = new DevExpress.Utils.PointFloat(632.5003F, 111.0001F);
+            this.xrLabel5.LocationFloat = new DevExpress.Utils.PointFloat(618.5003F, 111.0001F);
             this.xrLabel5.Name = "xrLabel5";
             this.xrLabel5.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100F);
-            this.xrLabel5.SizeF = new System.Drawing.SizeF(160.3566F, 22.99998F);
+            this.xrLabel5.SizeF = new System.Drawing.SizeF(173.4996F, 22.99998F);
             this.xrLabel5.StylePriority.UseTextAlignment = false;
             this.xrLabel5.Text = "xrLabel5";
             this.xrLabel5.TextAlignment = DevExpress.XtraPrinting.TextAlignment.MiddleRight;
@@ -575,7 +575,7 @@ namespace IWSProject.Reports
             this.xrLabel8.LocationFloat = new DevExpress.Utils.PointFloat(549.1432F, 111.0001F);
             this.xrLabel8.Name = "xrLabel8";
             this.xrLabel8.Padding = new DevExpress.XtraPrinting.PaddingInfo(2, 2, 0, 0, 100F);
-            this.xrLabel8.SizeF = new System.Drawing.SizeF(83.35712F, 23F);
+            this.xrLabel8.SizeF = new System.Drawing.SizeF(65.99982F, 23F);
             this.xrLabel8.Text = global::IWSProject.Content.IWSLocalResource.Email;
             // 
             // TopMargin

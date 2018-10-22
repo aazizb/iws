@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -33,8 +34,8 @@
 
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
-        //performance tuning
-        settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
+//performance tuning
+settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
         settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
         settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
 
@@ -138,8 +139,8 @@
             column.Width = Unit.Percentage(50);
         });
 
-        #region Template Edit
-        settings.SetEditFormTemplateContent(templateContent =>
+#region Template Edit
+settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -230,9 +231,9 @@
             .Bind(ViewData["bank"] ?? templateContent.DataItem)
             .Render();
         });
-        #endregion
+#endregion
 
-        settings.DataBinding = (sender, e) =>
+settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(Bank));
         };

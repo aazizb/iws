@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -82,8 +83,8 @@
         {
             ASPxEdit editor = (ASPxEdit)e.Editor;
             editor.ValidationSettings.Display = Display.Dynamic;
-            //    editor.SetClientSideEventHandler("KeyDown", "function(s, e){ if(e.htmlEvent.keyCode==13) DetailGridView.UpdateEdit(); }");
-        };
+    //    editor.SetClientSideEventHandler("KeyDown", "function(s, e){ if(e.htmlEvent.keyCode==13) DetailGridView.UpdateEdit(); }");
+};
         settings.PreRender = (sender, e) =>
         {
             if (ViewData["IsNewDetailRow"] != null)
@@ -228,237 +229,237 @@
         });
 
 
-        #region Template
+#region Template
 
-        //settings.SetEditFormTemplateContent(templateContent =>
-        //{
-        //    Html.DevExpress().FormLayout(formLayoutSettings =>
-        //    {
-        //        formLayoutSettings.Name = "DetailGridViewEdit";
-        //        formLayoutSettings.Width = Unit.Percentage(100);
-        //        formLayoutSettings.ColCount = 3;
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "Id";
-        //            i.Caption = IWSLocalResource.id;
-        //            i.NestedExtension().TextBox(s =>
-        //            {
-        //                s.ShowModelErrors = true;
-        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-        //                s.Width = Unit.Percentage(100);
-        //                s.TabIndex = 8;
-        //            });
-        //        });
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "Einnahmen";
-        //            i.Caption = IWSLocalResource.Revenue;
-        //            i.NestedExtension().TextBox(s =>
-        //            {
-        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-        //                s.ShowModelErrors = true;
-        //                s.Width = Unit.Percentage(100);
-        //                s.TabIndex = 2;
-        //            });
-        //        });
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "Ausgaben";
-        //            i.Caption = IWSLocalResource.Expenses;
-        //            i.NestedExtension().TextBox(s =>
-        //            {
-        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-        //                s.ShowModelErrors = true;
-        //                s.Width = Unit.Percentage(100);
-        //                s.TabIndex = 3;
-        //            });
-        //        });
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "Bestand";
-        //            i.Caption = IWSLocalResource.Available;
-        //            i.NestedExtension().TextBox(s =>
-        //            {
-        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-        //                s.ShowModelErrors = true;
-        //                s.Width = Unit.Percentage(100);
-        //                s.TabIndex = 4;
-        //            });
-        //        });
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "Konto";
-        //            i.Visible = false;
-        //            i.Caption = IWSLocalResource.account;
-        //            i.NestedExtension().ComboBox(s =>
-        //            {
-        //                s.Properties.TextField = "name";
-        //                s.Properties.ValueField = "id";
-        //                s.Properties.ValueType = typeof(string);
-        //                s.Properties.DataSource = IWSLookUp.GetAccounts();
-        //                s.Properties.Columns.Add(a =>
-        //                {
-        //                    a.FieldName = "id";
-        //                    a.Caption = IWSLocalResource.id;
-        //                    a.Width = Unit.Percentage(35);
-        //                });
-        //                s.Properties.Columns.Add(a =>
-        //                {
-        //                    a.FieldName = "name";
-        //                    a.Caption = IWSLocalResource.name;
-        //                    a.Width = Unit.Percentage(65);
-        //                });
-        //                s.Properties.TextFormatString = "{0}-{1}";
-        //                s.Properties.CallbackPageSize = 15;
-        //                s.Properties.FilterMinLength = 2;
-        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-        //                s.ShowModelErrors = true;
-        //                s.Width = Unit.Percentage(100);
-        //                s.TabIndex = 1;
-        //            });
-        //        });
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "side";
-        //            i.Caption = IWSLocalResource.side;
-        //            i.NestedExtension().CheckBox(e =>
-        //            {
-        //                e.TabIndex = 5;
-        //            });
-        //        });
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "GegenKonto";
-        //            i.Caption = IWSLocalResource.oaccount;
-        //            i.NestedExtension().ComboBox(s =>
-        //            {
-        //                s.Properties.TextField = "name";
-        //                s.Properties.ValueField = "id";
-        //                s.Properties.ValueType = typeof(string);
-        //                s.Properties.DataSource = IWSLookUp.GetAccounts();
-        //                s.Properties.Columns.Add(a =>
-        //                {
-        //                    a.FieldName = "id";
-        //                    a.Caption = IWSLocalResource.id;
-        //                    a.Width = Unit.Percentage(35);
-        //                });
-        //                s.Properties.Columns.Add(a =>
-        //                {
-        //                    a.FieldName = "name";
-        //                    a.Caption = IWSLocalResource.name;
-        //                    a.Width = Unit.Percentage(65);
-        //                });
-        //                s.Properties.TextFormatString = "{0}-{1}";
-        //                s.Properties.CallbackPageSize = 15;
-        //                s.Properties.FilterMinLength = 2;
-        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-        //                s.ShowModelErrors = true;
-        //                s.Width = Unit.Percentage(100);
-        //                s.TabIndex = 1;
-        //                s.Properties.ClientSideEvents.Init = "function(s, e) { s.Focus(); }";
-        //            });
-        //        });
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "BelegNr";
-        //            i.Caption = IWSLocalResource.item;
-        //            i.NestedExtension().TextBox(s =>
-        //            {
-        //                s.ShowModelErrors = true;
-        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-        //                s.Width = Unit.Percentage(100);
-        //                s.TabIndex = 6;
-        //            });
-        //        });
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "Datum";
-        //            i.Caption = IWSLocalResource.TransDate;
-        //            i.NestedExtension().DateEdit(d =>
-        //            {
-        //                d.Properties.EditFormatString = "MM/dd/yyyy";
-        //                d.Properties.NullDisplayText = "MM/dd/yyyy";
-        //                d.Properties.EditFormat = EditFormat.Custom;
-        //                d.Width = Unit.Percentage(90);
-        //                d.Properties.DisplayFormatString = "yyyy-MM-dd";
-        //                d.Properties.DisplayFormatInEditMode = true;
-        //                d.Properties.AllowUserInput = true;
-        //                d.Properties.AllowMouseWheel = true;
-        //                d.TabIndex = 7;
-        //            });
-        //        });
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "SteuerSatz";
-        //            i.Caption = IWSLocalResource.vat;
-        //            i.Width = Unit.Percentage(50);
-        //            i.NestedExtension().SpinEdit(s =>
-        //            {
-        //                s.Properties.MinValue = 0;
-        //                s.Properties.MaxValue = 0.55M;
-        //                s.Properties.NumberType = SpinEditNumberType.Float;
-        //                s.Properties.Increment = 0.01M;
-        //                s.Properties.LargeIncrement = 0.1M;
-        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-        //                s.Properties.SpinButtons.ShowLargeIncrementButtons = true;
-        //                s.Width = Unit.Percentage(69);
-        //                s.TabIndex = 8;
-        //            });
-        //        });
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.FieldName = "Beschreibung";
-        //            i.Caption = IWSLocalResource.text;
-        //            i.ColSpan = 3;
-        //            i.NestedExtension().Memo(s =>
-        //            {
-        //                s.ShowModelErrors = true;
-        //                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-        //                s.Width = Unit.Percentage(100);
-        //                s.TabIndex = 9;
-        //            });
-        //        });
-        //        formLayoutSettings.Items.AddEmptyItem();
-        //        formLayoutSettings.Items.Add(i =>
-        //        {
-        //            i.ShowCaption = DefaultBoolean.False;
-        //            i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
-        //        }).SetNestedContent(() =>
-        //        {
-        //            Html.DevExpress().Button(
-        //        btnSettings =>
-        //        {
-        //            btnSettings.Name = "btnDUpdate";
-        //            btnSettings.Text = "";
-        //            btnSettings.ToolTip = IWSLocalResource.btnUpdate;
-        //            btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-        //            btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
-        //            btnSettings.Width = Unit.Pixel(80);
-        //            btnSettings.ClientEnabled = !(bool)Session["IsValidated"];
-        //            btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.UpdateEdit(); }";
-        //            btnSettings.TabIndex = 9;
-        //        }).Render();
-        //            Html.DevExpress().Button(
-        //        btnSettings =>
-        //        {
-        //            btnSettings.Name = "btnDCancel";
-        //            btnSettings.Text = "";
-        //            btnSettings.ToolTip = IWSLocalResource.btnCancel;
-        //            btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
-        //            btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
-        //            btnSettings.Width = Unit.Pixel(80);
-        //            btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.CancelEdit(); }";
-        //            btnSettings.TabIndex = 10;
-        //        }).Render();
-        //        });
-        //    })
-        //    .Bind(ViewData["line"] ?? templateContent.DataItem)
-        //    .Render();
-        //});
+//settings.SetEditFormTemplateContent(templateContent =>
+//{
+//    Html.DevExpress().FormLayout(formLayoutSettings =>
+//    {
+//        formLayoutSettings.Name = "DetailGridViewEdit";
+//        formLayoutSettings.Width = Unit.Percentage(100);
+//        formLayoutSettings.ColCount = 3;
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "Id";
+//            i.Caption = IWSLocalResource.id;
+//            i.NestedExtension().TextBox(s =>
+//            {
+//                s.ShowModelErrors = true;
+//                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+//                s.Width = Unit.Percentage(100);
+//                s.TabIndex = 8;
+//            });
+//        });
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "Einnahmen";
+//            i.Caption = IWSLocalResource.Revenue;
+//            i.NestedExtension().TextBox(s =>
+//            {
+//                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+//                s.ShowModelErrors = true;
+//                s.Width = Unit.Percentage(100);
+//                s.TabIndex = 2;
+//            });
+//        });
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "Ausgaben";
+//            i.Caption = IWSLocalResource.Expenses;
+//            i.NestedExtension().TextBox(s =>
+//            {
+//                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+//                s.ShowModelErrors = true;
+//                s.Width = Unit.Percentage(100);
+//                s.TabIndex = 3;
+//            });
+//        });
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "Bestand";
+//            i.Caption = IWSLocalResource.Available;
+//            i.NestedExtension().TextBox(s =>
+//            {
+//                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+//                s.ShowModelErrors = true;
+//                s.Width = Unit.Percentage(100);
+//                s.TabIndex = 4;
+//            });
+//        });
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "Konto";
+//            i.Visible = false;
+//            i.Caption = IWSLocalResource.account;
+//            i.NestedExtension().ComboBox(s =>
+//            {
+//                s.Properties.TextField = "name";
+//                s.Properties.ValueField = "id";
+//                s.Properties.ValueType = typeof(string);
+//                s.Properties.DataSource = IWSLookUp.GetAccounts();
+//                s.Properties.Columns.Add(a =>
+//                {
+//                    a.FieldName = "id";
+//                    a.Caption = IWSLocalResource.id;
+//                    a.Width = Unit.Percentage(35);
+//                });
+//                s.Properties.Columns.Add(a =>
+//                {
+//                    a.FieldName = "name";
+//                    a.Caption = IWSLocalResource.name;
+//                    a.Width = Unit.Percentage(65);
+//                });
+//                s.Properties.TextFormatString = "{0}-{1}";
+//                s.Properties.CallbackPageSize = 15;
+//                s.Properties.FilterMinLength = 2;
+//                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+//                s.ShowModelErrors = true;
+//                s.Width = Unit.Percentage(100);
+//                s.TabIndex = 1;
+//            });
+//        });
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "side";
+//            i.Caption = IWSLocalResource.side;
+//            i.NestedExtension().CheckBox(e =>
+//            {
+//                e.TabIndex = 5;
+//            });
+//        });
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "GegenKonto";
+//            i.Caption = IWSLocalResource.oaccount;
+//            i.NestedExtension().ComboBox(s =>
+//            {
+//                s.Properties.TextField = "name";
+//                s.Properties.ValueField = "id";
+//                s.Properties.ValueType = typeof(string);
+//                s.Properties.DataSource = IWSLookUp.GetAccounts();
+//                s.Properties.Columns.Add(a =>
+//                {
+//                    a.FieldName = "id";
+//                    a.Caption = IWSLocalResource.id;
+//                    a.Width = Unit.Percentage(35);
+//                });
+//                s.Properties.Columns.Add(a =>
+//                {
+//                    a.FieldName = "name";
+//                    a.Caption = IWSLocalResource.name;
+//                    a.Width = Unit.Percentage(65);
+//                });
+//                s.Properties.TextFormatString = "{0}-{1}";
+//                s.Properties.CallbackPageSize = 15;
+//                s.Properties.FilterMinLength = 2;
+//                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+//                s.ShowModelErrors = true;
+//                s.Width = Unit.Percentage(100);
+//                s.TabIndex = 1;
+//                s.Properties.ClientSideEvents.Init = "function(s, e) { s.Focus(); }";
+//            });
+//        });
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "BelegNr";
+//            i.Caption = IWSLocalResource.item;
+//            i.NestedExtension().TextBox(s =>
+//            {
+//                s.ShowModelErrors = true;
+//                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+//                s.Width = Unit.Percentage(100);
+//                s.TabIndex = 6;
+//            });
+//        });
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "Datum";
+//            i.Caption = IWSLocalResource.TransDate;
+//            i.NestedExtension().DateEdit(d =>
+//            {
+//                d.Properties.EditFormatString = "MM/dd/yyyy";
+//                d.Properties.NullDisplayText = "MM/dd/yyyy";
+//                d.Properties.EditFormat = EditFormat.Custom;
+//                d.Width = Unit.Percentage(90);
+//                d.Properties.DisplayFormatString = "yyyy-MM-dd";
+//                d.Properties.DisplayFormatInEditMode = true;
+//                d.Properties.AllowUserInput = true;
+//                d.Properties.AllowMouseWheel = true;
+//                d.TabIndex = 7;
+//            });
+//        });
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "SteuerSatz";
+//            i.Caption = IWSLocalResource.vat;
+//            i.Width = Unit.Percentage(50);
+//            i.NestedExtension().SpinEdit(s =>
+//            {
+//                s.Properties.MinValue = 0;
+//                s.Properties.MaxValue = 0.55M;
+//                s.Properties.NumberType = SpinEditNumberType.Float;
+//                s.Properties.Increment = 0.01M;
+//                s.Properties.LargeIncrement = 0.1M;
+//                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+//                s.Properties.SpinButtons.ShowLargeIncrementButtons = true;
+//                s.Width = Unit.Percentage(69);
+//                s.TabIndex = 8;
+//            });
+//        });
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.FieldName = "Beschreibung";
+//            i.Caption = IWSLocalResource.text;
+//            i.ColSpan = 3;
+//            i.NestedExtension().Memo(s =>
+//            {
+//                s.ShowModelErrors = true;
+//                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+//                s.Width = Unit.Percentage(100);
+//                s.TabIndex = 9;
+//            });
+//        });
+//        formLayoutSettings.Items.AddEmptyItem();
+//        formLayoutSettings.Items.Add(i =>
+//        {
+//            i.ShowCaption = DefaultBoolean.False;
+//            i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
+//        }).SetNestedContent(() =>
+//        {
+//            Html.DevExpress().Button(
+//        btnSettings =>
+//        {
+//            btnSettings.Name = "btnDUpdate";
+//            btnSettings.Text = "";
+//            btnSettings.ToolTip = IWSLocalResource.btnUpdate;
+//            btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+//            btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
+//            btnSettings.Width = Unit.Pixel(80);
+//            btnSettings.ClientEnabled = !(bool)Session["IsValidated"];
+//            btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.UpdateEdit(); }";
+//            btnSettings.TabIndex = 9;
+//        }).Render();
+//            Html.DevExpress().Button(
+//        btnSettings =>
+//        {
+//            btnSettings.Name = "btnDCancel";
+//            btnSettings.Text = "";
+//            btnSettings.ToolTip = IWSLocalResource.btnCancel;
+//            btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+//            btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
+//            btnSettings.Width = Unit.Pixel(80);
+//            btnSettings.ClientSideEvents.Click = "function(s, e){ DetailGridView.CancelEdit(); }";
+//            btnSettings.TabIndex = 10;
+//        }).Render();
+//        });
+//    })
+//    .Bind(ViewData["line"] ?? templateContent.DataItem)
+//    .Render();
+//});
 
-        #endregion
+#endregion
 
-        settings.DataBinding = (sender, e) =>
+settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(CashLine));
         };

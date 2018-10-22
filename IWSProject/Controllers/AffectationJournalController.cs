@@ -1,8 +1,9 @@
-﻿using System;
+﻿using DevExpress.Web.Mvc;
+using IWSProject.Models;
+using IWSProject.Models.Entities;
+using System;
 using System.Linq;
 using System.Web.Mvc;
-using IWSProject.Models;
-using DevExpress.Web.Mvc;
 
 namespace IWSProject.Controllers
 {
@@ -76,8 +77,8 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-
-            return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
+            ViewBag.Aff = IWSLookUp.GetAffectationJournal();
+            return PartialView("AffectationJournalGridViewPartial", ViewBag.Aff);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] AffectationJournal item)
@@ -109,8 +110,8 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-
-            return PartialView ("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
+            ViewBag.Aff = IWSLookUp.GetAffectationJournal();
+            return PartialView("AffectationJournalGridViewPartial", ViewBag.Aff);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartialDelete(string accountID, bool side, string oaccountID)
@@ -133,8 +134,8 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = e.Message;
             }
-
-            return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
+            ViewBag.Aff = IWSLookUp.GetAffectationJournal();
+            return PartialView("AffectationJournalGridViewPartial", ViewBag.Aff);
         }
         public ActionResult AccountIdComboBox()
         {

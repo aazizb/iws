@@ -409,6 +409,9 @@
     <Content Include="Views\SalesInvoiceXR\DocumentViewerPartial.cshtml" />
     <Content Include="Views\Companies\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\Companies\UploadControlPartial.cshtml" />
+    <Content Include="Views\Immo\Index.cshtml" />
+    <Content Include="Views\Immo\ImmoGridViewPartial.cshtml" />
+    <Content Include="Views\Immo\ImmoDetailGridViewPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -455,6 +458,7 @@
     <Compile Include="Controllers\ExceptionLogController.cs" />
     <Compile Include="Controllers\FiscalYearController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ImmoController.cs" />
     <Compile Include="Controllers\IWSBaseController.cs" />
     <Compile Include="Controllers\JournauxController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -493,6 +497,48 @@
     </Compile>
     <Compile Include="IWSHelper.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\Entities\Account.cs" />
+    <Compile Include="Models\Entities\AffectationJournal.cs" />
+    <Compile Include="Models\Entities\Article.cs" />
+    <Compile Include="Models\Entities\AspNetRole.cs" />
+    <Compile Include="Models\Entities\AspNetUser.cs" />
+    <Compile Include="Models\Entities\AspNetUserClaim.cs" />
+    <Compile Include="Models\Entities\AspNetUserLogin.cs" />
+    <Compile Include="Models\Entities\AspNetUserRole.cs" />
+    <Compile Include="Models\Entities\Bank.cs" />
+    <Compile Include="Models\Entities\BankAccount.cs" />
+    <Compile Include="Models\Entities\BankStatement.cs" />
+    <Compile Include="Models\Entities\Brouillard.cs" />
+    <Compile Include="Models\Entities\Cash.cs" />
+    <Compile Include="Models\Entities\CashLine.cs" />
+    <Compile Include="Models\Entities\ClassSetup.cs" />
+    <Compile Include="Models\Entities\Company.cs" />
+    <Compile Include="Models\Entities\CostCenter.cs" />
+    <Compile Include="Models\Entities\Currency.cs" />
+    <Compile Include="Models\Entities\Customer.cs" />
+    <Compile Include="Models\Entities\Depreciation.cs" />
+    <Compile Include="Models\Entities\DepreciationDetail.cs" />
+    <Compile Include="Models\Entities\DetailCompta.cs" />
+    <Compile Include="Models\Entities\DetailDetailCompta.cs" />
+    <Compile Include="Models\Entities\DetailLogistic.cs" />
+    <Compile Include="Models\Entities\FiscalYear.cs" />
+    <Compile Include="Models\Entities\Journal.cs" />
+    <Compile Include="Models\Entities\JournalStock.cs" />
+    <Compile Include="Models\Entities\Localization.cs" />
+    <Compile Include="Models\Entities\LogException.cs" />
+    <Compile Include="Models\Entities\LookupAccountAmount.cs" />
+    <Compile Include="Models\Entities\MasterCompta.cs" />
+    <Compile Include="Models\Entities\MasterLogistic.cs" />
+    <Compile Include="Models\Entities\Menu.cs" />
+    <Compile Include="Models\Entities\PeriodicAccountBalance.cs" />
+    <Compile Include="Models\Entities\QuantityUnit.cs" />
+    <Compile Include="Models\Entities\Stock.cs" />
+    <Compile Include="Models\Entities\Store.cs" />
+    <Compile Include="Models\Entities\Supplier.cs" />
+    <Compile Include="Models\Entities\tempAccountAmount.cs" />
+    <Compile Include="Models\Entities\TypeBrouillard.cs" />
+    <Compile Include="Models\Entities\TypeJournal.cs" />
+    <Compile Include="Models\Entities\VAT.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IWSDataModel.cs" />
     <Compile Include="Models\IWSComboHelper.cs" />

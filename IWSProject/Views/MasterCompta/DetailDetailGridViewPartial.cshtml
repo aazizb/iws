@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
+@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -84,7 +85,7 @@
             {
                 combo.ValueField = "OID";
                 combo.ValueType = typeof(int);
-                combo.DataSource = IWSLookUp.GetDetailDetailComptaOID((int)Session["ModelId"],true);
+                combo.DataSource = IWSLookUp.GetDetailDetailComptaOID((int)Session["ModelId"], true);
                 combo.Columns.Add("Account").Caption = IWSLocalResource.account;
                 combo.Columns.Add("Side").Caption = IWSLocalResource.side;
                 combo.Columns.Add("OAccount").Caption = IWSLocalResource.oaccount;
@@ -109,16 +110,16 @@
             });
         });
 
-        #region Template
+#region Template
 
-        settings.SetEditFormTemplateContent(templateContent =>
+settings.SetEditFormTemplateContent(templateContent =>
         {
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
 
-                #region Button
+        #region Button
 
-                formLayoutSettings.Items.AddEmptyItem();
+        formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
@@ -153,9 +154,9 @@
                 }).Render();
                 });
 
-                #endregion
+        #endregion
 
-                formLayoutSettings.Name = "DetailDetailGridViewEdit";
+        formLayoutSettings.Name = "DetailDetailGridViewEdit";
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 3;
 
@@ -225,9 +226,9 @@
             .Render();
         });
 
-        #endregion
+#endregion
 
-        settings.DataBinding = (sender, e) =>
+settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(DetailDetailCompta));
         };
