@@ -438,11 +438,89 @@
             return account.Single().accountid;
 
         }
-
+        public static IEnumerable GetDepreciationPeriods()
+        {
+            var u = (from p in IWSEntities.Depreciations
+                join d in IWSEntities.DepreciationDetails on new { p.Id } equals new { Id = d.TransId }
+                where
+                  p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                select new
+                {
+                    d.Period
+                }).Distinct();
+            return u;
+        }
+        public static IEnumerable GetDepreciation(string period, DepreciationType depreciationType)
+        {
+            if (depreciationType.Equals(DepreciationType.Degressive))
+            {
+                return from p in IWSEntities.Depreciations
+                       join d in IWSEntities.DepreciationDetails on new { p.Id } equals new { Id = d.TransId }
+                       where
+                         d.Period == period &&
+                         p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                       select new
+                       {
+                           p.Id,
+                           p.Asset,
+                           p.CostOfAsset,
+                           d.Period,
+                           d.BookValue,
+                           d.Depreciation,
+                           d.Currency,
+                           d.IsValidated
+                       };
+            }
+            if (depreciationType.Equals(DepreciationType.StraightLine))
+            {
+                return from p in IWSEntities.Depreciations
+                       join d in IWSEntities.DepreciationDetails on new { p.Id } equals new { Id = d.TransId }
+                       where
+                         d.Period == period &&
+                         p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                       select new
+                       {
+                           p.Id,
+                           p.Asset,
+                           p.CostOfAsset,
+                           d.Period,
+                           BookValue = d.StraightLineBookValue,
+                           Depreciation = d.StraightLineDepreciation,
+                           d.Currency,
+                           d.IsValidated
+                       };
+            }
+            return null;
+        }
+        public static List<ImmoDetailViewModel> GetImmoDetail(string[] IDs, string period)
+        {       
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+            List<ImmoDetailViewModel> detail = new List<ImmoDetailViewModel>
+                (from d in IWSEntities.Depreciations
+                    join p in IWSEntities.DepreciationDetails on new { d.Id } equals new { Id = p.TransId }
+                    where
+                        IDs.Contains(p.TransId) &&
+                        p.Period == period &&
+                        d.CompanyId == companyId
+                    select new ImmoDetailViewModel()
+                    {
+                        CostCenter ="100",
+                        TransDate = DateTime.Now,
+                        ItemDate = DateTime.Now,
+                        EntryDate = DateTime.Now,
+                        Account = d.Account,
+                        Side = true,
+                        OAccount = d.OAccount,
+                        DueDate = DateTime.Now,
+                        CompanyId = d.CompanyId,
+                        Currency = d.Currency
+                    });
+            return detail;
+        }
         public static IEnumerable GetDepreciation() =>
             IWSEntities.Depreciations.Where(c => 
             c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).AsEnumerable();
-        public static IEnumerable GetDepreciationDetail(int transId) => IWSEntities.DepreciationDetails.Where(c =>
+        public static IEnumerable GetDepreciationDetail(string transId) => IWSEntities.DepreciationDetails.Where(c =>
                         c.TransId == transId).
                         OrderBy(o => o.Id).AsEnumerable();
 
@@ -2406,6 +2484,17 @@
             LineSettlement = 125,
             LineGeneralLedger = 135,
             Default = 0000
+        }
+        public enum DepreciationType
+        {
+            StraightLine=2,
+            Degressive = 4,
+            Default = 0
+        }
+        public enum DepreciationFrequency
+        {
+            Yearly=360,
+            Monthly=30
         }
         public enum Side
         {

@@ -1,0 +1,145 @@
+﻿@using IWSProject.Content
+<script type="text/javascript">
+
+    var selectedIDs = null;
+    var currentType = null;
+    var currentPeriod = null;
+
+    function OnBeginCallback(s, e) {
+        if (currentType !== null && currentPeriod !== null) {
+            e.customArgs["currentType"] = currentType;
+            e.customArgs["currentPeriod"] = currentPeriod;
+            e.customArgs["selectedIDs"] = selectedIDs;
+            selectedIDs = null;
+        }
+    }
+    function OnEndCallback() {
+        setGridHeaderCheckboxes(s, e);
+        TrackLayout(s.cpClientLayout);
+        if (currentType !== null && currentPeriod !== null) {
+            callbackPanelPartialView.PerformCallback();
+        }
+    }
+    function OnButtonClick() {
+        if (depreciation.IsCustomizationWindowVisible()) {
+
+            depreciation.HideCustomizationWindow();
+        }
+        else {
+            depreciation.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp() {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = depreciation.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function OnTypeSelectionChanged() {
+        currentType = ComboBoxType.GetValue();
+        currentPeriod = ComboBoxPeriod.GetValue();
+        if (!callbackPanelPartialView.InCallback()) {
+            callbackPanelPartialView.PerformCallback();
+        }
+    }
+    function OnPeriodSelectionChanged() {
+        currentPeriod = ComboBoxPeriod.GetValue();
+        currentType = ComboBoxType.GetValue();
+        if (!callbackPanelPartialView.InCallback()) {
+            callbackPanelPartialView.PerformCallback();
+        }
+    }
+    function TrackLayout(layout) {
+        $("#LastLayout").text(layout);
+    }
+    function OnSelectionChanged(s, e) {
+        setGridHeaderCheckboxes(s, e);
+        s.GetSelectedFieldValues("Id;Period;Depreciation", GetSelectedFieldValues);
+    }
+    function GetSelectedFieldValues(values) {
+        selectedIDs = values.join(';');
+    }
+    function OnSubmitClick(s, e) {
+        currentType = ComboBoxType.GetValue();
+        currentPeriod = ComboBoxPeriod.GetValue();
+        $("#selectedIDs").val(selectedIDs);
+        callbackPanelPartialView.PerformCallback();
+    }
+    function CheckedChanged(s, e) {
+        currentType = ComboBoxType.GetValue();
+        currentPeriod = ComboBoxPeriod.GetValue();
+        depreciation.PerformCallback({ isChecked: s.GetChecked() });
+    }
+    function setGridHeaderCheckboxes(s, e) {
+        var indexes = depreciation.cpIndiceSelected;
+        checkBoxAll.SetChecked(s.GetSelectedRowCount() !== Object.size(indexes));
+    }
+    Object.size = function (obj) {
+        var size = 0, key;
+
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) size++;
+        }
+        return size;
+    };
+</script>
+@{
+    ViewBag.Title = IWSLocalResource.Depreciation;
+}
+@using (Html.BeginForm("Index", "Depreciation"))
+{
+    @Html.Hidden("selectedIDs");
+
+    @Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "ComboBoxType";
+    settings.Width = Unit.Pixel(185);
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+    settings.Properties.Items.Add("", 0);
+    settings.Properties.Items.Add(IWSLocalResource.StraghtLineDepreciation, 2);
+    settings.Properties.Items.Add(IWSLocalResource.Degressive, 4);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s, e) { OnTypeSelectionChanged(); }";
+    settings.SelectedIndex = 0;
+}).GetHtml()
+
+    @Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "ComboBoxPeriod";
+    settings.Width = Unit.Pixel(185);
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+    settings.Properties.TextField = "Period";
+    settings.Properties.ValueField = "Period";
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s, e) { OnPeriodSelectionChanged(); }";
+    settings.SelectedIndex = 0;
+}).BindList(ViewBag.Period).GetHtml()
+
+    @Html.DevExpress().Button( settings =>
+{
+    settings.Name = "btnSubmit";
+    settings.ControlStyle.CssClass = "button";
+    settings.Text = "";
+    settings.ToolTip = IWSLocalResource.Validate;
+    settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+    settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
+    settings.Width = Unit.Pixel(80);
+    settings.UseSubmitBehavior = false;
+    settings.ClientSideEvents.Click = "OnSubmitClick";
+}).GetHtml()
+
+    @Html.DevExpress().Button(settings =>
+    {
+        settings.Name = "btShowCustomizationWindow";
+        settings.Text = IWSLocalResource.WindowCustomization;
+        settings.Width = Unit.Pixel(100);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnButtonClick";
+    }).GetHtml()
+
+    @Html.Partial("CallbackPanelPartialView")
+
+}
+

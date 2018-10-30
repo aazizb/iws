@@ -7,6 +7,7 @@ using IWSProject.Reports;
 using IWSProject.Models;
 namespace IWSProject.Controllers
 {
+    [Authorize]
     public class SalesInvoiceXRController : Controller
     {
         // GET: SalesInvoiceXR

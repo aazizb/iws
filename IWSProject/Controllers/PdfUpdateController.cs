@@ -14,6 +14,7 @@ using System.Web.UI;
 
 namespace IWSProject.Controllers
 {
+    [Authorize]
     public class PdfUpdateController : IWSBaseController
     {
         // GET: Home

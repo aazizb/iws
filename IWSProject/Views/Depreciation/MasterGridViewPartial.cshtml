@@ -1,0 +1,260 @@
+﻿@using IWSProject.Content
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "depreciation";
+
+        settings.CallbackRouteValues = new { Controller = "Depreciation", Action = "MasterGridViewPartial" };
+
+        settings.CustomActionRouteValues = new { Controller = "Depreciation", Action = "CustomGridViewCallback" };
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+        settings.SettingsContextMenu.Enabled = true;
+
+        settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
+
+        settings.CommandColumn.ShowSelectCheckbox = true;
+
+        settings.Styles.RowHotTrack.Cursor = "pointer";
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
+        settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
+
+        settings.ClientSideEvents.SelectionChanged = "OnSelectionChanged";
+        settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+        settings.ClientSideEvents.EndCallback = "OnEndCallback";
+
+        settings.CommandColumn.SetHeaderTemplateContent(c =>
+        {
+            Html.DevExpress().CheckBox(selectAll =>
+            {
+                selectAll.Name = "checkBoxAll";
+                selectAll.Text = IWSLocalResource.Select;
+                selectAll.Properties.ClientSideEvents.CheckedChanged = "CheckedChanged";
+            }).Render();
+        });
+        settings.BeforeGetCallbackResult = (s, e) =>
+        {
+            MVCxGridView gridView = (MVCxGridView)s;
+
+            int startIndex = gridView.VisibleStartIndex;
+
+            int visibleRowCount = gridView.GetCurrentPageRowValues("Id").Count;
+
+            int endIndex = startIndex + visibleRowCount - 1;
+            bool select = false;
+            bool isRowSeleted;
+            bool isValidated;
+
+            if (Session["checked"] != null)
+            {
+                select = (bool)Session["checked"];
+            }
+
+            Session["checked"] = false;
+
+            for (int i = startIndex; i <= endIndex; i++)
+            {
+
+                isValidated = (bool)gridView.GetRowValues(i, "IsValidated");
+
+                isRowSeleted = gridView.Selection.IsRowSelected(i);
+
+                if (select && !isValidated)
+                {
+                    gridView.Selection.SelectRow(i);
+
+                }
+                else
+                {
+                    if (isRowSeleted)
+                        gridView.Selection.UnselectRow(i);
+                }
+                if (isRowSeleted && !select)
+                    gridView.Selection.SelectRow(i);
+            }
+        };
+
+        settings.CommandColumn.Visible = true;
+
+        settings.CommandColumn.Width = Unit.Percentage(8);
+        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
+
+        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
+        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
+        settings.SettingsCommandButton.NewButton.Text = " ";
+        settings.CommandColumn.ShowNewButtonInHeader = false;
+
+        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
+        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
+        settings.SettingsCommandButton.EditButton.Text = " ";
+        settings.CommandColumn.ShowEditButton = false;
+
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
+        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
+        settings.SettingsCommandButton.DeleteButton.Text = " ";
+        settings.CommandColumn.ShowDeleteButton = false;
+
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+            e.Properties["cpIndexesSelected"] = g.Selection.Count;
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["DepreciationLayout"] != null)
+                    {
+                        e.LayoutData = Session["DepreciationLayout"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["DepreciationLayout"] = e.LayoutData;
+                    break;
+            }
+        };
+
+        settings.CommandButtonInitialize = (s, e) =>
+        {
+            MVCxGridView Grid = s as MVCxGridView;
+            if (e.ButtonType == ColumnCommandButtonType.SelectCheckbox)
+            {
+                bool value = (bool)Grid.GetRowValues(e.VisibleIndex, "IsValidated");
+                if (value == true) e.Enabled = e.Visible = false;
+            }
+        };
+
+        settings.KeyFieldName = "Id";
+
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowFilterRowMenu = true;
+        settings.SettingsBehavior.AllowFocusedRow = true;
+
+
+        settings.SettingsBehavior.ConfirmDelete = true;
+
+        settings.Width = Unit.Percentage(100);
+
+
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
+        settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+        settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+
+        settings.SettingsPager.PageSize = 19;
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Id";
+            column.Caption = IWSLocalResource.id;
+            column.Width = Unit.Percentage(8);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Period";
+            column.Caption = IWSLocalResource.periode;
+            column.Width = Unit.Percentage(10);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Asset";
+            column.Caption = IWSLocalResource.name;
+            column.Width = Unit.Percentage(36);
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CostOfAsset";
+            column.Caption = IWSLocalResource.CostOfAsset;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().TextBox(textBox =>
+            {
+                textBox.DisplayFormatString = "N";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "BookValue";
+            column.Caption = IWSLocalResource.BookValue;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().TextBox(textBox =>
+            {
+                textBox.DisplayFormatString = "N";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Depreciation";
+            column.Caption = IWSLocalResource.Depreciation;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().TextBox(textBox =>
+            {
+                textBox.DisplayFormatString = "N";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Currency";
+            column.Caption = IWSLocalResource.Currency;
+            column.Width = Unit.Percentage(10);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "IsValidated";
+            column.Caption = IWSLocalResource.IsValidated;
+            column.Width = Unit.Percentage(6);
+            column.EditorProperties().CheckBox(c =>
+            {
+
+            });
+        });
+        settings.CustomSummaryCalculate = (s, e) =>
+        {
+            ASPxSummaryItem item = ((ASPxSummaryItem)e.Item);
+
+            if (item.FieldName != "Currency")
+                return;
+
+            if (e.IsTotalSummary)
+            {
+                e.TotalValue = e.GetValue("Currency");
+            }
+        };
+
+        settings.SummaryDisplayText = (sender, e) =>
+        {
+            if (e.IsTotalSummary && e.Item.FieldName != "Currency")
+            {
+                e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
+            }
+        };
+        settings.Settings.ShowFooter = true;
+        settings.Settings.ShowGroupPanel = true;
+        settings.SettingsBehavior.AutoExpandAllGroups = true;
+        settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
+        settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "CostOfAsset").ShowInGroupFooterColumn = "CostOfAsset";
+        settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "BookValue").ShowInGroupFooterColumn = "BookValue";
+        settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Depreciation").ShowInGroupFooterColumn = "Depreciation";
+        settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
+
+    }).Bind(Model).GetHtml();
+}

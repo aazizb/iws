@@ -23,6 +23,8 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult ImmoGridViewPartial()
         {
+            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
+            ViewBag.Currency = IWSLookUp.GetCurrency();
             return PartialView("ImmoGridViewPartial", IWSLookUp.GetDepreciation());
         }
 
@@ -56,29 +58,28 @@ namespace IWSProject.Controllers
             return PartialView("ImmoGridViewPartial", IWSLookUp.GetDepreciation());
         }
 
-        private void SetDepreciation(Depreciation item)
+        private void SetDepreciation(Depreciation depreciation)
         {
-            int id = 0;
-            if (item.Id == 0)//new depreciation
-                id = db.Depreciations.Max(i => i.Id);
-            id = item.Id;   //update existing one
 
-            List<DepreciationInfo> depreciationInfos =
-            ComputeDepreciation((double)item.CostOfAsset, (double)item.ScrapValue, (int)item.LifeSpan, id);
+            List<DepreciationInfo> depreciationInfos = ComputeDepreciation((double)depreciation.CostOfAsset, (double)depreciation.ScrapValue,
+                                        (int)depreciation.LifeSpan, 30, depreciation.Id, (DateTime)depreciation.Started, depreciation.Currency);
 
             var depreciationDetails = db.DepreciationDetails;
-            foreach (var depreciationInfo in depreciationInfos)
+
+            foreach (var item in depreciationInfos)
             {
                 DepreciationDetail detail = new DepreciationDetail
                 {
-                    TransId = depreciationInfo.TransId,
-                    Period = depreciationInfo.Period,
-                    StraightLineDepreciation = (decimal)depreciationInfo.StraightLineDepreciation,
-                    StraightLineBookValue = (decimal)depreciationInfo.StraightLineBookValue,
-                    Depreciation = (decimal)depreciationInfo.Depreciation,
-                    Accumulated = (decimal)depreciationInfo.Accumulation,
-                    BookValue = (decimal)depreciationInfo.BookValue,
-                    Percentage = (decimal)depreciationInfo.Percentage
+                    TransId = item.TransId,
+                    Period = item.Period,
+                    StraightLineDepreciation = (decimal)item.StraightLineDepreciation,
+                    StraightLineBookValue = (decimal)item.StraightLineBookValue,
+                    Depreciation = (decimal)item.Depreciation,
+                    Accumulated = (decimal)item.Accumulation,
+                    BookValue = (decimal)item.BookValue,
+                    Percentage = (decimal)item.Percentage,
+                    Currency = item.Currency,
+                    IsValidated = false
                 };
                 depreciationDetails.InsertOnSubmit(detail);
             }
@@ -126,7 +127,7 @@ namespace IWSProject.Controllers
         }
 
         [HttpPost, ValidateInput(false)]
-        public ActionResult ImmoGridViewPartialDelete(int id)
+        public ActionResult ImmoGridViewPartialDelete(string id)
         {
             var model = db.Depreciations;
             try
@@ -143,6 +144,13 @@ namespace IWSProject.Controllers
             }
             return PartialView("ImmoGridViewPartial", IWSLookUp.GetDepreciation());
         }
+        [ValidateInput(false)]
+        public ActionResult ImmoDetailGridView(string transId)
+        {
+            ViewBag.TransId = transId;
+            return PartialView("ImmoDetailGridViewPartial", IWSLookUp.GetDepreciationDetail(transId));
+        }
+        [HttpPost, ValidateInput(false)]
         public ActionResult ImmoDetailDelete(int transId)
         {
             var model = db.DepreciationDetails;
@@ -162,33 +170,36 @@ namespace IWSProject.Controllers
             return null;
         }
         [ValidateInput(false)]
-        public ActionResult ImmoDetailGridView(int transId)
-        {
-            return PartialView("ImmoDetailGridViewPartial", IWSLookUp.GetDepreciationDetail(transId));
-        }
 
-        private List<DepreciationInfo> ComputeDepreciation(double costValue, double scrapValue, int period, int transId)
+        private List<DepreciationInfo> ComputeDepreciation(double costValue, double scrapValue, int lifeSpan, int frequency,
+                                                                        string transId, DateTime startDate, string currency)
         {
             List<DepreciationInfo> depreciation = new List<DepreciationInfo>();
 
-            if (costValue <= 0 || scrapValue <= 0 || period <= 0)
+            if (costValue <= 0 || scrapValue < 0 || lifeSpan <= 0 || costValue <= scrapValue)
                 return depreciation;
 
             double accumulation = 0;
 
             double bookValue = costValue - scrapValue;
 
-            double yearlyDepreciation = bookValue / period;
+            double yearlyDepreciation = bookValue / lifeSpan;
 
             double straightLineBookValue = costValue;  
 
             double expense = 0;
 
-            int sum = period * (period + 1) / 2;
+            int sum = lifeSpan * (lifeSpan + 1) / 2;
 
-            int totalPeriod = period;
+            int totalPeriod = lifeSpan;
+        
+            DateTime dateTimePeriod = startDate;
 
-            for (int px = 0; px < period; px++)
+            string stringPeriod;
+
+            string stringMonth;
+
+            for (int i = 0; i < lifeSpan; i++)
             {
                 double percentage = totalPeriod / (double)sum;
 
@@ -200,11 +211,17 @@ namespace IWSProject.Controllers
 
                 accumulation += expense;
 
+                dateTimePeriod = dateTimePeriod.AddDays(frequency);
+
+                stringMonth = dateTimePeriod.Month<10 ?  "0"+ dateTimePeriod.Month.ToString() : dateTimePeriod.Month.ToString();
+
+                stringPeriod = dateTimePeriod.Year + "-" + stringMonth;
+
                 DepreciationInfo dpInfo = new DepreciationInfo
                 {
                     TransId = transId,
 
-                    Period = px + 1,
+                    Period = stringPeriod,
 
                     StraightLineDepreciation = yearlyDepreciation,
 
@@ -216,7 +233,8 @@ namespace IWSProject.Controllers
 
                     BookValue = costValue,
 
-                    Percentage = percentage * 100
+                    Percentage = percentage * 100,
+                    Currency = currency
                 };
 
                 depreciation.Add(dpInfo);
@@ -228,9 +246,9 @@ namespace IWSProject.Controllers
     }
     public class DepreciationInfo
     {
-        public int TransId
+        public string TransId
         { get; set; }
-        public int Period
+        public string Period
         { get; set; }
         public double StraightLineDepreciation
         { get; set; }
@@ -244,5 +262,8 @@ namespace IWSProject.Controllers
         { get; set; }
         public double Percentage
         { get; set; }
+        public string Currency
+        { get; set; }
+
     }
 }

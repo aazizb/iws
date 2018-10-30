@@ -1,7 +1,7 @@
 ﻿@using IWSProject.Content
 <script type="text/javascript">
 
-    var selectedIDs=null;
+    var selectedIDs = null;
 
     function OnButtonClick() {
         if (BankStatementsGridView.IsCustomizationWindowVisible())
@@ -22,7 +22,7 @@
         selectedIDs = null;
     }
     function OnEndCallback(s, e) {
-        setGridHeaderCheckboxes(s, e);  
+        setGridHeaderCheckboxes(s, e);
         TrackLayout(s.cpClientLayout);
     }
     function TrackLayout(layout) {
@@ -30,9 +30,9 @@
     }
     function OnSelectionChanged(s, e) {
         setGridHeaderCheckboxes(s, e);
-        s.GetSelectedFieldValues("id;Betrag;Kontonummer", GetSelectedFieldValuesCallback);
+        s.GetSelectedFieldValues("id;Betrag;Kontonummer", GetSelectedFieldValues);
     }
-    function GetSelectedFieldValuesCallback(values) {
+    function GetSelectedFieldValues(values) {
         selectedIDs = values.join(';');
     }
     function OnSubmitClick(s, e) {
@@ -55,6 +55,7 @@
         return size;
     };
 </script>
+
 
 @{
     ViewBag.Title = IWSLocalResource.BankStatement;
@@ -86,7 +87,7 @@
     settings.ClientSideEvents.Click = "OnButtonClick";
 }).GetHtml()
 
-@Html.Partial("CallbackPanelPartialView")
+    @Html.Partial("CallbackPanelPartialView")
 
 }
 

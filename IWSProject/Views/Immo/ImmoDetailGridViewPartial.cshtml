@@ -7,7 +7,8 @@
         settings.Name = "ImmoDetailGridView";
         settings.Caption = IWSLocalResource.Depreciation;
         settings.SettingsDetail.MasterGridName = "ImmoGridViewPartial";
-        settings.CallbackRouteValues = new { Controller = "Immo", Action = "ImmoGridViewPartial", TransId = Session["TransId"] };
+
+        settings.CallbackRouteValues = new { Controller = "Immo", Action = "ImmoDetailGridView", TransId = ViewBag.TransId };
 
         settings.CommandColumn.ShowSelectCheckbox = true;
 
@@ -47,11 +48,11 @@
         settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
 
-
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         settings.SettingsPager.Visible = true;
+
         settings.Settings.ShowGroupPanel = true;
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowFilterRowMenu = true;

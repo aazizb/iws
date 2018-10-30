@@ -1,12 +1,10 @@
 ﻿@using IWSProject.Content
-@using IWSProject.Models
 @using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "BankStatementsGridView";
-
-
+        
         settings.CallbackRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartial" };
 
         settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartialAddNew" };
@@ -145,7 +143,6 @@
             MVCxGridView Grid = s as MVCxGridView;
             if (e.ButtonType == ColumnCommandButtonType.SelectCheckbox)
             {
-
                 bool value = (bool)Grid.GetRowValues(e.VisibleIndex, "IsValidated");
                 if (value == true) e.Enabled = e.Visible = false;
             }
@@ -512,9 +509,6 @@ settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(BankStatement));
         };
-
-
-
 
     });
     if (ViewData["GenericError"] != null)

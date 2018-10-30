@@ -9,6 +9,7 @@ using System.Web.Mvc;
 
 namespace IWSProject.Controllers
 {
+    [Authorize]
     public class ReportController : Controller
     {
         public ActionResult Index()

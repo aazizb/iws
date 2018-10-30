@@ -1,0 +1,15 @@
+﻿@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "callbackPanelPartialView";
+    settings.CallbackRouteValues = new { Controller = "Depreciation", Action = "CallbackPanelPartialView" };
+
+    settings.SetContent(() =>
+    {
+        @Html.RenderPartial("MasterGridViewPartial");
+
+    });
+    settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+    settings.ClientSideEvents.EndCallback = "OnEndCallback";
+}).GetHtml()
+
+

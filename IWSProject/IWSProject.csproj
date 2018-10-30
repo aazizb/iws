@@ -412,6 +412,9 @@
     <Content Include="Views\Immo\Index.cshtml" />
     <Content Include="Views\Immo\ImmoGridViewPartial.cshtml" />
     <Content Include="Views\Immo\ImmoDetailGridViewPartial.cshtml" />
+    <Content Include="Views\Depreciation\Index.cshtml" />
+    <Content Include="Views\Depreciation\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\Depreciation\MasterGridViewPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -455,6 +458,7 @@
     <Compile Include="Controllers\AffectationJournalController.cs" />
     <Compile Include="Controllers\BrouillardController.cs" />
     <Compile Include="Controllers\CashController.cs" />
+    <Compile Include="Controllers\DepreciationController.cs" />
     <Compile Include="Controllers\ExceptionLogController.cs" />
     <Compile Include="Controllers\FiscalYearController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

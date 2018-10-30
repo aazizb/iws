@@ -3,6 +3,7 @@ using System.Web.Mvc;
 
 namespace IWSProject.Controllers
 {
+    [Authorize]
     public class UnpaidBillController : Controller
     {
         // GET: 

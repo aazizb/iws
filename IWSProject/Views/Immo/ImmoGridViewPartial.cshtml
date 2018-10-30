@@ -4,7 +4,10 @@
     {
         settings.Name = "ImmoGridView";
 
-        settings.CallbackRouteValues = new { Controller = "Immo", Action = "ImmoGridViewPartial" };
+        settings.CallbackRouteValues = new
+        {
+            Controller = "Immo",
+            Action = "ImmoGridViewPartial" };
 
         settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Immo", Action = "ImmoGridViewPartialAddNew" };
         settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Immo", Action = "ImmoGridViewPartialUpdate" };
@@ -70,6 +73,14 @@
                     break;
             }
         };
+        settings.InitNewRow = (s, e) =>
+        {
+            e.NewValues["Posted"] = DateTime.Today;
+            e.NewValues["Updated"] = DateTime.Today;
+            e.NewValues["Started"] = DateTime.Today;
+            e.NewValues["IsValidated"] = false;
+            e.NewValues["ScrapValue"] = 0;
+        };
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
@@ -113,9 +124,89 @@
         settings.Columns.Add(column =>
         {
             column.FieldName = "Asset";
-            column.Caption = IWSLocalResource.Asset;
-            column.Width = Unit.Percentage(25);
+            column.Caption = IWSLocalResource.name;
+            column.Width = Unit.Percentage(20);
         });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "CostOfAsset";
+            column.Caption = IWSLocalResource.CostOfAsset;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().TextBox(p =>
+            {
+                p.DisplayFormatString = "N";
+                p.DisplayFormatInEditMode = true;
+                p.Width = Unit.Percentage(100);
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "ScrapValue";
+            column.Caption = IWSLocalResource.ScrapValue;
+            column.Width = Unit.Percentage(10);
+            column.EditorProperties().TextBox(p =>
+            {
+                p.DisplayFormatString = "N";
+                p.DisplayFormatInEditMode = true;
+                p.Width = Unit.Percentage(100);
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Currency";
+            column.Caption = IWSLocalResource.Currency;
+            column.Width = Unit.Percentage(5);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = ViewBag.Currency;
+                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("name", IWSLocalResource.Currency, Unit.Percentage(50));
+                combo.TextFormatString = "{1}";
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "LifeSpan";
+            column.Caption = IWSLocalResource.LifeSpan;
+            column.Width = Unit.Percentage(10);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Started";
+            column.Caption = IWSLocalResource.StartedDate;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(6);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormatString = "MM/dd/yyyy";
+                d.EditFormat = EditFormat.Custom;
+                d.Width = Unit.Percentage(100);
+                d.DisplayFormatString = "yyyy-MM-dd";
+            });
+        });
+
+        //settings.Columns.Add(column =>
+        //{
+        //    column.FieldName = "Frequency";
+        //    column.Caption = IWSLocalResource.Frequency;
+        //    column.Width = Unit.Percentage(13);
+        //    column.EditorProperties().ComboBox(combo =>
+        //    {
+        //        combo.TextField = "Name";
+        //        combo.ValueField = "id";
+        //        combo.ValueType = typeof(string);
+
+        //        combo.DataSource = ViewBag.Currency;
+
+        //        combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+        //        combo.Columns.Add("name", IWSLocalResource.Currency, Unit.Percentage(50));
+        //        combo.TextFormatString = "{1}";
+        //    });
+        //});
+
         settings.Columns.Add(column =>
         {
             column.FieldName = "Updated";
@@ -129,6 +220,7 @@
                 d.Width = Unit.Percentage(100);
                 d.DisplayFormatString = "yyyy-MM-dd";
             });
+            column.Visible = false;
         });
         settings.Columns.Add(column =>
         {
@@ -142,36 +234,7 @@
                 d.Width = Unit.Percentage(100);
                 d.DisplayFormatString = "yyyy-MM-dd";
             });
-        });
-        settings.Columns.Add(column =>
-        {
-            column.FieldName = "CostOfAsset";
-            column.Caption = IWSLocalResource.CostOfAsset;
-            column.Width = Unit.Percentage(18);
-            column.EditorProperties().TextBox(p =>
-            {
-                p.DisplayFormatString = "N";
-                p.DisplayFormatInEditMode = true;
-                p.Width = Unit.Percentage(100);
-            });
-        });
-        settings.Columns.Add(column =>
-        {
-            column.FieldName = "ScrapValue";
-            column.Caption = IWSLocalResource.ScrapValue;
-            column.Width = Unit.Percentage(18);
-            column.EditorProperties().TextBox(p =>
-            {
-                p.DisplayFormatString = "N";
-                p.DisplayFormatInEditMode = true;
-                p.Width = Unit.Percentage(100);
-            });
-        });
-        settings.Columns.Add(column =>
-        {
-            column.FieldName = "LifeSpan";
-            column.Caption = IWSLocalResource.LifeSpan;
-            column.Width = Unit.Percentage(18);
+            column.Visible = false;
         });
 
         #region Template Edit
@@ -184,17 +247,32 @@
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 3;
                 formLayoutSettings.Items.AddEmptyItem();
-
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "Asset";
-                    i.Caption = IWSLocalResource.Asset;
+                    i.FieldName = "Id";
+                    i.Caption = IWSLocalResource.id;
                     i.Width = Unit.Percentage(50);
                     i.NestedExtension().TextBox(s =>
                     {
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(75);
+                        s.TabIndex = 1;
+                    });
+                });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Asset";
+                    i.Caption = IWSLocalResource.name;
+                    i.Width = Unit.Percentage(50);
+                    i.NestedExtension().TextBox(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(75);
+                        s.TabIndex = 2;
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
@@ -210,6 +288,7 @@
                         s.ShowModelErrors = true;
                         s.Properties.DisplayFormatString = "N";
                         s.Width = Unit.Percentage(75);
+                        s.TabIndex = 3;
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
@@ -225,8 +304,73 @@
                         s.ShowModelErrors = true;
                         s.Properties.DisplayFormatString = "N";
                         s.Width = Unit.Percentage(75);
+                        s.TabIndex = 4;
                     });
                 });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Currency";
+                    i.Caption = IWSLocalResource.Currency;
+                    i.NestedExtension().ComboBox(s =>
+                    {
+                        s.Properties.TextField = "name";
+                        s.Properties.ValueField = "id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = ViewBag.Currency;
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "id";
+                            column.Caption = IWSLocalResource.id;
+                            column.Width = Unit.Percentage(15);
+
+                        });
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "name";
+                            column.Caption = IWSLocalResource.Currency;
+                            column.Width = Unit.Percentage(85);
+
+                        });
+                        s.Properties.TextFormatString = "{1}";
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(75.1);
+                        s.TabIndex = 5;
+                    });
+                });
+                //formLayoutSettings.Items.Add(i =>
+                //{
+                //    i.FieldName = "Currency";
+                //    i.Caption = IWSLocalResource.Currency;
+                //    i.NestedExtension().ComboBox(s =>
+                //    {
+                //        s.Properties.TextField = "name";
+                //        s.Properties.ValueField = "id";
+                //        s.Properties.ValueType = typeof(string);
+                //        s.Properties.DataSource = ViewBag.Currency;
+                //        s.Properties.Columns.Add(column =>
+                //        {
+                //            column.FieldName = "id";
+                //            column.Caption = IWSLocalResource.id;
+                //            column.Width = Unit.Percentage(20);
+
+                //        });
+                //        s.Properties.Columns.Add(column =>
+                //        {
+                //            column.FieldName = "name";
+                //            column.Caption = IWSLocalResource.Currency;
+                //            column.Width = Unit.Percentage(80);
+
+                //        });
+                //        s.Properties.TextFormatString = "{1}";
+                //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                //        s.ShowModelErrors = false;
+                //        s.Width = Unit.Percentage(75.1);
+                //        s.TabIndex = 5;
+                //    });
+                //});
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
@@ -239,6 +383,156 @@
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(75);
+                        s.TabIndex = 6;
+                    });
+                });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Started";
+                    i.Caption = IWSLocalResource.StartedDate;
+                    i.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
+                    i.NestedExtension().DateEdit(s =>
+                    {
+                        s.Properties.UseMaskBehavior = true;
+                        s.Properties.EditFormat = EditFormat.Date;
+                        s.Width = Unit.Percentage(70.5);
+                        s.Properties.AllowUserInput = true;
+                        s.Properties.AllowMouseWheel = true;
+                        s.TabIndex = 7;
+                    });
+                });
+                //formLayoutSettings.Items.AddEmptyItem();
+                //formLayoutSettings.Items.AddEmptyItem();
+                //formLayoutSettings.Items.Add(i =>
+                //{
+                //    i.FieldName = "Type";
+                //    i.Caption = IWSLocalResource.Type;
+                //    i.NestedExtension().ComboBox(s =>
+                //    {
+                //        s.Properties.TextField = "name";
+                //        s.Properties.ValueField = "id";
+                //        s.Properties.ValueType = typeof(string);
+                //        s.Properties.DataSource = ViewBag.ComboAccountId;
+                //        s.Properties.Columns.Add(column =>
+                //        {
+                //            column.FieldName = "id";
+                //            column.Caption = IWSLocalResource.id;
+                //            column.Width = Unit.Percentage(15);
+
+                //        });
+                //        s.Properties.Columns.Add(column =>
+                //        {
+                //            column.FieldName = "name";
+                //            column.Caption = IWSLocalResource.account;
+                //            column.Width = Unit.Percentage(85);
+
+                //        });
+                //        s.Properties.TextFormatString = "{0}-{1}";
+                //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                //        s.ShowModelErrors = true;
+                //        s.Width = Unit.Percentage(75.1);
+                //    });
+                //});
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
+
+
+
+                //formLayoutSettings.Items.Add(i =>
+                //{
+                //    i.FieldName = "Frequency";
+                //    i.Caption = IWSLocalResource.Frequency;
+                //    i.NestedExtension().ComboBox(s =>
+                //    {
+                //        s.Properties.TextField = "name";
+                //        s.Properties.ValueField = "id";
+                //        s.Properties.ValueType = typeof(string);
+                //        s.Properties.DataSource = ViewBag.ComboAccountId;
+                //        s.Properties.Columns.Add(column =>
+                //        {
+                //            column.FieldName = "id";
+                //            column.Caption = IWSLocalResource.id;
+                //            column.Width = Unit.Percentage(15);
+
+                //        });
+                //        s.Properties.Columns.Add(column =>
+                //        {
+                //            column.FieldName = "name";
+                //            column.Caption = IWSLocalResource.account;
+                //            column.Width = Unit.Percentage(85);
+
+                //        });
+                //        s.Properties.TextFormatString = "{0}-{1}";
+                //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                //        s.ShowModelErrors = true;
+                //        s.Width = Unit.Percentage(75.1);
+                //    });
+                //});
+
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Account";
+                    i.Caption = IWSLocalResource.account;
+                    i.NestedExtension().ComboBox(s =>
+                    {
+                        s.Properties.TextField = "name";
+                        s.Properties.ValueField = "id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "id";
+                            column.Caption = IWSLocalResource.id;
+                            column.Width = Unit.Percentage(15);
+
+                        });
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "name";
+                            column.Caption = IWSLocalResource.account;
+                            column.Width = Unit.Percentage(85);
+
+                        });
+                        s.Properties.TextFormatString = "{0}-{1}";
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(75.1);
+                        s.TabIndex = 8;
+                    });
+                });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "OAccount";
+                    i.Caption = IWSLocalResource.oaccount;
+                    i.NestedExtension().ComboBox(s =>
+                    {
+                        s.Properties.TextField = "name";
+                        s.Properties.ValueField = "id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "id";
+                            column.Caption = IWSLocalResource.id;
+                            column.Width = Unit.Percentage(15);
+
+                        });
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "name";
+                            column.Caption = IWSLocalResource.account;
+                            column.Width = Unit.Percentage(85);
+
+                        });
+                        s.Properties.TextFormatString = "{0}-{1}";
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(75.1);
+                        s.TabIndex = 9;
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
@@ -261,6 +555,7 @@
                     b.Images.Image.IconID = IconID.ActionsApply16x16;
                     b.Width = Unit.Pixel(80);
                     b.ClientSideEvents.Click = "function(s, e){ ImmoGridView.UpdateEdit(); }";
+                    b.TabIndex = 10;
                 }).Render();
 
                     Html.DevExpress().Button(
@@ -273,6 +568,7 @@
                     b.Images.Image.IconID = IconID.ActionsCancel16x16;
                     b.Width = Unit.Pixel(80);
                     b.ClientSideEvents.Click = "function(s, e){ ImmoGridView.CancelEdit(); }";
+                    b.TabIndex = 11;
                 }).Render();
                 });
             })
@@ -281,11 +577,14 @@
         });
 
         #endregion
-
+        //settings.SetDetailRowTemplateContent(c =>
+        //{
+        //    Html.RenderAction("GridViewDetail", new { ID = DataBinder.Eval(c.DataItem, "ID") });
+        //});
         settings.SetDetailRowTemplateContent(c =>
         {
-            Session["TransId"] = DataBinder.Eval(c.DataItem, "Id");
-            Html.RenderAction("ImmoDetailGridView", new { TransId = Session["TransId"] });
+            //Session["TransId"] = DataBinder.Eval(c.DataItem, "Id");
+            Html.RenderAction("ImmoDetailGridView", new { TransId = DataBinder.Eval(c.DataItem, "Id") });
         });
     });
     if (ViewData["GenericError"] != null)
@@ -294,4 +593,3 @@
     }
 }
 @grid.Bind(Model).GetHtml()
-

@@ -1006,7 +1006,7 @@
     <value>Depreciation</value>
   </data>
   <data name="FixedAsset" xml:space="preserve">
-    <value>Fixed Aset</value>
+    <value>Fixed Asset</value>
   </data>
   <data name="LifeSpan" xml:space="preserve">
     <value>Life Span</value>
@@ -1025,5 +1025,23 @@
   </data>
   <data name="SumOfYears" xml:space="preserve">
     <value>Sum of Periods</value>
+  </data>
+  <data name="Degressive" xml:space="preserve">
+    <value>Degressive</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="StartedDate" xml:space="preserve">
+    <value>Started Date</value>
+  </data>
+  <data name="StraightLine" xml:space="preserve">
+    <value>Straight Line</value>
+  </data>
+  <data name="Yearly" xml:space="preserve">
+    <value>Yearly</value>
+  </data>
+  <data name="Frequency" xml:space="preserve">
+    <value>Frequency</value>
   </data>
 </root>

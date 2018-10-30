@@ -39,7 +39,7 @@
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(string selectedIDs)
         {
-            #region MyRegion
+            #region data processing
             string msg = string.Empty;
 
             string selectedItems = selectedIDs;

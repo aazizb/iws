@@ -112,9 +112,6 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial", 
                         IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
-
-
-
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] MasterCompta item)
         {
@@ -203,6 +200,7 @@ namespace IWSProject.Controllers
                     model.InsertOnSubmit(line);
                     db.SubmitChanges();
                     IWSLookUp.SetJournal(transId);
+                    db.SubmitChanges();
                 }
                 catch (Exception e)
                 {
@@ -413,7 +411,6 @@ namespace IWSProject.Controllers
             }
             db.SubmitChanges();
         }
- 
         public ActionResult HeaderText(int selectedOIDIndex)
         {
             return Json(IWSLookUp.GetHeaderText(selectedOIDIndex, (int)Session["ModelId"]));
@@ -510,7 +507,6 @@ namespace IWSProject.Controllers
             return null;
         }
         #endregion
-
     }
 
 }

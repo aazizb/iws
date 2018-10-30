@@ -288,6 +288,22 @@ namespace IWSProject.Models
         public string Currency { get; set; }
         public string Text { get; set; }
     }
+    public class ImmoDetailViewModel
+    {
+        public string CostCenter { get; set; }
+        public DateTime TransDate { get; set; }
+        public DateTime ItemDate { get; set; }
+        public DateTime EntryDate { get; set; }
+        public string Account { get; set; }
+        public string OAccount { get; set; }
+        public bool Side { get; set; }
+        public DateTime DueDate { get; set; }
+        public decimal Amount { get; set; }
+        public string Currency { get; set; }
+        public string CompanyId { get; set; }
+        public int ModelId { get; set; }
+        public bool IsValidated { get; set; }
+    }
     public class BrouillardViewModel
     {
         public int OID { get; set; }

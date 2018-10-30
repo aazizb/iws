@@ -790,6 +790,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Degressive.
+        /// </summary>
+        public static string Degressive {
+            get {
+                return ResourceManager.GetString("Degressive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delivery terms.
         /// </summary>
         public static string DeliveryTerms {
@@ -1078,7 +1087,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fixed Aset.
+        ///   Looks up a localized string similar to Fixed Asset.
         /// </summary>
         public static string FixedAsset {
             get {
@@ -1092,6 +1101,15 @@ namespace IWSProject.Content {
         public static string FooterText {
             get {
                 return ResourceManager.GetString("FooterText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Frequency.
+        /// </summary>
+        public static string Frequency {
+            get {
+                return ResourceManager.GetString("Frequency", resourceCulture);
             }
         }
         
@@ -1677,6 +1695,15 @@ namespace IWSProject.Content {
         public static string Month {
             get {
                 return ResourceManager.GetString("Month", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Monthly.
+        /// </summary>
+        public static string Monthly {
+            get {
+                return ResourceManager.GetString("Monthly", resourceCulture);
             }
         }
         
@@ -2329,6 +2356,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Started Date.
+        /// </summary>
+        public static string StartedDate {
+            get {
+                return ResourceManager.GetString("StartedDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to State.
         /// </summary>
         public static string state {
@@ -2379,6 +2415,15 @@ namespace IWSProject.Content {
         public static string StraghtLineDepreciation {
             get {
                 return ResourceManager.GetString("StraghtLineDepreciation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Straight Line.
+        /// </summary>
+        public static string StraightLine {
+            get {
+                return ResourceManager.GetString("StraightLine", resourceCulture);
             }
         }
         
@@ -2775,6 +2820,15 @@ namespace IWSProject.Content {
         public static string Year {
             get {
                 return ResourceManager.GetString("Year", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yearly.
+        /// </summary>
+        public static string Yearly {
+            get {
+                return ResourceManager.GetString("Yearly", resourceCulture);
             }
         }
         
