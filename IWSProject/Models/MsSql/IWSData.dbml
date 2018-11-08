@@ -1,31 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="consolid" Class="IWSDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=(LocalDB)\MSSQLLOcalDB;Initial Catalog=consolid;Integrated Security=True" SettingsObjectName="IWSProject.Properties.Settings" SettingsPropertyName="consolidConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.Depreciation" Member="Depreciations">
-    <Type Name="Depreciation">
-      <Column Name="Id" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="CostOfAsset" Type="System.Decimal" DbType="Money" CanBeNull="true" />
-      <Column Name="ScrapValue" Type="System.Decimal" DbType="Money" CanBeNull="true" />
-      <Column Name="LifeSpan" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Currency" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Asset" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Account" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="OAccount" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
-      <Column Name="Frequency" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Started" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
-      <Column Name="CompanyId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="ModelId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Posted" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
-      <Column Name="Updated" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.DepreciationDetail" Member="DepreciationDetails">
     <Type Name="DepreciationDetail">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="TransId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Period" Type="System.String" DbType="NVarChar(7) NOT NULL" CanBeNull="false" />
       <Column Name="Depreciation" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
-      <Column Name="StraightLineDepreciation" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
-      <Column Name="StraightLineBookValue" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
       <Column Name="Accumulated" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
       <Column Name="BookValue" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
       <Column Name="Percentage" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />

@@ -1,5 +1,4 @@
 ﻿@using IWSProject.Content
-@using IWSProject.Models
 @using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -215,7 +214,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                 }).Render();
                 });
             })
-            .Bind(ViewData["Currencies"] ?? templateContent.DataItem)
+            .Bind(ViewBag.Currencies ?? templateContent.DataItem)
             .Render();
         });
 #endregion

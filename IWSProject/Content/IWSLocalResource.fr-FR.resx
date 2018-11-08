@@ -1033,7 +1033,7 @@
     <value>Somme Périodes</value>
   </data>
   <data name="Degressive" xml:space="preserve">
-    <value>Dégressif</value>
+    <value>Dégressive</value>
   </data>
   <data name="Monthly" xml:space="preserve">
     <value>Mensuel</value>
@@ -1049,5 +1049,8 @@
   </data>
   <data name="Frequency" xml:space="preserve">
     <value>Frequence</value>
+  </data>
+  <data name="DecliningRate" xml:space="preserve">
+    <value>Taux de dépréciation</value>
   </data>
 </root>

@@ -33,7 +33,7 @@ namespace IWSProject.Controllers
         {
             var model = db.Depreciations;
             item.CompanyId = (string)Session["CompanyID"];
-            item.ModelId = (int)IWSLookUp.MetaModelId.Immo;
+            item.ModelId = (int)IWSLookUp.MetaModelId.Asset;
             item.Posted = DateTime.Now.Date;
             item.Updated = DateTime.Now.Date;
             ViewData["immo"] = item;
@@ -72,8 +72,8 @@ namespace IWSProject.Controllers
                 {
                     TransId = item.TransId,
                     Period = item.Period,
-                    StraightLineDepreciation = (decimal)item.StraightLineDepreciation,
-                    StraightLineBookValue = (decimal)item.StraightLineBookValue,
+                    //StraightLineDepreciation = (decimal)item.StraightLineDepreciation,
+                    //StraightLineBookValue = (decimal)item.StraightLineBookValue,
                     Depreciation = (decimal)item.Depreciation,
                     Accumulated = (decimal)item.Accumulation,
                     BookValue = (decimal)item.BookValue,
@@ -170,7 +170,6 @@ namespace IWSProject.Controllers
             return null;
         }
         [ValidateInput(false)]
-
         private List<DepreciationInfo> ComputeDepreciation(double costValue, double scrapValue, int lifeSpan, int frequency,
                                                                         string transId, DateTime startDate, string currency)
         {
@@ -211,9 +210,11 @@ namespace IWSProject.Controllers
 
                 accumulation += expense;
 
-                dateTimePeriod = dateTimePeriod.AddDays(frequency);
+                dateTimePeriod = dateTimePeriod.AddMonths(1);
 
-                stringMonth = dateTimePeriod.Month<10 ?  "0"+ dateTimePeriod.Month.ToString() : dateTimePeriod.Month.ToString();
+                stringMonth = dateTimePeriod.Month < 10 ?  
+                        "0"+ dateTimePeriod.Month.ToString() :
+                                    dateTimePeriod.Month.ToString();
 
                 stringPeriod = dateTimePeriod.Year + "-" + stringMonth;
 
@@ -244,26 +245,5 @@ namespace IWSProject.Controllers
             return depreciation;
         }
     }
-    public class DepreciationInfo
-    {
-        public string TransId
-        { get; set; }
-        public string Period
-        { get; set; }
-        public double StraightLineDepreciation
-        { get; set; }
-        public double StraightLineBookValue
-        { get; set; }
-        public double Depreciation
-        { get; set; }
-        public double Accumulation
-        { get; set; }
-        public double BookValue
-        { get; set; }
-        public double Percentage
-        { get; set; }
-        public string Currency
-        { get; set; }
 
-    }
 }

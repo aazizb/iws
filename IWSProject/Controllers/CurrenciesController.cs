@@ -33,7 +33,7 @@ namespace IWSProject.Controllers
             item.ModelId = (int)IWSLookUp.MetaModelId.Currency;
             item.Posted = DateTime.Now.Date;
             item.Updated = DateTime.Now.Date;
-            ViewData["Currencies"] = item;
+            ViewBag.Currencies = item;
             if (ModelState.IsValid)
             {
                 try
@@ -60,7 +60,8 @@ namespace IWSProject.Controllers
         {
             var model = db.Currencies;
 
-            ViewData["Currencies"] = item;
+            ViewBag.Currencies = item;
+            
             if (ModelState.IsValid)
             {
                 try

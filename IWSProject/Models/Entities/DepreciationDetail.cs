@@ -18,10 +18,6 @@ namespace IWSProject.Models.Entities
 
         private decimal _Depreciation;
 
-        private decimal _StraightLineDepreciation;
-
-        private decimal _StraightLineBookValue;
-
         private decimal _Accumulated;
 
         private decimal _BookValue;
@@ -44,10 +40,6 @@ namespace IWSProject.Models.Entities
         partial void OnPeriodChanged();
         partial void OnDepreciationChanging(decimal value);
         partial void OnDepreciationChanged();
-        partial void OnStraightLineDepreciationChanging(decimal value);
-        partial void OnStraightLineDepreciationChanged();
-        partial void OnStraightLineBookValueChanging(decimal value);
-        partial void OnStraightLineBookValueChanged();
         partial void OnAccumulatedChanging(decimal value);
         partial void OnAccumulatedChanged();
         partial void OnBookValueChanging(decimal value);
@@ -141,46 +133,6 @@ namespace IWSProject.Models.Entities
                     this._Depreciation = value;
                     this.SendPropertyChanged("Depreciation");
                     this.OnDepreciationChanged();
-                }
-            }
-        }
-
-        [ColumnAttribute(Storage = "_StraightLineDepreciation", DbType = "Money NOT NULL")]
-        public decimal StraightLineDepreciation
-        {
-            get
-            {
-                return this._StraightLineDepreciation;
-            }
-            set
-            {
-                if ((this._StraightLineDepreciation != value))
-                {
-                    this.OnStraightLineDepreciationChanging(value);
-                    this.SendPropertyChanging();
-                    this._StraightLineDepreciation = value;
-                    this.SendPropertyChanged("StraightLineDepreciation");
-                    this.OnStraightLineDepreciationChanged();
-                }
-            }
-        }
-
-        [ColumnAttribute(Storage = "_StraightLineBookValue", DbType = "Money NOT NULL")]
-        public decimal StraightLineBookValue
-        {
-            get
-            {
-                return this._StraightLineBookValue;
-            }
-            set
-            {
-                if ((this._StraightLineBookValue != value))
-                {
-                    this.OnStraightLineBookValueChanging(value);
-                    this.SendPropertyChanging();
-                    this._StraightLineBookValue = value;
-                    this.SendPropertyChanged("StraightLineBookValue");
-                    this.OnStraightLineBookValueChanged();
                 }
             }
         }

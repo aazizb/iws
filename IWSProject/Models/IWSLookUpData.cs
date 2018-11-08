@@ -450,6 +450,24 @@
                 }).Distinct();
             return u;
         }
+        public static IEnumerable GetDepreciation(string period)
+        {
+            return from p in IWSEntities.Assets
+                   join d in IWSEntities.DepreciationDetails on new { p.Id } equals new { Id = d.TransId }
+                   where
+                     d.Period == period &&
+                     p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
+                   select new
+                   {
+                       p.Id,
+                       Asset = p.Name,
+                       d.Period,
+                       d.BookValue,
+                       d.Depreciation,
+                       d.Currency,
+                       d.IsValidated
+                   };
+        }
         public static IEnumerable GetDepreciation(string period, DepreciationType depreciationType)
         {
             if (depreciationType.Equals(DepreciationType.Degressive))
@@ -484,39 +502,89 @@
                            p.Asset,
                            p.CostOfAsset,
                            d.Period,
-                           BookValue = d.StraightLineBookValue,
-                           Depreciation = d.StraightLineDepreciation,
+                           d.BookValue,
+                           d.Depreciation,
                            d.Currency,
                            d.IsValidated
                        };
             }
             return null;
         }
-        public static List<ImmoDetailViewModel> GetImmoDetail(string[] IDs, string period)
-        {       
-            string companyId = (string)HttpContext.Current.Session["CompanyID"];
-            List<ImmoDetailViewModel> detail = new List<ImmoDetailViewModel>
-                (from d in IWSEntities.Depreciations
-                    join p in IWSEntities.DepreciationDetails on new { d.Id } equals new { Id = p.TransId }
-                    where
-                        IDs.Contains(p.TransId) &&
-                        p.Period == period &&
-                        d.CompanyId == companyId
-                    select new ImmoDetailViewModel()
-                    {
-                        CostCenter ="100",
-                        TransDate = DateTime.Now,
-                        ItemDate = DateTime.Now,
-                        EntryDate = DateTime.Now,
-                        Account = d.Account,
-                        Side = true,
-                        OAccount = d.OAccount,
-                        DueDate = DateTime.Now,
-                        CompanyId = d.CompanyId,
-                        Currency = d.Currency
-                    });
+        public static ImmoDetailViewModel GetImmoDetail(string IDs, string period)
+        {
+            string companyId = (string)HttpContext.Current.Session["CompanyID"]; 
+            ImmoDetailViewModel detail = 
+                (from d in IWSEntities.Assets
+                 join p in IWSEntities.DepreciationDetails on new { d.Id } equals new { Id = p.TransId }
+                 where
+                     IDs.Equals(p.TransId) &&
+                     p.Period == period &&
+                     d.CompanyId == companyId
+                 select new ImmoDetailViewModel()
+                 {
+                     CostCenter = "100",
+                     TransDate = DateTime.Now,
+                     ItemDate = DateTime.Now,
+                     EntryDate = DateTime.Now,
+                     Account = d.Account,
+                     Side = true,
+                     OAccount = d.OAccount,
+                     DueDate = DateTime.Now,
+                     CompanyId = d.CompanyId,
+                     Currency = d.Currency
+                 }).SingleOrDefault<ImmoDetailViewModel>();
             return detail;
         }
+        public static List<ImmoDetailViewModel> GetImmoDetail(string[] IDs, string period)
+        {
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+            List<ImmoDetailViewModel> detail = new List<ImmoDetailViewModel>
+                (from d in IWSEntities.Assets
+                 join p in IWSEntities.DepreciationDetails on new { d.Id } equals new { Id = p.TransId }
+                 where
+                     IDs.Contains(p.TransId) &&
+                     p.Period == period &&
+                     d.CompanyId == companyId
+                 select new ImmoDetailViewModel()
+                 {
+                     CostCenter = "100",
+                     TransDate = DateTime.Now,
+                     ItemDate = DateTime.Now,
+                     EntryDate = DateTime.Now,
+                     Account = d.Account,
+                     Side = true,
+                     OAccount = d.OAccount,
+                     DueDate = DateTime.Now,
+                     CompanyId = d.CompanyId,
+                     Currency = d.Currency
+                 });
+            return detail;
+        }
+        //public static List<ImmoDetailViewModel> GetImmoDetail(string[] IDs, string period)
+        //{       
+        //    string companyId = (string)HttpContext.Current.Session["CompanyID"];
+        //    List<ImmoDetailViewModel> detail = new List<ImmoDetailViewModel>
+        //        (from d in IWSEntities.Depreciations
+        //            join p in IWSEntities.DepreciationDetails on new { d.Id } equals new { Id = p.TransId }
+        //            where
+        //                IDs.Contains(p.TransId) &&
+        //                p.Period == period &&
+        //                d.CompanyId == companyId
+        //            select new ImmoDetailViewModel()
+        //            {
+        //                CostCenter ="100",
+        //                TransDate = DateTime.Now,
+        //                ItemDate = DateTime.Now,
+        //                EntryDate = DateTime.Now,
+        //                Account = d.Account,
+        //                Side = true,
+        //                OAccount = d.OAccount,
+        //                DueDate = DateTime.Now,
+        //                CompanyId = d.CompanyId,
+        //                Currency = d.Currency
+        //            });
+        //    return detail;
+        //}
         public static IEnumerable GetDepreciation() =>
             IWSEntities.Depreciations.Where(c => 
             c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).AsEnumerable();
@@ -1530,6 +1598,56 @@
         }
         public static List<Currency> GetCurrencies() => IWSEntities.Currencies.Where(c =>
             c.CompanyID == (string)HttpContext.Current.Session["CompanyID"]).ToList<Currency>();
+
+        public static List<Asset> GetAssets() => IWSEntities.Assets.Where(c =>
+                c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).ToList<Asset>();
+
+        public static List<AssetViewModel> GetAssets(DateTime dateTimePeriod)
+        {
+            List<AssetViewModel> results = new List<AssetViewModel>();
+
+            List<AssetViewModel> assets = (from asset in IWSEntities.Assets
+                                           where
+                                             ((dateTimePeriod-(DateTime)asset.Started).Days/30) <= asset.LifeSpan &&
+                                             ((dateTimePeriod - (DateTime)asset.Started).Days / 30) > 0
+                                           select new AssetViewModel()
+                                           {
+                                               Id = asset.Id,
+                                               Name = asset.Name,
+                                               Account = asset.Account,
+                                               OAccount = asset.OAccount,
+                                               ScrapValue = (decimal)asset.ScrapValue,
+                                               StartDate = asset.Started.Value.AddMonths(+(dateTimePeriod - (DateTime)asset.Started).Days / 30),
+                                               LifeSpan = 1 + (int)asset.LifeSpan - (dateTimePeriod-(DateTime)asset.Started).Days / 30,
+                                               DepreciationType = (int)asset.Depreciation,
+                                               Rate = (decimal)asset.Rate
+                                           }).ToList();
+            foreach (var asset in assets)
+            {
+                var item = (from b in IWSEntities.PeriodicAccountBalances
+                               group b by new
+                               {
+                                   b.AccountId,
+                                   b.Currency
+                               } into g
+                               where g.Key.AccountId == asset.Account
+                               select new
+                               {
+                                   g.Key.AccountId,
+                                   balance = (decimal?)g.Sum(p => p.Debit - p.Credit + p.InitialBalance),
+                                   g.Key.Currency
+                               }).FirstOrDefault();
+                if(item != null)
+                {
+                    asset.BookValue = (decimal)item.balance;
+                    asset.Currency = item.Currency;
+                    results.Add(asset);
+                }
+            }
+
+            return results;
+        }
+
         public static string GetCurrency(string id)
         {
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
@@ -2444,7 +2562,7 @@
             BankAccount =12,
             BankStatement =18,
             PeriodicAccountBalance =13,
-            Immo = 19,
+            Asset = 19,
             Default = 0000
         }
         public enum LogisticMasterModelId
@@ -2489,7 +2607,7 @@
         {
             StraightLine=2,
             Degressive = 4,
-            Default = 0
+            Default = 2
         }
         public enum DepreciationFrequency
         {

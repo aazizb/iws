@@ -790,6 +790,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Declining Rate.
+        /// </summary>
+        public static string DecliningRate {
+            get {
+                return ResourceManager.GetString("DecliningRate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Degressive.
         /// </summary>
         public static string Degressive {

@@ -1041,4 +1041,7 @@
   <data name="Frequency" xml:space="preserve">
     <value>Frequency</value>
   </data>
+  <data name="DecliningRate" xml:space="preserve">
+    <value>Declining Rate</value>
+  </data>
 </root>

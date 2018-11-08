@@ -240,6 +240,14 @@ namespace IWSProject.Models
             }
         }
 
+        public Table<Asset> Assets
+        {
+            get
+            {
+                return this.GetTable<Asset>();
+            }
+        }
+
         public Table<Bank> Banks
         {
             get

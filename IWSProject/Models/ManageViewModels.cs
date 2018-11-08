@@ -345,6 +345,20 @@ namespace IWSProject.Models
         public string Text { get; set; }
         public string Currency { get; set; }
     }
+    public class AssetViewModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Account { get; set; }
+        public string OAccount { get; set; }
+        public DateTime StartDate { get; set; }
+        public int LifeSpan { get; set; }
+        public decimal BookValue { get; set; }
+        public decimal ScrapValue { get; set; }
+        public decimal Rate { get; set; }
+        public string Currency { get; set; }
+        public int DepreciationType { get; set; }
+    }
     public class StatementDetailViewModel
     {
         public string Id { get; set; }

@@ -415,6 +415,8 @@
     <Content Include="Views\Depreciation\Index.cshtml" />
     <Content Include="Views\Depreciation\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\Depreciation\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\Assets\Index.cshtml" />
+    <Content Include="Views\Assets\AssetsGridViewPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -458,6 +460,7 @@
     <Compile Include="Controllers\AffectationJournalController.cs" />
     <Compile Include="Controllers\BrouillardController.cs" />
     <Compile Include="Controllers\CashController.cs" />
+    <Compile Include="Controllers\AssetsController.cs" />
     <Compile Include="Controllers\DepreciationController.cs" />
     <Compile Include="Controllers\ExceptionLogController.cs" />
     <Compile Include="Controllers\FiscalYearController.cs" />
@@ -509,6 +512,7 @@
     <Compile Include="Models\Entities\AspNetUserClaim.cs" />
     <Compile Include="Models\Entities\AspNetUserLogin.cs" />
     <Compile Include="Models\Entities\AspNetUserRole.cs" />
+    <Compile Include="Models\Entities\Asset.cs" />
     <Compile Include="Models\Entities\Bank.cs" />
     <Compile Include="Models\Entities\BankAccount.cs" />
     <Compile Include="Models\Entities\BankStatement.cs" />

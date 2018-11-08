@@ -155,16 +155,13 @@
         settings.Settings.ShowFilterRowMenu = true;
         settings.SettingsBehavior.AllowFocusedRow = true;
 
-
         settings.SettingsBehavior.ConfirmDelete = true;
 
         settings.Width = Unit.Percentage(100);
 
-
         settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
         settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
-
 
         settings.SettingsPager.Visible = true;
         settings.SettingsPager.Position = PagerPosition.Bottom;
@@ -269,7 +266,6 @@
             column.Width = Unit.Percentage(19);
         });
 
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "Kontonummer";
@@ -314,7 +310,6 @@
         });
 
 #region Template Edit
-
 settings.SetEditFormTemplateContent(templateContent =>
         {
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -505,6 +500,7 @@ settings.SetEditFormTemplateContent(templateContent =>
         .Render();
         });
 #endregion
+
 settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(BankStatement));
