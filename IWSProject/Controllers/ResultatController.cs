@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace IWSProject.Controllers
 {
+
     [Authorize]
     public class ResultatController : Controller
     {
@@ -43,6 +44,11 @@ namespace IWSProject.Controllers
                                                                                             company, isBalance);
             Session["Results"] = model;
             return PartialView("_CallbackPartialView", model);
+        }
+        public ActionResult ResultatView()
+        {
+            ViewData["class"] = IWSLookUp.GetClass();
+            return PartialView();
         }
         public  ActionResult Export()
         {
@@ -90,6 +96,5 @@ namespace IWSProject.Controllers
             e.ColumnsInfo[3].ColumnWidth -= 30;
             e.ColumnsInfo[e.ColumnsInfo.Count - 1].IsVisible = true;
         }
-
     }
 }

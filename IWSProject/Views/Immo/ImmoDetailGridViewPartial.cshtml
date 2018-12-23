@@ -49,11 +49,14 @@
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
-
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
         settings.SettingsPager.Visible = true;
 
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowFilterRowMenu = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;

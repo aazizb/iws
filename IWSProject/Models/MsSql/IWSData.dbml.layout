@@ -1,12 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="IWSData">
   <DataContextMoniker Name="/IWSDataContext" />
-  <nestedChildShapes>
-    <classShape Id="e935ff09-550a-4c83-9493-a08a46a89ce5" absoluteBounds="1.5, 1.125, 2, 2.5401025390625">
-      <DataClassMoniker Name="/IWSDataContext/DepreciationDetail" />
-      <nestedChildShapes>
-        <elementListCompartment Id="63b7521a-eb89-48b5-9221-cb7d9020bff1" absoluteBounds="1.5150000000000001, 1.585, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-  </nestedChildShapes>
 </ordesignerObjectsDiagram>

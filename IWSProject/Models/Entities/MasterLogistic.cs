@@ -47,6 +47,8 @@ namespace IWSProject.Models.Entities
 
         private int _ModelId;
 
+        private string _Terms;
+
         private EntitySet<DetailLogistic> _DetailLogistics;
 
         private EntityRef<Company> _Company;
@@ -93,6 +95,8 @@ namespace IWSProject.Models.Entities
         partial void OnoMonthChanged();
         partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
+        partial void OnTermsChanging(string value);
+        partial void OnTermsChanged();
         #endregion
 
         public MasterLogistic()
@@ -467,6 +471,26 @@ namespace IWSProject.Models.Entities
                     this._ModelId = value;
                     this.SendPropertyChanged("ModelId");
                     this.OnModelIdChanged();
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_Terms", DbType = "NVarChar(250)")]
+        public string Terms
+        {
+            get
+            {
+                return this._Terms;
+            }
+            set
+            {
+                if ((this._Terms != value))
+                {
+                    this.OnTermsChanging(value);
+                    this.SendPropertyChanging();
+                    this._Terms = value;
+                    this.SendPropertyChanged("Terms");
+                    this.OnTermsChanged();
                 }
             }
         }

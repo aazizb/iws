@@ -40,7 +40,6 @@
         settings.CommandColumn.ShowSelectCheckbox = true;
         settings.CommandColumn.Width = Unit.Percentage(8);
         settings.CommandColumn.ShowNewButtonInHeader = false;
-        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
         settings.CommandColumn.SetHeaderTemplateContent(c =>
         {
             Html.DevExpress().CheckBox(selectAll =>
@@ -50,47 +49,25 @@
                 selectAll.Properties.ClientSideEvents.CheckedChanged = "CheckedChanged";
             }).Render();
         });
-        settings.BeforeGetCallbackResult = (s, e) =>
+        settings.AfterPerformCallback = (s, e) =>
         {
             MVCxGridView gridView = (MVCxGridView)s;
-            //var gridView = s as MVCxGridView;
+
             int startIndex = gridView.VisibleStartIndex;
             int visibleRowCount = gridView.GetCurrentPageRowValues("Id").Count;
             int endIndex = startIndex + visibleRowCount - 1;
-            bool select = false;
-            bool isRowSeleted;
             bool isValidated;
-            //if (Session["checked"] != null)
-            //{
-            //    select = (bool)Session["checked"];
-            //}
-            //Session["checked"] = false;
-            //for (int i = startIndex; i <= endIndex; i++)
-            //{
-            //    bool select = (bool)ViewData["select"];
-            //    bool rowEnabled = (bool)gridview.GetRowValues(i, "IsActive");
-            //    if (rowEnabled && select)
-            //        gridview.Selection.SelectRow(i);
-            //    else
-            //        gridview.Selection.UnselectRow(i);
-            //}///////////
+            bool select = false;
+            if (ViewBag.select != null)
+                select = (bool)ViewBag.select;
+
             for (int i = startIndex; i <= endIndex; i++)
             {
-                if (Session["checked"] != null)
-                    select = (bool)Session["checked"];
                 isValidated = (bool)gridView.GetRowValues(i, "IsValidated");
-                isRowSeleted = gridView.Selection.IsRowSelected(i);
                 if (select && !isValidated)
-                {
                     gridView.Selection.SelectRow(i);
-                }
                 else
-                {
-                    //if (isRowSeleted)
                     gridView.Selection.UnselectRow(i);
-                }
-                //if (isRowSeleted && !select)
-                //    gridView.Selection.SelectRow(i);
             }
         };
 
@@ -229,7 +206,7 @@
         };
         settings.Settings.ShowFooter = true;
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
 
         settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;

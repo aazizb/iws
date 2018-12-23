@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Data.Linq;
 using System.Data.Linq.Mapping;
 
 namespace IWSProject.Models.Entities
@@ -28,8 +27,6 @@ namespace IWSProject.Models.Entities
         private string _Account;
 
         private string _OAccount;
-
-        private System.Nullable<System.DateTime> _Started;
 
         private System.Nullable<System.DateTime> _Posted;
 
@@ -63,8 +60,6 @@ namespace IWSProject.Models.Entities
         partial void OnAccountChanged();
         partial void OnOAccountChanging(string value);
         partial void OnOAccountChanged();
-        partial void OnStartedChanging(System.Nullable<System.DateTime> value);
-        partial void OnStartedChanged();
         partial void OnPostedChanging(System.Nullable<System.DateTime> value);
         partial void OnPostedChanged();
         partial void OnUpdatedChanging(System.Nullable<System.DateTime> value);
@@ -258,26 +253,6 @@ namespace IWSProject.Models.Entities
                     this._OAccount = value;
                     this.SendPropertyChanged("OAccount");
                     this.OnOAccountChanged();
-                }
-            }
-        }
-
-        [ColumnAttribute(Storage = "_Started", DbType = "DateTime2")]
-        public System.Nullable<System.DateTime> Started
-        {
-            get
-            {
-                return this._Started;
-            }
-            set
-            {
-                if ((this._Started != value))
-                {
-                    this.OnStartedChanging(value);
-                    this.SendPropertyChanging();
-                    this._Started = value;
-                    this.SendPropertyChanged("Started");
-                    this.OnStartedChanged();
                 }
             }
         }

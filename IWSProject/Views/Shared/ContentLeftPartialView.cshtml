@@ -13,11 +13,20 @@
 {
     settings.Name = "navBarMenu";
     settings.AutoCollapse = true;
-    settings.EnableAnimation = true;
+    //settings.EnableAnimation = true;
     settings.Width = Unit.Percentage(100);
     settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
     settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
+    settings.ItemLinkMode = ItemLinkMode.TextOnly;
+    settings.ShowExpandButtons = false;
+    //settings.AllowSelectItem = true;
+    //settings.EnableHotTrack = true;
+
+
+    //settings.ClientSideEvents.ItemClick = "OnItemClick";
+
     ResourceManager rm = new ResourceManager(typeof(IWSLocalResource));
+
     if (HttpContext.Current.User.Identity.IsAuthenticated)
     {
         //get current user
@@ -39,11 +48,27 @@
 
                 foreach (var mc in menus.Where(c => c.Parent == link.ID).OrderBy(o=>o.MenuOrder))
                 {
+                    //group.Items.Add(item =>
+                    //{
+                    //    item.Name = mc.Name;
+                    //    item.Text = rm.GetString(mc.Name);
+                    //    item.NavigateUrl = DevExpressHelper.GetUrl(new { controller = mc.Controller, action = mc.Action, menuid = mc.Name });
+                    //});
                     group.Items.Add(item =>
                     {
                         item.Name = mc.Name;
-                        item.Text = rm.GetString(mc.Name);
-                        item.NavigateUrl = DevExpressHelper.GetUrl(new { Controller = mc.Controller, Action = mc.Action, MenuID=mc.Name });
+                        item.Text = rm.GetString(mc.Name);                                              //new { @class = "btn btn-primary", id = "btnCheckout" }
+                        item.SetTextTemplateContent(c =>
+                        {
+                            //ViewContext.Writer.Write(Html.ActionLink(item.Text, mc.Action, mc.Controller, new { }, new { onclick = "LoadData(event)" }).ToString());
+                            ViewContext.Writer.Write(Ajax.ActionLink(item.Text, mc.Action, mc.Controller, new AjaxOptions
+                            {
+                                HttpMethod = "GET",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "dvContainer"
+                            }).ToString());
+                        });
+
                     });
                 }
             });
@@ -64,15 +89,30 @@
                 group.Text = rm.GetString(link.Name);
                 foreach (var mc in menus.Where(c => c.Parent == link.ID))
                 {
+                    //group.Items.Add(item =>
+                    //{
+                    //    item.Name = mc.Name;
+                    //    item.Text = rm.GetString(mc.Name);
+                    //    item.NavigateUrl = DevExpressHelper.GetUrl(new { Controller = mc.Controller, Action = mc.Action });
+                    //});
                     group.Items.Add(item =>
                     {
                         item.Name = mc.Name;
                         item.Text = rm.GetString(mc.Name);
-                        item.NavigateUrl = DevExpressHelper.GetUrl(new { Controller = mc.Controller, Action = mc.Action });
+                        item.SetTextTemplateContent(c =>
+                        {
+                            //ViewContext.Writer.Write(Html.ActionLink(item.Text, mc.Action, mc.Controller, new { }, new { onclick = "LoadData(event)" }).ToString());
+                            ViewContext.Writer.Write(Ajax.ActionLink(item.Text, mc.Action, mc.Controller, new AjaxOptions
+                            {
+                                HttpMethod = "GET",
+                                InsertionMode = InsertionMode.Replace,
+                                UpdateTargetId = "dvContainer"
+                            }).ToString());
+                        });
                     });
                 }
             });
         }
     }
-    
+
 }).GetHtml()

@@ -1,4 +1,5 @@
 using System.Web.Mvc;
+
 namespace IWSProject.Controllers
 {
     [Authorize]
@@ -8,5 +9,12 @@ namespace IWSProject.Controllers
         {
             return View();
         }
+
+        public ActionResult CallbackPanelPartial(string itemName)
+        {
+            ViewBag.ActionName = itemName;
+            return PartialView();
+        }
+
     }
 }

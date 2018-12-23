@@ -46,14 +46,10 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(string selectedIDs, string currentPeriod)
         {
-
             #region data processing
-
             string period = DateToYM(currentPeriod);
             try
             {
-
-
                 if (!string.IsNullOrWhiteSpace(selectedIDs))
                 {
                     MakeGeneralLedger(selectedIDs);
@@ -64,8 +60,11 @@ namespace IWSProject.Controllers
                     List<AssetViewModel> assets = IWSLookUp.GetAssets(dateTime);
                     foreach (AssetViewModel asset in assets)
                     {
-                        DeleteDepreciation(asset.Id);
-                        SetDepreciation(asset);
+                        if (asset != null)
+                        {
+                            DeleteDepreciation(asset.Id);
+                            SetDepreciation(asset);
+                        }
                     }
                 }
             }
@@ -79,9 +78,15 @@ namespace IWSProject.Controllers
         }
         public ActionResult CustomGridViewCallback(string currentPeriod, bool isChecked)
         {
-            Session["checked"] = isChecked;
+            ViewBag.select = isChecked;
             string period = DateToYM(currentPeriod);
             return PartialView("MasterGridViewpartial", IWSLookUp.GetDepreciation(period));
+        }
+        public ActionResult DepreciationView()
+        {
+            ViewBag.Period = IWSLookUp.GetDepreciationPeriods();
+            ViewBag.Currency = IWSLookUp.GetCurrency();
+            return PartialView();
         }
         #region make GL
         private void MakeGeneralLedger(string IDs)
@@ -114,9 +119,9 @@ namespace IWSProject.Controllers
                 DetailCompta detailCompta = new DetailCompta()
                 {
                     transid = newId,
-                    account = details.Account,
+                    account = details.OAccount,
                     side = details.Side,
-                    oaccount = details.OAccount,
+                    oaccount = details.Account,
                     amount = amount,
                     duedate = details.DueDate,
                     Currency = details.Currency,
@@ -182,7 +187,6 @@ namespace IWSProject.Controllers
         private void SetDepreciation(AssetViewModel asset)
         {
             int frequency = 30;
-            DateTime startDate = asset.StartDate.AddMonths(-1);
             List<DepreciationInfo> depreciationInfos = ComputeDepreciation((double)asset.BookValue, (double)asset.ScrapValue, asset.LifeSpan,
                                     frequency, asset.DepreciationType, (double)asset.Rate, asset.Id, asset.StartDate, asset.Currency);
 
@@ -205,6 +209,7 @@ namespace IWSProject.Controllers
             }
             db.SubmitChanges();
         }
+
         private List<DepreciationInfo> ComputeDepreciation(double costValue, double scrapValue, int lifeSpan, int frequency,
                                       int DepreciationType, double rate, string transId, DateTime startDate, string currency)
         {
@@ -213,15 +218,20 @@ namespace IWSProject.Controllers
             if (costValue <= 0 || scrapValue < 0 || lifeSpan <= 0 || costValue <= scrapValue)
                 return depreciation;
             DepreciationInfo dpInfo = new DepreciationInfo();
-            double bookValue = costValue - scrapValue;
-            double depreciationValue = bookValue / lifeSpan;
+            double bookValue = costValue;
+            if (DepreciationType.Equals((int)IWSLookUp.DepreciationType.StraightLine))
+            {
+                bookValue -= scrapValue;
+            }
+                double depreciationValue = Math.Round(bookValue / lifeSpan,2);
             if (DepreciationType.Equals((int)IWSLookUp.DepreciationType.Degressive))
             {
-                depreciationValue = rate * depreciationValue;
+                if(lifeSpan > 1)
+                    depreciationValue = Math.Round(rate * depreciationValue,2);
             }
-            if (depreciationValue > bookValue)
+            if (depreciationValue >= bookValue)
             {
-                bookValue = 0;
+                bookValue = scrapValue;
             }
             else
             {
@@ -247,6 +257,9 @@ namespace IWSProject.Controllers
             depreciation.Add(dpInfo);
             return depreciation;
         }
+
+
+
         private string DateToYM(string stringDate)
         {
             if (stringDate == null)

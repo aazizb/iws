@@ -1,4 +1,5 @@
 ﻿@using IWSProject.Content;
+@model string
 @Html.DevExpress().FileManager(settings =>
 {
     settings.Name = "FileManager";
@@ -8,14 +9,18 @@
     settings.Settings.AllowedFileExtensions = new string[] { ".xls", ".xlsx" };
     settings.Settings.EnableMultiSelect = false;
 
+    settings.SettingsEditing.AllowCreate = true;
+    settings.SettingsEditing.AllowRename = true;
+    settings.SettingsEditing.AllowMove = true;
     settings.SettingsEditing.AllowDelete = true;
-
-    settings.SettingsContextMenu.Enabled = true;
+    settings.SettingsEditing.AllowDownload = false;
 
     settings.SettingsUpload.Enabled = true;
-    settings.SettingsEditing.AllowDownload = true;
     settings.SettingsUpload.UseAdvancedUploadMode = true;
     settings.SettingsUpload.AdvancedModeSettings.EnableMultiSelect = true;
+
+    settings.SettingsFileList.View = DevExpress.Web.FileListView.Details;
+    settings.SettingsContextMenu.Enabled = true;
 
     settings.ClientSideEvents.CustomCommand = "OnCustomCommand";
     settings.ClientSideEvents.ToolbarUpdating = "OnToolbarUpdating";
@@ -26,23 +31,22 @@
     settings.SettingsContextMenu.Items.Add(new FileManagerToolbarRefreshButton());
     settings.SettingsToolbar.Items.Add(new FileManagerToolbarRefreshButton());
 
-    var uploadToDBButton = new FileManagerToolbarCustomButton();
-    uploadToDBButton.CommandName = "UploadBrouillardToDb";
-    uploadToDBButton.Text = IWSLocalResource.UploadToDB;
-    uploadToDBButton.Image.IconID = IconID.ActionsUp216x16;
-    uploadToDBButton.BeginGroup = true;
+    var toolBarButton = new FileManagerToolbarCustomButton();
+    toolBarButton.CommandName = "UploadBrouillardToDb";
+    toolBarButton.Text = IWSLocalResource.UploadToDB;
+    toolBarButton.Image.IconID = IconID.ActionsUp216x16;
+    toolBarButton.BeginGroup = true;
 
-    settings.SettingsContextMenu.Items.Add(uploadToDBButton);
+    settings.SettingsContextMenu.Items.Add(toolBarButton);
 
-    uploadToDBButton = new FileManagerToolbarCustomButton();
-    uploadToDBButton.CommandName = "UploadBrouillardToDb";
-    uploadToDBButton.ToolTip = IWSLocalResource.UploadToDB;
-    uploadToDBButton.Image.IconID = IconID.ActionsUp216x16;
-    uploadToDBButton.BeginGroup = true;
+    var contextMenuButton = new FileManagerToolbarCustomButton();
+    contextMenuButton.CommandName = "UploadBrouillardToDb";
+    contextMenuButton.Text = IWSLocalResource.UploadToDB;
+    contextMenuButton.ToolTip = IWSLocalResource.UploadToDB;
+    contextMenuButton.Image.IconID = IconID.ActionsUp216x16;
+    contextMenuButton.BeginGroup = true;
 
-    settings.SettingsToolbar.Items.Add(uploadToDBButton);
-
-    settings.SettingsUpload.NullText = (string)ViewData["GenericError"];
+    settings.SettingsToolbar.Items.Add(contextMenuButton);
 
     settings.SettingsUpload.NullText = IWSLocalResource.DropFiles;
 

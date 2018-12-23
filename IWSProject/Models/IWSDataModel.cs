@@ -134,6 +134,12 @@ namespace IWSProject.Models
         partial void InserttempAccountAmount(tempAccountAmount instance);
         partial void UpdatetempAccountAmount(tempAccountAmount instance);
         partial void DeletetempAccountAmount(tempAccountAmount instance);
+        partial void InsertTimeSheet(TimeSheet instance);
+        partial void UpdateTimeSheet(TimeSheet instance);
+        partial void DeleteTimeSheet(TimeSheet instance);
+        partial void InsertTimeSheetLine(TimeSheetLine instance);
+        partial void UpdateTimeSheetLine(TimeSheetLine instance);
+        partial void DeleteTimeSheetLine(TimeSheetLine instance);
         partial void InsertTypeBrouillard(TypeBrouillard instance);
         partial void UpdateTypeBrouillard(TypeBrouillard instance);
         partial void DeleteTypeBrouillard(TypeBrouillard instance);
@@ -488,6 +494,22 @@ namespace IWSProject.Models
             }
         }
 
+        public System.Data.Linq.Table<TimeSheet> TimeSheets
+        {
+            get
+            {
+                return this.GetTable<TimeSheet>();
+            }
+        }
+
+        public System.Data.Linq.Table<TimeSheetLine> TimeSheetLines
+        {
+            get
+            {
+                return this.GetTable<TimeSheetLine>();
+            }
+        }
+
         public Table<TypeBrouillard> TypeBrouillards
         {
             get
@@ -512,6 +534,7 @@ namespace IWSProject.Models
             }
         }
 
+        #region Functions and SP
         [FunctionAttribute(Name = "dbo.account1To7")]
         public ISingleResult<account1To7Result> account1To7([ParameterAttribute(DbType = "NVarChar(6)")] string start, [ParameterAttribute(DbType = "NVarChar(6)")] string end, [ParameterAttribute(DbType = "NVarChar(6)")] string companyid)
         {
@@ -599,9 +622,9 @@ namespace IWSProject.Models
         }
 
         [FunctionAttribute(Name = "dbo.PeriodicBalances")]
-        public ISingleResult<PeriodicBalancesResult> PeriodicBalances([ParameterAttribute(DbType = "NVarChar(550)")] string selectedIDs, [ParameterAttribute(DbType = "NVarChar(4)")] string companyid)
+        public ISingleResult<PeriodicBalancesResult> PeriodicBalances([ParameterAttribute(DbType = "NVarChar(6)")] string start, [ParameterAttribute(DbType = "NVarChar(6)")] string end, [ParameterAttribute(DbType = "NVarChar(550)")] string selectedIDs, [ParameterAttribute(DbType = "NVarChar(4)")] string companyid)
         {
-            IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), selectedIDs, companyid);
+            IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), start, end, selectedIDs, companyid);
             return ((ISingleResult<PeriodicBalancesResult>)(result.ReturnValue));
         }
 
@@ -652,8 +675,9 @@ namespace IWSProject.Models
             IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), start, end, uiculture, companyid);
             return ((ISingleResult<GetJournalResult>)(result.ReturnValue));
         }
+        #endregion
     }
-
+    #region Function and SP
     public partial class account1To7Result
     {
 
@@ -3309,4 +3333,5 @@ namespace IWSProject.Models
             }
         }
     }
+    #endregion
 }

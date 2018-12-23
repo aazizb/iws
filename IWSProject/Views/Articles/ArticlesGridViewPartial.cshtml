@@ -1,5 +1,7 @@
-@using IWSProject.Content
+﻿@using IWSProject.Content
+@using IWSProject.Models
 @using IWSProject.Models.Entities
+
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -24,7 +26,6 @@
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
-
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
         settings.CommandColumn.ShowEditButton = true;
@@ -33,9 +34,9 @@
 
         settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
-//performance tuning
-settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
-        settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
+        ////performance tuning
+        settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
+        //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
         settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
@@ -80,22 +81,24 @@ settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
         };
 
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
 
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
         settings.SettingsBehavior.EnableRowHotTrack = true;
 
-
         settings.Width = Unit.Percentage(100);
         settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
         settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
 
-
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
         settings.SettingsPager.Visible = true;
         settings.SettingsPager.Position = PagerPosition.Bottom;
@@ -104,11 +107,6 @@ settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
         settings.SettingsPager.PageSize = 19;
 
-        settings.InitNewRow = (s, e) =>
-        {
-            e.NewValues["avgprice"] = 0;
-            e.NewValues["IsService"] = true;
-        };
         settings.Columns.Add(column =>
         {
             column.FieldName = "id";
@@ -204,7 +202,7 @@ settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.Currency;
+                combo.DataSource = IWSLookUp.GetCurrency();
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.Currency, Unit.Percentage(50));
                 combo.TextFormatString = "{1}";
@@ -220,7 +218,7 @@ settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.QttyUnit;
+                combo.DataSource = IWSLookUp.GetQuantityUnits();
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{1}";
@@ -236,7 +234,7 @@ settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.PackUnit;
+                combo.DataSource = IWSLookUp.GetPackUnits();
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{1}";
@@ -252,16 +250,17 @@ settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.VAT;
+                combo.DataSource = IWSLookUp.GetVAT();
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
             });
         });
 
-#region Template Edit
 
-settings.SetEditFormTemplateContent(templateContent =>
+        #region Template Edit
+
+        settings.SetEditFormTemplateContent(templateContent =>
         {
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
@@ -321,7 +320,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.PackUnit;
+                        s.Properties.DataSource = IWSLookUp.GetPackUnits();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -349,7 +348,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.DataSource = IWSLookUp.GetAccounts();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -388,7 +387,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.QttyUnit;
+                        s.Properties.DataSource = IWSLookUp.GetQuantityUnits();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -416,7 +415,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.DataSource = IWSLookUp.GetAccounts();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -455,7 +454,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.VAT;
+                        s.Properties.DataSource = IWSLookUp.GetVAT();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -484,7 +483,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.DataSource = IWSLookUp.GetAccounts();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -514,7 +513,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.Currency;
+                        s.Properties.DataSource = IWSLookUp.GetCurrency();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -544,7 +543,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboArticleId;
+                        s.Properties.DataSource = IWSLookUp.GetAccounts();
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -590,7 +589,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                 b =>
                 {
                     b.Name = "btnUpdate";
-                    b.Text = "";
+                    b.Text = IWSLocalResource.btnUpdate;
                     b.ToolTip = IWSLocalResource.btnUpdate;
                     b.Style[HtmlTextWriterStyle.MarginRight] = "5px";
                     b.Images.Image.IconID = IconID.ActionsApply16x16;
@@ -601,7 +600,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                 b =>
                 {
                     b.Name = "btnCancel";
-                    b.Text = "";
+                    b.Text = IWSLocalResource.btnCancel;
                     b.ToolTip = IWSLocalResource.btnCancel;
                     b.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
                     b.Images.Image.IconID = IconID.ActionsCancel16x16;
@@ -614,9 +613,10 @@ settings.SetEditFormTemplateContent(templateContent =>
             .Render();
         });
 
-#endregion
+        #endregion
 
-settings.DataBinding = (sender, e) =>
+
+        settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(Article));
         };

@@ -36,7 +36,7 @@
             okButtonSettings.Name = "Continue";
             okButtonSettings.Images.Image.IconID = IconID.ActionsApply16x16;
             okButtonSettings.Width = Unit.Pixel(80);
-            okButtonSettings.Text = " ";
+            okButtonSettings.Text = IWSLocalResource.btnUpdate;
             okButtonSettings.ClientSideEvents.Click = "function(s, e){ OnContinueClick(); }";
         }).Render();
         Html.DevExpress().Button(cancelButtonSettings =>
@@ -44,7 +44,7 @@
             cancelButtonSettings.Name = "CancelButton";
             cancelButtonSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
             cancelButtonSettings.Width = Unit.Pixel(80);
-            cancelButtonSettings.Text = " ";
+            cancelButtonSettings.Text = IWSLocalResource.btnCancel;
             cancelButtonSettings.ClientSideEvents.Click = "function(s, e){ PopupControl.Hide(); }";
             cancelButtonSettings.Style.Add(HtmlTextWriterStyle.MarginLeft, "0.5em");
         }).Render();

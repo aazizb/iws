@@ -1,12 +1,10 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
-@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "Brouillard";
         settings.Width = Unit.Percentage(100);
-
 
         settings.CallbackRouteValues = new { Controller = "Brouillard", Action = "MasterGridViewPartial" };
 
@@ -45,7 +43,7 @@
 
         settings.Settings.ShowFooter = true;
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
 
         settings.SettingsPager.Visible = true;
@@ -60,10 +58,10 @@
         settings.CommandColumn.ShowEditButton = true;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowSelectCheckbox = true;
-//settings.CommandColumn.ShowNewButtonInHeader = true;
-//settings.CommandColumn.ShowUpdateButton = false;
-//settings.CommandColumn.ShowCancelButton = false;
-settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
+        //settings.CommandColumn.ShowNewButtonInHeader = true;
+        //settings.CommandColumn.ShowUpdateButton = false;
+        //settings.CommandColumn.ShowCancelButton = false;
+        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;

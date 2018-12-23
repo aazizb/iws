@@ -15,16 +15,13 @@ namespace IWSProject.Controllers
     [Authorize]
     public class CashController : Controller
     {
-        IWSDataContext db;
+        readonly IWSDataContext db;
         public CashController()
         {
             db = new IWSDataContext();
         }
-        private object RootFolder = "~/Content/Uploads";
-        public ActionResult Cash()
-        {
-            return View("Cash", RootFolder);
-        }
+        private readonly object RootFolder = "~/Content/Uploads";
+
         // GET: cash
         public ActionResult Index()
         {
@@ -214,9 +211,18 @@ namespace IWSProject.Controllers
             }
             return PartialView("DetailGridViewPartial", IWSLookUp.GetCashLines(transId));
         }
-
         [ValidateInput(false)]
-        public ActionResult CashPartial(string currentFileName)
+        public ActionResult CashView()
+        {
+            return PartialView(IWSLookUp.GetCash());
+        }
+        [ValidateInput(false)]
+        public ActionResult Cash()
+        {
+            return PartialView(RootFolder);
+        }
+        [ValidateInput(false)]
+        public ActionResult CashPartial()
         {
             return PartialView(RootFolder);
         }

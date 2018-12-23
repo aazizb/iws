@@ -30,14 +30,7 @@
 @using (Html.BeginForm("Index", "Immo"))
 {
 
-    @Html.DevExpress().Button(settings =>
-    {
-        settings.Name = "btShowCustomizationWindow";
-        settings.Text = IWSLocalResource.WindowCustomization;
-        settings.Width = Unit.Pixel(100);
-        settings.UseSubmitBehavior = false;
-        settings.ClientSideEvents.Click = "OnButtonClick";
-    }).GetHtml()
+    @Html.Partial("ShowHideButtonPartialView")
 
     <div class="options">
         <div class="options-item">

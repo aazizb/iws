@@ -2,6 +2,7 @@ using IWSProject.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -219,7 +220,7 @@ namespace IWSProject.Controllers
             {
                 return View("Error");
             }
-            return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
+            return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, model.ReturnUrl, model.RememberMe });
         }
 
         //
@@ -463,7 +464,7 @@ namespace IWSProject.Controllers
                 var u = new EditUserViewModel(user);
                 model.Add(u);
             }
-            return View(model);
+            return PartialView(model);
         }
 
         [Authorize(Roles = "Admins")]
@@ -520,6 +521,71 @@ namespace IWSProject.Controllers
                 return RedirectToAction("index");
             }
             return View();
+        }
+
+        // GET: /Account/ResetPassword
+        [Authorize(Roles = "Admins")]
+        public ActionResult ClearPassword(string username)
+        {
+            SetPasswordViewModel model = new SetPasswordViewModel()
+            {
+                UserName = username,
+            };
+            return View(model);
+        }
+
+        //
+        // POST: /Account/ResetPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admins")]
+        public async Task<ActionResult> ClearPassword(SetPasswordViewModel userPassword)
+        {
+            var Db = new ApplicationDbContext();
+            var users = Db.Users;
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var model = users.FirstOrDefault(o => o.UserName == userPassword.UserName);
+
+                    if (model != null)
+                    {
+                        var user = new ApplicationUser
+                        {
+                            FirstName = model.FirstName,
+                            LastName = model.LastName,
+                            Gender = model.Gender,
+                            Company = model.Company,
+                            BirthDate = model.BirthDate,
+                            UserName = "x" + model.UserName ,
+                            Email = "x" + model.Email
+                        };
+                        var result = await UserManager.CreateAsync(user, userPassword.ConfirmPassword);
+                        if (result.Succeeded)
+                        {
+                            model.PasswordHash = user.PasswordHash;
+                            this.UpdateModel(model);
+                            users = Db.Users;
+                            var newUser = users.FirstOrDefault(u => u.UserName == user.UserName);
+                            users.Remove(newUser);
+                            await Db.SaveChangesAsync();
+
+                            return RedirectToAction("ChangePasswordSuccess");
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    ViewData["GenericError"] = e.Message;
+                    IWSLookUp.LogException(e);
+                }
+            }
+            else
+            {
+                ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
+            }
+            return View(userPassword);
         }
 
         #region Helpers

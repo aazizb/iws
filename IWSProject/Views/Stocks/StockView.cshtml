@@ -1,0 +1,8 @@
+﻿@using IWSProject.Models
+@model List<StockViewModel>
+@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.StockAndStore;
+}
+@Html.Partial("StocksPartialView", Model)
+

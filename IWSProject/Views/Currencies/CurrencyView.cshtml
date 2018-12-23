@@ -1,0 +1,31 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.Currency>
+<script type="text/javascript">
+
+    function OnButtonClick() {
+        if (CurrenciesGridView.IsCustomizationWindowVisible()) {
+
+            CurrenciesGridView.HideCustomizationWindow();
+        }
+        else {
+            CurrenciesGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = CurrenciesGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutCr").text(layout)
+    }
+</script>
+
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Action("CurrenciesGridViewPartial", Model)

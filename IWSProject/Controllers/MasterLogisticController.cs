@@ -44,7 +44,7 @@ namespace IWSProject.Controllers
 
             Session["IsVending"] = IsVending(currentModelId);
 
-            if (!String.IsNullOrWhiteSpace(selectedIDs) && (currentModelId >0))
+            if (!String.IsNullOrWhiteSpace(selectedIDs) && (currentModelId > 0))
             {
                 string companyID = (string)Session["CompanyID"];
 
@@ -52,6 +52,15 @@ namespace IWSProject.Controllers
             }
             return PartialView("CallbackPanelPartialView", 
                 IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)currentModelId));
+        }
+        public ActionResult CustomGridViewCallback(bool isChecked)
+        {
+            ViewBag.select = isChecked;
+            int modelId = (int)IWSLookUp.ComptaMasterModelId.Default;
+            if (Session["ModelId"] != null)
+                modelId = (int)Session["ModelId"];
+            return PartialView("MasterGridViewPartial",
+                    IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] MasterLogistic item)
@@ -249,6 +258,11 @@ namespace IWSProject.Controllers
                 }
             }
             return PartialView("DetailGridViewPartial", IWSLookUp.GetDetailLogistic(transId));
+        }
+
+        public ActionResult LogisticView()
+        {
+            return PartialView(IWSLookUp.GetMasterLogistic(IWSLookUp.LogisticMasterModelId.Default));
         }
 
         #region Helper

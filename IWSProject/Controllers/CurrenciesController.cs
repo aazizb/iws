@@ -109,5 +109,9 @@ namespace IWSProject.Controllers
             }
             return PartialView("CurrenciesGridViewPartial", IWSLookUp.GetCurrencies());
         }
+        public ActionResult CurrencyView()
+        {
+            return PartialView(IWSLookUp.GetCurrencies());
+        }
     }
 }

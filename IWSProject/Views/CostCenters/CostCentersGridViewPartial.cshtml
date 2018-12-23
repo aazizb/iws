@@ -19,6 +19,9 @@
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowNewButtonInHeader = true;
 
 
         settings.SettingsBehavior.EnableCustomizationWindow = true;
@@ -32,11 +35,14 @@
 
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
-        settings.CommandColumn.ShowNewButtonInHeader = true;
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
         settings.SettingsCommandButton.NewButton.Text = " ";
@@ -44,12 +50,10 @@
         settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
         settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
         settings.SettingsCommandButton.EditButton.Text = " ";
-        settings.CommandColumn.ShowEditButton = true;
 
         settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
         settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
         settings.SettingsCommandButton.DeleteButton.Text = " ";
-        settings.CommandColumn.ShowDeleteButton = true;
 
         settings.KeyFieldName = "id";
         settings.CustomJSProperties = (s, e) =>
@@ -73,7 +77,7 @@
             }
         };
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
 
         settings.Width = Unit.Percentage(100);
@@ -136,132 +140,132 @@
             column.Width = Unit.Percentage(65);
         });
 
-#region Template Edit
-settings.SetEditFormTemplateContent(templateContent =>
-        {
-
-            Html.DevExpress().FormLayout(formLayoutSettings =>
-            {
-                formLayoutSettings.Name = "CostCentersViewEdit";
-                formLayoutSettings.Width = Unit.Percentage(100);
-
-                formLayoutSettings.ColCount = 3;
-
-                formLayoutSettings.Items.AddEmptyItem();
-
-                formLayoutSettings.Items.Add(i =>
+        #region Template Edit
+        settings.SetEditFormTemplateContent(templateContent =>
                 {
-                    i.FieldName = "id";
-                    i.Caption = IWSLocalResource.id;
-                    i.Width = Unit.Percentage(50);
-                    i.NestedExtension().TextBox(s =>
+
+                    Html.DevExpress().FormLayout(formLayoutSettings =>
                     {
-                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
-                        s.Width = Unit.Percentage(75);
-                    });
-                });
-                formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.FieldName = "name";
-                    i.Caption = IWSLocalResource.name;
-                    i.Width = Unit.Percentage(50);
-                    i.NestedExtension().TextBox(s =>
-                    {
-                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
-                        s.Width = Unit.Percentage(75);
-                    });
-                });
-                formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.FieldName = "accountid";
-                    i.Caption = IWSLocalResource.accountid;
-                    i.Width = Unit.Percentage(50);
-                    i.NestedExtension().ComboBox(s =>
-                    {
-                        s.Properties.TextField = "name";
-                        s.Properties.ValueField = "id";
-                        s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
-                        s.Properties.Columns.Add(column =>
+                        formLayoutSettings.Name = "CostCentersViewEdit";
+                        formLayoutSettings.Width = Unit.Percentage(100);
+
+                        formLayoutSettings.ColCount = 3;
+
+                        formLayoutSettings.Items.AddEmptyItem();
+
+                        formLayoutSettings.Items.Add(i =>
                         {
-                            column.FieldName = "id";
-                            column.Caption = IWSLocalResource.id;
-                            column.Width = Unit.Percentage(15);
-
+                            i.FieldName = "id";
+                            i.Caption = IWSLocalResource.id;
+                            i.Width = Unit.Percentage(50);
+                            i.NestedExtension().TextBox(s =>
+                            {
+                                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                                s.ShowModelErrors = true;
+                                s.Width = Unit.Percentage(75);
+                            });
                         });
-                        s.Properties.Columns.Add(column =>
+                        formLayoutSettings.Items.AddEmptyItem();
+                        formLayoutSettings.Items.AddEmptyItem();
+                        formLayoutSettings.Items.Add(i =>
                         {
-                            column.FieldName = "name";
-                            column.Caption = IWSLocalResource.account;
-                            column.Width = Unit.Percentage(85);
-
+                            i.FieldName = "name";
+                            i.Caption = IWSLocalResource.name;
+                            i.Width = Unit.Percentage(50);
+                            i.NestedExtension().TextBox(s =>
+                            {
+                                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                                s.ShowModelErrors = true;
+                                s.Width = Unit.Percentage(75);
+                            });
                         });
+                        formLayoutSettings.Items.AddEmptyItem();
+                        formLayoutSettings.Items.AddEmptyItem();
+                        formLayoutSettings.Items.Add(i =>
+                        {
+                            i.FieldName = "accountid";
+                            i.Caption = IWSLocalResource.accountid;
+                            i.Width = Unit.Percentage(50);
+                            i.NestedExtension().ComboBox(s =>
+                            {
+                                s.Properties.TextField = "name";
+                                s.Properties.ValueField = "id";
+                                s.Properties.ValueType = typeof(string);
+                                s.Properties.DataSource = IWSLookUp.GetAccounts();
+                                s.Properties.Columns.Add(column =>
+                                {
+                                    column.FieldName = "id";
+                                    column.Caption = IWSLocalResource.id;
+                                    column.Width = Unit.Percentage(15);
 
-                        s.Properties.TextFormatString = "{0}-{1}";
-                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
-                        s.Width = Unit.Percentage(75);
-                    });
-                });
-                formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.FieldName = "description";
-                    i.Caption = IWSLocalResource.description;
-                    i.Width = Unit.Percentage(50);
-                    i.NestedExtension().Memo(s =>
-                    {
-                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                        s.ShowModelErrors = true;
-                        s.Width = Unit.Percentage(75);
-                        s.Height = Unit.Pixel(80);
-                    });
-                });
-                formLayoutSettings.Items.AddEmptyItem();
-                formLayoutSettings.Items.AddEmptyItem();
+                                });
+                                s.Properties.Columns.Add(column =>
+                                {
+                                    column.FieldName = "name";
+                                    column.Caption = IWSLocalResource.account;
+                                    column.Width = Unit.Percentage(85);
 
-                formLayoutSettings.Items.Add(i =>
-                {
-                    i.ShowCaption = DefaultBoolean.False;
-                    i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
-                }).SetNestedContent(() =>
-                {
-                    Html.DevExpress().Button(
-                b =>
-                {
-                    b.Name = "btnUpdate";
-                    b.Text = "";
-                    b.ToolTip = IWSLocalResource.btnUpdate;
-                    b.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-                    b.Images.Image.IconID = IconID.ActionsApply16x16;
-                    b.Width = Unit.Pixel(80);
-                    b.ClientSideEvents.Click = "function(s, e){ CostCentersGridView.UpdateEdit(); }";
-                }).Render();
+                                });
 
-                    Html.DevExpress().Button(
-                b =>
-                {
-                    b.Name = "btnCancel";
-                    b.Text = "";
-                    b.ToolTip = IWSLocalResource.btnCancel;
-                    b.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
-                    b.Images.Image.IconID = IconID.ActionsCancel16x16;
-                    b.Width = Unit.Pixel(80);
-                    b.ClientSideEvents.Click = "function(s, e){ CostCentersGridView.CancelEdit(); }";
-                }).Render();
+                                s.Properties.TextFormatString = "{0}-{1}";
+                                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                                s.ShowModelErrors = true;
+                                s.Width = Unit.Percentage(75);
+                            });
+                        });
+                        formLayoutSettings.Items.AddEmptyItem();
+                        formLayoutSettings.Items.AddEmptyItem();
+                        formLayoutSettings.Items.Add(i =>
+                        {
+                            i.FieldName = "description";
+                            i.Caption = IWSLocalResource.description;
+                            i.Width = Unit.Percentage(50);
+                            i.NestedExtension().Memo(s =>
+                            {
+                                s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                                s.ShowModelErrors = true;
+                                s.Width = Unit.Percentage(75);
+                                s.Height = Unit.Pixel(80);
+                            });
+                        });
+                        formLayoutSettings.Items.AddEmptyItem();
+                        formLayoutSettings.Items.AddEmptyItem();
+
+                        formLayoutSettings.Items.Add(i =>
+                        {
+                            i.ShowCaption = DefaultBoolean.False;
+                            i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
+                        }).SetNestedContent(() =>
+                        {
+                            Html.DevExpress().Button(
+                        b =>
+                        {
+                            b.Name = "btnUpdate";
+                            b.Text = IWSLocalResource.btnUpdate;
+                            b.ToolTip = IWSLocalResource.btnUpdate;
+                            b.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+                            b.Images.Image.IconID = IconID.ActionsApply16x16;
+                            b.Width = Unit.Pixel(80);
+                            b.ClientSideEvents.Click = "function(s, e){ CostCentersGridView.UpdateEdit(); }";
+                        }).Render();
+
+                            Html.DevExpress().Button(
+                        b =>
+                        {
+                            b.Name = "btnCancel";
+                            b.Text = IWSLocalResource.btnCancel;
+                            b.ToolTip = IWSLocalResource.btnCancel;
+                            b.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+                            b.Images.Image.IconID = IconID.ActionsCancel16x16;
+                            b.Width = Unit.Pixel(80);
+                            b.ClientSideEvents.Click = "function(s, e){ CostCentersGridView.CancelEdit(); }";
+                        }).Render();
+                        });
+                    })
+                    .Bind(ViewData["costCenters"] ?? templateContent.DataItem)
+                    .Render();
                 });
-            })
-            .Bind(ViewData["costCenters"] ?? templateContent.DataItem)
-            .Render();
-        });
-#endregion
+        #endregion
 
 settings.DataBinding = (sender, e) =>
         {

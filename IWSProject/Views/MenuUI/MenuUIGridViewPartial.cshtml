@@ -1,6 +1,5 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
-@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -16,15 +15,19 @@
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
         settings.SettingsContextMenu.Enabled = true;
 
+        settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
+
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
+
+
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowNewButtonInHeader = true;
 
-        settings.SettingsBehavior.EnableRowHotTrack = true;
-        settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
-        settings.CommandColumn.ShowNewButtonInHeader = true;
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
         settings.SettingsCommandButton.NewButton.Text = " ";
@@ -32,12 +35,10 @@
         settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
         settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
         settings.SettingsCommandButton.EditButton.Text = " ";
-        settings.CommandColumn.ShowEditButton = true;
 
         settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
         settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
         settings.SettingsCommandButton.DeleteButton.Text = " ";
-        settings.CommandColumn.ShowDeleteButton = true;
 
         settings.InitNewRow = (s, e) =>
         {
@@ -47,18 +48,24 @@
 
         settings.KeyFieldName = "ID";
 
-        settings.SettingsBehavior.EnableRowHotTrack = true;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
+
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.AllowFocusedRow = true;
-
+        settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
 
         settings.Width = Unit.Percentage(100);
 
@@ -134,8 +141,8 @@
             column.Width = Unit.Percentage(12);
         });
 
-#region Template Edit
-settings.SetEditFormTemplateContent(templateContent =>
+        #region Template Edit
+        settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -252,7 +259,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                 btnSettings =>
                 {
                     btnSettings.Name = "btnUpdate";
-                    btnSettings.Text = "";
+                    btnSettings.Text = IWSLocalResource.btnUpdate;
                     btnSettings.ToolTip = IWSLocalResource.btnUpdate;
                     btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
                     btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
@@ -264,7 +271,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                 btnSettings =>
                 {
                     btnSettings.Name = "btnCancel";
-                    btnSettings.Text = "";
+                    btnSettings.Text = IWSLocalResource.btnCancel;
                     btnSettings.ToolTip = IWSLocalResource.btnCancel;
                     btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
                     btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
@@ -277,11 +284,11 @@ settings.SetEditFormTemplateContent(templateContent =>
             .Bind(ViewData["menus"] ?? templateContent.DataItem)
             .Render();
         });
-#endregion
+        #endregion
 
-settings.DataBinding = (sender, e) =>
+        settings.DataBinding = (sender, e) =>
         {
-            ((MVCxGridView)sender).ForceDataRowType(typeof(Stock));
+            ((MVCxGridView)sender).ForceDataRowType(typeof(IWSProject.Models.Entities.Menu));
         };
     });
     if (ViewData["GenericError"] != null)
@@ -290,4 +297,3 @@ settings.DataBinding = (sender, e) =>
     }
 }
 @grid.Bind(Model).GetHtml()
-

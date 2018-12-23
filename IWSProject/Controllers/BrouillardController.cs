@@ -19,12 +19,7 @@ namespace IWSProject.Controllers
         {
             db = new IWSDataContext();
         }
-        private object RootFolder = "~/Content/Uploads";
-        public ActionResult Brouillard()
-        {
-            ViewData["Brouillard"] = IWSLookUp.GetBrouillardType();
-            return View("Brouillard", RootFolder);
-        }
+        private readonly object RootFolder = "~/Content/Uploads";
         // GET: Brouillard
         public ActionResult Index()
         {
@@ -123,9 +118,18 @@ namespace IWSProject.Controllers
             }
             return PartialView("MasterGridViewPartial", IWSLookUp.GetBrouillard());
         }
-
+        public ActionResult BrouillardView()
+        {
+            return PartialView(IWSLookUp.GetBrouillard());
+        }
         [ValidateInput(false)]
-        public ActionResult BrouillardPartial(string currentFileName)
+        public ActionResult Brouillard()
+        {
+            ViewData["Brouillard"] = IWSLookUp.GetBrouillardType();
+            return PartialView("Brouillard", RootFolder);
+        }
+        [ValidateInput(false)]
+        public ActionResult BrouillardPartial()
         {
             return PartialView(RootFolder);
         }
@@ -239,7 +243,7 @@ namespace IWSProject.Controllers
                     if (dataTable == null)
                         return null;
 
-                    String[] excelSheets = new String[dataTable.Rows.Count];
+                    string[] excelSheets = new string[dataTable.Rows.Count];
 
                     List<Brouillard> Brouillards = new List<Brouillard>();
 

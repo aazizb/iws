@@ -1,9 +1,9 @@
-﻿using DevExpress.Web.Mvc;
-using IWSProject.Models;
-using IWSProject.Models.Entities;
-using System;
+﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using DevExpress.Web.Mvc;
+using IWSProject.Models;
+using IWSProject.Models.Entities;
 
 namespace IWSProject.Controllers
 {
@@ -18,44 +18,13 @@ namespace IWSProject.Controllers
         // GET: articles
         public ActionResult Index()
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-            ViewBag.Currency = IWSLookUp.GetCurrency();
-            ViewBag.QttyUnit = IWSLookUp.GetQuantityUnits();
-            ViewBag.PackUnit = IWSLookUp.GetPackUnits();
-            ViewBag.VAT = IWSLookUp.GetVAT();
-            ViewBag.ComboArticleId = IWSLookUp.GetArticle();
-            ViewBag.Articles = IWSLookUp.GetArticles();
-
-            sw.Stop();
-
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            //if(Session["DurationArt"] == null)
-            //{
-                Session["DurationArt"] = $"Data reading time: {elapsedTime} ms";
-
-            //}
-
             return View();
         }
 
         [ValidateInput(false)]
         public ActionResult ArticlesGridViewPartial()
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-            ViewBag.Currency = IWSLookUp.GetCurrency();
-            ViewBag.QttyUnit = IWSLookUp.GetQuantityUnits();
-            ViewBag.PackUnit = IWSLookUp.GetPackUnits();
-            ViewBag.VAT = IWSLookUp.GetVAT();
-            ViewBag.ComboArticleId = IWSLookUp.GetArticle();
-            ViewBag.Art = IWSLookUp.GetArticles();
-            sw.Stop();
-
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            Session["DurationArt"] = $"Data reading time: {elapsedTime} ms";
-            return PartialView(ViewBag.Art);
+            return PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult ArticlesGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Article item)
@@ -85,7 +54,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("ArticlesGridViewPartial", item);
+            return PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult ArticlesGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Article item)
@@ -142,6 +111,9 @@ namespace IWSProject.Controllers
             return PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
         }
 
+        public ActionResult ArticleView()
+        {
+            return PartialView(IWSLookUp.GetArticles());
+        }
     }
-
 }

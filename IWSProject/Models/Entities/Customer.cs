@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Data.Linq;
 using System.Data.Linq.Mapping;
 
 namespace IWSProject.Models.Entities
@@ -42,15 +41,15 @@ namespace IWSProject.Models.Entities
 
         private string _Produit;
 
-        private DateTime _Posted;
+        private System.DateTime _Posted;
 
-        private DateTime _Updated;
+        private System.DateTime _Updated;
 
         private int _ModelId;
 
         #region Extensibility Method Definitions
         partial void OnLoaded();
-        partial void OnValidate(ChangeAction action);
+        partial void OnValidate(System.Data.Linq.ChangeAction action);
         partial void OnCreated();
         partial void OnidChanging(string value);
         partial void OnidChanged();
@@ -82,9 +81,9 @@ namespace IWSProject.Models.Entities
         partial void OnVatCodeChanged();
         partial void OnProduitChanging(string value);
         partial void OnProduitChanged();
-        partial void OnPostedChanging(DateTime value);
+        partial void OnPostedChanging(System.DateTime value);
         partial void OnPostedChanged();
-        partial void OnUpdatedChanging(DateTime value);
+        partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
         partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
@@ -255,7 +254,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50)")]
         public string accountid
         {
             get
@@ -295,7 +294,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(50)")]
         public string IBAN
         {
             get
@@ -315,7 +314,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_Bank", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_Bank", DbType = "NVarChar(50)")]
         public string Bank
         {
             get
@@ -335,7 +334,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_BIC", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_BIC", DbType = "NVarChar(50)")]
         public string BIC
         {
             get
@@ -355,7 +354,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_VatCode", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_VatCode", DbType = "NVarChar(50)")]
         public string VatCode
         {
             get
@@ -375,7 +374,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_Produit", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_Produit", DbType = "NVarChar(50)")]
         public string Produit
         {
             get
@@ -396,7 +395,7 @@ namespace IWSProject.Models.Entities
         }
 
         [ColumnAttribute(Storage = "_Posted", DbType = "DateTime2 NOT NULL")]
-        public DateTime Posted
+        public System.DateTime Posted
         {
             get
             {
@@ -416,7 +415,7 @@ namespace IWSProject.Models.Entities
         }
 
         [ColumnAttribute(Storage = "_Updated", DbType = "DateTime2 NOT NULL")]
-        public DateTime Updated
+        public System.DateTime Updated
         {
             get
             {
@@ -475,4 +474,5 @@ namespace IWSProject.Models.Entities
             }
         }
     }
+
 }

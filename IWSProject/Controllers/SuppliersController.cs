@@ -225,5 +225,10 @@ namespace IWSProject.Controllers
             }
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
+
+        public ActionResult SupplierView()
+        {
+            return PartialView(IWSLookUp.GetSupplier());
+        }
     }
 }

@@ -94,6 +94,7 @@ namespace IWSProject.Controllers
                     if (modelItem != null)
                     {
                         this.UpdateModel(modelItem);
+
                         db.SubmitChanges();
                     }
                 }
@@ -219,6 +220,11 @@ namespace IWSProject.Controllers
                 IWSLookUp.LogException(e);
             }
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
+        }
+
+        public ActionResult CustomerView()
+        {
+            return PartialView(IWSLookUp.GetCustomer());
         }
     }
 }

@@ -18,7 +18,9 @@ namespace IWSProject.Controllers
         {
             string selectedIDs = (string)Session["selectedIDs"];
             string company = (string)Session["CompanyID"];
-            List<AccountBalanceViewModel> model = (List<AccountBalanceViewModel>)IWSLookUp.GetAccountBalance(selectedIDs, company);
+            string start = (string)Session["startBalance"];
+            string end = (string)Session["endBalance"];
+            List<AccountBalanceViewModel> model = (List<AccountBalanceViewModel>)IWSLookUp.GetAccountBalance(start, end, selectedIDs, company);
             return PartialView("AccountBalancePartialView", model);
         }
         [ValidateInput(false)]
@@ -29,13 +31,19 @@ namespace IWSProject.Controllers
             return PartialView("GridLookupPartial", ViewData["accounts"]);
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult CallbackPanelPartial(string selectedIDs)
+        public ActionResult CallbackPanelPartial(string start, string end, string selectedIDs)
         {
             Session["selectedIDs"] = selectedIDs;
+            Session["startBalance"] = start;
+            Session["endBalance"] = end;
             string company = (string)Session["CompanyID"];
-            List<AccountBalanceViewModel> model = (List<AccountBalanceViewModel>)IWSLookUp.GetAccountBalance(selectedIDs, company);
+            List<AccountBalanceViewModel> model = (List<AccountBalanceViewModel>)IWSLookUp.GetAccountBalance(start, end, selectedIDs, company);
             Session["Results"] = model;
             return PartialView("_CallbackPartialView", model);
+        }
+        public ActionResult BalanceView()
+        {
+            return PartialView();
         }
         public ActionResult Export()
         {
@@ -71,6 +79,7 @@ namespace IWSProject.Controllers
             e.ColumnsInfo[8].ColumnWidth *= 2;
             e.ColumnsInfo[e.ColumnsInfo.Count - 1].IsVisible = true;
         }
+
 
     }
 }

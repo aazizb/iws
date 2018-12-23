@@ -1,0 +1,42 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.Asset>
+
+<script type="text/javascript">
+
+    function OnButtonClick() {
+        if (AssetsGridView.IsCustomizationWindowVisible()) {
+
+            AssetsGridView.HideCustomizationWindow();
+        }
+        else {
+            AssetsGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+
+    function UpdateButtonText() {
+        var text = AssetsGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+
+    function TrackLayout(layout) {
+        $("#LastLayoutAr").text(layout);
+    }
+    function OnValueChanged(s, e) {
+        if (Depreciation.GetValue() == 2) {//DepreciationType.StraightLine
+            Rate.SetText(1);
+            Rate.SetEnabled(false);
+        } else { Rate.SetEnabled(true); }   //DepreciationType.Degressive
+    }
+</script>
+
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Partial("AssetsGridViewPartial", Model)

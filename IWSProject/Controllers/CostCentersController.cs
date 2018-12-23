@@ -23,8 +23,6 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult CostCentersGridViewPartial()
         {
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
             return PartialView("CostCentersGridViewPartial", IWSLookUp.GetCostCenter());
         }
         [HttpPost, ValidateInput(false)]
@@ -88,7 +86,7 @@ namespace IWSProject.Controllers
             return PartialView("CostCentersGridViewPartial", item);
         }
         [HttpPost, ValidateInput(false)]
-        public ActionResult CostCentersGridViewPartialDelete(System.String id)
+        public ActionResult CostCentersGridViewPartialDelete(string id)
         {
             var model = db.CostCenters;
             if (id != null)
@@ -107,6 +105,10 @@ namespace IWSProject.Controllers
                 }
             }
             return PartialView("CostCentersGridViewPartial", IWSLookUp.GetCostCenter());
+        }
+        public ActionResult CostCenterView()
+        {
+            return PartialView(IWSLookUp.GetCostCenter());
         }
     }
 }

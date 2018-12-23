@@ -1,0 +1,36 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.CostCenter>
+<script type="text/javascript">
+
+    function OnButtonClick() {
+        if (CostCentersGridView.IsCustomizationWindowVisible()) {
+
+            CostCentersGridView.HideCustomizationWindow();
+        }
+        else {
+            CostCentersGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = CostCentersGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutCc").text(layout)
+    }
+</script>
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Partial("CostCentersGridViewPartial", Model)
+
+
+
+
+

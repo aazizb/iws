@@ -1,4 +1,5 @@
 ﻿@using IWSProject.Content
+@using IWSProject.Models
 @using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -18,6 +19,9 @@
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowNewButtonInHeader = true;
 
         settings.SettingsBehavior.EnableCustomizationWindow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
@@ -30,16 +34,19 @@
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
         //performance tuning
         settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
-        settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
+        //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
         settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
 
-        settings.CommandColumn.ShowNewButtonInHeader = true;
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
         settings.SettingsCommandButton.NewButton.Text = " ";
@@ -47,12 +54,10 @@
         settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
         settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
         settings.SettingsCommandButton.EditButton.Text = " ";
-        settings.CommandColumn.ShowEditButton = true;
 
         settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
         settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
         settings.SettingsCommandButton.DeleteButton.Text = " ";
-        settings.CommandColumn.ShowDeleteButton = true;
 
 
         settings.InitNewRow = (s, e) =>
@@ -69,21 +74,20 @@
             switch (e.LayoutMode)
             {
                 case ClientLayoutMode.Loading:
-                    if (Session["LayoutAj"] != null)
+                    if (Session["layoutAj"] != null)
                     {
-                        e.LayoutData = Session["LayoutAj"].ToString();
+                        e.LayoutData = Session["layoutAj"].ToString();
                     }
                     break;
                 case ClientLayoutMode.Saving:
-                    Session["LayoutAj"] = e.LayoutData;
+                    Session["layoutAj"] = e.LayoutData;
                     break;
             }
         };
         settings.KeyFieldName = "AccountID;Side;OAccountID";
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
-
 
         settings.Width = Unit.Percentage(100);
         settings.Height = Unit.Percentage(100);
@@ -106,23 +110,23 @@
             column.Caption = IWSLocalResource.account;
             column.Width = Unit.Percentage(20);
 
-            column.ColumnType = MVCxGridViewColumnType.ComboBox;//
+            column.ColumnType = MVCxGridViewColumnType.ComboBox;
 
             column.EditorProperties().ComboBox(combo =>
             {
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                //combo.DataSource = ViewBag.ComboAccountId;
+                //combo.DataSource = IWSLookUp.GetAccounts();
                 combo.Columns.Add("id").Caption = IWSLocalResource.id;
                 combo.Columns.Add("name").Caption = IWSLocalResource.item;
                 combo.Width = Unit.Percentage(100);
                 combo.TextFormatString = "{0}-{1}";
 
-                combo.CallbackRouteValues = new { Controller = "AffectationJournal", Action = "AccountIdComboBox" };//
-                combo.DropDownStyle = DropDownStyle.DropDown;//
-                combo.CallbackPageSize = 15;//
-                combo.BindList(ViewBag.ComboAccountId);//
+                combo.CallbackRouteValues = new { Controller = "AffectationJournal", Action = "AccountIdComboBox" };
+                combo.DropDownStyle = DropDownStyle.DropDown;
+                combo.CallbackPageSize = 15;
+                combo.BindList(IWSLookUp.GetAccounts());
             });
         });
         settings.Columns.Add(column =>
@@ -144,7 +148,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.ComboAccountId;
+                combo.DataSource = IWSLookUp.GetAccounts();
                 combo.Columns.Add("id").Caption = IWSLocalResource.id;
                 combo.Columns.Add("name").Caption = IWSLocalResource.item;
                 combo.Width = Unit.Percentage(100);
@@ -162,7 +166,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "Id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.TypeJournal;
+                combo.DataSource = IWSLookUp.GetTypeJournals();
                 combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(20));
                 combo.Columns.Add("Name", IWSLocalResource.TypeJournal, Unit.Percentage(80));
                 combo.TextFormatString = "{0}-{1}";
@@ -198,7 +202,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.DataSource = IWSLookUp.GetAccounts();
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -244,7 +248,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.DataSource = IWSLookUp.GetAccounts();
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -277,7 +281,7 @@
                         s.Properties.TextField = "Name";
                         s.Properties.ValueField = "Id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.TypeJournal;
+                        s.Properties.DataSource = IWSLookUp.GetTypeJournals();
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "Id";
@@ -329,7 +333,7 @@
                 b =>
                 {
                     b.Name = "btnUpdate";
-                    b.Text = "";
+                    b.Text = IWSLocalResource.btnUpdate;
                     b.TabIndex = 6;
                     b.ToolTip = IWSLocalResource.btnUpdate;
                     b.Style[HtmlTextWriterStyle.MarginRight] = "5px";
@@ -342,7 +346,7 @@
                 b =>
                 {
                     b.Name = "btnCancel";
-                    b.Text = "";
+                    b.Text = IWSLocalResource.btnCancel;
                     b.TabIndex = 7;
                     b.ToolTip = IWSLocalResource.btnCancel;
                     b.Style[HtmlTextWriterStyle.MarginLeft] = "5px";

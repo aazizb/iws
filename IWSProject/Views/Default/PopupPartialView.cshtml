@@ -1,0 +1,154 @@
+﻿@model System.Collections.IEnumerable
+@using IWSProject.Content
+
+@Html.DevExpress().PopupControl(settings => {
+    settings.Name = "popup";
+    settings.Modal = false;
+    //settings.EnableClientSideAPI = false;
+    settings.ShowOnPageLoad = true;
+    // settings.CloseAction = CloseAction.None;
+    settings.HeaderText = IWSLocalResource.FiscalYear;
+    settings.CallbackRouteValues = new { Controller = "Default", Action = "GridViewPartialView" };
+
+    settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+    //settings.LoadContentViaCallback = LoadContentViaCallback.None; // I added this
+
+    settings.Width = System.Web.UI.WebControls.Unit.Pixel(600);
+    settings.Height = System.Web.UI.WebControls.Unit.Pixel(100);
+
+    settings.PopupHorizontalAlign = PopupHorizontalAlign.WindowCenter;
+    settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
+
+    settings.SetContent(() => {
+        @Html.DevExpress().PageControl(pc =>
+        {
+            pc.Name = "PageControl";
+            pc.TabPages.Add(IWSLocalResource.FiscalYearCurrent).SetContent(() =>
+            {
+                @Html.DevExpress().FormLayout(fl =>
+                {
+                    fl.Name = "flCourrent";
+                    fl.Width = Unit.Percentage(100);
+                    fl.Items.AddGroupItem(group =>
+                    {
+                        group.Name = "gCurrentFiscalYear";
+                        group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
+                        group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+                        group.ShowCaption = DefaultBoolean.False;
+                        group.Items.Add(txtExtension =>
+                        {
+                            txtExtension.FieldName = "CStart";
+                            txtExtension.Name = "CStart";
+                            txtExtension.Caption = IWSLocalResource.FiscalYearStart;
+                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
+                            textBoxSettings.ReadOnly = true;
+                        });
+                        group.Items.Add(txtExtension =>
+                        {
+                            txtExtension.FieldName = "CEnd";
+                            txtExtension.Name = "CEnd";
+                            txtExtension.Caption = IWSLocalResource.FiscalYearEnd;
+                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
+                            textBoxSettings.ReadOnly = true;
+                        });
+                    });
+
+                }).GetHtml();
+
+            });
+            pc.TabPages.Add(IWSLocalResource.FiscalYearOpen).SetContent(() =>
+            {
+                @Html.DevExpress().FormLayout(fl =>
+                {
+                    fl.Name = "flOpen";
+                    fl.Width = Unit.Percentage(100);
+                    fl.Items.AddGroupItem(group =>
+                    {
+                        group.Name = "gCurrentFiscalYear";
+                        group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
+                        group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+                        group.ShowCaption = DefaultBoolean.False;
+                        group.Items.Add(txtExtension =>
+                        {
+                            txtExtension.FieldName = "OStart";
+                            txtExtension.Name = "OStart";
+                            txtExtension.Caption = IWSLocalResource.FiscalYearStart;
+                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
+                            textBoxSettings.ReadOnly = true;
+                        });
+                        group.Items.Add(txtExtension =>
+                        {
+                            txtExtension.FieldName = "OEnd";
+                            txtExtension.Name = "OEnd";
+                            txtExtension.Caption = IWSLocalResource.FiscalYearEnd;
+                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
+                            textBoxSettings.ReadOnly = true;
+                        });
+                    });
+                }).GetHtml();
+            });
+            pc.TabPages.Add(IWSLocalResource.FiscalYearNext).SetContent(() =>
+            {
+                @Html.DevExpress().FormLayout(fl =>
+                {
+                    fl.Name = "flNext";
+                    fl.Width = Unit.Percentage(100);
+                    fl.Items.AddGroupItem(group =>
+                    {
+                        group.Name = "gNextFiscalYear";
+                        group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
+                        group.ShowCaption = DefaultBoolean.False;
+                        group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+                        group.Items.Add(txtExtension =>
+                        {
+                            txtExtension.FieldName = "NStart";
+                            txtExtension.Name = "NStart";
+                            txtExtension.Caption = IWSLocalResource.FiscalYearStart;
+                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
+                            textBoxSettings.ReadOnly = true;
+                        });
+                        group.Items.Add(txtExtension =>
+                        {
+                            txtExtension.FieldName = "NEnd";
+                            txtExtension.Name = "NEnd";
+                            txtExtension.Caption = IWSLocalResource.FiscalYearEnd;
+                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
+                            textBoxSettings.ReadOnly = true;
+                        });
+
+                        ViewContext.Writer.Write("<div class='buttonsContainer' style='width: 100%; text-align: center'>");
+                        Html.DevExpress().Button(s =>
+                        {
+                            s.Name = "Submit";
+                            s.Width = Unit.Pixel(90);
+                            s.Text = " ";
+                            s.Images.Image.IconID = IconID.ActionsApply16x16;
+                            s.UseSubmitBehavior = false;
+                            s.ClientSideEvents.Click = "function(s,e){popup.PerformCallback();}";
+                        }).Render();
+                        Html.DevExpress().Button(s =>
+                        {
+                            s.Name = "Cancel";
+                            s.Width = Unit.Pixel(90);
+                            s.Text = " ";
+                            s.Images.Image.IconID = IconID.ActionsCancel16x16;
+                            s.UseSubmitBehavior = false;
+                            s.ClientSideEvents.Click = "function(s,e){popup.Hide();}";
+                        }).Render();
+                        ViewContext.Writer.Write("</div>");
+
+                    });
+                }).GetHtml();
+            });
+        }).GetHtml();
+    });
+}).GetHtml()
+
+
+

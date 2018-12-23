@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Data.Linq;
 using System.Data.Linq.Mapping;
-using System.Linq;
-using System.Reflection;
 
 namespace IWSProject.Models.Entities
 {
-
     [TableAttribute(Name = "dbo.Supplier")]
     public partial class Supplier : INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -46,15 +40,15 @@ namespace IWSProject.Models.Entities
 
         private string _Charge;
 
-        private DateTime _Posted;
+        private System.DateTime _Posted;
 
-        private DateTime _Updated;
+        private System.DateTime _Updated;
 
         private int _ModelId;
 
         #region Extensibility Method Definitions
         partial void OnLoaded();
-        partial void OnValidate(ChangeAction action);
+        partial void OnValidate(System.Data.Linq.ChangeAction action);
         partial void OnCreated();
         partial void OnidChanging(string value);
         partial void OnidChanged();
@@ -86,9 +80,9 @@ namespace IWSProject.Models.Entities
         partial void OnVatCodeChanged();
         partial void OnChargeChanging(string value);
         partial void OnChargeChanged();
-        partial void OnPostedChanging(DateTime value);
+        partial void OnPostedChanging(System.DateTime value);
         partial void OnPostedChanged();
-        partial void OnUpdatedChanging(DateTime value);
+        partial void OnUpdatedChanging(System.DateTime value);
         partial void OnUpdatedChanged();
         partial void OnModelIdChanging(int value);
         partial void OnModelIdChanged();
@@ -259,7 +253,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_accountid", DbType = "NVarChar(50)")]
         public string accountid
         {
             get
@@ -299,7 +293,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(50)")]
         public string IBAN
         {
             get
@@ -319,7 +313,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_Bank", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_Bank", DbType = "NVarChar(50)")]
         public string Bank
         {
             get
@@ -339,7 +333,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_BIC", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_BIC", DbType = "NVarChar(50)")]
         public string BIC
         {
             get
@@ -359,7 +353,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_VatCode", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_VatCode", DbType = "NVarChar(50)")]
         public string VatCode
         {
             get
@@ -379,7 +373,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_Charge", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        [ColumnAttribute(Storage = "_Charge", DbType = "NVarChar(50)")]
         public string Charge
         {
             get
@@ -400,7 +394,7 @@ namespace IWSProject.Models.Entities
         }
 
         [ColumnAttribute(Storage = "_Posted", DbType = "DateTime2 NOT NULL")]
-        public DateTime Posted
+        public System.DateTime Posted
         {
             get
             {
@@ -420,7 +414,7 @@ namespace IWSProject.Models.Entities
         }
 
         [ColumnAttribute(Storage = "_Updated", DbType = "DateTime2 NOT NULL")]
-        public DateTime Updated
+        public System.DateTime Updated
         {
             get
             {

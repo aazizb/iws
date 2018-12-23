@@ -58,7 +58,6 @@
         column.Caption = IWSLocalResource.classx;
         column.Width = Unit.Percentage(12);
     });
-
     settings.Columns.Add(column =>
     {
         column.FieldName = "SubClassName";
@@ -67,7 +66,6 @@
         column.Width = Unit.Percentage(14);
         column.Visible = false;
     });
-
     settings.Columns.Add(column =>
     {
         column.FieldName = "AccountId";
@@ -75,14 +73,12 @@
         column.Width = Unit.Percentage(12);
         column.Visible = false;
     });
-
     settings.Columns.Add(column =>
     {
         column.FieldName = "AccountName";
         column.Caption = IWSLocalResource.name;
         column.Width = Unit.Percentage(32);
     });
-
     settings.Columns.Add(column =>
     {
         column.FieldName = "TDebit";
@@ -90,7 +86,6 @@
         column.Width = Unit.Percentage(12);
         column.PropertiesEdit.DisplayFormatString = "N";
     });
-
     settings.Columns.Add(column =>
     {
         column.FieldName = "TCredit";
@@ -98,7 +93,6 @@
         column.Width = Unit.Percentage(12);
         column.PropertiesEdit.DisplayFormatString = "N";
     });
-
     settings.Columns.Add(column =>
     {
         column.FieldName = "Balance";
@@ -106,14 +100,12 @@
         column.Width = Unit.Percentage(12);
         column.PropertiesEdit.DisplayFormatString = "N";
     });
-
     settings.Columns.Add(column =>
     {
         column.FieldName = "Currency";
         column.Caption = IWSLocalResource.Currency;
         column.Width = Unit.Percentage(6);
     });
-
     settings.CustomSummaryCalculate = (s, e) =>
     {
         ASPxSummaryItem item = ((ASPxSummaryItem)e.Item);
@@ -126,7 +118,6 @@
             e.TotalValue = e.GetValue("Currency");
         }
     };
-
     settings.SummaryDisplayText = (sender, e) =>
     {
         if (e.IsGroupSummary && e.Item.FieldName != "Currency")
@@ -134,15 +125,10 @@
             e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
         }
     };
-
     settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleIfExpanded;
-
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TDebit").ShowInGroupFooterColumn = "TDebit";
-
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TCredit").ShowInGroupFooterColumn = "TCredit";
-
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").ShowInGroupFooterColumn = "Balance";
-
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
 
 }).Bind(Model).GetHtml()

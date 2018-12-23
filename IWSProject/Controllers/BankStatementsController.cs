@@ -41,11 +41,8 @@
         {
             #region data processing
             string msg = string.Empty;
-
             string selectedItems = selectedIDs;
-
             int modelId = 0;
-
             try
             {
                 if (!string.IsNullOrWhiteSpace(selectedItems))
@@ -166,9 +163,7 @@
                 ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
             }
-
             #endregion
-
             List<BankStatementViewModel> model=IWSLookUp.GetBankStatements((string)Session["CompanyID"], false);
             return PartialView("CallbackPanelPartialView", model); 
         }
@@ -252,20 +247,28 @@
             return PartialView("BankStatementsGridViewPartial", 
                     IWSLookUp.GetBankStatements((string)Session["CompanyID"], false)); 
         }
+        [ValidateInput(false)]
+        public ActionResult BankStatementView()
+        {
+            List<BankStatementViewModel> model = IWSLookUp.GetBankStatements((string)Session["CompanyID"], false);
+            return PartialView(model);
+        }
+
         public ActionResult CustomGridViewCallback(bool isChecked)
         {
-            Session["select"] = isChecked;
+            ViewBag.select = isChecked;
             List<BankStatementViewModel> model = IWSLookUp.GetBankStatements((string)Session["CompanyID"], false);
             return PartialView("BankStatementsGridViewPartial", model);
         }
         private readonly object RootFolder = "~/Content/Uploads";
-
+        [ValidateInput(false)]
         public ActionResult ImportCSV()
         {
-            return View("ImportCSV", RootFolder);
+            return PartialView("ImportCSV", RootFolder);
         }
+
         [ValidateInput(false)]
-        public ActionResult ImportCSVPartial(string currentFileName)
+        public ActionResult ImportCSVPartial()
         {
             return PartialView("ImportCSVPartial", RootFolder);
         }
@@ -689,7 +692,6 @@
         }
 
         #region Helper
-
         private int MakeComptaMaster(int bankStatementId, int OID, int modelId, string itemtype)
         {
             int itemID = 0;
@@ -959,7 +961,6 @@
             }
             return countLineID;
         }
- 
         private InvoiceViewModel GetInvoiceDetail(int itemId, int bankStatementId, string itemType, string companyId)
         {
             string id;
@@ -1226,7 +1227,6 @@
             }
             return null;
         }
-
         private int MakeHeader(MasterCompta masterCompta)
         {
             int id = 0;
@@ -1263,7 +1263,6 @@
             }
             return id;
         }
-
         private StatementDetailViewModel GetDetailCompta(int bankStatementId, string itemType, string companyId)
         {
 
@@ -1297,8 +1296,6 @@
                     return sd;
 
         }
-
-
         private bool ValidateBankStatement(int ItemID)
         {
             try
@@ -1385,7 +1382,6 @@
                 
             }
         }
-
         private class Helper
         {
             public const string RootFolder = "~/Content/Uploads";
@@ -1393,8 +1389,7 @@
 
             public static string[] AllowedFileExtensions = new string[] { ".csv", ".txt", ".xls", ".xlsx" };
         }
-
-     #endregion
+        #endregion
 
     }
 

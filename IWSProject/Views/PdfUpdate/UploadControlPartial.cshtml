@@ -2,7 +2,7 @@
 
 @Html.DevExpress().Button(settings => {
     settings.Name = "buttonOkUpload";
-    settings.Text = " ";
+    settings.Text = IWSLocalResource.btnUpdate;
     settings.ToolTip = IWSLocalResource.btnUpdate;
     settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
     settings.Images.Image.IconID = IconID.ActionsApply16x16;
@@ -11,7 +11,7 @@
 }).GetHtml()
 
 @Html.DevExpress().Button(settings => {
-    settings.Text = " ";
+    settings.Text = IWSLocalResource.btnCancel;
     settings.Name = "buttonCancelUpload";
     settings.ToolTip = IWSLocalResource.btnCancel;
     settings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";

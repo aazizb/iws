@@ -1,0 +1,34 @@
+﻿
+@model string
+
+<script type="text/javascript">
+    function OnCustomCommand(s, e) {
+        if (e.commandName == "UploadToDB") {
+            var items = TimeSheetsFileManager.GetSelectedItems();
+            var names = [];
+            for (var i = 0; i < items.length; i++) {
+                names[i] = items[i].GetFullName();
+            }
+            $.ajax({
+                url: '@Url.Action("UploadToDB", "TimeSheets")',
+                type: "POST",
+                dataType: "json",
+                data: { files: names },
+                success: function (Message) {
+                    alert(Message.Description);
+                }
+            })
+        }
+        }
+    function OnToolbarUpdating(s, e) {
+            var enabled = (TimeSheetsFileManager.GetSelectedItems().length > 0) &&
+                                        e.activeAreaName != "None";
+            TimeSheetsFileManager.GetToolbarItemByCommandName("UploadToDB").SetEnabled(enabled);
+            TimeSheetsFileManager.GetContextMenuItemByCommandName("UploadToDB").SetEnabled(enabled);
+        }
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.Partial("_TimeSheetsFileManagerPartial", Model)
+}

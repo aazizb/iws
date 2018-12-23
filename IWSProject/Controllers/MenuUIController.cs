@@ -103,5 +103,9 @@ namespace IWSProject.Controllers
             }
             return PartialView("MenuUIGridViewPartial", IWSLookUp.GetMenus());
         }
+        public ActionResult MenuUIView()
+        {
+            return PartialView(IWSLookUp.GetMenus());
+        }
     }
 }

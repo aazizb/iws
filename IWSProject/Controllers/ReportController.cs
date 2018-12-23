@@ -23,7 +23,7 @@ namespace IWSProject.Controllers
             string end = (string)Session["End"];
             string companyId = (string)Session["CompanyID"];
             string accountId = string.Empty;
-            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, companyId);
+            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, companyId,true);
             return PartialView("PivotGridPartial", model.ToList());
         }
         public ActionResult CallbackPanelPartial(string start, string end)
@@ -34,7 +34,7 @@ namespace IWSProject.Controllers
             Session["End"] = end;
             string company = (string)Session["CompanyID"];
             string accountId = string.Empty;
-            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, company);
+            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, company,true);
             return PartialView("_CallbackPartialView", model);
         }
         public ActionResult ExportToXLS()
@@ -44,7 +44,7 @@ namespace IWSProject.Controllers
             string companyId = (string)Session["CompanyID"];
             string accountId = string.Empty;
             PivotXlsxExportOptions exportOptions = new PivotXlsxExportOptions() { ExportType = DevExpress.Export.ExportType.WYSIWYG };
-            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, companyId);
+            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, companyId,true);
             return PivotGridExtension.ExportToXlsx(PivotGridHelper.Settings, model.ToList(), exportOptions);
         }
         [ValidateInput(false)]
@@ -56,22 +56,26 @@ namespace IWSProject.Controllers
 
             return View(accountBalance);
         }
-        [ValidateInput(false)]
-        public ActionResult PeriodicBalance()
+        public ActionResult ReportView()
         {
-            return View();
+            return PartialView();
         }
-        [ValidateInput(false)]
-        public ActionResult SalesInvoiceXS()
-        {
+        //[ValidateInput(false)]
+        //public ActionResult PeriodicBalance()
+        //{
+        //    return View();
+        //}
+        //[ValidateInput(false)]
+        //public ActionResult SalesInvoiceXS()
+        //{
 
-            return View();
-        }
-        [ValidateInput(false)]
-        public ActionResult PurchaseOrderXS()
-        {
-            return View();
-        }
+        //    return View();
+        //}
+        //[ValidateInput(false)]
+        //public ActionResult PurchaseOrderXS()
+        //{
+        //    return View();
+        //}
     }
     public static class PivotGridHelper
     {

@@ -1,40 +1,5 @@
 ﻿@using IWSProject.Content
-
-<script type="text/javascript">
-
-    function OnButtonClick() {
-        if (VatsGridView.IsCustomizationWindowVisible()) {
-
-            VatsGridView.HideCustomizationWindow();
-        }
-        else {
-            VatsGridView.ShowCustomizationWindow();
-        }
-        UpdateButtonText();
-    }
-    function CustomizationWindowCloseUp(s, e) {
-        UpdateButtonText();
-    }
-    function UpdateButtonText() {
-        var text = VatsGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
-        btShowCustomizationWindow.SetText(text);
-    }
-    function OnEndCallback(s, e) {
-        TrackLayout(s.cpClientLayout);
-    }
-    function TrackLayout(layout) {
-        $("#LastLayoutVa").text(layout)
-    }
-</script>
 @{
     ViewBag.Title = IWSLocalResource.vat;
 }
-@Html.DevExpress().Button(settings =>
-{
-    settings.Name = "btShowCustomizationWindow";
-    settings.Text = IWSLocalResource.WindowCustomization;
-    settings.Width = Unit.Pixel(100);
-    settings.UseSubmitBehavior = false;
-    settings.ClientSideEvents.Click = "OnButtonClick";
-}).GetHtml()
-@Html.Action("VatsGridViewPartial")
+@Html.Action("VatView")

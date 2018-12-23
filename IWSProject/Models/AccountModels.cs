@@ -11,7 +11,7 @@ namespace IWSProject.Models
     public class UsersContext : DbContext
     {
         public UsersContext()
-            : base("DefaultConnection")
+            : base("IWSConnectionString")
         {
         }
         public DbSet<UserProfile> UserProfiles { get; set; }
@@ -70,6 +70,9 @@ namespace IWSProject.Models
     public class ResetPasswordViewModel
     {
         [Required]
+        public string UserName { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
@@ -82,7 +85,7 @@ namespace IWSProject.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
-        [System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
         public string Code { get; set; }
@@ -102,7 +105,7 @@ namespace IWSProject.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm new password")]
-        [System.ComponentModel.DataAnnotations.Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+        [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
     public class LoginModel

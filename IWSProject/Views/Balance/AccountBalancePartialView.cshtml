@@ -10,6 +10,14 @@
     settings.KeyFieldName = "AccountID";
     settings.SettingsContextMenu.Enabled = true;
 
+    settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
+
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+
+    settings.SettingsContextMenu.RowMenuItemVisibility.DeleteRow = false;
+    settings.SettingsContextMenu.RowMenuItemVisibility.EditRow = false;
+    settings.SettingsContextMenu.RowMenuItemVisibility.NewRow = false;
+
     settings.SettingsBehavior.EnableRowHotTrack = true;
     settings.SettingsBehavior.AllowFocusedRow = true;
     settings.SettingsBehavior.AllowSelectByRowClick = false;
@@ -26,7 +34,7 @@
     settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
     settings.Settings.ShowFilterRow = true;
-    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowGroupPanel = false;
     settings.Settings.ShowFilterRowMenu = true;
 
     settings.Width = Unit.Percentage(100);
@@ -99,6 +107,7 @@
         column.FieldName = "InitialBalance";
         column.Caption = IWSLocalResource.InitialBalance;
         column.Width = Unit.Percentage(14);
+        column.Visible = false;
         column.EditorProperties().TextBox(textBox =>
         {
             textBox.DisplayFormatString = "N";
@@ -157,7 +166,7 @@
     });
     settings.Columns.Add(column =>
     {
-        column.Visible = false;
+        column.Visible = true;
         column.FieldName = "Currency";
         column.Caption = IWSLocalResource.Currency;
         column.Width = Unit.Percentage(10);
@@ -182,14 +191,14 @@
         }
     };
     settings.Settings.ShowFooter = true;
-    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowGroupPanel = false;
     settings.SettingsBehavior.AutoExpandAllGroups = true;
     settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
 
-    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").ShowInGroupFooterColumn = "Debit";
-    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").ShowInGroupFooterColumn = "Credit";
-    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").ShowInGroupFooterColumn = "Balance";
-    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").ShowInGroupFooterColumn = "Debit";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").ShowInGroupFooterColumn = "Credit";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").ShowInGroupFooterColumn = "Balance";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
 
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").ShowInGroupFooterColumn = "Debit";
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").ShowInGroupFooterColumn = "Credit";

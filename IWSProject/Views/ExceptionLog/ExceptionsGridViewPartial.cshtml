@@ -1,5 +1,4 @@
 ﻿@using IWSProject.Content
-@using IWSProject.Models
 @using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -11,6 +10,10 @@
 
         settings.SettingsContextMenu.Enabled = true;
 
+        settings.SettingsContextMenu.RowMenuItemVisibility.DeleteRow = false;
+        settings.SettingsContextMenu.RowMenuItemVisibility.EditRow = false;
+        settings.SettingsContextMenu.RowMenuItemVisibility.NewRow = false;
+
         var showCustomizationWindow = ViewData["ShowCustomizationWindow"] ?? false;
 
         settings.ClientSideEvents.Init = string.Format("function(s, e) {{ OnGridInit(s, e, {0}); }}", showCustomizationWindow.ToString().ToLower());
@@ -19,7 +22,7 @@
         settings.KeyFieldName = "LogId";
 
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel= true;
         settings.Settings.ShowFilterRowMenu = true;
 
         settings.SettingsBehavior.EnableCustomizationWindow = true;

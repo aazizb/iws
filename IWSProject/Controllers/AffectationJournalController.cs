@@ -8,7 +8,7 @@ using System.Web.Mvc;
 namespace IWSProject.Controllers
 {
     [Authorize]
-    [HandleError()]
+    //[HandleError()]
     public class AffectationJournalController : Controller
     {
 
@@ -20,40 +20,13 @@ namespace IWSProject.Controllers
         //GET: AffectationJournal
         public ActionResult Index()
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
-            ViewBag.TypeJournal = IWSLookUp.GetTypeJournals();
-
-            ViewBag.AffectationJournal = IWSLookUp.GetAffectationJournal();
-
-            sw.Stop();
-
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            //if (Session["DurationAff"] == null)
-            //{
-                Session["DurationAff"] = $"Data reading time: {elapsedTime} ms";
-
-            //}
             return View();
         }
 
         [ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartial()
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
-            ViewBag.TypeJournal = IWSLookUp.GetTypeJournals();
-
-            ViewBag.Aff = IWSLookUp.GetAffectationJournal();
-
-            sw.Stop();
-
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            Session["DurationAff"] = $"Data reading time: {elapsedTime} ms";
-            return PartialView("AffectationJournalGridViewPartial", ViewBag.Aff);
+            return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
         }
 
         [HttpPost, ValidateInput(false)]
@@ -145,6 +118,10 @@ namespace IWSProject.Controllers
                                                                             "Name", "id", dataObject);
 
             return GridViewExtension.GetComboBoxCallbackResult(combo);
+        }
+        public ActionResult AffectationJournalView()
+        {
+            return PartialView(IWSLookUp.GetAffectationJournal());
         }
     }
 }

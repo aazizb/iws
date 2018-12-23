@@ -136,5 +136,9 @@ namespace IWSProject.Controllers
             }
             return PartialView("AccountsGridViewPartial",   IWSLookUp.GetAccount());
             }
+        public ActionResult AccountsView()
+        {
+            return PartialView(IWSLookUp.GetAccount());
+        }
     }
 }

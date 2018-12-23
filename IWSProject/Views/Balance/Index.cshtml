@@ -1,57 +1,5 @@
-﻿@using IWSProject.Models
-@using IWSProject.Models.Entities
-@using IWSProject.Content
-@model List<AccountBalanceViewModel>
-
-<script type="text/javascript">
-    var selectedIDs = null;
-    var id = null;
-    function OnButtonClick(s, e) {
-        id = gridLookupIDs.GetText()
-        callbackPartialView.PerformCallback();
-    }
-    function OnBeginCallback(s, e) {
-        e.customArgs["selectedIDs"] = id;
-    }
-    function OnSelectionChanged(s, e) {
-        var g = gridLookup.GetGridView();
-        g.OnGetRowValues("Id", GetSelectedFieldValuesCallback)
-    }
-    function GetSelectedFieldValuesCallback(values) {
-        selectedIDs = values.join(';');
-    }
-    function HideGridLookup() {
-        gridLookupIDs.ConfirmCurrentSelection();
-        gridLookupIDs.HideDropDown();
-    }
-</script>
+﻿@using IWSProject.Content
 @{
     ViewBag.Title = IWSLocalResource.AccountBalance;
 }
-@using (Html.BeginForm())
-{
-
-    @Html.Action("GridLookupPartial")
-    @Html.DevExpress().Button(
-    settings =>
-    {
-        settings.Name = "btnSubmit";
-        settings.ControlStyle.CssClass = "button";
-        settings.Text = IWSLocalResource.Validate;
-        settings.Width = Unit.Pixel(105);
-        settings.UseSubmitBehavior = false;
-        settings.ClientSideEvents.Click = "OnButtonClick";
-    }
-    ).GetHtml()
-    @Html.DevExpress().Button(
-    settings =>
-    {
-        settings.Name = "btnExport";
-        settings.ControlStyle.CssClass = "button";
-        settings.Text = IWSLocalResource.Export;
-        settings.Width = Unit.Pixel(105);
-        settings.UseSubmitBehavior = false;
-        settings.RouteValues = new { Controller = "Balance", Action = "Export" };
-    }).GetHtml()
-    @Html.Partial("_CallbackPartialView")
-}
+@Html.Action("BalanceView")

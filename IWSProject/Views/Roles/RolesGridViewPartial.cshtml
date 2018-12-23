@@ -18,8 +18,13 @@
         settings.CommandColumn.Width = Unit.Percentage(5);
 
         settings.SettingsBehavior.EnableRowHotTrack = true;
+
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
@@ -41,9 +46,6 @@
         settings.KeyFieldName = "Id";
 
         settings.SettingsBehavior.EnableRowHotTrack = true;
-
-        settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
 
         settings.Settings.ShowFilterRow = true;
         settings.SettingsBehavior.ConfirmDelete = true;
@@ -112,7 +114,7 @@
                     Html.DevExpress().Button( btnSettings =>
                     {
                         btnSettings.Name = "btnUpdate";
-                        btnSettings.Text = "";
+                        btnSettings.Text = IWSLocalResource.btnUpdate;
                         btnSettings.ToolTip = IWSLocalResource.btnUpdate;
                         btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
                         btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
@@ -123,7 +125,7 @@
                     Html.DevExpress().Button( btnSettings =>
                     {
                         btnSettings.Name = "btnCancel";
-                        btnSettings.Text = "";
+                        btnSettings.Text = IWSLocalResource.btnCancel;
                         btnSettings.ToolTip = IWSLocalResource.btnCancel;
                         btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
                         btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;

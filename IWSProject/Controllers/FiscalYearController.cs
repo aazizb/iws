@@ -12,13 +12,21 @@ namespace IWSProject.Controllers
             db = new IWSDataContext();
         }
         // GET: FiscalYear
+        [HttpGet]
         public ActionResult Index()
         {
             string companyId = (string)Session["CompanyID"];
             ViewBag.FiscalYear = IWSLookUp.GetFiscalYears(companyId);
             return View(IWSLookUp.GetCurrentFiscalYear(companyId));
         }
-
+        [HttpGet]
+        public ActionResult GridViewPartialView()
+        {
+            string companyId = (string)Session["CompanyID"];
+            ViewBag.FiscalYear = IWSLookUp.GetFiscalYears(companyId);
+            //return PartialView("Index", IWSLookUp.GetCurrentFiscalYear(companyId));
+            return PartialView("GridViewPartialView", IWSLookUp.GetCurrentFiscalYear(companyId));
+        }
         public ActionResult CallbackPanel()
         {
 

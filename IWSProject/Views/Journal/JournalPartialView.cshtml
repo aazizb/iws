@@ -1,5 +1,4 @@
 ﻿@using IWSProject.Models
-@using IWSProject.Models.Entities
 @using IWSProject.Content
 @using IWSProject.Controllers
 @Html.DevExpress().GridView(settings =>
@@ -8,9 +7,16 @@
 
     settings.CallbackRouteValues = new { Controller = "Journal", Action = "JournalPartialView" };
 
+    settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
+    settings.SettingsBehavior.EnableCustomizationWindow = true;
+
     settings.KeyFieldName = "ItemID";
 
     settings.SettingsContextMenu.Enabled = true;
+
+    settings.SettingsContextMenu.RowMenuItemVisibility.DeleteRow = false;
+    settings.SettingsContextMenu.RowMenuItemVisibility.EditRow = false;
+    settings.SettingsContextMenu.RowMenuItemVisibility.NewRow = false;
 
     settings.SettingsBehavior.AllowSelectByRowClick = false;
     settings.SettingsBehavior.EnableRowHotTrack = true;
@@ -30,8 +36,6 @@
     settings.Settings.ShowGroupPanel = true;
     settings.Settings.ShowFilterRowMenu = true;
     settings.SettingsBehavior.AllowFocusedRow = true;
-
-    settings.Settings.ShowGroupPanel = true;
 
     settings.Width = Unit.Percentage(100);
 
@@ -76,12 +80,14 @@
         column.FieldName = "ItemType";
         column.Caption = IWSLocalResource.PartType;
         column.Width = Unit.Percentage(10);
+        column.Visible = false;
     });
     settings.Columns.Add(column =>
     {
         column.FieldName = "TypeJournal";
         column.Caption = IWSLocalResource.TypeJournal;
         column.Width = Unit.Percentage(10);
+        column.Visible = false;
         column.EditorProperties().ComboBox(combo =>
         {
             combo.TextField = "Name";
@@ -215,7 +221,7 @@
         }
     };
     settings.Settings.ShowFooter = true;
-    settings.Settings.ShowGroupPanel = true;
+
     settings.SettingsBehavior.AutoExpandAllGroups = true;
     settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
     settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Amount").ShowInGroupFooterColumn = "Amount";

@@ -1,0 +1,51 @@
+﻿
+<script type="text/javascript">
+    function OnDropDown(s, e) {
+        var calendar = s.GetCalendar();
+        var fastNav = calendar.fastNavigation;
+        fastNav.activeView = calendar.GetView(0, 0);
+        fastNav.Prepare();
+        fastNav.GetPopup().popupVerticalAlign = 'Below';
+        fastNav.GetPopup().ShowAtElement(s.GetMainElement())
+        fastNav.OnOkClick = function () {
+            var parentDateEdit = this.calendar.owner;
+            var currentDate = new Date(fastNav.activeYear, fastNav.activeMonth, 1);
+            parentDateEdit.SetDate(currentDate);
+            parentDateEdit.HideDropDown();
+            $.ajax({
+                //call controller action to handle the date selection change
+            });
+        }
+        fastNav.OnCancelClick = function () {
+            var parentDateEdit = this.calendar.owner;
+            parentDateEdit.HideDropDown();
+        }
+    }
+
+    function OnDateChanged(s, e) {
+        var newDate = s.GetDate();
+        if (newDate == null) {
+            $.ajax({
+                //call controller action to handle the date selection change
+            });
+        }
+    }
+
+</script>
+@Html.DevExpress().DateEdit(settings =>
+{
+    settings.Name = "toYearMonth";
+    settings.Date = DateTime.Now;
+    settings.Properties.ValidationSettings.RequiredField.IsRequired = true;
+    settings.Properties.ValidationSettings.ErrorDisplayMode = DevExpress.Web.ErrorDisplayMode.ImageWithTooltip;
+
+    settings.Properties.DisplayFormatInEditMode = true;
+    settings.Properties.DisplayFormatString = "yyyyMM";
+    settings.Properties.EditFormatString = "yyyyMM";
+    settings.Properties.ClientSideEvents.DropDown = "OnDropDown";
+    settings.Properties.ClientSideEvents.Init = @"function OnInit(s, e) {var calendar = s.GetCalendar();calendar.owner = s;calendar.GetMainElement().style.opacity = '0';}";
+    settings.Properties.CalendarProperties.EnableYearNavigation = true;
+    settings.Width = System.Web.UI.WebControls.Unit.Pixel(180);
+    settings.Properties.ShowShadow = false;
+}).GetHtml()
+

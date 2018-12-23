@@ -1,0 +1,35 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.Article>
+<script type="text/javascript">
+
+    function OnButtonClick() {
+        if (ArticlesGridView.IsCustomizationWindowVisible()) {
+
+            ArticlesGridView.HideCustomizationWindow();
+        }
+        else {
+            ArticlesGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+
+    function UpdateButtonText() {
+        var text = ArticlesGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+
+    function TrackLayout(layout) {
+        $("#LastLayoutAr").text(layout);
+    }
+</script>
+
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Partial("ArticlesGridViewPartial", Model)

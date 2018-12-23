@@ -28,7 +28,7 @@
             buttonsettings.Name = "updateButton";
             buttonsettings.Width = Unit.Pixel(80);
             buttonsettings.Images.Image.IconID = IconID.ActionsApply16x16;
-            buttonsettings.Text = " ";
+            buttonsettings.Text = IWSLocalResource.btnUpdate;
             buttonsettings.ClientSideEvents.Click = "function(s, e) { updateControl.PerformCallback({param: true}); PdfUpdateGridView.Refresh(); }";
         }).Render();
         ViewContext.Writer.Write("</div></div>");

@@ -1,0 +1,32 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.QuantityUnit>
+<script type="text/javascript">
+
+    function OnButtonClick() {
+        if (QuantityUnitsGridView.IsCustomizationWindowVisible()) {
+
+            QuantityUnitsGridView.HideCustomizationWindow();
+        }
+        else {
+            QuantityUnitsGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = QuantityUnitsGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutQu").text(layout)
+    }
+</script>
+
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Action("QuantityUnitsGridViewPartial", Model)

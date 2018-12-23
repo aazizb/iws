@@ -1,39 +1,5 @@
 ﻿@using IWSProject.Content
-<script type="text/javascript">
-
-    function OnButtonClick() {
-        if (CurrenciesGridView.IsCustomizationWindowVisible()) {
-
-            CurrenciesGridView.HideCustomizationWindow();
-        }
-        else {
-            CurrenciesGridView.ShowCustomizationWindow();
-        }
-        UpdateButtonText();
-    }
-    function CustomizationWindowCloseUp(s, e) {
-        UpdateButtonText();
-    }
-    function UpdateButtonText() {
-        var text = CurrenciesGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
-        btShowCustomizationWindow.SetText(text);
-    }
-    function OnEndCallback(s, e) {
-        TrackLayout(s.cpClientLayout);
-    }
-    function TrackLayout(layout) {
-        $("#LastLayoutCr").text(layout)
-    }
-</script>
 @{
     ViewBag.Title = IWSLocalResource.Currency;
 }
-@Html.DevExpress().Button(settings =>
-{
-    settings.Name = "btShowCustomizationWindow";
-    settings.Text = IWSLocalResource.WindowCustomization;
-    settings.Width = Unit.Pixel(100);
-    settings.UseSubmitBehavior = false;
-    settings.ClientSideEvents.Click = "OnButtonClick";
-}).GetHtml()
-@Html.Action("CurrenciesGridViewPartial")
+@Html.Action("CurrencyView")

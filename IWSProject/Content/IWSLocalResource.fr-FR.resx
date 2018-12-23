@@ -1053,4 +1053,73 @@
   <data name="DecliningRate" xml:space="preserve">
     <value>Taux de dépréciation</value>
   </data>
+  <data name="TimeSheets" xml:space="preserve">
+    <value>Time Sheets</value>
+  </data>
+  <data name="ImportTimeSheets" xml:space="preserve">
+    <value>Import Time Sheets</value>
+  </data>
+  <data name="AuftragsNummer" xml:space="preserve">
+    <value>Auftrags Nummer</value>
+  </data>
+  <data name="EBNummer" xml:space="preserve">
+    <value>EB-Nummer</value>
+  </data>
+  <data name="Firma" xml:space="preserve">
+    <value>Firma</value>
+  </data>
+  <data name="Kunde" xml:space="preserve">
+    <value>Kunde</value>
+  </data>
+  <data name="Mitarbeiter" xml:space="preserve">
+    <value>Mitarbeiter</value>
+  </data>
+  <data name="MonatJahr" xml:space="preserve">
+    <value>Monat-Jahr</value>
+  </data>
+  <data name="SummeDerStunden" xml:space="preserve">
+    <value>Summe Der Stunden</value>
+  </data>
+  <data name="SummeTage" xml:space="preserve">
+    <value>Summe Tage</value>
+  </data>
+  <data name="TatigkeitsNachweis" xml:space="preserve">
+    <value>TätigkeitsNachweis</value>
+  </data>
+  <data name="ArbeitsZeitBis" xml:space="preserve">
+    <value>ArbeitsZeitBis</value>
+  </data>
+  <data name="ArbeitsZeitVon" xml:space="preserve">
+    <value>ArbeitsZeitVon</value>
+  </data>
+  <data name="Datum" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="GerundetBis" xml:space="preserve">
+    <value>GerundetBis</value>
+  </data>
+  <data name="GerundetVon" xml:space="preserve">
+    <value>GerundetVon</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Project" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="StundenNetto" xml:space="preserve">
+    <value>StundenNetto</value>
+  </data>
+  <data name="TatigkeitEinsatzort" xml:space="preserve">
+    <value>TatigkeitEinsatzort</value>
+  </data>
+  <data name="Gerundet" xml:space="preserve">
+    <value>Gerundet</value>
+  </data>
+  <data name="UnsupportedFormat" xml:space="preserve">
+    <value>Format non compatible</value>
+  </data>
+  <data name="QueryDetail" xml:space="preserve">
+    <value>Détail de la requête</value>
+  </data>
 </root>

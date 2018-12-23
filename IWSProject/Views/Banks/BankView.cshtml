@@ -1,0 +1,31 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.Bank>
+<script type="text/javascript">
+
+    function OnButtonClick() {
+        if (BanksGridView.IsCustomizationWindowVisible()) {
+
+            BanksGridView.HideCustomizationWindow();
+        }
+        else {
+            BanksGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = BanksGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#lastLayout").text(layout)
+    }
+</script>
+
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Partial("BanksGridViewPartial", Model)

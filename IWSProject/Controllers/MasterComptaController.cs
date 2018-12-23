@@ -58,6 +58,16 @@ namespace IWSProject.Controllers
             return PartialView("CallbackPanelPartialView", 
                     IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)currentModelId));
         }
+
+        public ActionResult CustomGridViewCallback(bool isChecked)
+        {
+            ViewBag.select = isChecked;
+            int modelId = (int)IWSLookUp.ComptaMasterModelId.Default;
+            if (Session["ModelId"] != null)
+                modelId = (int)Session["ModelId"];
+            return PartialView("MasterGridViewPartial",
+                    IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+        }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] MasterCompta item)
         {
@@ -167,8 +177,11 @@ namespace IWSProject.Controllers
             return PartialView("MasterGridViewPartial",
                                 IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
+        public ActionResult ComptaView()
+        {
+            return PartialView(IWSLookUp.GetMasterCompta(IWSLookUp.ComptaMasterModelId.Default));
+        }
         #endregion
-
         #region Detail
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(int transId, object newKeyValue)
@@ -270,7 +283,6 @@ namespace IWSProject.Controllers
             return PartialView("DetailGridViewPartial", IWSLookUp.GetDetailCompta(transId));
         }
         #endregion
-
         #region DetailDetail
         [ValidateInput(false)]
         public ActionResult DetailDetailGridViewPartial(int transId)

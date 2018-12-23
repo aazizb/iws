@@ -16,13 +16,11 @@ namespace IWSProject.Controllers
             
             db = new IWSDataContext();
         }
-
         // GET: Vats
         public ActionResult Index()
         {
             return View();// IWSLookUp.GetVats());
         }
-
         [ValidateInput(false)]
         public ActionResult VatsGridViewPartial()
         {
@@ -30,7 +28,6 @@ namespace IWSProject.Controllers
 
             return PartialView("VatsGridViewPartial", IWSLookUp.GetVats());
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult VatsGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Vat item)
         {
@@ -114,6 +111,10 @@ namespace IWSProject.Controllers
                 }
             }
             return PartialView("VatsGridViewPartial", IWSLookUp.GetVats());
+        }
+        public ActionResult VatView()
+        {
+            return PartialView(IWSLookUp.GetVats());
         }
     }
 }

@@ -4,7 +4,7 @@
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "BankStatementsGridView";
-        
+
         settings.CallbackRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartial" };
 
         settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "BankStatements", Action = "BankStatementsGridViewPartialAddNew" };
@@ -16,9 +16,17 @@
         settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
         settings.SettingsContextMenu.Enabled = true;
 
+        settings.SettingsContextMenu.RowMenuItemVisibility.DeleteRow = false;
+        settings.SettingsContextMenu.RowMenuItemVisibility.NewRow = false;
+
         settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
 
+        settings.CommandColumn.Visible = true;
         settings.CommandColumn.ShowSelectCheckbox = true;
+        settings.CommandColumn.Width = Unit.Percentage(8);
+        settings.CommandColumn.ShowEditButton = false;
+        settings.CommandColumn.ShowDeleteButton = false;
+        settings.CommandColumn.ShowNewButtonInHeader = false;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
@@ -49,66 +57,39 @@
                 selectAll.Properties.ClientSideEvents.CheckedChanged = "CheckedChanged";
             }).Render();
         });
-        settings.BeforeGetCallbackResult = (s, e) =>
+        settings.AfterPerformCallback = (s, e) =>
         {
             MVCxGridView gridView = (MVCxGridView)s;
 
             int startIndex = gridView.VisibleStartIndex;
-
             int visibleRowCount = gridView.GetCurrentPageRowValues("id").Count;
-
             int endIndex = startIndex + visibleRowCount - 1;
-            bool select = false;
-            bool isRowSeleted;
             bool isValidated;
-            if (Session["select"] != null)
-            {
-                select = (bool)Session["select"];
-            }
-
-            Session["select"] = false;
+            bool select = false;
+            if (ViewBag.select != null)
+                select = (bool)ViewBag.select;
 
             for (int i = startIndex; i <= endIndex; i++)
             {
-
                 isValidated = (bool)gridView.GetRowValues(i, "IsValidated");
-
-                isRowSeleted = gridView.Selection.IsRowSelected(i);
-
                 if (select && !isValidated)
-                {
                     gridView.Selection.SelectRow(i);
-
-                }
                 else
-                {
-                    if (isRowSeleted)
-                        gridView.Selection.UnselectRow(i);
-                }
-                if (isRowSeleted && !select)
-                    gridView.Selection.SelectRow(i);
+                    gridView.Selection.UnselectRow(i);
             }
         };
-
-        settings.CommandColumn.Visible = true;
-
-        settings.CommandColumn.Width = Unit.Percentage(8);
-        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
         settings.SettingsCommandButton.NewButton.Text = " ";
-        settings.CommandColumn.ShowNewButtonInHeader = false;
 
         settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
         settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
         settings.SettingsCommandButton.EditButton.Text = " ";
-        settings.CommandColumn.ShowEditButton = false;
 
         settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
         settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
         settings.SettingsCommandButton.DeleteButton.Text = " ";
-        settings.CommandColumn.ShowDeleteButton = false;
 
         settings.InitNewRow = (s, e) =>
         {
@@ -151,7 +132,7 @@
         settings.KeyFieldName = "id";
 
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel= true;
         settings.Settings.ShowFilterRowMenu = true;
         settings.SettingsBehavior.AllowFocusedRow = true;
 
@@ -309,9 +290,16 @@
             });
         });
 
-#region Template Edit
-settings.SetEditFormTemplateContent(templateContent =>
+        #region Template Edit
+        settings.SetEditFormTemplateContent(templateContent =>
         {
+            var isValidated = DataBinder.Eval(templateContent.DataItem, "IsValidated");
+
+            if (isValidated == null)
+                isValidated = false;
+
+            ViewBag.Visible = ((bool)isValidated == true) ? false : true;
+
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
                 formLayoutSettings.Name = "BankStatementsViewEdit";
@@ -475,19 +463,20 @@ settings.SetEditFormTemplateContent(templateContent =>
                         b =>
                         {
                             b.Name = "btnUpdate";
-                            b.Text = "";
+                            b.Text = IWSLocalResource.btnUpdate;
                             b.ToolTip = IWSLocalResource.btnUpdate;
                             b.Style[HtmlTextWriterStyle.MarginRight] = "5px";
                             b.Images.Image.IconID = IconID.ActionsApply16x16;
                             b.Width = Unit.Pixel(80);
                             b.ClientSideEvents.Click = "function(s, e){ BankStatementsGridView.UpdateEdit(); }";
+                            b.ClientVisible = ViewBag.Visible;
                         }).Render();
 
                     Html.DevExpress().Button(
                         b =>
                         {
                             b.Name = "btnCancel";
-                            b.Text = "";
+                            b.Text = IWSLocalResource.btnCancel;
                             b.ToolTip = IWSLocalResource.btnCancel;
                             b.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
                             b.Images.Image.IconID = IconID.ActionsCancel16x16;
@@ -499,9 +488,9 @@ settings.SetEditFormTemplateContent(templateContent =>
         .Bind(ViewData["BankStatement"] ?? templateContent.DataItem)
         .Render();
         });
-#endregion
+        #endregion
 
-settings.DataBinding = (sender, e) =>
+        settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(BankStatement));
         };

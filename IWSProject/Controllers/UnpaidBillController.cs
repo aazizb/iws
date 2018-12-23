@@ -29,5 +29,9 @@ namespace IWSProject.Controllers
             return PartialView("CallbackPanelPartialView",
                             IWSLookUp.GetUnPaidBill((IWSLookUp.ComptaMasterModelId)currentModelId, balanced));
         }
+        public ActionResult UnpaidBillView()
+        {
+            return PartialView(IWSLookUp.GetUnPaidBill((int)IWSLookUp.ComptaMasterModelId.Default, true));
+        }
     }
 }

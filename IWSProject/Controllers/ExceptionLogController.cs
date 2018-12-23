@@ -22,5 +22,10 @@ namespace IWSProject.Controllers
             ViewData["ShowCustomizationWindow"] = true;
             return PartialView(IWSLookUp.GetExceptions());
         }
+        public ActionResult ExceptionView()
+        {
+            ViewData["ShowCustomizationWindow"] = true;
+            return PartialView(IWSLookUp.GetExceptions());
+        }
     }
 }

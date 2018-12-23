@@ -15,13 +15,12 @@
         settings.GridViewProperties.Settings.ShowStatusBar = GridViewStatusBarMode.Visible;
 
         settings.GridViewProperties.SettingsPager.Visible = true;
-        settings.GridViewProperties.Settings.ShowGroupPanel = true;
+        settings.GridViewProperties.Settings.ShowGroupPanel = false;
         settings.GridViewProperties.Settings.ShowFilterRow = true;
         settings.GridViewProperties.SetStatusBarTemplateContent(c =>
         {
             ViewContext.Writer.Write("<div style=\"padding: 2px 8px 2px 0; float: right\">");
-            Html.DevExpress().Button(
-                btnSettings =>
+            Html.DevExpress().Button(btnSettings =>
                 {
                     btnSettings.Name = "btnClose";
                     btnSettings.UseSubmitBehavior = false;
@@ -29,21 +28,21 @@
 
                     btnSettings.ClientSideEvents.Click = "HideGridLookup";
                 }
-            )
-            .Render();
+            ).Render();
             ViewContext.Writer.Write("</div>");
         });
 
         settings.Columns.Add(column =>
         {
             column.FieldName = "Id";
-            column.Width= Unit.Pixel(160);
+            column.Width = Unit.Percentage(20);
             column.Caption = IWSLocalResource.accountid;
             column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
         });
         settings.Columns.Add(column =>
         {
             column.FieldName = "Name";
+            column.Width = Unit.Percentage(80);
             column.Caption = IWSLocalResource.name;
             column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
         });

@@ -1,0 +1,32 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.Menu>
+
+<script type="text/javascript">
+
+    function OnButtonClick() {
+        if (MenuUIGridView.IsCustomizationWindowVisible()) {
+
+            MenuUIGridView.HideCustomizationWindow();
+        }
+        else {
+            MenuUIGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = MenuUIGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutVa").text(layout)
+    }
+</script>
+
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Partial("MenuUIGridViewPartial", Model)

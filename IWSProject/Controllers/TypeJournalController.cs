@@ -7,7 +7,7 @@ using System.Web.Mvc;
 namespace IWSProject.Controllers
 {
     [Authorize]
-    [HandleError()]
+    //[HandleError()]
     public class TypeJournalController : Controller
     {
         IWSDataContext db;
@@ -19,18 +19,18 @@ namespace IWSProject.Controllers
         public ActionResult Index()
         {
             
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+            //System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
 
-            ViewBag.TypeJournal = IWSLookUp.GetTypeJournals();
+            //ViewBag.TypeJournal = IWSLookUp.GetTypeJournals();
 
-            sw.Stop();
+            //sw.Stop();
 
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            //if (Session["DurationTypeJ"] == null)
-            //{
-                Session["DurationTypeJ"] = $"Data reading time: {elapsedTime} ms";
+            //string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            ////if (Session["DurationTypeJ"] == null)
+            ////{
+            //    Session["DurationTypeJ"] = $"Data reading time: {elapsedTime} ms";
 
-            //}
+            ////}
             return View();
         }
 
@@ -38,14 +38,14 @@ namespace IWSProject.Controllers
         public ActionResult TypeJournalsGridViewPartial()
         {
             
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-            ViewBag.TypeJour = IWSLookUp.GetTypeJournals();
-            var p = IWSLookUp.GetTypeJournals();
-            sw.Stop();
+            //System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
+            //ViewBag.TypeJour = IWSLookUp.GetTypeJournals();
+            //var p = IWSLookUp.GetTypeJournals();
+            //sw.Stop();
 
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            Session["DurationTypeJ"] = $"Data reading time: {elapsedTime} ms";
-            return PartialView("TypeJournalsGridViewPartial", ViewBag.TypeJour);
+            //string elapsedTime = sw.ElapsedMilliseconds.ToString();
+            //Session["DurationTypeJ"] = $"Data reading time: {elapsedTime} ms";
+            return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
         }
 
         [HttpPost, ValidateInput(false)]
@@ -126,6 +126,10 @@ namespace IWSProject.Controllers
                 }
             }
             return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
+        }
+        public ActionResult TypeJournalView()
+        {
+            return PartialView(IWSLookUp.GetTypeJournals());
         }
     }
 }

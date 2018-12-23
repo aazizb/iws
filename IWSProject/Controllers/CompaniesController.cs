@@ -27,40 +27,13 @@ namespace IWSProject.Controllers
         // GET: Companies
         public ActionResult Index()
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
-            ViewBag.Currency = IWSLookUp.GetCurrency();
-
-            ViewBag.Company = IWSLookUp.GetCompany();
-
-            sw.Stop();
-
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            if (Session["DurationCom"] == null)
-            {
-                Session["DurationCom"] = $"Data reading time: {elapsedTime} ms";
-
-            }
             return View();
         }
         
         [ValidateInput(false)]
         public ActionResult CompaniesGridViewPartial()
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
-            ViewBag.Currency = IWSLookUp.GetCurrency();
-
-            ViewBag.Comp = IWSLookUp.GetCompany();
-            sw.Stop();
-
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            Session["DurationCom"] = $"Data reading time: {elapsedTime} ms";
-            return PartialView("CompaniesGridViewPartial", ViewBag.Comp);
+            return PartialView("CompaniesGridViewPartial", IWSLookUp.GetCompany());
         }
 
         [HttpPost, ValidateInput(false)]
@@ -162,10 +135,6 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(string owner)
         {
-            ViewBag.BankChildren = IWSLookUp.GetBankChildren();
-
-            ViewBag.BIC = IWSLookUp.GetBIC();
-
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
         [HttpPost, ValidateInput(false)]
@@ -254,6 +223,11 @@ namespace IWSProject.Controllers
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
 
+        public ActionResult CompanyView()
+        {
+            return PartialView(IWSLookUp.GetCompany());
+        }
+
     }
     public class CompaniesControllerUploadControlLogoSettings
     {
@@ -294,7 +268,7 @@ namespace IWSProject.Controllers
             
             string query = "Update Company set LogoName=@FileName, LogoContent=@FileContent, ContentType=@ContentType where id = @Id;";
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.
-                            ConnectionStrings["DefaultConnection"].ToString()))
+                            ConnectionStrings["IWSConnectionString"].ToString()))
             {
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {

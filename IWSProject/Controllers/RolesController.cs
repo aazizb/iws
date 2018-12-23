@@ -22,6 +22,10 @@ namespace IWSProject.Controllers
         {
             return View(context.Roles.ToList());
         }
+        public ActionResult RoleView()
+        {
+            return PartialView(context.Roles.ToList());
+        }
 
         [ValidateInput(false)]
         public ActionResult RolesGridViewPartial()

@@ -28,7 +28,11 @@
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
         settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.AliceBlue;
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
@@ -71,7 +75,7 @@
         };
 
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel= true;
         settings.Settings.ShowFilterRowMenu = true;
 
 
@@ -170,9 +174,9 @@
             });
         });
 
-#region Template Edit
+        #region Template Edit
 
-settings.SetEditFormTemplateContent(templateContent =>
+        settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -192,19 +196,19 @@ settings.SetEditFormTemplateContent(templateContent =>
                     });
                 });
 
-        //formLayoutSettings.Items.Add(i =>
-        //{
-        //    i.FieldName = "name";
-        //    i.Caption = IWSLocalResource.Owner;
-        //    i.NestedExtension().TextBox(s =>
-        //    {
-        //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-        //        s.ShowModelErrors = true;
-        //        s.Width = Unit.Percentage(100);
-        //    });
-        //});
+                //formLayoutSettings.Items.Add(i =>
+                //{
+                //    i.FieldName = "name";
+                //    i.Caption = IWSLocalResource.Owner;
+                //    i.NestedExtension().TextBox(s =>
+                //    {
+                //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                //        s.ShowModelErrors = true;
+                //        s.Width = Unit.Percentage(100);
+                //    });
+                //});
 
-        formLayoutSettings.Items.Add(i =>
+                formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "name";
                     i.Caption = IWSLocalResource.Owner;
@@ -369,10 +373,10 @@ settings.SetEditFormTemplateContent(templateContent =>
             .Render();
         });
 
-#endregion
+        #endregion
 
 
-settings.DataBinding = (sender, e) =>
+        settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(BankAccount));
         };

@@ -37,6 +37,8 @@ namespace IWSProject.Controllers
             item.ModelId = (int)IWSLookUp.MetaModelId.Asset;
             item.Posted = DateTime.Now.Date;
             item.Updated = DateTime.Now.Date;
+            if (item.Rate == null)
+                item.Rate = 1;
             ViewBag.Assets = item;
             if (ModelState.IsValid)
             {
@@ -111,6 +113,10 @@ namespace IWSProject.Controllers
                 }
             }
             return PartialView("AssetsGridViewPartial", IWSLookUp.GetAssets());
+        }
+        public ActionResult AssetView()
+        {
+            return PartialView(IWSLookUp.GetAssets());
         }
     }
 }

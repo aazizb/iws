@@ -1,6 +1,5 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Models
-@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -13,6 +12,10 @@
 
         settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
         settings.SettingsContextMenu.Enabled = true;
+
+        settings.SettingsContextMenu.RowMenuItemVisibility.DeleteRow = false;
+        settings.SettingsContextMenu.RowMenuItemVisibility.EditRow = false;
+        settings.SettingsContextMenu.RowMenuItemVisibility.NewRow = false;
 
         settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
 
@@ -41,7 +44,7 @@
 
         settings.Settings.ShowFooter = true;
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
 
         settings.SettingsPager.Visible = true;

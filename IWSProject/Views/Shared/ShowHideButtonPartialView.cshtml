@@ -1,0 +1,9 @@
+﻿@using IWSProject.Content
+@Html.DevExpress().Button(settings =>
+{
+    settings.Name = "btShowCustomizationWindow";
+    settings.Text = IWSLocalResource.WindowCustomization;
+    settings.Width = Unit.Pixel(100);
+    settings.UseSubmitBehavior = false;
+    settings.ClientSideEvents.Click = "OnButtonClick";
+}).GetHtml()

@@ -24,8 +24,6 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult StoresGridViewPartial()
         {
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
             return PartialView("StoresGridViewPartial", IWSLookUp.GetStores());
         }
 
@@ -107,6 +105,10 @@ namespace IWSProject.Controllers
                 }
             }
             return PartialView("StoresGridViewPartial", IWSLookUp.GetStores());
+        }
+        public ActionResult StoreView()
+        {
+            return PartialView(IWSLookUp.GetStores());
         }
     }
 }

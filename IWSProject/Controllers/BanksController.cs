@@ -17,32 +17,12 @@ namespace IWSProject.Controllers
         // GET: Banks
         public ActionResult Index()
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
-            ViewBag.Banks = IWSLookUp.GetBanks();
-
-            sw.Stop();
-
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-
-            if (Session["DurationBank"] == null)
-            {
-                Session["DurationBank"] = $"Data reading time: {elapsedTime} ms";
-
-            }
             return View();
         }
         [ValidateInput(false)]
         public ActionResult BanksGridViewPartial()
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-            ViewBag.BankX = IWSLookUp.GetBanks();
-            sw.Stop();
-
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            Session["DurationBank"] = $"Data reading time: {elapsedTime} ms";
-
-            return PartialView("BanksGridViewPartial", ViewBag.BankX);
+             return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult BanksGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Bank item)
@@ -123,6 +103,11 @@ namespace IWSProject.Controllers
                 }
             }
             return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
+        }
+
+        public ActionResult BankView()
+        {
+            return PartialView(IWSLookUp.GetBanks());
         }
     }
 }

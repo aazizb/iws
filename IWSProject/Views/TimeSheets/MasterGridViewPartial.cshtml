@@ -1,0 +1,411 @@
+﻿@using IWSProject.Content
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "TimeSheet";
+        settings.Width = Unit.Percentage(100);
+
+
+        settings.CallbackRouteValues = new { Controller = "TimeSheets", Action = "MasterGridViewPartial" };
+
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "TimeSheets", Action = "MasterGridViewPartialAddNew" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "TimeSheets", Action = "MasterGridViewPartialUpdate" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "TimeSheets", Action = "MasterGridViewPartialDelete" };
+
+        settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+        settings.SettingsContextMenu.Enabled = true;
+
+        //settings.ClientSideEvents.RowClick = "OnRowClick";
+        //settings.ClientSideEvents.RowDblClick = "OnRowClick";
+        //settings.ClientSideEvents.Init = "OnMInit";
+        //settings.ClientSideEvents.SelectionChanged = "OnSelectionChanged";
+        //settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
+        //settings.ClientSideEvents.EndCallback = "OnEndCallback";
+
+        settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
+
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
+
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsBehavior.EnableRowHotTrack = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+
+        settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
+        settings.SettingsResizing.Visualization = ResizingMode.Live;
+
+        settings.Styles.RowHotTrack.Cursor = "pointer";
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(1);
+        settings.ControlStyle.Border.BorderWidth = Unit.Pixel(1);
+        settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+        settings.Settings.ShowFooter = true;
+        settings.Settings.ShowFilterRow = true;
+        settings.Settings.ShowGroupPanel = false;
+        settings.Settings.ShowFilterRowMenu = true;
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
+        settings.SettingsPager.PageSize = 19;
+
+        settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
+        settings.SettingsDetail.ShowDetailRow = true;
+
+        settings.Images.DetailCollapsedButton.IconID = IconID.ActionsAdd16x16;
+        settings.Images.DetailExpandedButton.IconID = IconID.ActionsRemove16x16;
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.Width = Unit.Percentage(6);
+        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowSelectCheckbox = true;
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.CommandColumn.ShowUpdateButton = false;
+        settings.CommandColumn.ShowCancelButton = false;
+        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
+
+        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
+        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
+        settings.SettingsCommandButton.NewButton.Text = " ";
+
+        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
+        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
+        settings.SettingsCommandButton.EditButton.Text = " ";
+
+        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
+        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
+        settings.SettingsCommandButton.DeleteButton.Text = " ";
+
+        settings.SettingsCommandButton.UpdateButton.Image.IconID = IconID.ActionsApply16x16;
+        settings.SettingsCommandButton.UpdateButton.Image.ToolTip = IWSLocalResource.btnUpdate;
+        settings.SettingsCommandButton.UpdateButton.Text = " ";
+
+        settings.SettingsCommandButton.CancelButton.Image.IconID = IconID.ActionsCancel16x16;
+        settings.SettingsCommandButton.CancelButton.Image.ToolTip = IWSLocalResource.btnCancel;
+        settings.SettingsCommandButton.CancelButton.Text = " ";
+
+        settings.CommandButtonInitialize = (s, e) =>
+        {
+            if (e.VisibleIndex == -1) return;
+            MVCxGridView g = (MVCxGridView)s;
+            bool isValidated = Convert.ToBoolean(g.GetRowValues(e.VisibleIndex, "IsValidated"));
+            if (e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.Delete ||
+                e.ButtonType == ColumnCommandButtonType.SelectCheckbox || e.ButtonType == ColumnCommandButtonType.Update)
+            {
+                e.Visible = false.Equals(isValidated);
+            }
+        };
+
+        settings.InitNewRow = (s, e) =>
+        {
+            e.NewValues["IsValidated"] = false;
+        };
+        settings.CellEditorInitialize = (s, e) =>
+        {
+            ASPxEdit editor = (ASPxEdit)e.Editor;
+            editor.ValidationSettings.Display = Display.Dynamic;
+        };
+        settings.BeforeGetCallbackResult = (sender, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)sender;
+            if (ViewData["NewKeyValue"] != null)
+            {
+                g.DetailRows.ExpandRowByKey((int)ViewData["NewKeyValue"]);
+            }
+        };
+        settings.CustomJSProperties = (s, e) =>
+        {
+            MVCxGridView g = (MVCxGridView)s;
+            e.Properties["cpClientLayout"] = g.SaveClientLayout();
+        };
+        settings.ClientLayout = (s, e) =>
+        {
+            switch (e.LayoutMode)
+            {
+                case ClientLayoutMode.Loading:
+                    if (Session["timeSheetLayout"] != null)
+                    {
+                        e.LayoutData = Session["timeSheetLayout"].ToString();
+                    }
+                    break;
+                case ClientLayoutMode.Saving:
+                    Session["timeSheetLayout"] = e.LayoutData;
+                    break;
+            }
+        };
+        #region Column
+
+        settings.KeyFieldName = "Id";
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Id";
+            column.ReadOnly = true;
+            column.Caption = IWSLocalResource.id;
+            column.Width = Unit.Percentage(6);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "TatigkeitsNachweis";
+            column.Caption = IWSLocalResource.TatigkeitsNachweis;
+            column.Width = Unit.Percentage(20);
+
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "MonatJahr";
+            column.Caption = IWSLocalResource.MonatJahr;
+            column.Width = Unit.Percentage(10);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Firma";
+            column.Caption = IWSLocalResource.Firma;
+            column.Width = Unit.Percentage(12);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Mitarbeiter";
+            column.Caption = IWSLocalResource.Mitarbeiter;
+            column.Width = Unit.Percentage(12);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Kunde";
+            column.Caption = IWSLocalResource.Kunde;
+            column.Width = Unit.Percentage(12);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "EBNummer";
+            column.Caption = IWSLocalResource.EBNummer;
+            column.Width = Unit.Percentage(12);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "AuftragsNummer";
+            column.Caption = IWSLocalResource.AuftragsNummer;
+            column.Width = Unit.Percentage(12);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "SummeDerStunden";
+            column.Caption = IWSLocalResource.SummeDerStunden;
+            column.Width = Unit.Percentage(12);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "SummeTage";
+            column.Caption = IWSLocalResource.SummeTage;
+            column.Width = Unit.Percentage(12);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.EditFormSettings.Visible = DefaultBoolean.False;
+            column.FieldName = "IsValidated";
+            column.Caption = IWSLocalResource.IsValidated;
+            column.Width = Unit.Percentage(7);
+            column.ReadOnly = true;
+            column.ColumnType = MVCxGridViewColumnType.CheckBox;
+        });
+
+        #endregion
+
+        #region FormTemplate
+
+        //    settings.SetEditFormTemplateContent(c =>
+        //    {
+
+        //        ViewBag.IsValidated = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
+        //        ViewData["test"] = DataBinder.Eval(c.DataItem, "Id");
+        //        ViewBag.IsNewRow = c.Grid.IsNewRowEditing;
+
+        //        Html.DevExpress().FormLayout(formLayoutSettings =>
+        //        {
+        //            formLayoutSettings.Name = "TimeSheetsEdit";
+
+        //            formLayoutSettings.Width = Unit.Percentage(100);
+        //            formLayoutSettings.ColCount = 1;
+        //            if (ViewBag.IsNewRow)
+        //                formLayoutSettings.Items.AddEmptyItem();
+        //            formLayoutSettings.Items.Add(i =>
+        //            {
+        //                i.FieldName = "Id";
+        //                i.Visible = !ViewBag.IsNewRow;
+        //                i.Caption = IWSLocalResource.id;
+        //                i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+        //                i.NestedExtension().TextBox(s =>
+        //                {
+        //                    s.Width = Unit.Percentage(6);
+        //                    s.ReadOnly = true;
+        //                });
+        //            });
+        //            formLayoutSettings.Items.Add(i =>
+        //            {
+        //                i.Name = "IsValidated";
+        //                i.FieldName = "IsValidated";
+        //                i.Caption = IWSLocalResource.IsValidated;
+        //                i.NestedExtensionType = FormLayoutNestedExtensionItemType.CheckBox;
+        //                i.NestedExtension().CheckBox(s =>
+        //                {
+        //                    s.Width = Unit.Percentage(20);
+        //                    s.ReadOnly = true;
+        //                });
+        //            });
+        //            formLayoutSettings.Items.Add(i =>
+        //            {
+        //                i.FieldName = "Account";
+        //                i.Caption = IWSLocalResource.account;
+        //                i.NestedExtension().ComboBox(s =>
+        //                {
+        //                    s.Properties.TextField = "name";
+        //                    s.Properties.ValueField = "id";
+        //                    s.Properties.ValueType = typeof(string);
+        //                    s.Properties.DataSource = IWSLookUp.GetAccounts();
+        //                    s.Properties.Columns.Add(a =>
+        //                    {
+        //                        a.FieldName = "id";
+        //                        a.Caption = IWSLocalResource.id;
+        //                        a.Width = Unit.Percentage(35);
+        //                    });
+        //                    s.Properties.Columns.Add(a =>
+        //                    {
+        //                        a.FieldName = "name";
+        //                        a.Caption = IWSLocalResource.name;
+        //                        a.Width = Unit.Percentage(65);
+        //                    });
+        //                    s.Properties.TextFormatString = "{0}-{1}";
+        //                    s.Properties.CallbackPageSize = 15;
+        //                    s.Properties.FilterMinLength = 2;
+        //                    s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+        //                    s.ShowModelErrors = true;
+        //                    s.Width = Unit.Percentage(100);
+        //                    s.TabIndex = 1;
+        //                    s.Properties.ClientSideEvents.Init = "function(s, e) { s.Focus(); }";
+        //                });
+        //            });
+        //            formLayoutSettings.Items.Add(i =>
+        //            {
+        //                i.FieldName = "SYear";
+        //                i.Caption = IWSLocalResource.id;
+        //                i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+        //                i.NestedExtension().TextBox(s =>
+        //                {
+        //                    s.Width = Unit.Percentage(95);
+        //                });
+        //            });
+        //            formLayoutSettings.Items.Add(i =>
+        //            {
+        //                i.FieldName = "SMonth";
+        //                i.Caption = IWSLocalResource.id;
+        //                i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+        //                i.NestedExtension().TextBox(s =>
+        //                {
+        //                    s.Width = Unit.Percentage(95);
+        //                });
+        //            });
+        //            formLayoutSettings.Items.Add(i =>
+        //            {
+        //                i.FieldName = "Report";
+        //                i.Caption = IWSLocalResource.id;
+        //                i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+        //                i.NestedExtension().TextBox(s =>
+        //                {
+        //                    s.Width = Unit.Percentage(95);
+        //                    s.ReadOnly = true;
+        //                });
+        //            });
+        //            formLayoutSettings.Items.Add(i =>
+        //            {
+        //                i.FieldName = "NotImported";
+        //                i.Caption = IWSLocalResource.id;
+        //                i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+        //                i.NestedExtension().TextBox(s =>
+        //                {
+        //                    s.Width = Unit.Percentage(95);
+        //                    s.ReadOnly = true;
+        //                });
+        //            });
+        //            formLayoutSettings.Items.Add(i =>
+        //            {
+        //                i.FieldName = "Sheet";
+        //                i.Caption = IWSLocalResource.id;
+        //                i.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
+        //                i.NestedExtension().TextBox(s =>
+        //                {
+        //                    s.Width = Unit.Percentage(95);
+        //                    s.ReadOnly = true;
+        //                });
+        //            });
+        //            formLayoutSettings.Items.Add(i =>
+        //            {
+        //                i.ShowCaption = DefaultBoolean.False;
+        //                i.HorizontalAlign = FormLayoutHorizontalAlign.Center;
+        //            }).SetNestedContent(() =>
+        //            {
+        //                Html.DevExpress().Button(
+        //            btnSettings =>
+        //            {
+        //                btnSettings.Name = "btnMUpdate";
+        //                btnSettings.Text = IWSLocalResource.btnUpdate;
+        //                btnSettings.ToolTip = IWSLocalResource.btnUpdate;
+        //                btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+        //                btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
+        //                btnSettings.Width = Unit.Pixel(80);
+        //                btnSettings.ClientSideEvents.Click = "function(s, e){ TimeSheet.UpdateEdit(); }";
+        //                btnSettings.ClientVisible = !ViewBag.IsValidated;
+        //                btnSettings.TabIndex = 8;
+        //            }).Render();
+        //                Html.DevExpress().Button(
+        //            btnSettings =>
+        //            {
+        //                btnSettings.Name = "btnMCancel";
+        //                btnSettings.Text = IWSLocalResource.btnCancel;
+        //                btnSettings.ToolTip = IWSLocalResource.btnCancel;
+        //                btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
+        //                btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
+        //                btnSettings.Width = Unit.Pixel(80);
+        //                btnSettings.ClientSideEvents.Click = "function(s, e){ TimeSheet.CancelEdit(); }";
+        //                btnSettings.TabIndex = 9;
+        //            }).Render();
+        //            });
+        //        })
+        //.Bind(ViewData["item"] ?? c.DataItem)
+        //.Render();
+        //    });
+
+        #endregion
+
+        #region DetailTemplate
+
+        settings.SetDetailRowTemplateContent(c =>
+        {
+            Session["transid"] = DataBinder.Eval(c.DataItem, "Id");
+            Session["IsValidated"] = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
+            Html.RenderAction("DetailGridViewPartial", new
+            {
+                transid = Session["transid"],
+                IsValidated = Session["IsValidated"],
+                newKeyValue = ViewData["NewKeyValue"]
+            });
+        });
+
+        #endregion
+    });
+
+    if (ViewData["GenericError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["GenericError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()

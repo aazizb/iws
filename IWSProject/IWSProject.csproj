@@ -27,6 +27,8 @@
     <UseGlobalApplicationHostFile />
     <UpgradeBackupLocation />
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -199,6 +201,9 @@
     <Reference Include="DevExpress.Dashboard.v17.1.Web.Mvc5, Version=17.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.TreeMap.v17.1.Core, Version=17.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.Map.v17.1.Core, Version=17.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.0.3\lib\net40\WebActivatorEx.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
     </Reference>
@@ -234,6 +239,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Content\Web.config" />
+    <Content Include="libman.json" />
     <None Include="Models\MsSql\IWSData.dbml.layout">
       <DependentUpon>IWSData.dbml</DependentUpon>
     </None>
@@ -258,7 +264,6 @@
     <Content Include="Views\Shared\HeaderMenuPartialView.cshtml" />
     <Content Include="Views\Accounts\AccountsGridViewPartial.cshtml" />
     <Content Include="Views\Accounts\Index.cshtml" />
-    <Content Include="Views\Articles\ArticlesGridViewPartial.cshtml" />
     <Content Include="Views\Articles\Index.cshtml" />
     <Content Include="Views\Balance\AccountBalancePartialView.cshtml" />
     <Content Include="Views\Balance\Index.cshtml" />
@@ -274,36 +279,36 @@
     <Content Include="Views\BankStatements\Index.cshtml" />
     <Content Include="Views\Companies\CompaniesGridViewPartial.cshtml" />
     <Content Include="Views\Companies\DetailGridViewPartial.cshtml" />
-    <Content Include="Views\Companies\Index.cshtml" />
+    <Content Include="Views\Companies\CompanyView.cshtml" />
     <Content Include="Views\CostCenters\CostCentersGridViewPartial.cshtml" />
-    <Content Include="Views\CostCenters\Index.cshtml" />
+    <Content Include="Views\CostCenters\CostCenterView.cshtml" />
     <Content Include="Views\Currencies\CurrenciesGridViewPartial.cshtml" />
-    <Content Include="Views\Currencies\Index.cshtml" />
+    <Content Include="Views\Currencies\CurrencyView.cshtml" />
     <Content Include="Views\Customers\CustomersGridViewPartial.cshtml" />
     <Content Include="Views\Customers\DetailGridViewPartial.cshtml" />
-    <Content Include="Views\Customers\Index.cshtml" />
+    <Content Include="Views\Customers\CustomerView.cshtml" />
     <Content Include="Views\Journal\GridLookupPartial.cshtml" />
     <Content Include="Views\Journal\Index.cshtml" />
     <Content Include="Views\Journal\JournalPartialView.cshtml" />
     <Content Include="Views\Journal\_CallbackPartialView.cshtml" />
     <Content Include="Views\MenuUI\Index.cshtml" />
     <Content Include="Views\MenuUI\MenuUIGridViewPartial.cshtml" />
-    <Content Include="Views\QuantityUnits\Index.cshtml" />
+    <Content Include="Views\QuantityUnits\QuantityUnitView.cshtml" />
     <Content Include="Views\QuantityUnits\QuantityUnitsGridViewPartial.cshtml" />
-    <Content Include="Views\Report\Index.cshtml" />
+    <Content Include="Views\Report\ReportView.cshtml" />
     <Content Include="Views\Report\PivotGridPartial.cshtml" />
     <Content Include="Views\Report\_CallbackPartialView.cshtml" />
-    <Content Include="Views\Resultat\Index.cshtml" />
+    <Content Include="Views\Resultat\ResultatView.cshtml" />
     <Content Include="Views\Resultat\ResultatPartialView.cshtml" />
     <Content Include="Views\Resultat\_CallbackPartialView.cshtml" />
     <Content Include="Views\Roles\Index.cshtml" />
     <Content Include="Views\Roles\RolesGridViewPartial.cshtml" />
     <Content Include="Views\Stocks\Index.cshtml" />
     <Content Include="Views\Stocks\StocksPartialView.cshtml" />
-    <Content Include="Views\Stores\Index.cshtml" />
+    <Content Include="Views\Stores\StoreView.cshtml" />
     <Content Include="Views\Stores\StoresGridViewPartial.cshtml" />
     <Content Include="Views\Suppliers\DetailGridViewPartial.cshtml" />
-    <Content Include="Views\Suppliers\Index.cshtml" />
+    <Content Include="Views\Suppliers\SupplierView.cshtml" />
     <Content Include="Views\Suppliers\SuppliersGridViewPartial.cshtml" />
     <Content Include="Views\Vats\Index.cshtml" />
     <Content Include="Views\Vats\VatsGridViewPartial.cshtml" />
@@ -351,25 +356,22 @@
     <Content Include="Views\Cash\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\Cash\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Cash\DetailGridViewPartial.cshtml" />
-    <Content Include="Views\ExceptionLog\Index.cshtml" />
+    <Content Include="Views\ExceptionLog\ExceptionView.cshtml" />
     <Content Include="Views\ExceptionLog\ExceptionsGridViewPartial.cshtml" />
     <Content Include="Views\Brouillard\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\Brouillard\MasterGridViewPartial.cshtml" />
-    <Content Include="Views\Brouillard\Index.cshtml" />
+    <Content Include="Views\Brouillard\BrouillardView.cshtml" />
     <Content Include="Views\Brouillard\BrouillardPartial.cshtml" />
     <Content Include="Views\Brouillard\Brouillard.cshtml" />
-    <Content Include="Views\FiscalYear\Index.cshtml" />
-    <Content Include="Views\FiscalYear\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Masterfile\Masterfile.cshtml" />
     <Content Include="Views\Masterfile\MasterfilePartial.cshtml" />
     <Content Include="Views\Brouillard\PopupControl.cshtml" />
-    <Content Include="Views\FiscalYear\CallbackPanel.cshtml" />
-    <Content Include="Views\FiscalYear\PopupContent.cshtml" />
+    <Content Include="Views\FiscalYear\xxCallbackPanel.cshtml" />
     <Content Include="Views\Brouillard\ValidatePartialView.cshtml" />
     <Content Include="Views\Balance\GridLookupPartial.cshtml" />
-    <Content Include="Views\TypeJournal\Index.cshtml" />
+    <Content Include="Views\TypeJournal\TypeJournalView.cshtml" />
     <Content Include="Views\TypeJournal\TypeJournalsGridViewPartial.cshtml" />
-    <Content Include="Views\AffectationJournal\Index.cshtml" />
+    <Content Include="Views\AffectationJournal\AffectationJournalView.cshtml" />
     <Content Include="Views\AffectationJournal\AffectationJournalGridViewPartial.cshtml" />
     <Content Include="Views\Shared\PerformancePartialView.cshtml" />
     <Content Include="Views\Journaux\Index.cshtml" />
@@ -379,10 +381,10 @@
     <Content Include="Views\Journaux\_CallbackPartialView.cshtml" />
     <Content Include="Views\AffectationJournal\FormLayoutPartial.cshtml" />
     <Content Include="Views\MasterLogistic\MasterGridViewPartial.cshtml" />
-    <Content Include="Views\MasterLogistic\Index.cshtml" />
+    <Content Include="Views\MasterLogistic\LogisticView.cshtml" />
     <Content Include="Views\MasterLogistic\DetailGridViewPartial.cshtml" />
     <Content Include="Views\MasterLogistic\CallbackPanelPartialView.cshtml" />
-    <Content Include="Views\MasterCompta\Index.cshtml" />
+    <Content Include="Views\MasterCompta\ComptaView.cshtml" />
     <Content Include="Views\MasterCompta\MasterGridViewPartial.cshtml" />
     <Content Include="Views\MasterCompta\DetailGridViewPartial.cshtml" />
     <Content Include="Views\MasterCompta\CallbackPanelPartialView.cshtml" />
@@ -391,7 +393,7 @@
     <Content Include="Views\UnpaidBill\Index.cshtml" />
     <Content Include="Views\UnpaidBill\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\UnpaidBill\MasterGridViewPartial.cshtml" />
-    <Content Include="Views\PdfUpdate\Index.cshtml" />
+    <Content Include="Views\PdfUpdate\PdfUpdateView.cshtml" />
     <Content Include="Views\PdfUpdate\_GridViewPartial.cshtml" />
     <Content Include="Views\PdfUpdate\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\PdfUpdate\UploadControlPartial.cshtml" />
@@ -405,18 +407,70 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Content Include="Views\SalesInvoiceXR\Index.cshtml" />
+    <Content Include="Views\SalesInvoiceXR\SalesInvoiceView.cshtml" />
     <Content Include="Views\SalesInvoiceXR\DocumentViewerPartial.cshtml" />
     <Content Include="Views\Companies\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\Companies\UploadControlPartial.cshtml" />
     <Content Include="Views\Immo\Index.cshtml" />
     <Content Include="Views\Immo\ImmoGridViewPartial.cshtml" />
     <Content Include="Views\Immo\ImmoDetailGridViewPartial.cshtml" />
-    <Content Include="Views\Depreciation\Index.cshtml" />
+    <Content Include="Views\Depreciation\DepreciationView.cshtml" />
     <Content Include="Views\Depreciation\CallbackPanelPartialView.cshtml" />
     <Content Include="Views\Depreciation\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Assets\Index.cshtml" />
     <Content Include="Views\Assets\AssetsGridViewPartial.cshtml" />
+    <Content Include="Views\Account\ClearPassword.cshtml" />
+    <Content Include="Views\Home\CallbackPanelPartial.cshtml" />
+    <Content Include="Views\Articles\ArticlesGridViewPartial.cshtml" />
+    <Content Include="Views\Shared\ShowHideButtonPartialView.cshtml" />
+    <Content Include="Views\Vats\VatView.cshtml" />
+    <Content Include="Views\Articles\ArticleView.cshtml" />
+    <Content Include="Views\MenuUI\MenuUIView.cshtml" />
+    <Content Include="Views\Accounts\AccountsView.cshtml" />
+    <Content Include="Views\Assets\AssetView.cshtml" />
+    <Content Include="Views\Banks\BankView.cshtml" />
+    <Content Include="Views\Customers\Index.cshtml" />
+    <Content Include="Views\Companies\Index.cshtml" />
+    <Content Include="Views\CostCenters\Index.cshtml" />
+    <Content Include="Views\QuantityUnits\Index.cshtml" />
+    <Content Include="Views\Stores\Index.cshtml" />
+    <Content Include="Views\Suppliers\Index.cshtml" />
+    <Content Include="Views\Currencies\Index.cshtml" />
+    <Content Include="Views\AffectationJournal\Index.cshtml" />
+    <Content Include="Views\TypeJournal\Index.cshtml" />
+    <Content Include="Views\MasterLogistic\Index.cshtml" />
+    <Content Include="Views\MasterCompta\Index.cshtml" />
+    <Content Include="Views\Stocks\StockView.cshtml" />
+    <Content Include="Views\Balance\BalanceView.cshtml" />
+    <Content Include="Views\Journal\JournalView.cshtml" />
+    <Content Include="Views\BankStatements\BankStatementView.cshtml" />
+    <Content Include="Views\Resultat\Index.cshtml" />
+    <Content Include="Views\Report\Index.cshtml" />
+    <Content Include="Views\ExceptionLog\Index.cshtml" />
+    <Content Include="Views\Depreciation\Index.cshtml" />
+    <Content Include="Views\PdfUpdate\Index.cshtml" />
+    <Content Include="Views\UnpaidBill\UnpaidBillView.cshtml" />
+    <Content Include="Views\Cash\CashView.cshtml" />
+    <Content Include="Views\Brouillard\Index.cshtml" />
+    <Content Include="Views\Roles\RoleView.cshtml" />
+    <Content Include="Views\SalesInvoiceXR\Index.cshtml" />
+    <Content Include="Views\FiscalYear\XYIndex.cshtml" />
+    <Content Include="Views\TimeSheets\Index.cshtml" />
+    <Content Include="Views\TimeSheets\ImportTimeSheets.cshtml" />
+    <Content Include="Views\TimeSheets\_TimeSheetsFileManagerPartial.cshtml" />
+    <Content Include="Views\TimeSheets\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\TimeSheets\DetailGridViewPartial.cshtml" />
+    <Content Include="Views\TimeSheets\TimeSheetView.cshtml" />
+    <Content Include="Views\TimeSheets\CallbackPanelPartialView.cshtml" />
+    <Content Include="Views\FiscalYear\xxFiscalYearView.cshtml" />
+    <Content Include="Views\FiscalYear\Index.cshtml" />
+    <Content Include="Views\FiscalYear\PopupPartialView.cshtml" />
+    <Content Include="Views\FiscalYear\xxFormLayoutPartial.cshtml" />
+    <Content Include="Views\FiscalYear\GridViewPartialView.cshtml" />
+    <Content Include="Views\Default\Index.cshtml" />
+    <Content Include="Views\Default\PopupPartialView.cshtml" />
+    <Content Include="Views\Shared\FromYearMonthDateEditPartialView.cshtml" />
+    <Content Include="Views\Shared\ToYearMonthDateEditPartialView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -461,6 +515,7 @@
     <Compile Include="Controllers\BrouillardController.cs" />
     <Compile Include="Controllers\CashController.cs" />
     <Compile Include="Controllers\AssetsController.cs" />
+    <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\DepreciationController.cs" />
     <Compile Include="Controllers\ExceptionLogController.cs" />
     <Compile Include="Controllers\FiscalYearController.cs" />
@@ -495,6 +550,7 @@
     <Compile Include="Controllers\StocksController.cs" />
     <Compile Include="Controllers\StoresController.cs" />
     <Compile Include="Controllers\SuppliersController.cs" />
+    <Compile Include="Controllers\TimeSheetsController.cs" />
     <Compile Include="Controllers\TypeJournalController.cs" />
     <Compile Include="Controllers\UnpaidBillController.cs" />
     <Compile Include="Controllers\VatsController.cs" />
@@ -544,6 +600,8 @@
     <Compile Include="Models\Entities\Store.cs" />
     <Compile Include="Models\Entities\Supplier.cs" />
     <Compile Include="Models\Entities\tempAccountAmount.cs" />
+    <Compile Include="Models\Entities\TimeSheetLines.cs" />
+    <Compile Include="Models\Entities\TimeSheets.cs" />
     <Compile Include="Models\Entities\TypeBrouillard.cs" />
     <Compile Include="Models\Entities\TypeJournal.cs" />
     <Compile Include="Models\Entities\VAT.cs" />
@@ -578,16 +636,11 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Startup.cs" />
-    <Compile Include="Views\Manage\AddPhoneNumber.generated.cs" />
-    <Compile Include="Views\Manage\Index.generated.cs" />
-    <Compile Include="Views\Manage\ManageLogins.generated.cs" />
-    <Compile Include="Views\Manage\SetPassword.generated.cs" />
-    <Compile Include="Views\Manage\VerifyPhoneNumber.generated.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\UploadControl\UploadFolder\" />
-    <Folder Include="Content\Uploads\" />
+    <Folder Include="Content\Uploads\TimeSheets\" />
     <Folder Include="Documents\" />
     <Folder Include="Models\data\" />
   </ItemGroup>

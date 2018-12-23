@@ -19,7 +19,7 @@ namespace IWSProject.Content {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class IWSLocalResource {
@@ -214,6 +214,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ArbeitsZeitBis.
+        /// </summary>
+        public static string ArbeitsZeitBis {
+            get {
+                return ResourceManager.GetString("ArbeitsZeitBis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ArbeitsZeitVon.
+        /// </summary>
+        public static string ArbeitsZeitVon {
+            get {
+                return ResourceManager.GetString("ArbeitsZeitVon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Article.
         /// </summary>
         public static string articles {
@@ -228,6 +246,15 @@ namespace IWSProject.Content {
         public static string Asset {
             get {
                 return ResourceManager.GetString("Asset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auftrags Nummer.
+        /// </summary>
+        public static string AuftragsNummer {
+            get {
+                return ResourceManager.GetString("AuftragsNummer", resourceCulture);
             }
         }
         
@@ -781,6 +808,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Datum.
+        /// </summary>
+        public static string Datum {
+            get {
+                return ResourceManager.GetString("Datum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Debit.
         /// </summary>
         public static string debit {
@@ -903,6 +939,15 @@ namespace IWSProject.Content {
         public static string duedate {
             get {
                 return ResourceManager.GetString("duedate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EB-Nummer.
+        /// </summary>
+        public static string EBNummer {
+            get {
+                return ResourceManager.GetString("EBNummer", resourceCulture);
             }
         }
         
@@ -1033,6 +1078,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Firma.
+        /// </summary>
+        public static string Firma {
+            get {
+                return ResourceManager.GetString("Firma", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First Name.
         /// </summary>
         public static string FirstName {
@@ -1137,6 +1191,33 @@ namespace IWSProject.Content {
         public static string GenericError {
             get {
                 return ResourceManager.GetString("GenericError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gerundet.
+        /// </summary>
+        public static string Gerundet {
+            get {
+                return ResourceManager.GetString("Gerundet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GerundetBis.
+        /// </summary>
+        public static string GerundetBis {
+            get {
+                return ResourceManager.GetString("GerundetBis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GerundetVon.
+        /// </summary>
+        public static string GerundetVon {
+            get {
+                return ResourceManager.GetString("GerundetVon", resourceCulture);
             }
         }
         
@@ -1281,6 +1362,15 @@ namespace IWSProject.Content {
         public static string ImportedSage {
             get {
                 return ResourceManager.GetString("ImportedSage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import Time Sheets.
+        /// </summary>
+        public static string ImportTimeSheets {
+            get {
+                return ResourceManager.GetString("ImportTimeSheets", resourceCulture);
             }
         }
         
@@ -1461,6 +1551,15 @@ namespace IWSProject.Content {
         public static string journal {
             get {
                 return ResourceManager.GetString("journal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Kunde.
+        /// </summary>
+        public static string Kunde {
+            get {
+                return ResourceManager.GetString("Kunde", resourceCulture);
             }
         }
         
@@ -1690,11 +1789,29 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mitarbeiter.
+        /// </summary>
+        public static string Mitarbeiter {
+            get {
+                return ResourceManager.GetString("Mitarbeiter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Model ID.
         /// </summary>
         public static string modelid {
             get {
                 return ResourceManager.GetString("modelid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Monat-Jahr.
+        /// </summary>
+        public static string MonatJahr {
+            get {
+                return ResourceManager.GetString("MonatJahr", resourceCulture);
             }
         }
         
@@ -1906,6 +2023,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pause.
+        /// </summary>
+        public static string Pause {
+            get {
+                return ResourceManager.GetString("Pause", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Payment.
         /// </summary>
         public static string payment {
@@ -2041,6 +2167,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Project.
+        /// </summary>
+        public static string Project {
+            get {
+                return ResourceManager.GetString("Project", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Purchase Order.
         /// </summary>
         public static string PurchaseOrder {
@@ -2109,6 +2244,15 @@ namespace IWSProject.Content {
         public static string Quarter {
             get {
                 return ResourceManager.GetString("Quarter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Query Detail.
+        /// </summary>
+        public static string QueryDetail {
+            get {
+                return ResourceManager.GetString("QueryDetail", resourceCulture);
             }
         }
         
@@ -2455,6 +2599,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to StundenNetto.
+        /// </summary>
+        public static string StundenNetto {
+            get {
+                return ResourceManager.GetString("StundenNetto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sub Account Of.
         /// </summary>
         public static string SubAccountOf {
@@ -2491,6 +2644,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Summe Der Stunden.
+        /// </summary>
+        public static string SummeDerStunden {
+            get {
+                return ResourceManager.GetString("SummeDerStunden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Summe Tage.
+        /// </summary>
+        public static string SummeTage {
+            get {
+                return ResourceManager.GetString("SummeTage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sum of Periods.
         /// </summary>
         public static string SumOfYears {
@@ -2514,6 +2685,24 @@ namespace IWSProject.Content {
         public static string support {
             get {
                 return ResourceManager.GetString("support", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TatigkeitEinsatzort.
+        /// </summary>
+        public static string TatigkeitEinsatzort {
+            get {
+                return ResourceManager.GetString("TatigkeitEinsatzort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TätigkeitsNachweis.
+        /// </summary>
+        public static string TatigkeitsNachweis {
+            get {
+                return ResourceManager.GetString("TatigkeitsNachweis", resourceCulture);
             }
         }
         
@@ -2559,6 +2748,15 @@ namespace IWSProject.Content {
         public static string text {
             get {
                 return ResourceManager.GetString("text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time Sheets.
+        /// </summary>
+        public static string TimeSheets {
+            get {
+                return ResourceManager.GetString("TimeSheets", resourceCulture);
             }
         }
         
@@ -2640,6 +2838,15 @@ namespace IWSProject.Content {
         public static string unit {
             get {
                 return ResourceManager.GetString("unit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported format.
+        /// </summary>
+        public static string UnsupportedFormat {
+            get {
+                return ResourceManager.GetString("UnsupportedFormat", resourceCulture);
             }
         }
         

@@ -1,7 +1,6 @@
 ﻿@model List<EditUserViewModel>
 @using IWSProject.Content
 @using IWSProject.Models
-@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -10,9 +9,16 @@
 
         settings.CallbackRouteValues = new { Controller = "Account", Action = "UsersList" };
 
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Account", Action = "UsersList" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Account", Action = "UsersList" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Account", Action = "UsersList" };
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
+        settings.SettingsContextMenu.Enabled = true;
+
         settings.KeyFieldName = "UserName";
 
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.SettingsBehavior.AllowFocusedRow = true;
 
         settings.Settings.ShowFilterRow = true;
@@ -33,6 +39,9 @@
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
 
         settings.SettingsPager.PageSize = 19;
+
+        settings.ClientSideEvents.RowDblClick =
+                "function(s, e) { window.location = 'Account/ClearPassword?username=' + s.GetRowKey(e.visibleIndex); }";
 
         settings.ClientSideEvents.RowClick =
                                    string.Format("function(s, e) {{ OnRowClicked(s, e, '{0}'); }}",

@@ -1,0 +1,32 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.Store>
+<script type="text/javascript">
+
+    function OnButtonClick() {
+        if (StoresGridView.IsCustomizationWindowVisible()) {
+
+            StoresGridView.HideCustomizationWindow();
+        }
+        else {
+            StoresGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = StoresGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutSt").text(layout)
+    }
+</script>
+
+@Html.Partial("ShowHideButtonPartialView")
+@Html.Partial("StoresGridViewPartial", Model)
+

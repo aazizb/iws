@@ -12,20 +12,15 @@ namespace IWSProject.Controllers
         {
             db = new IWSDataContext();
         }
-
+        
         // GET: Stocks
         public ActionResult Index()
         {
-            var SV = IWSLookUp.GetStock((string)Session["CompanyID"]);
-            var model = new List<StockViewModel>();
-            foreach (StockViewModel item in SV)
-            {
-                model.Add(item);
-            }
+            List<StockViewModel> model = Stock();
             return View(model);
         }
-        [ValidateInput(false)]
-        public ActionResult StocksPartialView()
+
+        private List<StockViewModel> Stock()
         {
             var SV = IWSLookUp.GetStock((string)Session["CompanyID"]);
             var model = new List<StockViewModel>();
@@ -33,6 +28,24 @@ namespace IWSProject.Controllers
             {
                 model.Add(item);
             }
+            return model;
+        }
+
+        [ValidateInput(false)]
+        public ActionResult StocksPartialView()
+        {
+            //var SV = IWSLookUp.GetStock((string)Session["CompanyID"]);
+            //var model = new List<StockViewModel>();
+            //foreach (StockViewModel item in SV)
+            //{
+            //    model.Add(item);
+            //}
+            List<StockViewModel> model = Stock();
+            return PartialView(model);
+        }
+        public ActionResult StockView()
+        {
+            List<StockViewModel> model = Stock();
             return PartialView(model);
         }
     }

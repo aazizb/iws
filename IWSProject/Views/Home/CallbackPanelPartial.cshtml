@@ -1,0 +1,27 @@
+﻿@Html.DevExpress().CallbackPanel(settings =>
+{
+    settings.Name = "CallbackPanel";
+    settings.CallbackRouteValues = new { Controller = "Home", Action = "CallbackPanelPartial" };
+
+    if (ViewBag.ActionName != null)
+    {
+        //if ((string)ViewBag.ActionName == "articles")
+        //{
+        //    settings.SetContent(() =>
+        //    {
+        //        Html.RenderAction("Index", "Articles", new { area = "" });//ArticlesGridViewPartial
+
+        //    });
+        //}
+        //if ((string)ViewBag.ActionName == "banks")
+        //{
+        //    settings.SetContent(() =>
+        //    {
+        //        //Html.RenderAction("Index", "Banks", new { area = "" });
+        //        Html.RenderAction("ProductsVP", "Product", new { area = "" });
+        //    });
+        //}
+    }
+
+}).GetHtml()
+

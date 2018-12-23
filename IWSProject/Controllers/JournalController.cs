@@ -1,5 +1,6 @@
 ﻿using DevExpress.XtraReports.UI;
 using IWSProject.Models;
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 
@@ -19,7 +20,8 @@ namespace IWSProject.Controllers
             string end = (string)Session["End"];
             string selectedIDs = (string)Session["selectedIDs"];
             string company = (string)Session["CompanyID"];
-            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, selectedIDs, company);
+            bool side = (bool)Session["side"];
+            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, selectedIDs, company, side);
             return PartialView("JournalPartialView", model);
         }
         [ValidateInput(false)]
@@ -29,16 +31,14 @@ namespace IWSProject.Controllers
                 ViewData["accounts"] = IWSLookUp.GetAccounts();
             return PartialView("GridLookupPartial", ViewData["accounts"]);
         }
-        public ActionResult CallbackPanelPartial(string start, string end, string selectedIDs)
+        public ActionResult CallbackPanelPartial(string start, string end, string selectedIDs, bool side)
         {
-            if (string.IsNullOrWhiteSpace(start) || string.IsNullOrWhiteSpace(end))
-                return PartialView("_CallbackPartialView");
-
             Session["Start"] = start;
             Session["End"] = end;
             Session["selectedIDs"] = selectedIDs;
+            Session["side"] = side;
             string company = (string)Session["CompanyID"];
-            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, selectedIDs, company);
+            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, selectedIDs, company, side);
             Session["Journal"] = model;
             return PartialView("_CallbackPartialView", model);
         }
@@ -84,6 +84,10 @@ namespace IWSProject.Controllers
         {
             e.ColumnsInfo[3].ColumnWidth *= 4;
             e.ColumnsInfo[4].ColumnWidth *= 2;
+        }
+        public ActionResult JournalView()
+        {
+            return PartialView();
         }
 
     }

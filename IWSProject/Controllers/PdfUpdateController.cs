@@ -53,7 +53,18 @@ namespace IWSProject.Controllers
             }
             return PartialView("UpdatePdfPartial");
         }
+        public ActionResult PdfUpdateView()
+        {
+            if (Session["IsVending"] == null)
+            {
+                Session["IsVending"] = "SU";
+            }
+            int modelId = (int)IWSLookUp.ComptaMasterModelId.Default;
+            if (Session["ModelId"] != null)
+                modelId = (int)Session["ModelId"];
 
+            return PartialView(IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+        }
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(int currentModelId)
         {
@@ -139,7 +150,7 @@ namespace IWSProject.Controllers
         private static void UpdatePdfDetails(int Id)
         {
             string query = "Update MasterCompta Set FileName = NULL, FileContent = NULL, ContentType = NULL Where Id= @Id;";
-            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString()))
+            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["IWSConnectionString"].ToString()))
             {
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -166,7 +177,7 @@ namespace IWSProject.Controllers
         private static List<UploadedFileInfo> GetFileDetail(int Id)
         {
             List<UploadedFileInfo> files = new List<UploadedFileInfo>();
-            string constr = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            string constr = ConfigurationManager.ConnectionStrings["IWSConnectionString"].ConnectionString;
             string query = "Select id, FileName, FileContent, ContentType From MasterCompta Where Id= @Id";
             using (SqlConnection connection = new SqlConnection(constr))
             {
@@ -278,7 +289,7 @@ namespace IWSProject.Controllers
         {
             string query = "Update MasterCompta Set FileName = @FileName, FileContent = @FileContent, ContentType = @ContentType Where Id= @Id;";
             using (SqlConnection connection = new SqlConnection(ConfigurationManager.
-                            ConnectionStrings["DefaultConnection"].ToString()))
+                            ConnectionStrings["IWSConnectionString"].ToString()))
             {
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {

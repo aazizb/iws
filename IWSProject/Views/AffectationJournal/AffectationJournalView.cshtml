@@ -1,0 +1,34 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.AffectationJournal>
+<script type="text/javascript">
+    //function OnSelectedIndexChanged(s, e) {
+    //    grid.AutoFilterByColumn("AccountID", s.GetText());
+    //}
+    function OnButtonClick() {
+        if (AffectationJournalGridView.IsCustomizationWindowVisible()) {
+
+            AffectationJournalGridView.HideCustomizationWindow();
+        }
+        else {
+            AffectationJournalGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = AffectationJournalGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutAj").text(layout)
+    }
+</script>
+
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Partial("AffectationJournalGridViewPartial", Model)

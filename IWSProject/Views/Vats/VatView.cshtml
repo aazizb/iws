@@ -1,0 +1,32 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.Vat>
+
+<script type="text/javascript">
+
+    function OnButtonClick() {
+        if (VatsGridView.IsCustomizationWindowVisible()) {
+
+            VatsGridView.HideCustomizationWindow();
+        }
+        else {
+            VatsGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = VatsGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutVa").text(layout)
+    }
+</script>
+
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Partial("VatsGridViewPartial", Model)

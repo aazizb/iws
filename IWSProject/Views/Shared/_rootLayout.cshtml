@@ -1,13 +1,8 @@
-﻿
-<!DOCTYPE html>
-
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8" />
     <title>@ViewBag.Title</title>
-    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
-   
-
     @Html.DevExpress().GetStyleSheets(
                               new StyleSheet { ExtensionSuite = ExtensionSuite.NavigationAndLayout, ExtensionType = ExtensionType.Menu },
                               new StyleSheet { ExtensionSuite = ExtensionSuite.GridView },
@@ -15,13 +10,31 @@
                               new StyleSheet { ExtensionSuite = ExtensionSuite.Report },
                               new StyleSheet { ExtensionSuite = ExtensionSuite.PivotGrid }
                           )
-        @Html.DevExpress().GetScripts(
-                            new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout, ExtensionType = ExtensionType.Menu },
-                            new Script { ExtensionSuite = ExtensionSuite.GridView },
-                            new Script { ExtensionSuite = ExtensionSuite.Editors },
-                            new Script { ExtensionSuite = ExtensionSuite.Report },
-                            new Script { ExtensionSuite = ExtensionSuite.PivotGrid }
-                        )
+    @Html.DevExpress().GetScripts(
+                        new Script { ExtensionSuite = ExtensionSuite.NavigationAndLayout, ExtensionType = ExtensionType.Menu },
+                        new Script { ExtensionSuite = ExtensionSuite.GridView },
+                        new Script { ExtensionSuite = ExtensionSuite.Editors },
+                        new Script { ExtensionSuite = ExtensionSuite.Report },
+                        new Script { ExtensionSuite = ExtensionSuite.PivotGrid }
+                    )
+    <script type="text/javascript">
+    var sessionTimeout = @Session.Timeout;
+    var timeout = parseInt(sessionTimeout) * 60 * 1000;
+    setTimeout('SessionEnd()', timeout);
+
+    function SessionEnd() {
+        window.location = "/Account/LogOff";
+    }
+    function OnItemClick(s, e) {
+        var name = e.item.name;
+        CallbackPanel.PerformCallback({ itemName: name });
+    }
+    function LoadData(e) {
+        e.preventDefault();
+        $('#dvContainer').load(e.target.href);
+    }
+    </script>
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
 </head>
 <body>
     @Html.DevExpress().Splitter(settings => {

@@ -1,15 +1,14 @@
-﻿
-@using IWSProject.Content
+﻿@using IWSProject.Content
 @using IWSProject.Models
-@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "MasterLogistic";
         settings.Width = Unit.Percentage(100);
 
-
         settings.CallbackRouteValues = new { Controller = "MasterLogistic", Action = "MasterGridViewPartial" };
+
+        settings.CustomActionRouteValues = new { Controller = "MasterLogistic", Action = "CustomGridViewCallback" };
 
         settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "MasterLogistic", Action = "MasterGridViewPartialAddNew" };
         settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "MasterLogistic", Action = "MasterGridViewPartialUpdate" };
@@ -18,8 +17,8 @@
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
         settings.SettingsContextMenu.Enabled = true;
 
-        settings.ClientSideEvents.RowClick = "OnMRowClick";
-        settings.ClientSideEvents.RowDblClick = "OnMRowClick";
+        //settings.ClientSideEvents.RowClick = "OnMRowClick";
+        //settings.ClientSideEvents.RowDblClick = "OnMRowClick";
         settings.ClientSideEvents.Init = "OnMInit";
         settings.ClientSideEvents.SelectionChanged = "OnMSelectionChanged";
         settings.ClientSideEvents.BeginCallback = "OnMBeginCallback";
@@ -39,7 +38,6 @@
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
-
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
         settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
@@ -53,7 +51,7 @@
 
         settings.Settings.ShowFooter = true;
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
 
         settings.SettingsPager.Visible = true;
@@ -75,8 +73,6 @@
         settings.CommandColumn.ShowSelectCheckbox = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
         settings.CommandColumn.Width = Unit.Percentage(8);
-        settings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.Page;
-
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
@@ -90,18 +86,56 @@
         settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
         settings.SettingsCommandButton.DeleteButton.Text = " ";
 
+        settings.CommandColumn.SetHeaderTemplateContent(c =>
+        {
+            Html.DevExpress().Button(btnSettings =>
+            {
+                btnSettings.Name = "btnNew";
+                btnSettings.Text = IWSLocalResource.btnAddNew;
+                btnSettings.Images.Image.IconID = IconID.ActionsAdditem16x16;
+                btnSettings.ClientSideEvents.Click = string.Format("function(s, e) {{ {0}.AddNewRow(); }}", settings.Name);
+            }).Render();
+            Html.DevExpress().CheckBox(selectAll =>
+            {
+                selectAll.Name = "checkBoxAll";
+                selectAll.Text = IWSLocalResource.Select;
+                selectAll.Properties.ClientSideEvents.CheckedChanged = "CheckedChanged";
+            }).Render();
+        });
+        settings.AfterPerformCallback = (s, e) =>
+        {
+            MVCxGridView gridView = (MVCxGridView)s;
+
+            int startIndex = gridView.VisibleStartIndex;
+            int visibleRowCount = gridView.GetCurrentPageRowValues("id").Count;
+            int endIndex = startIndex + visibleRowCount - 1;
+            bool isValidated;
+            bool select = false;
+            if (ViewBag.select != null)
+                select = (bool)ViewBag.select;
+
+            for (int i = startIndex; i <= endIndex; i++)
+            {
+                isValidated = (bool)gridView.GetRowValues(i, "IsValidated");
+                if (select && !isValidated)
+                    gridView.Selection.SelectRow(i);
+                else
+                    gridView.Selection.UnselectRow(i);
+            }
+        };
         settings.CommandButtonInitialize = (s, e) =>
         {
             if (e.VisibleIndex == -1) return;
             MVCxGridView g = (MVCxGridView)s;
-            bool isValidated = Convert.ToBoolean(g.GetRowValues(e.VisibleIndex, "IsValidated"));
             if (e.ButtonType == ColumnCommandButtonType.Edit || e.ButtonType == ColumnCommandButtonType.Delete)
             {
-                e.Visible = false.Equals(isValidated);
+                bool value = (bool)g.GetRowValues(e.VisibleIndex, "IsValidated");
+                e.Visible = false.Equals(value);
             }
             if (e.ButtonType == ColumnCommandButtonType.SelectCheckbox)
             {
-                e.Visible = false.Equals(isValidated);
+                bool value = (bool)g.GetRowValues(e.VisibleIndex, "IsValidated");
+                if (value == true) e.Enabled = e.Visible = false;
             }
         };
 
@@ -126,6 +160,7 @@
         {
             MVCxGridView g = (MVCxGridView)s;
             e.Properties["cpClientLayout"] = g.SaveClientLayout();
+            e.Properties["cpIndexesSelected"] = g.Selection.Count;
         };
         settings.ClientLayout = (s, e) =>
         {
@@ -274,8 +309,15 @@
             column.FieldName = "HeaderText";
             column.Caption = IWSLocalResource.text;
             column.Width = Unit.Percentage(17);
+            column.Visible = false;
         });
-
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Terms";
+            column.Caption = IWSLocalResource.DeliveryTerms;
+            column.Width = Unit.Percentage(17);
+            column.Visible = false;
+        });
         settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oTotal").DisplayFormat = "N";
         settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oNet").DisplayFormat = "N";
         settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oVat").DisplayFormat = "N";
@@ -284,9 +326,9 @@
         settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oNet").DisplayFormat = "N";
         settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "oVat").DisplayFormat = "N";
 
-#region Template
+        #region Template
 
-settings.SetEditFormTemplateContent(c =>
+        settings.SetEditFormTemplateContent(c =>
         {
             var isValidated = DataBinder.Eval(c.DataItem, "IsValidated");
 
@@ -297,9 +339,9 @@ settings.SetEditFormTemplateContent(c =>
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
 
-        #region Button
+                #region Button
 
-        formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.ShowCaption = DefaultBoolean.False;
@@ -310,32 +352,32 @@ settings.SetEditFormTemplateContent(c =>
                 btnSettings =>
                 {
                     btnSettings.Name = "btnMUpdate";
-                    btnSettings.Text = "";
+                    btnSettings.Text = IWSLocalResource.btnUpdate;
                     btnSettings.ToolTip = IWSLocalResource.btnUpdate;
                     btnSettings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
                     btnSettings.Images.Image.IconID = IconID.ActionsApply16x16;
                     btnSettings.Width = Unit.Pixel(80);
                     btnSettings.ClientSideEvents.Click = "function(s, e){ MasterLogistic.UpdateEdit(); }";
                     btnSettings.ClientVisible = ViewBag.Visible;
-                    btnSettings.TabIndex = 8;
+                    btnSettings.TabIndex = 10;
                 }).Render();
                     Html.DevExpress().Button(
                 btnSettings =>
                 {
                     btnSettings.Name = "btnMCancel";
-                    btnSettings.Text = "";
+                    btnSettings.Text = IWSLocalResource.btnCancel;
                     btnSettings.ToolTip = IWSLocalResource.btnCancel;
                     btnSettings.Style[HtmlTextWriterStyle.MarginLeft] = "5px";
                     btnSettings.Images.Image.IconID = IconID.ActionsCancel16x16;
                     btnSettings.Width = Unit.Pixel(80);
                     btnSettings.ClientSideEvents.Click = "function(s, e){ MasterLogistic.CancelEdit(); }";
-                    btnSettings.TabIndex = 9;
+                    btnSettings.TabIndex = 11;
                 }).Render();
                 });
 
-        #endregion
+                #endregion
 
-        formLayoutSettings.Name = "MasterLogisticEdit";
+                formLayoutSettings.Name = "MasterLogisticEdit";
 
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 2;
@@ -526,7 +568,20 @@ settings.SetEditFormTemplateContent(c =>
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(100);
-                        s.TabIndex = 4;
+                        s.TabIndex = 8;
+                    });
+                });
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "Terms";
+                    i.Caption = IWSLocalResource.DeliveryTerms;
+                    i.ColSpan = 2;
+                    i.NestedExtension().Memo(s =>
+                    {
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(100);
+                        s.TabIndex = 9;
                     });
                 });
             })
@@ -534,9 +589,9 @@ settings.SetEditFormTemplateContent(c =>
             .Render();
         });
 
-#endregion
+        #endregion
 
-settings.SetDetailRowTemplateContent(c =>
+        settings.SetDetailRowTemplateContent(c =>
         {
             Session["transid"] = DataBinder.Eval(c.DataItem, "ID");
             Session["IsValidated"] = (bool)DataBinder.Eval(c.DataItem, "IsValidated");

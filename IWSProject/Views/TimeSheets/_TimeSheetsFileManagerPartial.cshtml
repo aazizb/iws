@@ -1,0 +1,60 @@
+@using IWSProject.Content
+@model string
+@Html.DevExpress().FileManager(settings => {
+    settings.Name = "TimeSheetsFileManager";
+    settings.CallbackRouteValues = new { Controller = "TimeSheets", Action = "TimeSheetsFileManagerPartial" };
+
+    settings.DownloadRouteValues = new { Controller = "TimeSheets", Action = "TimeSheetsFileManagerPartialDownload" };
+    settings.SettingsEditing.AllowDownload = false;
+
+    settings.Settings.AllowedFileExtensions = new string[] { ".xls", ".xlsx" };
+    settings.Settings.EnableMultiSelect = true;
+
+    settings.SettingsEditing.AllowCreate = true;
+    settings.SettingsEditing.AllowDelete = true;
+    settings.SettingsEditing.AllowRename = true;
+    settings.SettingsEditing.AllowMove = true;
+    settings.SettingsEditing.AllowCopy = true;
+
+    settings.SettingsFileList.View = FileListView.Details;
+    settings.SettingsFileList.DetailsViewSettings.AllowColumnResize = true;
+    settings.SettingsFileList.DetailsViewSettings.AllowColumnDragDrop = true;
+    settings.SettingsFileList.DetailsViewSettings.AllowColumnSort = true;
+    settings.SettingsFileList.DetailsViewSettings.ShowHeaderFilterButton = true;
+    settings.SettingsFileList.DetailsViewSettings.Columns.Add(new FileManagerDetailsColumn(FileInfoType.Thumbnail));
+    settings.SettingsFileList.DetailsViewSettings.Columns.Add(new FileManagerDetailsColumn(FileInfoType.FileName));
+    settings.SettingsFileList.DetailsViewSettings.Columns.Add(new FileManagerDetailsColumn(FileInfoType.LastWriteTime));
+    settings.SettingsFileList.DetailsViewSettings.Columns.Add(new FileManagerDetailsColumn(FileInfoType.Size));
+
+    settings.SettingsUpload.Enabled = true;
+    settings.SettingsUpload.UseAdvancedUploadMode = true;
+    settings.SettingsUpload.AdvancedModeSettings.EnableMultiSelect = true;
+
+    settings.SettingsToolbar.Items.CreateDefaultItems();
+    settings.SettingsContextMenu.Items.CreateDefaultItems();
+
+    settings.ClientSideEvents.CustomCommand = "OnCustomCommand";
+    settings.ClientSideEvents.ToolbarUpdating = "OnToolbarUpdating";
+
+    FileManagerToolbarCustomButton contextMenuButton = new FileManagerToolbarCustomButton();
+    contextMenuButton.CommandName = "UploadToDB";
+    contextMenuButton.Text = IWSLocalResource.UploadToDB;
+    contextMenuButton.Image.IconID = IconID.ActionsUp216x16;
+    contextMenuButton.BeginGroup = true;
+
+    settings.SettingsContextMenu.Items.Add(contextMenuButton);
+    settings.SettingsContextMenu.Enabled = true;
+
+    FileManagerToolbarCustomButton toolBarButton = new FileManagerToolbarCustomButton();
+    toolBarButton.CommandName = "UploadToDB";
+    toolBarButton.ToolTip = IWSLocalResource.UploadToDB;
+    toolBarButton.Text = IWSLocalResource.UploadToDB;
+    toolBarButton.Image.IconID = IconID.ActionsUp216x16;
+    toolBarButton.BeginGroup = true;
+
+    settings.SettingsToolbar.Items.Add(toolBarButton);
+
+    settings.SettingsUpload.NullText = IWSLocalResource.DropFiles;
+
+    settings.SettingsUpload.AdvancedModeSettings.DropZoneText = (string)ViewData["GenericError"];
+}).BindToFolder(Model).GetHtml()

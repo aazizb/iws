@@ -23,10 +23,23 @@ namespace IWSProject.Controllers
             report.Parameters["ModelId"].Visible = false;
             ViewData["Report"] = report;
 
-            return View();
+            return PartialView();
 
         }
+        public ActionResult SalesInvoiceView()
+        {
+            string companyID = (string)Session["CompanyID"];
+            int modelId = (int)IWSLookUp.LogisticMasterModelId.SalesInvoice;
+            SalesInvoiceXS report = new SalesInvoiceXS();
 
+            report.Parameters["CompanyId"].Value = companyID;
+            report.Parameters["CompanyId"].Visible = false;
+            report.Parameters["ModelId"].Value = modelId;
+            report.Parameters["ModelId"].Visible = false;
+            ViewData["Report"] = report;
+            return PartialView();
+        }
+        
         public ActionResult DocumentViewerPartial()
         {
             string companyID = (string)Session["CompanyID"];

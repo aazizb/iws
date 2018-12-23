@@ -1,0 +1,32 @@
+﻿@model IEnumerable<IWSProject.Models.Entities.TypeJournal>
+<script type="text/javascript">
+
+    function OnButtonClick() {
+        if (TypeJournalGridView.IsCustomizationWindowVisible()) {
+
+            TypeJournalGridView.HideCustomizationWindow();
+        }
+        else {
+            TypeJournalGridView.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = TypeJournalGridView.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayoutTj").text(layout)
+    }
+</script>
+
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Action("TypeJournalsGridViewPartial", Model)

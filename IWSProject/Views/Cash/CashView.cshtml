@@ -1,0 +1,119 @@
+﻿@using IWSProject.Content
+
+<script type="text/javascript">
+
+    var selectedIDs = null;
+    var expanded = false;
+    var ndxMaster = 0;
+    var ndxDetail = 0;
+    function OnMRowClick(s, e) {
+        expanded = true;
+        ndxMaster = e.visibleIndex;
+        s.StartEditRow(ndxMaster);
+    }
+    function OnDRowClick(s, e) {
+        if (Cash.IsEditing())
+            Cash.UpdateEdit();
+        ndxDetail = e.visibleIndex
+        s.SetFocusedRowIndex(ndxDetail);
+        s.StartEditRow(ndxDetail);
+    }
+    function OnMEndCallback(s, e) {
+        if (expanded == true) {
+            expanded = false;
+            s.ExpandDetailRow(ndxMaster);
+        }
+    }
+    function OnDEndCallback(s, e) {
+        s.SetFocusedRowIndex(e.visibleIndex);
+    }
+    function OnMBeginCallback(s, e) {
+        e.customArgs["selectedIDs"] = selectedIDs;
+    }
+    function OnMSelectionChanged(s, e) {
+        s.GetSelectedFieldValues("Id", GetSelectedFieldValuesCallback);
+    }
+    function GetSelectedFieldValuesCallback(values) {
+        selectedIDs = values.join(';');
+    }
+    function OnSubmitClick(s, e) {
+        callbackPanelPartialView.PerformCallback();
+    }
+    function OnMInit(s, e) {
+
+        ASPxClientUtils.AttachEventToElement(
+            s.GetMainElement(),
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    case 13://ENTER
+                        var isValidated = IsValidated.GetValue();
+                        if (s.IsEditing()) {
+                            if (isValidated == false) {
+                                s.UpdateEdit();
+                            }
+                            else {
+                                s.CancelEdit();
+                            }
+                        } k;
+                    case 27://ESC
+                        if (s.IsEditing()) {
+                            s.CancelEdit();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+    }
+    function OnDInit(s, e) {
+
+        ASPxClientUtils.AttachEventToElement(
+            s.GetMainElement(),
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    case 13://ENTER
+                        if (s.IsEditing()) {
+                            s.UpdateEdit();
+                            s.AddNewRow();
+                        }
+                        break;
+                    case 27://ESC
+                        if (s.IsEditing()) {
+                            s.CancelEdit();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+    }
+    function TrackLayout(layout) {
+        $("#LastLayout").text(layout)
+    }
+
+</script>
+@{
+    ViewBag.Title = IWSLocalResource.Cash;
+}
+
+@using (Html.BeginForm("Index", "Cash"))
+{
+    @Html.DevExpress().Button(
+    settings =>
+    {
+        settings.Name = "btnSubmit";
+        settings.ControlStyle.CssClass = "button";
+        settings.Text = IWSLocalResource.Validate;
+        settings.Width = Unit.Pixel(150);
+        settings.UseSubmitBehavior = false;
+        settings.ClientSideEvents.Click = "OnSubmitClick";
+    }
+    ).GetHtml()
+
+    @Html.Partial("CallbackPanelPartialView")
+}
+
+
+

@@ -1,0 +1,260 @@
+﻿@using IWSProject.Content
+<script type="text/javascript">
+    function OnOIDSelectedIndexChanged(s, e) {
+    $.ajax({
+        url: '@Url.Action("Account", "MasterCompta")',
+        type: "POST",
+        data: { selectedOIDIndex: s.GetValue() },
+        success: function (data) {
+            account.SetText(data);
+        },
+        error: function (xhr, textStatus, errorThrown) {
+            alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+        }
+    });
+    $.ajax({
+    url: '@Url.Action("HeaderText", "MasterCompta")',
+    type: "POST",
+    data: { selectedOIDIndex: s.GetValue() },
+    success: function (data) {
+        HeaderText.SetText(data);
+    },
+    error: function (xhr, textStatus, errorThrown) {
+        alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+    }
+    });
+    $.ajax({
+    url: '@Url.Action("CostCenter", "MasterCompta")',
+    type: "POST",
+    data: { selectedOIDIndex: s.GetValue() },
+    success: function (data) {
+        CostCenter.SetText(data);
+    },
+    error: function (xhr, textStatus, errorThrown) {
+        alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+    }
+    });
+    }
+    function OnDetailOIDSelectedIndexChanged(s, e) {
+        $.ajax({
+            url: '@Url.Action("Amount", "MasterCompta")',
+            type: "POST",
+            data: { selectedDetailOIDIndex: s.GetValue() },
+            success: function (data) {
+                Amount.SetText(data);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                alert('Request Status: ' + xhr.status + '; Status Text: ' + textStatus + '; Error: ' + errorThrown);
+            }
+        });
+    }
+    var selectedIDs = null;
+    var expanded = false;
+    var ndxMaster = 0;
+    var ndxDetail = 0;
+    var command;
+    var isDetailRowExpanded = new Array();
+    var currentModelId = null;
+    function OnMRowClick(s, e) {
+        expanded = true;
+        ndxMaster = e.visibleIndex;
+        s.StartEditRow(ndxMaster);
+        isDetailRowExpanded[ndxMaster] = true;
+    }
+    function OnDRowClick(s, e) {
+        ndxDetail = e.visibleIndex;
+        s.SetFocusedRowIndex(ndxDetail);
+        s.StartEditRow(ndxDetail);
+    }
+
+    function OnDetailRowExpanding(s, e) {
+        isDetailRowExpanded[e.visibleIndex] = true;
+    }
+    function OnDetailRowCollapsing(s, e) {
+        isDetailRowExpanded[e.visibleIndex] = false;
+    }
+    function OnDEndCallback(s, e) {
+        s.SetFocusedRowIndex(e.visibleIndex);
+    }
+    function OnMBeginCallback(s, e) {
+        e.customArgs["selectedIDs"] = selectedIDs;
+        e.customArgs["currentModelId"] = currentModelId;
+        currentModelId = null;
+        selectedIDs = null;
+        command = e.command;
+    }
+    function OnMSelectionChanged(s, e) {
+        setGridHeaderCheckboxes(s, e);
+        s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
+    }
+    function OnMEndCallback(s, e) {
+        if (expanded === true) {
+            expanded = false;
+            s.ExpandDetailRow(ndxMaster);
+        }
+        if (command === "HIDEDETAILROW") {
+            if (s.IsEditing || s.IsNewRowEditing)
+                s.CancelEdit();
+        }
+        if (command === 'CANCELEDIT') {
+            if (isDetailRowExpanded[ndxMaster] === true) {
+                s.CollapseDetailRow(ndxMaster);
+            }
+        }
+        if (currentModelId !== null) {
+            callbackPanelPartialView.PerformCallback();
+        }
+        setGridHeaderCheckboxes(s, e);
+        TrackLayout(s.cpClientLayout);
+    }
+    function GetSelectedFieldValuesCallback(values) {
+        selectedIDs = values.join(';');
+    }
+    function OnSubmitClick(s, e) {
+        currentModelId = ComboBoxModelId.GetValue();
+        $("#selectedIDs").val(selectedIDs);
+        callbackPanelPartialView.PerformCallback();
+    }
+    function TrackLayout(layout) {
+        $("#LastLayout").text(layout);
+    }
+    function CheckedChanged(s, e) {
+        MasterCompta.PerformCallback({ isChecked: s.GetChecked() });
+    }
+    function setGridHeaderCheckboxes(s, e) {
+        var indexes = MasterCompta.cpIndiceSelected;
+        checkBoxAll.SetChecked(s.GetSelectedRowCount() !== Object.size(indexes));
+    }
+    Object.size = function (obj) {
+        var size = 0, key;
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) size++;
+        }
+        return size;
+    };
+    function OnMInit(s, e) {
+        ASPxClientUtils.AttachEventToElement(
+            s.GetMainElement(),
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    case 13://ENTER
+                        var isValidated = IsValidated.GetValue();
+                        if (s.IsEditing()) {
+                            if (isValidated === false) {
+                                s.UpdateEdit();
+                            }
+                            else {
+                                s.CancelEdit();
+                            }
+                        }
+                        break;
+                    case 27://ESC
+                        if (s.IsEditing()) {
+                            s.CancelEdit();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+    }
+    function OnDInit(s, e) {
+
+        ASPxClientUtils.AttachEventToElement(
+            s.GetMainElement(),
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    case 13://ENTER
+                        if (s.IsEditing()) {
+                            s.UpdateEdit();
+                            s.AddNewRow();
+                        }
+                        break;
+                    case 27://ESC
+                        if (s.IsEditing()) {
+                            s.CancelEdit();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+    }
+    function OnButtonClick() {
+        if (MasterCompta.IsCustomizationWindowVisible()) {
+
+            MasterCompta.HideCustomizationWindow();
+        }
+        else {
+            MasterCompta.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = MasterCompta.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function OnModelIdSelectionChanged() {
+        selectedIDs = null;
+        currentModelId = ComboBoxModelId.GetValue();
+        if (!callbackPanelPartialView.InCallback()) {
+            callbackPanelPartialView.PerformCallback();
+        }
+    }
+    function OnAmountValidation(s, e) {
+        if (e.value < 0) {
+            e.IsValid = false;
+            e.value = 0;
+        }
+    }
+</script>
+
+@*@{
+    ViewBag.Title = IWSLocalResource.Accounting;
+}*@
+@using (Html.BeginForm("Index", "MasterCompta"))
+{
+    @Html.Hidden("selectedIDs");
+
+    @Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "ComboBoxModelId";
+    settings.Width = Unit.Pixel(185);
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+    settings.Properties.Items.Add("",0000);
+    settings.Properties.Items.Add(IWSLocalResource.vendorinvoice, 112);
+    settings.Properties.Items.Add(IWSLocalResource.payment, 114);
+    settings.Properties.Items.Add(IWSLocalResource.CustomerInvoice, 122);
+    settings.Properties.Items.Add(IWSLocalResource.Settlement, 124);
+    settings.Properties.Items.Add(IWSLocalResource.GeneralLedger, 134);
+    //settings.Properties.TextField = "ParentName";
+    //settings.Properties.ValueField = "ParentId";
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s, e) { OnModelIdSelectionChanged(); }";
+    settings.SelectedIndex = 0;
+}).GetHtml()
+
+    @Html.DevExpress().Button(
+        settings =>
+        {
+            settings.Name = "btnSubmit";
+            settings.ControlStyle.CssClass = "button";
+            settings.Text = IWSLocalResource.Validate;
+            settings.ToolTip = IWSLocalResource.Validate;
+            settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+            settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
+            settings.Width = Unit.Pixel(80);
+            settings.UseSubmitBehavior = false;
+            settings.ClientSideEvents.Click = "OnSubmitClick";
+        }).GetHtml()
+
+    @Html.Partial("ShowHideButtonPartialView")
+    
+    @Html.Partial("CallbackPanelPartialView")
+}
+

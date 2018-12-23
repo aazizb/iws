@@ -18,7 +18,11 @@ namespace IWSProject
         {
 
             ViewEngines.Engines.Clear();
-            ViewEngines.Engines.Add(new RazorViewEngine());
+
+            IViewEngine razorEngine = new RazorViewEngine() { FileExtensions = new string[] { "cshtml" } };
+
+            ViewEngines.Engines.Add(razorEngine);
+            //ViewEngines.Engines.Add(new RazorViewEngine());
 
             DevExpress.XtraReports.Web.WebDocumentViewer.Native.WebDocumentViewerBootstrapper.SessionState = System.Web.SessionState.SessionStateBehavior.Disabled;
             AreaRegistration.RegisterAllAreas();

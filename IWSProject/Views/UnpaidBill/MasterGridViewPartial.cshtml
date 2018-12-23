@@ -38,7 +38,7 @@
 
         settings.Settings.ShowFooter = true;
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
 
         settings.SettingsPager.Visible = true;
@@ -207,8 +207,7 @@
                 e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
             }
         };
-        settings.Settings.ShowFooter = true;
-        settings.Settings.ShowGroupPanel = true;
+        
         settings.SettingsBehavior.AutoExpandAllGroups = true;
         settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
         settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "amount").ShowInGroupFooterColumn = "amount";

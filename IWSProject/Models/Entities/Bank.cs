@@ -5,7 +5,6 @@ using System.Data.Linq.Mapping;
 
 namespace IWSProject.Models.Entities
 {
-
     [TableAttribute(Name = "dbo.Bank")]
     public partial class Bank : INotifyPropertyChanging, INotifyPropertyChanged
     {

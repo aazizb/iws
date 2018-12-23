@@ -110,5 +110,9 @@ namespace IWSProject.Controllers
             }
             return PartialView("QuantityUnitsGridViewPartial", IWSLookUp.GetQuantityUnits());
         }
+        public ActionResult QuantityUnitView()
+        {
+            return PartialView(IWSLookUp.GetQuantityUnits());
+        }
     }
 }

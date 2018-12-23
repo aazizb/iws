@@ -1,4 +1,5 @@
 ﻿@using IWSProject.Content
+@model string
 <script type="text/javascript">
     function OnCustomCommand(s, e) {
         if (e.commandName == "CashToDb") {
@@ -18,7 +19,7 @@
             })
         }
         }
-        function OnToolbarUpdating(s, e) {
+    function OnToolbarUpdating(s, e) {
             var enabled = (FileManager.GetSelectedItems().length > 0) &&
                                         e.activeAreaName != "None";
             FileManager.GetToolbarItemByCommandName("CashToDb").SetEnabled(enabled);
@@ -31,7 +32,7 @@
 }
 @using (Html.BeginForm())
 {
-    @Html.Action("CashPartial")
+    @Html.Partial("CashPartial")
 }
 
 

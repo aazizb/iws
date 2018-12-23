@@ -1,0 +1,113 @@
+﻿@using IWSProject.Content
+<script type="text/javascript">
+
+    var selectedIDs = null;
+    var currentPeriod = null;
+
+    function OnBeginCallback(s, e) {
+        e.customArgs["currentPeriod"] = currentPeriod;
+        e.customArgs["selectedIDs"] = selectedIDs;
+        selectedIDs = null;
+    }
+    function OnEndCallback() {
+        setGridHeaderCheckboxes(s, e);
+        TrackLayout(s.cpClientLayout);
+        if (currentPeriod !== null) {
+            callbackPanelPartialView.PerformCallback();
+        }
+    }
+    function OnButtonClick() {
+        if (depreciation.IsCustomizationWindowVisible()) {
+
+            depreciation.HideCustomizationWindow();
+        }
+        else {
+            depreciation.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp() {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = depreciation.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function TrackLayout(layout) {
+        $("#LastLayout").text(layout);
+    }
+
+    function OnDateChanged(s, e) {
+        currentPeriod = DateToYMD(s.GetDate());
+        if (!callbackPanelPartialView.InCallback()) {
+            callbackPanelPartialView.PerformCallback();
+        }
+    }
+    function DateToYMD(date) {
+        var d = date.getDate();
+        var m = date.getMonth() + 1;
+        var y = date.getFullYear();
+        return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
+    }
+    function OnSelectionChanged(s, e) {
+        setGridHeaderCheckboxes(s, e);
+        s.GetSelectedFieldValues("Id;Period;Depreciation", GetSelectedFieldValues);
+    }
+    function GetSelectedFieldValues(values) {
+        selectedIDs = values.join(';');
+    }
+    function OnSubmitClick(s, e) {
+        $("#selectedIDs").val(selectedIDs);
+        callbackPanelPartialView.PerformCallback();
+    }
+    function CheckedChanged(s, e) {
+        depreciation.PerformCallback({ isChecked: s.GetChecked() });
+    }
+    function setGridHeaderCheckboxes(s, e) {
+        var indexes = depreciation.cpIndiceSelected;
+        checkBoxAll.SetChecked(s.GetSelectedRowCount() !== Object.size(indexes));
+    }
+    Object.size = function (obj) {
+        var size = 0, key;
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) size++;
+        }
+        return size;
+    };
+</script>
+
+@using (Html.BeginForm("Index", "Depreciation"))
+{
+@Html.Hidden("selectedIDs")
+
+@Html.DevExpress().DateEdit(settings => {
+settings.Name = "periodDateEdit";
+settings.Width = Unit.Pixel(185);
+settings.Properties.UseMaskBehavior = true;
+settings.Properties.EditFormat = EditFormat.Custom;
+settings.Properties.EditFormatString = "MMMM-yyyy";
+settings.Properties.DisplayFormatString = "MMMM-yyyy";
+settings.Properties.ClientSideEvents.DateChanged = "OnDateChanged";
+settings.Date = DateTime.Now;
+
+}).GetHtml()
+
+@Html.DevExpress().Button( settings =>
+{
+settings.Name = "btnSubmit";
+settings.ControlStyle.CssClass = "button";
+settings.Text = IWSLocalResource.Validate;
+settings.ToolTip = IWSLocalResource.Validate;
+settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
+settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
+settings.Width = Unit.Pixel(80);
+settings.UseSubmitBehavior = false;
+settings.ClientSideEvents.Click = "OnSubmitClick";
+}).GetHtml()
+
+@Html.Partial("ShowHideButtonPartialView")
+
+@Html.Partial("CallbackPanelPartialView")
+
+} 
+
