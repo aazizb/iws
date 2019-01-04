@@ -28,12 +28,5 @@
 </script>
 
 @Html.Partial("ShowHideButtonPartialView")
-<div class="options">
-    <div class="options-item">
-        @Html.Partial("PerformancePartialView")
-    </div>
-</div>
-@{
-    @Session["DurationCust"];
-}
+
 @Html.Action("CustomersGridViewPartial", Model)

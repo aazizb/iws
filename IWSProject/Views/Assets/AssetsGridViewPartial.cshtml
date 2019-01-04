@@ -82,9 +82,9 @@
             e.NewValues["ScrapValue"] = 0;
             e.NewValues["Rate"] = 1.00;
             e.NewValues["Depreciation"] = (int)IWSLookUp.DepreciationType.StraightLine;
+            e.NewValues["Frequency"] = (int)IWSLookUp.DepreciationFrequency.Yearly;
         };
 
-               
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
@@ -113,7 +113,7 @@
         {
             column.FieldName = "Name";
             column.Caption = IWSLocalResource.name;
-            column.Width = Unit.Percentage(30);
+            column.Width = Unit.Percentage(25);
         });
         settings.Columns.Add(column =>
         {
@@ -141,6 +141,69 @@
             });
             column.Width = Unit.Percentage(6);
         });
+        //settings.Columns.Add(column =>
+        //{
+        //    column.FieldName = "Frequency";
+        //    column.Caption = IWSLocalResource.Frequency;
+        //    column.EditorProperties().ComboBox(combo =>
+        //    {
+        //        combo.TextField = "Name";
+        //        combo.ValueField = "id";
+        //        combo.ValueType = typeof(string);
+        //        combo.DataSource = ViewBag.PackUnit;
+        //        //combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+        //        combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+        //        combo.TextFormatString = "{0}";
+        //    });
+        //    column.Width = Unit.Percentage(15);
+        //    column.Visible = false;
+        //});
+        //settings.Columns.Add(column =>
+        //{
+        //    //settings.Name = "ComboBoxModelId";
+        //    //settings.Width = Unit.Pixel(185);
+        //    //settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+        //    //settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+        //    //settings.Properties.Items.Add("", 0000);
+        //    //settings.Properties.Items.Add(IWSLocalResource.vendorinvoice, 112);
+        //    //settings.Properties.Items.Add(IWSLocalResource.payment, 114);
+        //    column.FieldName = "Frequency";
+        //    column.Caption = IWSLocalResource.Frequency;
+        //    column.EditorProperties().ComboBox(combo =>
+        //    {
+        //        combo.nam
+        //        //cbSettings.Properties.Items.Add("Cancel", "Cancel");
+        //        //cbSettings.Properties.Items.Add("Issue", "Issue");
+        //        combo.Items.Add(IWSLocalResource.debit, 2);
+        //        combo.Items.Add(IWSLocalResource.credit, 4);
+        //    });
+        //    column.Width = Unit.Percentage(6);
+        //});
+
+        //settings.Columns.Add(column =>
+        //{
+        //    column.FieldName = "Frequency";
+        //    column.Caption = IWSLocalResource.Frequency;
+        //    //column.UnboundType = DevExpress.Data.UnboundColumnType.String;
+        //    column.SetDataItemTemplateContent(c =>
+        //    {
+        //        Html.DevExpress().ComboBox(combo =>
+        //        {
+        //            combo.Name = "cb" + c.KeyValue;
+        //            combo.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+        //            combo.Properties.Items.Add(IWSLocalResource.debit, 2);
+        //            combo.Properties.Items.Add(IWSLocalResource.credit, 4);
+
+        //            //combo.CustomJSProperties = (send, evargs) =>
+        //            //{
+        //            //    evargs.Properties["cpKeyValue"] = c.KeyValue;
+        //            //};
+
+        //            //combo.Properties.ClientSideEvents.SelectedIndexChanged = "OnActionChanged";
+        //        }).GetHtml();      //.Bind(c.Text != "&nbsp;" ? c.Text : "").Render();
+        //    });
+        //});
+
         settings.Columns.Add(column =>
         {
             column.FieldName = "Account";
@@ -160,7 +223,7 @@
         });
         settings.Columns.Add(column =>
         {
-            column.FieldName = "OAccount    ";
+            column.FieldName = "OAccount";
             column.Caption = IWSLocalResource.oaccount;
             column.EditorProperties().ComboBox(combo =>
             {
@@ -267,6 +330,7 @@
                 });
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
+
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "Currency";
@@ -314,7 +378,22 @@
                         s.TabIndex = 6;
                     });
                 });
+                //formLayoutSettings.Items.AddEmptyItem();
+                //formLayoutSettings.Items.AddEmptyItem();
 
+                //formLayoutSettings.Items.Add(i =>
+                //{
+                //    i.FieldName = "Frequency";
+                //    i.Caption = IWSLocalResource.Frequency;
+                //    i.Width = Unit.Percentage(50);
+                //    i.NestedExtension().TextBox(s =>
+                //    {
+                //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                //        s.ShowModelErrors = true;
+                //        s.Width = Unit.Percentage(75);
+                //        s.TabIndex = 7;
+                //    });
+                //});
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
 
@@ -330,8 +409,8 @@
                         s.Properties.Items.Add("items1", (int)IWSLookUp.DepreciationType.StraightLine).Text = IWSLocalResource.StraghtLineDepreciation;
                         s.Properties.Items.Add("items2", (int)IWSLookUp.DepreciationType.Degressive).Text = IWSLocalResource.Degressive;
                         s.Properties.ValidationSettings.RequiredField.IsRequired = true;
-                        s.TabIndex = 6;
-                        s.Properties.ClientSideEvents.ValueChanged = "OnValueChanged";
+                        s.TabIndex = 8;
+                        //s.Properties.ClientSideEvents.ValueChanged = "OnValueChanged";
 
                     });
                 });
@@ -347,10 +426,9 @@
                     {
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
-                        s.ClientEnabled = false;
                         s.Properties.DisplayFormatString = "P";
                         s.Width = Unit.Percentage(75);
-                        s.TabIndex = 7;
+                        s.TabIndex = 9;
                     });
                 });
 
@@ -385,7 +463,7 @@
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(75.1);
-                        s.TabIndex = 9;
+                        s.TabIndex = 10;
                     });
                 });
 
@@ -420,7 +498,7 @@
                         s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(75.1);
-                        s.TabIndex = 10;
+                        s.TabIndex = 11;
                     });
                 });
 
@@ -438,7 +516,7 @@
                         s.ShowModelErrors = true;
                         s.Width = Unit.Percentage(75);
                         s.Height = Unit.Pixel(80);
-                        s.TabIndex = 11;
+                        s.TabIndex = 12;
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
@@ -459,7 +537,7 @@
                     b.Images.Image.IconID = IconID.ActionsApply16x16;
                     b.Width = Unit.Pixel(80);
                     b.ClientSideEvents.Click = "function(s, e){ AssetsGridView.UpdateEdit(); }";
-                    b.TabIndex = 12;
+                    b.TabIndex = 13;
                 }).Render();
 
                     Html.DevExpress().Button(
@@ -472,7 +550,7 @@
                     b.Images.Image.IconID = IconID.ActionsCancel16x16;
                     b.Width = Unit.Pixel(80);
                     b.ClientSideEvents.Click = "function(s, e){ AssetsGridView.CancelEdit(); }";
-                    b.TabIndex = 13;
+                    b.TabIndex = 14;
                 }).Render();
                 });
             })

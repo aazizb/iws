@@ -21,6 +21,7 @@
     settings.SettingsBehavior.AllowSelectByRowClick = false;
     settings.SettingsBehavior.EnableRowHotTrack = true;
     settings.SettingsBehavior.AllowEllipsisInText = true;
+    settings.SettingsBehavior.AllowFocusedRow = true;
     settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
     settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
     settings.SettingsResizing.Visualization = ResizingMode.Live;
@@ -33,9 +34,8 @@
     settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
     settings.Settings.ShowFilterRow = true;
-    settings.Settings.ShowGroupPanel = true;
+    settings.Settings.ShowGroupPanel = false;
     settings.Settings.ShowFilterRowMenu = true;
-    settings.SettingsBehavior.AllowFocusedRow = true;
 
     settings.Width = Unit.Percentage(100);
 
@@ -115,7 +115,13 @@
             combo.TextFormatString = "{0}-{1}";
         });
     });
-
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Info";
+        column.Caption = IWSLocalResource.Info;
+        column.Width = Unit.Percentage(10);
+        column.Visible = false;
+    });
     settings.Columns.Add(column =>
     {
         column.FieldName = "TransDate";
@@ -188,6 +194,26 @@
     {
         column.FieldName = "Amount";
         column.Caption = IWSLocalResource.amount;
+        column.Width = Unit.Percentage(13);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "DebitBefore";
+        column.Caption = IWSLocalResource.DebitBefore;
+        column.Width = Unit.Percentage(13);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "CreditBefore";
+        column.Caption = IWSLocalResource.CreditBefore;
         column.Width = Unit.Percentage(13);
         column.EditorProperties().TextBox(textBox =>
         {

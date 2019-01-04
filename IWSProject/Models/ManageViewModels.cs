@@ -84,6 +84,8 @@ namespace IWSProject.Models
         public string OAccount { get; set; }
         public string OAccountName { get; set; }
         public decimal Amount { get; set; }
+        public decimal DebitBefore { get; set; }
+        public decimal CreditBefore { get; set; }
         public string Side { get; set; }
         public string CompanyID { get; set; }
         public string CompanyIBAN { get; set; }
@@ -142,6 +144,11 @@ namespace IWSProject.Models
         public string CEnd { get; set; }
         public string OStart { get; set; }
         public string OEnd { get; set; }
+    }
+    public class BeforeAmountViewModel
+    {
+        public decimal Debit { get; set; }
+        public decimal Credit { get; set; }
     }
     public class ValidateDocsViewModel
     {
@@ -356,12 +363,15 @@ namespace IWSProject.Models
         public string Account { get; set; }
         public string OAccount { get; set; }
         public DateTime StartDate { get; set; }
+        public DateTime AssetStartDate { get; set; }
         public int LifeSpan { get; set; }
+        public int Frequency { get; set; }
         public decimal BookValue { get; set; }
         public decimal ScrapValue { get; set; }
         public decimal Rate { get; set; }
         public string Currency { get; set; }
         public int DepreciationType { get; set; }
+        public string CompanyId { get; set; }
     }
     public class StatementDetailViewModel
     {

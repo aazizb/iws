@@ -39,6 +39,7 @@ namespace IWSProject.Controllers
             item.Updated = DateTime.Now.Date;
             if (item.Rate == null)
                 item.Rate = 1;
+            item.Frequency = 12;
             ViewBag.Assets = item;
             if (ModelState.IsValid)
             {

@@ -11,6 +11,10 @@
         settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
         settings.SettingsContextMenu.Enabled = true;
 
+        settings.SettingsContextMenu.RowMenuItemVisibility.DeleteRow = false;
+        settings.SettingsContextMenu.RowMenuItemVisibility.EditRow = false;
+        settings.SettingsContextMenu.RowMenuItemVisibility.NewRow = false;
+
         settings.Styles.RowHotTrack.Cursor = "pointer";
         settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
         settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
@@ -215,5 +219,15 @@
         settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Depreciation").ShowInGroupFooterColumn = "Depreciation";
         settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
 
+        if (ViewData["GenericError"] != null)
+        {
+            settings.Settings.ShowFooter = true;
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["GenericError"]);
+            });
+        }
+
     }).Bind(Model).GetHtml();
+
 }

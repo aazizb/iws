@@ -20,9 +20,13 @@
     settings.PopupVerticalAlign = PopupVerticalAlign.WindowCenter;
 
     settings.SetContent(() => {
+
         @Html.DevExpress().PageControl(pc =>
         {
             pc.Name = "PageControl";
+            //pc.CallbackRouteValues = new { Controller = "Default", Action = "GridViewPartialView" };
+            //pc.ClientSideEvents.BeginCallback = "OnBeginCallback";
+
             pc.TabPages.Add(IWSLocalResource.FiscalYearCurrent).SetContent(() =>
             {
                 @Html.DevExpress().FormLayout(fl =>
@@ -35,23 +39,24 @@
                         group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
                         group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
                         group.ShowCaption = DefaultBoolean.False;
-                        group.Items.Add(txtExtension =>
+                        group.Items.Add(dateEdit =>
                         {
-                            txtExtension.FieldName = "CStart";
-                            txtExtension.Name = "CStart";
-                            txtExtension.Caption = IWSLocalResource.FiscalYearStart;
-                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
-                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
-                            textBoxSettings.ReadOnly = true;
+
+                            dateEdit.FieldName = "CStart";
+                            dateEdit.Name = "CStart";
+                            dateEdit.Caption = IWSLocalResource.FiscalYearStart;
+                            dateEdit.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
+                            var dateEditSettings = (DateEditSettings)dateEdit.NestedExtensionSettings;
+                            dateEditSettings.ReadOnly = true;
                         });
-                        group.Items.Add(txtExtension =>
+                        group.Items.Add(dateEdit =>
                         {
-                            txtExtension.FieldName = "CEnd";
-                            txtExtension.Name = "CEnd";
-                            txtExtension.Caption = IWSLocalResource.FiscalYearEnd;
-                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
-                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
-                            textBoxSettings.ReadOnly = true;
+                            dateEdit.FieldName = "CEnd";
+                            dateEdit.Name = "CEnd";
+                            dateEdit.Caption = IWSLocalResource.FiscalYearEnd;
+                            dateEdit.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
+                            var dateEditSettings = (DateEditSettings)dateEdit.NestedExtensionSettings;
+                            dateEditSettings.ReadOnly = true;
                         });
                     });
 
@@ -70,23 +75,23 @@
                         group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
                         group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
                         group.ShowCaption = DefaultBoolean.False;
-                        group.Items.Add(txtExtension =>
+                        group.Items.Add(dateEdit =>
                         {
-                            txtExtension.FieldName = "OStart";
-                            txtExtension.Name = "OStart";
-                            txtExtension.Caption = IWSLocalResource.FiscalYearStart;
-                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
-                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
-                            textBoxSettings.ReadOnly = true;
+                            dateEdit.FieldName = "OStart";
+                            dateEdit.Name = "OStart";
+                            dateEdit.Caption = IWSLocalResource.FiscalYearStart;
+                            dateEdit.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
+                            var dateEditSettings = (DateEditSettings)dateEdit.NestedExtensionSettings;
+                            dateEditSettings.ReadOnly = true;
                         });
-                        group.Items.Add(txtExtension =>
+                        group.Items.Add(dateEdit =>
                         {
-                            txtExtension.FieldName = "OEnd";
-                            txtExtension.Name = "OEnd";
-                            txtExtension.Caption = IWSLocalResource.FiscalYearEnd;
-                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
-                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
-                            textBoxSettings.ReadOnly = true;
+                            dateEdit.FieldName = "OEnd";
+                            dateEdit.Name = "OEnd";
+                            dateEdit.Caption = IWSLocalResource.FiscalYearEnd;
+                            dateEdit.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
+                            var dateEditSettings = (DateEditSettings)dateEdit.NestedExtensionSettings;
+                            dateEditSettings.ReadOnly = true;
                         });
                     });
                 }).GetHtml();
@@ -103,23 +108,23 @@
                         group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
                         group.ShowCaption = DefaultBoolean.False;
                         group.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
-                        group.Items.Add(txtExtension =>
+                        group.Items.Add(dateEdit =>
                         {
-                            txtExtension.FieldName = "NStart";
-                            txtExtension.Name = "NStart";
-                            txtExtension.Caption = IWSLocalResource.FiscalYearStart;
-                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
-                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
-                            textBoxSettings.ReadOnly = true;
+                            dateEdit.FieldName = "NStart";
+                            dateEdit.Name = "NStart";
+                            dateEdit.Caption = IWSLocalResource.FiscalYearStart;
+                            dateEdit.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
+                            var dateEditSettings = (DateEditSettings)dateEdit.NestedExtensionSettings;
+                            //dateEditSettings.ReadOnly = true;
                         });
-                        group.Items.Add(txtExtension =>
+                        group.Items.Add(dateEdit =>
                         {
-                            txtExtension.FieldName = "NEnd";
-                            txtExtension.Name = "NEnd";
-                            txtExtension.Caption = IWSLocalResource.FiscalYearEnd;
-                            txtExtension.NestedExtensionType = FormLayoutNestedExtensionItemType.TextBox;
-                            var textBoxSettings = (TextBoxSettings)txtExtension.NestedExtensionSettings;
-                            textBoxSettings.ReadOnly = true;
+                            dateEdit.FieldName = "NEnd";
+                            dateEdit.Name = "NEnd";
+                            dateEdit.Caption = IWSLocalResource.FiscalYearEnd;
+                            dateEdit.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
+                            var dateEditSettings = (DateEditSettings)dateEdit.NestedExtensionSettings;
+
                         });
 
                         ViewContext.Writer.Write("<div class='buttonsContainer' style='width: 100%; text-align: center'>");
@@ -147,8 +152,10 @@
                 }).GetHtml();
             });
         }).GetHtml();
+
     });
 }).GetHtml()
+
 
 
 

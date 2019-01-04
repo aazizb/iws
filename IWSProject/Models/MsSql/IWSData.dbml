@@ -1,5 +1,64 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DB_A18F7E_iws_2018_12" Class="IWSDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=(localdb)\mssqllocaldb;Initial Catalog=DB_A18F7E_iws_2018_12;Integrated Security=True;MultipleActiveResultSets=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="DB_A18F7E_iws_2018_12ConnectionString" Provider="System.Data.SqlClient" />
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="VI201812" Class="IWSDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=(localdb)\mssqllocaldb;Initial Catalog=VI201812;Integrated Security=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="DefaultConnection" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.PeriodicAccountBalance" Member="PeriodicAccountBalances">
+    <Type Name="PeriodicAccountBalance">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="AccountId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Periode" Type="System.String" DbType="NVarChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Debit" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Credit" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Currency" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="FinalBalance" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="InitialBalance" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="oYear" Type="System.String" DbType="Char(4)" IsDbGenerated="true" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="oMonth" Type="System.String" DbType="Char(2)" IsDbGenerated="true" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="ModelId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Asset" Member="Assets">
+    <Type Name="Asset">
+      <Column Name="Id" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ScrapValue" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="Currency" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="LifeSpan" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Frequency" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Depreciation" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Account" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="OAccount" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Posted" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Column Name="Updated" Type="System.DateTime" DbType="DateTime2" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="ModelId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Rate" Type="System.Decimal" DbType="Decimal(5,2)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Article" Member="Articles">
+    <Type Name="Article">
+      <Column Name="id" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="description" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="price" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="avgprice" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="salesprice" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="qttyunit" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="packunit" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="VatCode" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IsService" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="StockAccount" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="ExpenseAccount" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Currency" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="GroupId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="RevenuAccountId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Posted" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Column Name="Updated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Column Name="ModelId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
   <Function Name="dbo.account1To7" Method="account1To7">
     <Parameter Name="start" Type="System.String" DbType="NVarChar(6)" />
     <Parameter Name="end" Type="System.String" DbType="NVarChar(6)" />
@@ -236,33 +295,6 @@
     <Parameter Name="companyid" Type="System.String" DbType="NVarChar(50)" />
     <Return Type="System.Int32" />
   </Function>
-  <Function Name="dbo.GetJournal" Method="GetJournal">
-    <Parameter Name="start" Type="System.String" DbType="NVarChar(6)" />
-    <Parameter Name="end" Type="System.String" DbType="NVarChar(6)" />
-    <Parameter Name="uiculture" Type="System.String" DbType="NVarChar(5)" />
-    <Parameter Name="Companyid" Parameter="companyid" Type="System.String" DbType="NVarChar(6)" />
-    <ElementType Name="GetJournalResult">
-      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="ItemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="OID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="LocalName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="CustSupplierID" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="TransDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="Periode" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
-      <Column Name="OYear" Type="System.String" DbType="Char(4)" CanBeNull="true" />
-      <Column Name="oMonth" Type="System.String" DbType="Char(2)" CanBeNull="true" />
-      <Column Name="Account" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="AccountName" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
-      <Column Name="OAccount" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="OAccountName" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
-      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
-      <Column Name="Side" Type="System.String" DbType="NVarChar(6) NOT NULL" CanBeNull="false" />
-      <Column Name="Currency" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
-      <Column Name="CompanyID" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Owner" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
-      <Column Name="TypeJournal" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-    </ElementType>
-  </Function>
   <Function Name="dbo.PeriodicBalances" Method="PeriodicBalances">
     <Parameter Name="start" Type="System.String" DbType="NVarChar(6)" />
     <Parameter Name="end" Type="System.String" DbType="NVarChar(6)" />
@@ -285,6 +317,36 @@
       <Column Name="Currency" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="IsBalance" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="CompanyId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.GetJournal" Method="GetJournal">
+    <Parameter Name="start" Type="System.String" DbType="NVarChar(6)" />
+    <Parameter Name="end" Type="System.String" DbType="NVarChar(6)" />
+    <Parameter Name="uiculture" Type="System.String" DbType="NVarChar(5)" />
+    <Parameter Name="Companyid" Parameter="companyid" Type="System.String" DbType="NVarChar(6)" />
+    <ElementType Name="GetJournalResult">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ItemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LocalName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="CustSupplierID" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="TransDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Periode" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="OYear" Type="System.String" DbType="Char(4)" CanBeNull="true" />
+      <Column Name="oMonth" Type="System.String" DbType="Char(2)" CanBeNull="true" />
+      <Column Name="Account" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="AccountName" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="OAccount" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="OAccountName" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="CreditAvantImputationAmount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="DebitAvantImputationAmount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Side" Type="System.String" DbType="NVarChar(6) NOT NULL" CanBeNull="false" />
+      <Column Name="Currency" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Owner" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="TypeJournal" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Info" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
     </ElementType>
   </Function>
 </Database>

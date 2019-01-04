@@ -12,7 +12,6 @@ namespace IWSProject.Models
     [Database(Name = "IWSConnectionString")]
     public partial class IWSDataContext : DataContext
     {
-
         private static MappingSource mappingSource = new AttributeMappingSource();
 
         #region Extensibility Method Definitions
@@ -150,6 +149,7 @@ namespace IWSProject.Models
         partial void UpdateVat(Vat instance);
         partial void DeleteVat(Vat instance);
         #endregion
+        #region DBContext
 
         public IWSDataContext() :
         base(System.Configuration.ConfigurationManager.ConnectionStrings["IWSConnectionString"].ConnectionString, mappingSource)
@@ -533,7 +533,7 @@ namespace IWSProject.Models
                 return this.GetTable<Vat>();
             }
         }
-
+        #endregion
         #region Functions and SP
         [FunctionAttribute(Name = "dbo.account1To7")]
         public ISingleResult<account1To7Result> account1To7([ParameterAttribute(DbType = "NVarChar(6)")] string start, [ParameterAttribute(DbType = "NVarChar(6)")] string end, [ParameterAttribute(DbType = "NVarChar(6)")] string companyid)
@@ -675,6 +675,7 @@ namespace IWSProject.Models
             IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), start, end, uiculture, companyid);
             return ((ISingleResult<GetJournalResult>)(result.ReturnValue));
         }
+
         #endregion
     }
     #region Function and SP
@@ -2997,7 +2998,7 @@ namespace IWSProject.Models
 
         private string _CustSupplierID;
 
-        private DateTime _TransDate;
+        private System.DateTime _TransDate;
 
         private string _Periode;
 
@@ -3015,6 +3016,10 @@ namespace IWSProject.Models
 
         private decimal _Amount;
 
+        private decimal _CreditAvantImputationAmount;
+
+        private decimal _DebitAvantImputationAmount;
+
         private string _Side;
 
         private string _Currency;
@@ -3024,6 +3029,8 @@ namespace IWSProject.Models
         private string _Owner;
 
         private string _TypeJournal;
+
+        private string _Info;
 
         public GetJournalResult()
         {
@@ -3110,7 +3117,7 @@ namespace IWSProject.Models
         }
 
         [ColumnAttribute(Storage = "_TransDate", DbType = "DateTime NOT NULL")]
-        public DateTime TransDate
+        public System.DateTime TransDate
         {
             get
             {
@@ -3253,6 +3260,38 @@ namespace IWSProject.Models
             }
         }
 
+        [ColumnAttribute(Storage = "_CreditAvantImputationAmount", DbType = "Money NOT NULL")]
+        public decimal CreditAvantImputationAmount
+        {
+            get
+            {
+                return this._CreditAvantImputationAmount;
+            }
+            set
+            {
+                if ((this._CreditAvantImputationAmount != value))
+                {
+                    this._CreditAvantImputationAmount = value;
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_DebitAvantImputationAmount", DbType = "Money NOT NULL")]
+        public decimal DebitAvantImputationAmount
+        {
+            get
+            {
+                return this._DebitAvantImputationAmount;
+            }
+            set
+            {
+                if ((this._DebitAvantImputationAmount != value))
+                {
+                    this._DebitAvantImputationAmount = value;
+                }
+            }
+        }
+
         [ColumnAttribute(Storage = "_Side", DbType = "NVarChar(6) NOT NULL", CanBeNull = false)]
         public string Side
         {
@@ -3332,6 +3371,23 @@ namespace IWSProject.Models
                 }
             }
         }
+
+        [ColumnAttribute(Storage = "_Info", DbType = "NVarChar(255)")]
+        public string Info
+        {
+            get
+            {
+                return this._Info;
+            }
+            set
+            {
+                if ((this._Info != value))
+                {
+                    this._Info = value;
+                }
+            }
+        }
     }
+
     #endregion
 }

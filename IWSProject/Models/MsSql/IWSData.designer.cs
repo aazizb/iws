@@ -22,7 +22,7 @@ namespace IWSProject.Models.MsSql
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="DB_A18F7E_iws_2018_12")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="VI201812")]
 	public partial class IWSDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -30,10 +30,19 @@ namespace IWSProject.Models.MsSql
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
+    partial void InsertPeriodicAccountBalance(PeriodicAccountBalance instance);
+    partial void UpdatePeriodicAccountBalance(PeriodicAccountBalance instance);
+    partial void DeletePeriodicAccountBalance(PeriodicAccountBalance instance);
+    partial void InsertAsset(Asset instance);
+    partial void UpdateAsset(Asset instance);
+    partial void DeleteAsset(Asset instance);
+    partial void InsertArticle(Article instance);
+    partial void UpdateArticle(Article instance);
+    partial void DeleteArticle(Article instance);
     #endregion
 		
 		public IWSDataContext() : 
-				base(global::System.Configuration.ConfigurationManager.ConnectionStrings["DB_A18F7E_iws_2018_12ConnectionString"].ConnectionString, mappingSource)
+				base(global::System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
@@ -60,6 +69,30 @@ namespace IWSProject.Models.MsSql
 				base(connection, mappingSource)
 		{
 			OnCreated();
+		}
+		
+		public System.Data.Linq.Table<PeriodicAccountBalance> PeriodicAccountBalances
+		{
+			get
+			{
+				return this.GetTable<PeriodicAccountBalance>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Asset> Assets
+		{
+			get
+			{
+				return this.GetTable<Asset>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Article> Articles
+		{
+			get
+			{
+				return this.GetTable<Article>();
+			}
 		}
 		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.account1To7")]
@@ -189,18 +222,1260 @@ namespace IWSProject.Models.MsSql
 			return ((int)(result.ReturnValue));
 		}
 		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.PeriodicBalances")]
+		public ISingleResult<PeriodicBalancesResult> PeriodicBalances([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(6)")] string start, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(6)")] string end, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(550)")] string selectedIDs, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(4)")] string companyid)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), start, end, selectedIDs, companyid);
+			return ((ISingleResult<PeriodicBalancesResult>)(result.ReturnValue));
+		}
+		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.GetJournal")]
 		public ISingleResult<GetJournalResult> GetJournal([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(6)")] string start, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(6)")] string end, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(5)")] string uiculture, [global::System.Data.Linq.Mapping.ParameterAttribute(Name="Companyid", DbType="NVarChar(6)")] string companyid)
 		{
 			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), start, end, uiculture, companyid);
 			return ((ISingleResult<GetJournalResult>)(result.ReturnValue));
 		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PeriodicAccountBalance")]
+	public partial class PeriodicAccountBalance : INotifyPropertyChanging, INotifyPropertyChanged
+	{
 		
-		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.PeriodicBalances")]
-		public ISingleResult<PeriodicBalancesResult> PeriodicBalances([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(6)")] string start, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(6)")] string end, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(550)")] string selectedIDs, [global::System.Data.Linq.Mapping.ParameterAttribute(DbType="NVarChar(4)")] string companyid)
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private string _Name;
+		
+		private string _AccountId;
+		
+		private string _Periode;
+		
+		private decimal _Debit;
+		
+		private decimal _Credit;
+		
+		private string _CompanyID;
+		
+		private string _Currency;
+		
+		private decimal _FinalBalance;
+		
+		private decimal _InitialBalance;
+		
+		private string _oYear;
+		
+		private string _oMonth;
+		
+		private int _ModelId;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnAccountIdChanging(string value);
+    partial void OnAccountIdChanged();
+    partial void OnPeriodeChanging(string value);
+    partial void OnPeriodeChanged();
+    partial void OnDebitChanging(decimal value);
+    partial void OnDebitChanged();
+    partial void OnCreditChanging(decimal value);
+    partial void OnCreditChanged();
+    partial void OnCompanyIDChanging(string value);
+    partial void OnCompanyIDChanged();
+    partial void OnCurrencyChanging(string value);
+    partial void OnCurrencyChanged();
+    partial void OnFinalBalanceChanging(decimal value);
+    partial void OnFinalBalanceChanged();
+    partial void OnInitialBalanceChanging(decimal value);
+    partial void OnInitialBalanceChanged();
+    partial void OnoYearChanging(string value);
+    partial void OnoYearChanged();
+    partial void OnoMonthChanging(string value);
+    partial void OnoMonthChanged();
+    partial void OnModelIdChanging(int value);
+    partial void OnModelIdChanged();
+    #endregion
+		
+		public PeriodicAccountBalance()
 		{
-			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), start, end, selectedIDs, companyid);
-			return ((ISingleResult<PeriodicBalancesResult>)(result.ReturnValue));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountId", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string AccountId
+		{
+			get
+			{
+				return this._AccountId;
+			}
+			set
+			{
+				if ((this._AccountId != value))
+				{
+					this.OnAccountIdChanging(value);
+					this.SendPropertyChanging();
+					this._AccountId = value;
+					this.SendPropertyChanged("AccountId");
+					this.OnAccountIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Periode", DbType="NVarChar(6) NOT NULL", CanBeNull=false)]
+		public string Periode
+		{
+			get
+			{
+				return this._Periode;
+			}
+			set
+			{
+				if ((this._Periode != value))
+				{
+					this.OnPeriodeChanging(value);
+					this.SendPropertyChanging();
+					this._Periode = value;
+					this.SendPropertyChanged("Periode");
+					this.OnPeriodeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Debit", DbType="Decimal(18,2) NOT NULL")]
+		public decimal Debit
+		{
+			get
+			{
+				return this._Debit;
+			}
+			set
+			{
+				if ((this._Debit != value))
+				{
+					this.OnDebitChanging(value);
+					this.SendPropertyChanging();
+					this._Debit = value;
+					this.SendPropertyChanged("Debit");
+					this.OnDebitChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Credit", DbType="Decimal(18,2) NOT NULL")]
+		public decimal Credit
+		{
+			get
+			{
+				return this._Credit;
+			}
+			set
+			{
+				if ((this._Credit != value))
+				{
+					this.OnCreditChanging(value);
+					this.SendPropertyChanging();
+					this._Credit = value;
+					this.SendPropertyChanged("Credit");
+					this.OnCreditChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyID", DbType="NVarChar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string CompanyID
+		{
+			get
+			{
+				return this._CompanyID;
+			}
+			set
+			{
+				if ((this._CompanyID != value))
+				{
+					this.OnCompanyIDChanging(value);
+					this.SendPropertyChanging();
+					this._CompanyID = value;
+					this.SendPropertyChanged("CompanyID");
+					this.OnCompanyIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Currency", DbType="NVarChar(10) NOT NULL", CanBeNull=false)]
+		public string Currency
+		{
+			get
+			{
+				return this._Currency;
+			}
+			set
+			{
+				if ((this._Currency != value))
+				{
+					this.OnCurrencyChanging(value);
+					this.SendPropertyChanging();
+					this._Currency = value;
+					this.SendPropertyChanged("Currency");
+					this.OnCurrencyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FinalBalance", DbType="Decimal(18,2) NOT NULL")]
+		public decimal FinalBalance
+		{
+			get
+			{
+				return this._FinalBalance;
+			}
+			set
+			{
+				if ((this._FinalBalance != value))
+				{
+					this.OnFinalBalanceChanging(value);
+					this.SendPropertyChanging();
+					this._FinalBalance = value;
+					this.SendPropertyChanged("FinalBalance");
+					this.OnFinalBalanceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InitialBalance", DbType="Decimal(18,2) NOT NULL")]
+		public decimal InitialBalance
+		{
+			get
+			{
+				return this._InitialBalance;
+			}
+			set
+			{
+				if ((this._InitialBalance != value))
+				{
+					this.OnInitialBalanceChanging(value);
+					this.SendPropertyChanging();
+					this._InitialBalance = value;
+					this.SendPropertyChanged("InitialBalance");
+					this.OnInitialBalanceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_oYear", AutoSync=AutoSync.Always, DbType="Char(4)", IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
+		public string oYear
+		{
+			get
+			{
+				return this._oYear;
+			}
+			set
+			{
+				if ((this._oYear != value))
+				{
+					this.OnoYearChanging(value);
+					this.SendPropertyChanging();
+					this._oYear = value;
+					this.SendPropertyChanged("oYear");
+					this.OnoYearChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_oMonth", AutoSync=AutoSync.Always, DbType="Char(2)", IsDbGenerated=true, UpdateCheck=UpdateCheck.Never)]
+		public string oMonth
+		{
+			get
+			{
+				return this._oMonth;
+			}
+			set
+			{
+				if ((this._oMonth != value))
+				{
+					this.OnoMonthChanging(value);
+					this.SendPropertyChanging();
+					this._oMonth = value;
+					this.SendPropertyChanged("oMonth");
+					this.OnoMonthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModelId", DbType="Int NOT NULL")]
+		public int ModelId
+		{
+			get
+			{
+				return this._ModelId;
+			}
+			set
+			{
+				if ((this._ModelId != value))
+				{
+					this.OnModelIdChanging(value);
+					this.SendPropertyChanging();
+					this._ModelId = value;
+					this.SendPropertyChanged("ModelId");
+					this.OnModelIdChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Asset")]
+	public partial class Asset : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _Id;
+		
+		private string _Name;
+		
+		private System.Nullable<decimal> _ScrapValue;
+		
+		private string _Currency;
+		
+		private System.Nullable<int> _LifeSpan;
+		
+		private System.Nullable<int> _Frequency;
+		
+		private System.Nullable<int> _Depreciation;
+		
+		private string _Account;
+		
+		private string _OAccount;
+		
+		private System.Nullable<System.DateTime> _Posted;
+		
+		private System.Nullable<System.DateTime> _Updated;
+		
+		private string _Description;
+		
+		private int _ModelId;
+		
+		private string _CompanyId;
+		
+		private System.Nullable<decimal> _Rate;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(string value);
+    partial void OnIdChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnScrapValueChanging(System.Nullable<decimal> value);
+    partial void OnScrapValueChanged();
+    partial void OnCurrencyChanging(string value);
+    partial void OnCurrencyChanged();
+    partial void OnLifeSpanChanging(System.Nullable<int> value);
+    partial void OnLifeSpanChanged();
+    partial void OnFrequencyChanging(System.Nullable<int> value);
+    partial void OnFrequencyChanged();
+    partial void OnDepreciationChanging(System.Nullable<int> value);
+    partial void OnDepreciationChanged();
+    partial void OnAccountChanging(string value);
+    partial void OnAccountChanged();
+    partial void OnOAccountChanging(string value);
+    partial void OnOAccountChanged();
+    partial void OnPostedChanging(System.Nullable<System.DateTime> value);
+    partial void OnPostedChanged();
+    partial void OnUpdatedChanging(System.Nullable<System.DateTime> value);
+    partial void OnUpdatedChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnModelIdChanging(int value);
+    partial void OnModelIdChanged();
+    partial void OnCompanyIdChanging(string value);
+    partial void OnCompanyIdChanged();
+    partial void OnRateChanging(System.Nullable<decimal> value);
+    partial void OnRateChanged();
+    #endregion
+		
+		public Asset()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="NVarChar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(50)")]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ScrapValue", DbType="Money")]
+		public System.Nullable<decimal> ScrapValue
+		{
+			get
+			{
+				return this._ScrapValue;
+			}
+			set
+			{
+				if ((this._ScrapValue != value))
+				{
+					this.OnScrapValueChanging(value);
+					this.SendPropertyChanging();
+					this._ScrapValue = value;
+					this.SendPropertyChanged("ScrapValue");
+					this.OnScrapValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Currency", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Currency
+		{
+			get
+			{
+				return this._Currency;
+			}
+			set
+			{
+				if ((this._Currency != value))
+				{
+					this.OnCurrencyChanging(value);
+					this.SendPropertyChanging();
+					this._Currency = value;
+					this.SendPropertyChanged("Currency");
+					this.OnCurrencyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LifeSpan", DbType="Int")]
+		public System.Nullable<int> LifeSpan
+		{
+			get
+			{
+				return this._LifeSpan;
+			}
+			set
+			{
+				if ((this._LifeSpan != value))
+				{
+					this.OnLifeSpanChanging(value);
+					this.SendPropertyChanging();
+					this._LifeSpan = value;
+					this.SendPropertyChanged("LifeSpan");
+					this.OnLifeSpanChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Frequency", DbType="Int")]
+		public System.Nullable<int> Frequency
+		{
+			get
+			{
+				return this._Frequency;
+			}
+			set
+			{
+				if ((this._Frequency != value))
+				{
+					this.OnFrequencyChanging(value);
+					this.SendPropertyChanging();
+					this._Frequency = value;
+					this.SendPropertyChanged("Frequency");
+					this.OnFrequencyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Depreciation", DbType="Int")]
+		public System.Nullable<int> Depreciation
+		{
+			get
+			{
+				return this._Depreciation;
+			}
+			set
+			{
+				if ((this._Depreciation != value))
+				{
+					this.OnDepreciationChanging(value);
+					this.SendPropertyChanging();
+					this._Depreciation = value;
+					this.SendPropertyChanged("Depreciation");
+					this.OnDepreciationChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Account", DbType="NVarChar(50)")]
+		public string Account
+		{
+			get
+			{
+				return this._Account;
+			}
+			set
+			{
+				if ((this._Account != value))
+				{
+					this.OnAccountChanging(value);
+					this.SendPropertyChanging();
+					this._Account = value;
+					this.SendPropertyChanged("Account");
+					this.OnAccountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OAccount", DbType="NVarChar(50)")]
+		public string OAccount
+		{
+			get
+			{
+				return this._OAccount;
+			}
+			set
+			{
+				if ((this._OAccount != value))
+				{
+					this.OnOAccountChanging(value);
+					this.SendPropertyChanging();
+					this._OAccount = value;
+					this.SendPropertyChanged("OAccount");
+					this.OnOAccountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Posted", DbType="DateTime2")]
+		public System.Nullable<System.DateTime> Posted
+		{
+			get
+			{
+				return this._Posted;
+			}
+			set
+			{
+				if ((this._Posted != value))
+				{
+					this.OnPostedChanging(value);
+					this.SendPropertyChanging();
+					this._Posted = value;
+					this.SendPropertyChanged("Posted");
+					this.OnPostedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Updated", DbType="DateTime2")]
+		public System.Nullable<System.DateTime> Updated
+		{
+			get
+			{
+				return this._Updated;
+			}
+			set
+			{
+				if ((this._Updated != value))
+				{
+					this.OnUpdatedChanging(value);
+					this.SendPropertyChanging();
+					this._Updated = value;
+					this.SendPropertyChanged("Updated");
+					this.OnUpdatedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(255)")]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModelId", DbType="Int NOT NULL")]
+		public int ModelId
+		{
+			get
+			{
+				return this._ModelId;
+			}
+			set
+			{
+				if ((this._ModelId != value))
+				{
+					this.OnModelIdChanging(value);
+					this.SendPropertyChanging();
+					this._ModelId = value;
+					this.SendPropertyChanged("ModelId");
+					this.OnModelIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyId", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string CompanyId
+		{
+			get
+			{
+				return this._CompanyId;
+			}
+			set
+			{
+				if ((this._CompanyId != value))
+				{
+					this.OnCompanyIdChanging(value);
+					this.SendPropertyChanging();
+					this._CompanyId = value;
+					this.SendPropertyChanged("CompanyId");
+					this.OnCompanyIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rate", DbType="Decimal(5,2)")]
+		public System.Nullable<decimal> Rate
+		{
+			get
+			{
+				return this._Rate;
+			}
+			set
+			{
+				if ((this._Rate != value))
+				{
+					this.OnRateChanging(value);
+					this.SendPropertyChanging();
+					this._Rate = value;
+					this.SendPropertyChanged("Rate");
+					this.OnRateChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Article")]
+	public partial class Article : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _id;
+		
+		private string _name;
+		
+		private string _description;
+		
+		private decimal _price;
+		
+		private decimal _avgprice;
+		
+		private decimal _salesprice;
+		
+		private string _qttyunit;
+		
+		private string _packunit;
+		
+		private string _VatCode;
+		
+		private bool _IsService;
+		
+		private string _CompanyID;
+		
+		private string _StockAccount;
+		
+		private string _ExpenseAccount;
+		
+		private string _Currency;
+		
+		private string _GroupId;
+		
+		private string _RevenuAccountId;
+		
+		private System.DateTime _Posted;
+		
+		private System.DateTime _Updated;
+		
+		private int _ModelId;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnidChanging(string value);
+    partial void OnidChanged();
+    partial void OnnameChanging(string value);
+    partial void OnnameChanged();
+    partial void OndescriptionChanging(string value);
+    partial void OndescriptionChanged();
+    partial void OnpriceChanging(decimal value);
+    partial void OnpriceChanged();
+    partial void OnavgpriceChanging(decimal value);
+    partial void OnavgpriceChanged();
+    partial void OnsalespriceChanging(decimal value);
+    partial void OnsalespriceChanged();
+    partial void OnqttyunitChanging(string value);
+    partial void OnqttyunitChanged();
+    partial void OnpackunitChanging(string value);
+    partial void OnpackunitChanged();
+    partial void OnVatCodeChanging(string value);
+    partial void OnVatCodeChanged();
+    partial void OnIsServiceChanging(bool value);
+    partial void OnIsServiceChanged();
+    partial void OnCompanyIDChanging(string value);
+    partial void OnCompanyIDChanged();
+    partial void OnStockAccountChanging(string value);
+    partial void OnStockAccountChanged();
+    partial void OnExpenseAccountChanging(string value);
+    partial void OnExpenseAccountChanged();
+    partial void OnCurrencyChanging(string value);
+    partial void OnCurrencyChanged();
+    partial void OnGroupIdChanging(string value);
+    partial void OnGroupIdChanged();
+    partial void OnRevenuAccountIdChanging(string value);
+    partial void OnRevenuAccountIdChanged();
+    partial void OnPostedChanging(System.DateTime value);
+    partial void OnPostedChanged();
+    partial void OnUpdatedChanging(System.DateTime value);
+    partial void OnUpdatedChanged();
+    partial void OnModelIdChanging(int value);
+    partial void OnModelIdChanged();
+    #endregion
+		
+		public Article()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", DbType="NVarChar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this.OnidChanging(value);
+					this.SendPropertyChanging();
+					this._id = value;
+					this.SendPropertyChanged("id");
+					this.OnidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_name", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string name
+		{
+			get
+			{
+				return this._name;
+			}
+			set
+			{
+				if ((this._name != value))
+				{
+					this.OnnameChanging(value);
+					this.SendPropertyChanging();
+					this._name = value;
+					this.SendPropertyChanged("name");
+					this.OnnameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_description", DbType="NVarChar(255)")]
+		public string description
+		{
+			get
+			{
+				return this._description;
+			}
+			set
+			{
+				if ((this._description != value))
+				{
+					this.OndescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._description = value;
+					this.SendPropertyChanged("description");
+					this.OndescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_price", DbType="Money NOT NULL")]
+		public decimal price
+		{
+			get
+			{
+				return this._price;
+			}
+			set
+			{
+				if ((this._price != value))
+				{
+					this.OnpriceChanging(value);
+					this.SendPropertyChanging();
+					this._price = value;
+					this.SendPropertyChanged("price");
+					this.OnpriceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_avgprice", DbType="Money NOT NULL")]
+		public decimal avgprice
+		{
+			get
+			{
+				return this._avgprice;
+			}
+			set
+			{
+				if ((this._avgprice != value))
+				{
+					this.OnavgpriceChanging(value);
+					this.SendPropertyChanging();
+					this._avgprice = value;
+					this.SendPropertyChanged("avgprice");
+					this.OnavgpriceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_salesprice", DbType="Money NOT NULL")]
+		public decimal salesprice
+		{
+			get
+			{
+				return this._salesprice;
+			}
+			set
+			{
+				if ((this._salesprice != value))
+				{
+					this.OnsalespriceChanging(value);
+					this.SendPropertyChanging();
+					this._salesprice = value;
+					this.SendPropertyChanged("salesprice");
+					this.OnsalespriceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_qttyunit", DbType="NVarChar(255)")]
+		public string qttyunit
+		{
+			get
+			{
+				return this._qttyunit;
+			}
+			set
+			{
+				if ((this._qttyunit != value))
+				{
+					this.OnqttyunitChanging(value);
+					this.SendPropertyChanging();
+					this._qttyunit = value;
+					this.SendPropertyChanged("qttyunit");
+					this.OnqttyunitChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_packunit", DbType="NVarChar(255)")]
+		public string packunit
+		{
+			get
+			{
+				return this._packunit;
+			}
+			set
+			{
+				if ((this._packunit != value))
+				{
+					this.OnpackunitChanging(value);
+					this.SendPropertyChanging();
+					this._packunit = value;
+					this.SendPropertyChanged("packunit");
+					this.OnpackunitChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VatCode", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string VatCode
+		{
+			get
+			{
+				return this._VatCode;
+			}
+			set
+			{
+				if ((this._VatCode != value))
+				{
+					this.OnVatCodeChanging(value);
+					this.SendPropertyChanging();
+					this._VatCode = value;
+					this.SendPropertyChanged("VatCode");
+					this.OnVatCodeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsService", DbType="Bit NOT NULL")]
+		public bool IsService
+		{
+			get
+			{
+				return this._IsService;
+			}
+			set
+			{
+				if ((this._IsService != value))
+				{
+					this.OnIsServiceChanging(value);
+					this.SendPropertyChanging();
+					this._IsService = value;
+					this.SendPropertyChanged("IsService");
+					this.OnIsServiceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyID", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string CompanyID
+		{
+			get
+			{
+				return this._CompanyID;
+			}
+			set
+			{
+				if ((this._CompanyID != value))
+				{
+					this.OnCompanyIDChanging(value);
+					this.SendPropertyChanging();
+					this._CompanyID = value;
+					this.SendPropertyChanged("CompanyID");
+					this.OnCompanyIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StockAccount", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string StockAccount
+		{
+			get
+			{
+				return this._StockAccount;
+			}
+			set
+			{
+				if ((this._StockAccount != value))
+				{
+					this.OnStockAccountChanging(value);
+					this.SendPropertyChanging();
+					this._StockAccount = value;
+					this.SendPropertyChanged("StockAccount");
+					this.OnStockAccountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpenseAccount", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string ExpenseAccount
+		{
+			get
+			{
+				return this._ExpenseAccount;
+			}
+			set
+			{
+				if ((this._ExpenseAccount != value))
+				{
+					this.OnExpenseAccountChanging(value);
+					this.SendPropertyChanging();
+					this._ExpenseAccount = value;
+					this.SendPropertyChanged("ExpenseAccount");
+					this.OnExpenseAccountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Currency", DbType="NVarChar(10) NOT NULL", CanBeNull=false)]
+		public string Currency
+		{
+			get
+			{
+				return this._Currency;
+			}
+			set
+			{
+				if ((this._Currency != value))
+				{
+					this.OnCurrencyChanging(value);
+					this.SendPropertyChanging();
+					this._Currency = value;
+					this.SendPropertyChanged("Currency");
+					this.OnCurrencyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GroupId", DbType="NVarChar(50)")]
+		public string GroupId
+		{
+			get
+			{
+				return this._GroupId;
+			}
+			set
+			{
+				if ((this._GroupId != value))
+				{
+					this.OnGroupIdChanging(value);
+					this.SendPropertyChanging();
+					this._GroupId = value;
+					this.SendPropertyChanged("GroupId");
+					this.OnGroupIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RevenuAccountId", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string RevenuAccountId
+		{
+			get
+			{
+				return this._RevenuAccountId;
+			}
+			set
+			{
+				if ((this._RevenuAccountId != value))
+				{
+					this.OnRevenuAccountIdChanging(value);
+					this.SendPropertyChanging();
+					this._RevenuAccountId = value;
+					this.SendPropertyChanged("RevenuAccountId");
+					this.OnRevenuAccountIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Posted", DbType="DateTime2 NOT NULL")]
+		public System.DateTime Posted
+		{
+			get
+			{
+				return this._Posted;
+			}
+			set
+			{
+				if ((this._Posted != value))
+				{
+					this.OnPostedChanging(value);
+					this.SendPropertyChanging();
+					this._Posted = value;
+					this.SendPropertyChanged("Posted");
+					this.OnPostedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Updated", DbType="DateTime2 NOT NULL")]
+		public System.DateTime Updated
+		{
+			get
+			{
+				return this._Updated;
+			}
+			set
+			{
+				if ((this._Updated != value))
+				{
+					this.OnUpdatedChanging(value);
+					this.SendPropertyChanging();
+					this._Updated = value;
+					this.SendPropertyChanged("Updated");
+					this.OnUpdatedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModelId", DbType="Int NOT NULL")]
+		public int ModelId
+		{
+			get
+			{
+				return this._ModelId;
+			}
+			set
+			{
+				if ((this._ModelId != value))
+				{
+					this.OnModelIdChanging(value);
+					this.SendPropertyChanging();
+					this._ModelId = value;
+					this.SendPropertyChanged("ModelId");
+					this.OnModelIdChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -2214,356 +3489,6 @@ namespace IWSProject.Models.MsSql
 		}
 	}
 	
-	public partial class GetJournalResult
-	{
-		
-		private int _ID;
-		
-		private int _ItemID;
-		
-		private int _OID;
-		
-		private string _LocalName;
-		
-		private string _CustSupplierID;
-		
-		private System.DateTime _TransDate;
-		
-		private string _Periode;
-		
-		private string _OYear;
-		
-		private string _oMonth;
-		
-		private string _Account;
-		
-		private string _AccountName;
-		
-		private string _OAccount;
-		
-		private string _OAccountName;
-		
-		private decimal _Amount;
-		
-		private string _Side;
-		
-		private string _Currency;
-		
-		private string _CompanyID;
-		
-		private string _Owner;
-		
-		private string _TypeJournal;
-		
-		public GetJournalResult()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", DbType="Int NOT NULL")]
-		public int ID
-		{
-			get
-			{
-				return this._ID;
-			}
-			set
-			{
-				if ((this._ID != value))
-				{
-					this._ID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ItemID", DbType="Int NOT NULL")]
-		public int ItemID
-		{
-			get
-			{
-				return this._ItemID;
-			}
-			set
-			{
-				if ((this._ItemID != value))
-				{
-					this._ItemID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OID", DbType="Int NOT NULL")]
-		public int OID
-		{
-			get
-			{
-				return this._OID;
-			}
-			set
-			{
-				if ((this._OID != value))
-				{
-					this._OID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocalName", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string LocalName
-		{
-			get
-			{
-				return this._LocalName;
-			}
-			set
-			{
-				if ((this._LocalName != value))
-				{
-					this._LocalName = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CustSupplierID", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string CustSupplierID
-		{
-			get
-			{
-				return this._CustSupplierID;
-			}
-			set
-			{
-				if ((this._CustSupplierID != value))
-				{
-					this._CustSupplierID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TransDate", DbType="DateTime NOT NULL")]
-		public System.DateTime TransDate
-		{
-			get
-			{
-				return this._TransDate;
-			}
-			set
-			{
-				if ((this._TransDate != value))
-				{
-					this._TransDate = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Periode", DbType="NChar(6) NOT NULL", CanBeNull=false)]
-		public string Periode
-		{
-			get
-			{
-				return this._Periode;
-			}
-			set
-			{
-				if ((this._Periode != value))
-				{
-					this._Periode = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OYear", DbType="Char(4)")]
-		public string OYear
-		{
-			get
-			{
-				return this._OYear;
-			}
-			set
-			{
-				if ((this._OYear != value))
-				{
-					this._OYear = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_oMonth", DbType="Char(2)")]
-		public string oMonth
-		{
-			get
-			{
-				return this._oMonth;
-			}
-			set
-			{
-				if ((this._oMonth != value))
-				{
-					this._oMonth = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Account", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string Account
-		{
-			get
-			{
-				return this._Account;
-			}
-			set
-			{
-				if ((this._Account != value))
-				{
-					this._Account = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountName", DbType="NVarChar(150)")]
-		public string AccountName
-		{
-			get
-			{
-				return this._AccountName;
-			}
-			set
-			{
-				if ((this._AccountName != value))
-				{
-					this._AccountName = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OAccount", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string OAccount
-		{
-			get
-			{
-				return this._OAccount;
-			}
-			set
-			{
-				if ((this._OAccount != value))
-				{
-					this._OAccount = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OAccountName", DbType="NVarChar(150)")]
-		public string OAccountName
-		{
-			get
-			{
-				return this._OAccountName;
-			}
-			set
-			{
-				if ((this._OAccountName != value))
-				{
-					this._OAccountName = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Amount", DbType="Money NOT NULL")]
-		public decimal Amount
-		{
-			get
-			{
-				return this._Amount;
-			}
-			set
-			{
-				if ((this._Amount != value))
-				{
-					this._Amount = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Side", DbType="NVarChar(6) NOT NULL", CanBeNull=false)]
-		public string Side
-		{
-			get
-			{
-				return this._Side;
-			}
-			set
-			{
-				if ((this._Side != value))
-				{
-					this._Side = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Currency", DbType="NVarChar(10) NOT NULL", CanBeNull=false)]
-		public string Currency
-		{
-			get
-			{
-				return this._Currency;
-			}
-			set
-			{
-				if ((this._Currency != value))
-				{
-					this._Currency = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyID", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string CompanyID
-		{
-			get
-			{
-				return this._CompanyID;
-			}
-			set
-			{
-				if ((this._CompanyID != value))
-				{
-					this._CompanyID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Owner", DbType="NVarChar(150)")]
-		public string Owner
-		{
-			get
-			{
-				return this._Owner;
-			}
-			set
-			{
-				if ((this._Owner != value))
-				{
-					this._Owner = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeJournal", DbType="VarChar(50)")]
-		public string TypeJournal
-		{
-			get
-			{
-				return this._TypeJournal;
-			}
-			set
-			{
-				if ((this._TypeJournal != value))
-				{
-					this._TypeJournal = value;
-				}
-			}
-		}
-	}
-	
 	public partial class PeriodicBalancesResult
 	{
 		
@@ -2855,6 +3780,410 @@ namespace IWSProject.Models.MsSql
 				if ((this._CompanyId != value))
 				{
 					this._CompanyId = value;
+				}
+			}
+		}
+	}
+	
+	public partial class GetJournalResult
+	{
+		
+		private int _ID;
+		
+		private int _ItemID;
+		
+		private int _OID;
+		
+		private string _LocalName;
+		
+		private string _CustSupplierID;
+		
+		private System.DateTime _TransDate;
+		
+		private string _Periode;
+		
+		private string _OYear;
+		
+		private string _oMonth;
+		
+		private string _Account;
+		
+		private string _AccountName;
+		
+		private string _OAccount;
+		
+		private string _OAccountName;
+		
+		private decimal _Amount;
+		
+		private decimal _CreditAvantImputationAmount;
+		
+		private decimal _DebitAvantImputationAmount;
+		
+		private string _Side;
+		
+		private string _Currency;
+		
+		private string _CompanyID;
+		
+		private string _Owner;
+		
+		private string _TypeJournal;
+		
+		private string _Info;
+		
+		public GetJournalResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ID", DbType="Int NOT NULL")]
+		public int ID
+		{
+			get
+			{
+				return this._ID;
+			}
+			set
+			{
+				if ((this._ID != value))
+				{
+					this._ID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ItemID", DbType="Int NOT NULL")]
+		public int ItemID
+		{
+			get
+			{
+				return this._ItemID;
+			}
+			set
+			{
+				if ((this._ItemID != value))
+				{
+					this._ItemID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OID", DbType="Int NOT NULL")]
+		public int OID
+		{
+			get
+			{
+				return this._OID;
+			}
+			set
+			{
+				if ((this._OID != value))
+				{
+					this._OID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LocalName", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string LocalName
+		{
+			get
+			{
+				return this._LocalName;
+			}
+			set
+			{
+				if ((this._LocalName != value))
+				{
+					this._LocalName = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CustSupplierID", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string CustSupplierID
+		{
+			get
+			{
+				return this._CustSupplierID;
+			}
+			set
+			{
+				if ((this._CustSupplierID != value))
+				{
+					this._CustSupplierID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TransDate", DbType="DateTime NOT NULL")]
+		public System.DateTime TransDate
+		{
+			get
+			{
+				return this._TransDate;
+			}
+			set
+			{
+				if ((this._TransDate != value))
+				{
+					this._TransDate = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Periode", DbType="NChar(6) NOT NULL", CanBeNull=false)]
+		public string Periode
+		{
+			get
+			{
+				return this._Periode;
+			}
+			set
+			{
+				if ((this._Periode != value))
+				{
+					this._Periode = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OYear", DbType="Char(4)")]
+		public string OYear
+		{
+			get
+			{
+				return this._OYear;
+			}
+			set
+			{
+				if ((this._OYear != value))
+				{
+					this._OYear = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_oMonth", DbType="Char(2)")]
+		public string oMonth
+		{
+			get
+			{
+				return this._oMonth;
+			}
+			set
+			{
+				if ((this._oMonth != value))
+				{
+					this._oMonth = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Account", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Account
+		{
+			get
+			{
+				return this._Account;
+			}
+			set
+			{
+				if ((this._Account != value))
+				{
+					this._Account = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountName", DbType="NVarChar(150)")]
+		public string AccountName
+		{
+			get
+			{
+				return this._AccountName;
+			}
+			set
+			{
+				if ((this._AccountName != value))
+				{
+					this._AccountName = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OAccount", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string OAccount
+		{
+			get
+			{
+				return this._OAccount;
+			}
+			set
+			{
+				if ((this._OAccount != value))
+				{
+					this._OAccount = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OAccountName", DbType="NVarChar(150)")]
+		public string OAccountName
+		{
+			get
+			{
+				return this._OAccountName;
+			}
+			set
+			{
+				if ((this._OAccountName != value))
+				{
+					this._OAccountName = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Amount", DbType="Money NOT NULL")]
+		public decimal Amount
+		{
+			get
+			{
+				return this._Amount;
+			}
+			set
+			{
+				if ((this._Amount != value))
+				{
+					this._Amount = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditAvantImputationAmount", DbType="Money NOT NULL")]
+		public decimal CreditAvantImputationAmount
+		{
+			get
+			{
+				return this._CreditAvantImputationAmount;
+			}
+			set
+			{
+				if ((this._CreditAvantImputationAmount != value))
+				{
+					this._CreditAvantImputationAmount = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DebitAvantImputationAmount", DbType="Money NOT NULL")]
+		public decimal DebitAvantImputationAmount
+		{
+			get
+			{
+				return this._DebitAvantImputationAmount;
+			}
+			set
+			{
+				if ((this._DebitAvantImputationAmount != value))
+				{
+					this._DebitAvantImputationAmount = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Side", DbType="NVarChar(6) NOT NULL", CanBeNull=false)]
+		public string Side
+		{
+			get
+			{
+				return this._Side;
+			}
+			set
+			{
+				if ((this._Side != value))
+				{
+					this._Side = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Currency", DbType="NVarChar(10) NOT NULL", CanBeNull=false)]
+		public string Currency
+		{
+			get
+			{
+				return this._Currency;
+			}
+			set
+			{
+				if ((this._Currency != value))
+				{
+					this._Currency = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CompanyID", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string CompanyID
+		{
+			get
+			{
+				return this._CompanyID;
+			}
+			set
+			{
+				if ((this._CompanyID != value))
+				{
+					this._CompanyID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Owner", DbType="NVarChar(150)")]
+		public string Owner
+		{
+			get
+			{
+				return this._Owner;
+			}
+			set
+			{
+				if ((this._Owner != value))
+				{
+					this._Owner = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeJournal", DbType="VarChar(50)")]
+		public string TypeJournal
+		{
+			get
+			{
+				return this._TypeJournal;
+			}
+			set
+			{
+				if ((this._TypeJournal != value))
+				{
+					this._TypeJournal = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Info", DbType="NVarChar(255)")]
+		public string Info
+		{
+			get
+			{
+				return this._Info;
+			}
+			set
+			{
+				if ((this._Info != value))
+				{
+					this._Info = value;
 				}
 			}
 		}

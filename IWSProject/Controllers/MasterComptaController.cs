@@ -78,6 +78,8 @@ namespace IWSProject.Controllers
                 item.IsValidated = false;
                 item.CompanyId = (string)Session["CompanyID"];
                 int itemOID = item.oid;
+                if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.GeneralLedger))
+                    item.account = "6222";
                 item.ModelId = modelId;
                 ViewData["item"] = item;
                 bool result = false;
@@ -409,7 +411,6 @@ namespace IWSProject.Controllers
             return PartialView("DetailDetailGridViewPartial", IWSLookUp.GetDetailDetailCompta(transId, (int)Session["Modelid"]));
         }
         #endregion
-
         #region Helper
         private static void SetToBalanced(DetailDetailCompta line)
         {

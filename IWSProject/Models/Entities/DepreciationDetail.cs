@@ -26,6 +26,8 @@ namespace IWSProject.Models.Entities
 
         private string _Currency;
 
+        private string _CompanyId;
+
         private System.Nullable<bool> _IsValidated;
 
         #region Extensibility Method Definitions
@@ -46,6 +48,8 @@ namespace IWSProject.Models.Entities
         partial void OnBookValueChanged();
         partial void OnPercentageChanging(decimal value);
         partial void OnPercentageChanged();
+        partial void OnCompanyIdChanging(string value);
+        partial void OnCompanyIdChanged();
         partial void OnCurrencyChanging(string value);
         partial void OnCurrencyChanged();
         partial void OnIsValidatedChanging(System.Nullable<bool> value);
@@ -216,6 +220,28 @@ namespace IWSProject.Models.Entities
                 }
             }
         }
+
+
+        [ColumnAttribute(Storage = "_CompanyId", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
+        public string CompanyId
+        {
+            get
+            {
+                return this._CompanyId;
+            }
+            set
+            {
+                if ((this._CompanyId != value))
+                {
+                    this.OnCompanyIdChanging(value);
+                    this.SendPropertyChanging();
+                    this._CompanyId = value;
+                    this.SendPropertyChanged("CompanyId");
+                    this.OnCompanyIdChanged();
+                }
+            }
+        }
+
 
         [ColumnAttribute(Storage = "_IsValidated", DbType = "Bit")]
         public System.Nullable<bool> IsValidated

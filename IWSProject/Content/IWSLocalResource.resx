@@ -1116,4 +1116,16 @@
   <data name="QueryDetail" xml:space="preserve">
     <value>Query Detail</value>
   </data>
+  <data name="CreditBefore" xml:space="preserve">
+    <value>Credit Before</value>
+  </data>
+  <data name="DebitBefore" xml:space="preserve">
+    <value>Debit Before</value>
+  </data>
+  <data name="DepreciationValidate1" xml:space="preserve">
+    <value>Please, validate the depreciation for the period of </value>
+  </data>
+  <data name="DepreciationValidate2" xml:space="preserve">
+    <value>  and the corresponding general ledger before proceeding.</value>
+  </data>
 </root>

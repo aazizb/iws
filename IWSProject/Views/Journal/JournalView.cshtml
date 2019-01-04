@@ -65,6 +65,14 @@
         gsettings.Caption = IWSLocalResource.QueryDetail;
         gsettings.Items.Add(i =>
         {
+            i.Caption = IWSLocalResource.account;
+            i.SetNestedContent(() =>
+            {
+                Html.RenderPartial("GridLookupPartial");
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
             i.Caption = IWSLocalResource.PeriodFrom;
             i.SetNestedContent(() => {
                 Html.RenderPartial("FromYearMonthDateEditPartialView");
@@ -78,17 +86,10 @@
                 Html.RenderPartial("ToYearMonthDateEditPartialView");
             });
         });
+
         gsettings.Items.Add(i =>
         {
-            i.Caption = IWSLocalResource.account;
-            i.SetNestedContent(() =>
-            {
-                Html.RenderPartial("GridLookupPartial");
-            });
-        });
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = IWSLocalResource.side;
+            i.Caption = IWSLocalResource.debit;
             i.Name = "side";
             i.NestedExtension().CheckBox(e =>
             {

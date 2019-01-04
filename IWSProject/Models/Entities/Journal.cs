@@ -78,6 +78,10 @@ namespace IWSProject.Models.Entities
 
         private EntityRef<Account> _Account2;
 
+        private decimal _DebitAvantImputationAmount;
+
+        private decimal _CreditAvantImputationAmount;
+
         #region Extensibility Method Definitions
         partial void OnLoaded();
         partial void OnValidate(ChangeAction action);
@@ -144,6 +148,10 @@ namespace IWSProject.Models.Entities
         partial void OnTypeJournalNameChanged();
         partial void OnModelIdChanging(Nullable<int> value);
         partial void OnModelIdChanged();
+        partial void OnDebitAvantImputationAmountChanging(decimal value);
+        partial void OnDebitAvantImputationAmountChanged();
+        partial void OnCreditAvantImputationAmountChanging(decimal value);
+        partial void OnCreditAvantImputationAmountChanged();
         #endregion
 
         public Journal()
@@ -845,6 +853,46 @@ namespace IWSProject.Models.Entities
                         this._OAccount = default(string);
                     }
                     this.SendPropertyChanged("Account2");
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_DebitAvantImputationAmount", DbType = "Money NOT NULL")]
+        public decimal DebitAvantImputationAmount
+        {
+            get
+            {
+                return this._DebitAvantImputationAmount;
+            }
+            set
+            {
+                if ((this._DebitAvantImputationAmount != value))
+                {
+                    this.OnDebitAvantImputationAmountChanging(value);
+                    this.SendPropertyChanging();
+                    this._DebitAvantImputationAmount = value;
+                    this.SendPropertyChanged("DebitAvantImputationAmount");
+                    this.OnDebitAvantImputationAmountChanged();
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_CreditAvantImputationAmount", DbType = "Money NOT NULL")]
+        public decimal CreditAvantImputationAmount
+        {
+            get
+            {
+                return this._CreditAvantImputationAmount;
+            }
+            set
+            {
+                if ((this._CreditAvantImputationAmount != value))
+                {
+                    this.OnCreditAvantImputationAmountChanging(value);
+                    this.SendPropertyChanging();
+                    this._CreditAvantImputationAmount = value;
+                    this.SendPropertyChanged("CreditAvantImputationAmount");
+                    this.OnCreditAvantImputationAmountChanged();
                 }
             }
         }

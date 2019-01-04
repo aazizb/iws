@@ -1122,4 +1122,16 @@
   <data name="QueryDetail" xml:space="preserve">
     <value>Détail de la requête</value>
   </data>
+  <data name="CreditBefore" xml:space="preserve">
+    <value>Credit Avant</value>
+  </data>
+  <data name="DebitBefore" xml:space="preserve">
+    <value>Debit Avant</value>
+  </data>
+  <data name="DepreciationValidate1" xml:space="preserve">
+    <value>Vous voudrez bien valider la dépréciation de la période de</value>
+  </data>
+  <data name="DepreciationValidate2" xml:space="preserve">
+    <value>  et la pièce correspondante avant de continuer.</value>
+  </data>
 </root>

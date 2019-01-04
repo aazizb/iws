@@ -3,10 +3,11 @@
 
     var selectedIDs = null;
     var currentPeriod = null;
-
+    var Id = null;
     function OnBeginCallback(s, e) {
         e.customArgs["currentPeriod"] = currentPeriod;
         e.customArgs["selectedIDs"] = selectedIDs;
+        e.customArgs["assetIDs"] = Id;
         selectedIDs = null;
     }
     function OnEndCallback() {
@@ -16,6 +17,42 @@
             callbackPanelPartialView.PerformCallback();
         }
     }
+    function TrackLayout(layout) {
+        $("#LastLayout").text(layout);
+    }
+    function OnSelectionChanged(s, e) {
+        setGridHeaderCheckboxes(s, e);
+        s.GetSelectedFieldValues("Id;Period;Depreciation", GetSelectedFieldValues);
+    }
+    function GetSelectedFieldValues(values) {
+        selectedIDs = values.join(';');
+    }
+    function OnSubmitClick(s, e) {
+        currentPeriod = fromYearMonth.GetText();
+        Id = gridLookupIDs.GetText();
+        callbackPanelPartialView.PerformCallback();
+    }
+    function CheckedChanged(s, e) {
+        depreciation.PerformCallback({ isChecked: s.GetChecked() });
+    }
+    function setGridHeaderCheckboxes(s, e) {
+        var indexes = depreciation.cpIndiceSelected;
+        checkBoxAll.SetChecked(s.GetSelectedRowCount() !== Object.size(indexes));
+    }
+    function HideGridLookup() {
+        gridLookupIDs.ConfirmCurrentSelection();
+        gridLookupIDs.HideDropDown();
+    }
+    Object.size = function (obj) {
+        var size = 0, key;
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) size++;
+        }
+        return size;
+    };
+</script>
+<script type="text/javascript">
+
     function OnButtonClick() {
         if (depreciation.IsCustomizationWindowVisible()) {
 
@@ -26,88 +63,65 @@
         }
         UpdateButtonText();
     }
-    function CustomizationWindowCloseUp() {
+    function CustomizationWindowCloseUp(s, e) {
         UpdateButtonText();
     }
     function UpdateButtonText() {
         var text = depreciation.IsCustomizationWindowVisible() ? "Hide" : "Show";
         btShowCustomizationWindow.SetText(text);
     }
-    function TrackLayout(layout) {
-        $("#LastLayout").text(layout);
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
     }
-
-    function OnDateChanged(s, e) {
-        currentPeriod = DateToYMD(s.GetDate());
-        if (!callbackPanelPartialView.InCallback()) {
-            callbackPanelPartialView.PerformCallback();
-        }
-    }
-    function DateToYMD(date) {
-        var d = date.getDate();
-        var m = date.getMonth() + 1;
-        var y = date.getFullYear();
-        return '' + y + '-' + (m <= 9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
-    }
-    function OnSelectionChanged(s, e) {
-        setGridHeaderCheckboxes(s, e);
-        s.GetSelectedFieldValues("Id;Period;Depreciation", GetSelectedFieldValues);
-    }
-    function GetSelectedFieldValues(values) {
-        selectedIDs = values.join(';');
-    }
-    function OnSubmitClick(s, e) {
-        $("#selectedIDs").val(selectedIDs);
-        callbackPanelPartialView.PerformCallback();
-    }
-    function CheckedChanged(s, e) {
-        depreciation.PerformCallback({ isChecked: s.GetChecked() });
-    }
-    function setGridHeaderCheckboxes(s, e) {
-        var indexes = depreciation.cpIndiceSelected;
-        checkBoxAll.SetChecked(s.GetSelectedRowCount() !== Object.size(indexes));
-    }
-    Object.size = function (obj) {
-        var size = 0, key;
-        for (key in obj) {
-            if (obj.hasOwnProperty(key)) size++;
-        }
-        return size;
-    };
 </script>
 
-@using (Html.BeginForm("Index", "Depreciation"))
+
+@Html.DevExpress().FormLayout(settings =>
 {
-@Html.Hidden("selectedIDs")
-
-@Html.DevExpress().DateEdit(settings => {
-settings.Name = "periodDateEdit";
-settings.Width = Unit.Pixel(185);
-settings.Properties.UseMaskBehavior = true;
-settings.Properties.EditFormat = EditFormat.Custom;
-settings.Properties.EditFormatString = "MMMM-yyyy";
-settings.Properties.DisplayFormatString = "MMMM-yyyy";
-settings.Properties.ClientSideEvents.DateChanged = "OnDateChanged";
-settings.Date = DateTime.Now;
-
+    settings.Name = "FormLayout";
+    settings.Width = Unit.Percentage(100);
+    settings.Items.AddGroupItem(gsettings => {
+        gsettings.ColCount = 4;
+        gsettings.Caption = IWSLocalResource.QueryDetail;
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = IWSLocalResource.periode;
+            i.SetNestedContent(() =>
+            {
+                Html.RenderPartial("FromYearMonthDateEditPartialView");
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = IWSLocalResource.Asset;
+            i.SetNestedContent(() =>
+            {
+                Html.RenderPartial("GridLookupPartial");
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.Name = "btnSubmit";
+            i.NestedExtension().Button(e =>
+            {
+                e.Name = "btnOk";
+                e.Text = IWSLocalResource.Validate;
+                e.ControlStyle.CssClass = "button";
+                e.Width = Unit.Pixel(105);
+                e.ClientSideEvents.Click = "OnSubmitClick";
+                e.UseSubmitBehavior = false;
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.SetNestedContent(() =>
+            {
+                Html.RenderPartial("ShowHideButtonPartialView");
+            });
+        });
+    });
 }).GetHtml()
-
-@Html.DevExpress().Button( settings =>
-{
-settings.Name = "btnSubmit";
-settings.ControlStyle.CssClass = "button";
-settings.Text = IWSLocalResource.Validate;
-settings.ToolTip = IWSLocalResource.Validate;
-settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
-settings.Width = Unit.Pixel(80);
-settings.UseSubmitBehavior = false;
-settings.ClientSideEvents.Click = "OnSubmitClick";
-}).GetHtml()
-
-@Html.Partial("ShowHideButtonPartialView")
 
 @Html.Partial("CallbackPanelPartialView")
-
-} 
-

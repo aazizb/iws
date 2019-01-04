@@ -1,6 +1,7 @@
 @using IWSProject.Content
 @{
-    var gridLookup = Html.DevExpress().GridLookup(settings => {
+    var gridLookup = Html.DevExpress().GridLookup(settings => 
+    {
         settings.Name = "gridLookupIDs";
         settings.KeyFieldName = "Id";
 
@@ -9,7 +10,7 @@
         settings.Properties.TextFormatString = "{0}";
 
         settings.Width = Unit.Pixel(210);
-        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.Visible = true;  
         settings.CommandColumn.ShowSelectCheckbox = true;
 
         settings.GridViewProperties.Settings.ShowStatusBar = GridViewStatusBarMode.Visible;

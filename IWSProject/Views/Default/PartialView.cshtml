@@ -1,0 +1,33 @@
+﻿
+@Html.DevExpress().PageControl(
+    settings => {
+        settings.Name = "pcTest";
+        settings.Height = System.Web.UI.WebControls.Unit.Percentage(100);
+        settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+        settings.TabAlign = TabAlign.Left;
+
+        settings.TabPages.Add("DateEdit1").SetContent(() => {
+            //ViewContext.Writer.Write(Html.DevExpress().DateEdit(deSettings => {
+            //    deSettings.Name = "dateEdit1";
+            //}).GetHtml());
+
+            @Html.DevExpress().DateEdit(dt1 =>
+            {
+                dt1.Name = "DateEdit1";
+                dt1.Width = Unit.Percentage(50);
+            }).Render();
+        });
+        settings.TabPages.Add("DateEdit1").SetContent(() => {
+
+
+            @Html.DevExpress().DateEdit(dt2 =>
+            {
+                dt2.Name = "DateEdit2";
+                dt2.Width = Unit.Percentage(50);
+            }).Render();
+
+            //ViewContext.Writer.Write(Html.DevExpress().DateEdit(deSettings => {
+            //    deSettings.Name = "dateEdit2";
+            //}).GetHtml());
+        });
+    }).GetHtml()

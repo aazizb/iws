@@ -1,0 +1,37 @@
+﻿@model IWSProject.Models.FiscalYearViewModel
+@Html.DevExpress().FormLayout(settings =>
+{
+    settings.Name = "Picker";
+    settings.RequiredMarkDisplayMode = RequiredMarkMode.None;
+    settings.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
+    settings.ControlStyle.CssClass = "pickerFormLayout";
+
+    var pickerGroup = settings.Items.AddGroupItem(itemSettings =>
+    {
+        itemSettings.Caption = "Date Range Picker";
+        itemSettings.ColCount = 3;
+    });
+    pickerGroup.ParentContainerStyle.CssClass = "pickerGroupContainer";
+    pickerGroup.GroupBoxDecoration = GroupBoxDecoration.HeadingLine;
+    //pickerGroup.Items.Add(item => Model.Start, itemSettings => ConfigureDateEditItem(itemSettings));
+    //pickerGroup.Items.Add(item => Model.End, itemSettings => ConfigureDateEditItem(itemSettings));
+    pickerGroup.Items.Add(item => Model.CStart);
+    pickerGroup.Items.Add(item => Model.CEnd);
+
+    pickerGroup.Items.Add(itemSettings =>
+    {
+        itemSettings.NestedExtensionType = FormLayoutNestedExtensionItemType.ValidationSummary;
+        itemSettings.ShowCaption = DefaultBoolean.False;
+        itemSettings.ColSpan = 3;
+        itemSettings.Height = Unit.Pixel(50);
+    });
+    pickerGroup.Items.Add(itemSettings =>
+    {
+        itemSettings.NestedExtensionType = FormLayoutNestedExtensionItemType.Button;
+        itemSettings.ShowCaption = DefaultBoolean.False;
+        var btnSettigns = (ButtonSettings)itemSettings.NestedExtensionSettings;
+        btnSettigns.Name = "Submit";
+        btnSettigns.UseSubmitBehavior = true;
+        btnSettigns.Text = "Submit";
+    });
+}).Bind(Model).GetHtml()

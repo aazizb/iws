@@ -231,6 +231,19 @@
             .OrderBy(o => o.Name);
             return account;
         }
+        public static IEnumerable GetAsset()
+        {
+            string companyID = (string)HttpContext.Current.Session["CompanyID"];
+            var account = IWSEntities.Assets.AsEnumerable().Select(i => new
+            {
+                i.Id,
+                i.Name,
+                i.CompanyId
+            })
+            .Where(c => c.CompanyId == companyID)
+            .OrderBy(o => o.Name);
+            return account;
+        }
         public static IEnumerable GetBankChildren()
         {
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
@@ -450,12 +463,14 @@
                 }).Distinct();
             return u;
         }
-        public static IEnumerable GetDepreciation(string period)
+        public static IEnumerable GetDepreciation(string period, string assetIds)
         {
+            string[] IDs = assetIds.Split(';');
             return from p in IWSEntities.Assets
                    join d in IWSEntities.DepreciationDetails on new { p.Id } equals new { Id = d.TransId }
                    where
                      d.Period == period &&
+                     IDs.Contains(p.Id) &&
                      p.CompanyId == (string)HttpContext.Current.Session["CompanyID"]
                    select new
                    {
@@ -537,6 +552,7 @@
         }
         public static List<ImmoDetailViewModel> GetImmoDetail(string[] IDs, string period)
         {
+
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
             List<ImmoDetailViewModel> detail = new List<ImmoDetailViewModel>
                 (from d in IWSEntities.Assets
@@ -1018,7 +1034,33 @@
 
             return lines;
         }
+        public static BeforeAmountViewModel GetBeforeAmount(string accountId, string period)
+        {
 
+            BeforeAmountViewModel amount = (from p in
+                             (from item in IWSEntities.PeriodicAccountBalances
+                              where
+                                item.AccountId == accountId &&
+                                item.Periode == period
+                              select new
+                              {
+                                  item.Debit ,
+                                  item.Credit,
+                                  Dummy = "x"
+                              })
+                                             group p by new { p.Dummy } into g
+                                             select new BeforeAmountViewModel()
+                                             {
+                                                 Debit = Convert.ToDecimal(g.Sum(p => p.Debit)),
+                                                 Credit = Convert.ToDecimal(g.Sum(p => p.Credit))
+                                             }).SingleOrDefault();
+            if (amount == null)
+            {
+                amount = new BeforeAmountViewModel() { Debit = 0, Credit = 0 };
+
+            }
+            return amount;
+        }
         public static List<DetailDetailViewModel> GetNewLineDetailDetail(int detailId, int OID, int modelId)
         {
             List<DetailDetailViewModel> detail = new List<DetailDetailViewModel>( from d in IWSEntities.DetailComptas
@@ -1050,34 +1092,25 @@
         public static IEnumerable GetCurrentFiscalYear(string companyId)
         {
 
-            var b = from f in IWSEntities.PeriodicAccountBalances
+            var result = (from item in IWSEntities.PeriodicAccountBalances
                     where
-                      f.CompanyID == companyId &&
-                        (from FiscalYears in IWSEntities.FiscalYears
+                      item.CompanyID == companyId &&
+                        (from f in IWSEntities.FiscalYears
                          where
-                            FiscalYears.CompanyId == companyId &&
-                            FiscalYears.Current == true &&
-                            FiscalYears.Open == true
+                            f.CompanyId == companyId &&
+                            f.Current == true &&
+                            f.Open == true
                          select new
                          {
-                             FiscalYears.Period
-                         }).Contains(new { Period = f.Periode })
+                             f.Period
+                         }).Contains(new { Period = item.Periode })
                     select new
                     {
-                        f.Id,
-                        f.AccountId,
-                        f.Name,
-                        f.Periode,
-                        f.oYear,
-                        f.oMonth,
-                        f.Debit,
-                        f.Credit,
-                        f.InitialBalance,
-                        f.FinalBalance,
-                        f.Currency,
-                        f.CompanyID
-                    };
-                   return b;
+                        item.Id,                        item.AccountId,                     item.Name,                        item.Periode,
+                        item.oYear,                     item.oMonth,                        item.Debit,                       item.Credit,
+                        item.InitialBalance,            item.FinalBalance,                  item.Currency,                    item.CompanyID
+                    }).ToList();
+                   return result;
         }
 
         public static IEnumerable GetFiscalYears(string companyId) => IWSEntities.GetFiscalYears(companyId).
@@ -1086,7 +1119,16 @@
                     {
                         f.CompanyId,f.CStart,f.CEnd, f.OStart, f.OEnd
                     }).ToList();
-
+        public static FiscalYearViewModel GetFiscalYear(string companyId) => IWSEntities.GetFiscalYears(companyId).
+            Where(c => c.CompanyId == companyId).
+            Select(f => new FiscalYearViewModel()
+            {
+                CompanyId = f.CompanyId,
+                CStart = f.CStart,
+                CEnd = f.CEnd,
+                OStart = f.OStart,
+                OEnd = f.OEnd
+            }).FirstOrDefault();
         public static IEnumerable GetCash() => IWSEntities.Cashes.Where(c =>
                         c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
                         OrderByDescending(o => o.Id).AsEnumerable();
@@ -1318,11 +1360,12 @@
 
                             if (indexAmount > 0)
                             {
-                                var amount = usage.Substring(indexAmount, indexComma - indexAmount + 3);
+                                string amount = usage.Substring(indexAmount, indexComma - indexAmount + 3).Trim().Replace(".","").Replace(",",".");
+
                                 accountAmount.Add(new AccountAmountViewModel
                                 {
                                     AccountCode = item.AccountCode,
-                                    AccountAmount = StringToDecimal(amount)
+                                    AccountAmount = Convert.ToDecimal(amount, CultureInfo.InvariantCulture)
                                 });
                             }
                         }
@@ -1617,18 +1660,28 @@
             string m = ymDate.Substring(4, 2);
             return y + "-" + m + "-01";
         }
-        public static List<AssetViewModel> GetAssets(DateTime dateTimePeriod)
+        public static List<AssetViewModel> GetAssets(DateTime dateTimePeriod, string assetIds)
         {
+            string[] IDs = assetIds.Split(';');
+
             List<AssetViewModel> results = new List<AssetViewModel>();
             List<AssetViewModel> assets = new List<AssetViewModel>();
             AssetViewModel assetDate = new AssetViewModel();
+
             List<AssetViewModel> assetAccounts =  (from a in IWSEntities.Assets
-                                 select new AssetViewModel()
+                                where
+                                IDs.Contains(a.Id)
+                                select new AssetViewModel()
                                  {
-                                     Account=a.Account
+                                     Account=a.Account,
+                                     Frequency=(int)a.Frequency,
+                                     Rate=(decimal)a.Rate
                                  }).ToList();
+
             foreach (var account in assetAccounts)
             {
+                AssetViewModel asset = new AssetViewModel();
+
                 assetDate = (from p in IWSEntities.PeriodicAccountBalances
                              where
                                p.AccountId == account.Account
@@ -1637,33 +1690,78 @@
                              select new AssetViewModel()
                              {
                                  Account = p.AccountId,
-                                 StartDate = Convert.ToDateTime(YMToDate(p.Periode))
+                                 StartDate = Convert.ToDateTime(YMToDate(p.Periode)),
+                                 Frequency = account.Frequency
                              }).FirstOrDefault();
+
                 if (assetDate != null)
                 {
-                AssetViewModel asset =
-                    (from a in IWSEntities.Assets
-                     where
-                     (((dateTimePeriod.Year - assetDate.StartDate.Year) * 12) + dateTimePeriod.Month - assetDate.StartDate.Month) <= a.LifeSpan &&
-                     (((dateTimePeriod.Year - assetDate.StartDate.Year) * 12) + dateTimePeriod.Month - assetDate.StartDate.Month) >= 0 &&
-                     a.Account == assetDate.Account
-                     select new AssetViewModel()
-                     {
-                         Id = a.Id,
-                         Name = a.Name,
-                         Account = a.Account,
-                         OAccount = a.OAccount,
-                         ScrapValue = (decimal)a.ScrapValue,
-                         StartDate = dateTimePeriod,
-                         LifeSpan = (int)a.LifeSpan - (((dateTimePeriod.Year - assetDate.StartDate.Year) * 12) + dateTimePeriod.Month - assetDate.StartDate.Month), //1+
-                         DepreciationType = (int)a.Depreciation,
-                         Rate = (decimal)a.Rate
-                     }).SingleOrDefault();
+                    int lifeSpanYear = (dateTimePeriod.Year - assetDate.StartDate.Year) * 12;
+                    int lifeSpanMonth = dateTimePeriod.Month - assetDate.StartDate.Month;
 
-                if(asset!=null)
-                    assets.Add(asset);
+                    #region frequency=1
+                    if (account.Frequency == 1)
+                    {
+
+                        asset =
+                        (from a in IWSEntities.Assets
+                         where
+                         1 == 0  //update when frequency = 1
+                         //((((dateTimePeriod.Year - assetDate.StartDate.Year) * 12) + dateTimePeriod.Month - assetDate.StartDate.Month) >= 12) && a.Account == assetDate.Account
+                        select new AssetViewModel()
+                         {
+                             Id = a.Id,
+                             Name = a.Name,
+                             Account = a.Account,
+                             OAccount = a.OAccount,
+                             ScrapValue = (decimal)a.ScrapValue,
+                             StartDate = dateTimePeriod,
+                             LifeSpan = ((int)a.Frequency) * ((int)a.LifeSpan - (lifeSpanYear + lifeSpanMonth) + 1),
+                             Frequency = (int)a.Frequency,
+                             DepreciationType = (int)a.Depreciation,
+                             Rate = account.Rate
+                         }).SingleOrDefault();
+                    }
+                    #endregion
+
+                    #region frequncy>1
+                    if (account.Frequency > 1)
+                    {
+                        if (lifeSpanYear == 0)
+                        {
+                            lifeSpanMonth = 1;
+                        }
+                        else
+                        {
+                            lifeSpanMonth = 1 + (lifeSpanYear / account.Frequency);
+                            lifeSpanYear = 0;
+                        }
+                        asset = 
+                        (from a in IWSEntities.Assets
+                         where
+                         ((((dateTimePeriod.Year - assetDate.StartDate.Year) * 12) + dateTimePeriod.Month - assetDate.StartDate.Month) <= a.LifeSpan * assetDate.Frequency &&
+                         (((dateTimePeriod.Year - assetDate.StartDate.Year) * 12) + dateTimePeriod.Month - assetDate.StartDate.Month) > 0 &&   a.Account == assetDate.Account)
+                         select new AssetViewModel()
+                         {
+                             Id = a.Id,
+                             Name = a.Name,
+                             Account = a.Account,
+                             OAccount = a.OAccount,
+                             ScrapValue = (decimal)a.ScrapValue,
+                             StartDate = dateTimePeriod,
+                             AssetStartDate = assetDate.StartDate,
+                             LifeSpan = ((int)a.Frequency) * ((int)a.LifeSpan - (lifeSpanYear + lifeSpanMonth) + 1),
+                             Frequency = (int)a.Frequency,
+                             DepreciationType = (int)a.Depreciation,
+                             Rate = account.Rate
+                         }).SingleOrDefault();
+                    }
+
+                    #endregion
+
+                    if(asset!=null)
+                        assets.Add(asset);
                 }
-
             }
             foreach (var asset in assets)
             {
@@ -1682,13 +1780,13 @@
                                }).FirstOrDefault();
                 if(item != null)
                 {
-                    asset.BookValue = (decimal)item.balance;
+                    asset.BookValue = Math.Round((decimal)item.balance,2);
                     asset.Currency = item.Currency;
+                    asset.ScrapValue = Math.Round(asset.ScrapValue,2);
                     if(asset != null)
                         results.Add(asset);
                 }
             }
-
             return results;
         }
 
@@ -1905,140 +2003,82 @@
                          Currency = p.Currency,
                          IsBalance = (bool)p.IsBalance,
                          CompanyID = p.CompanyId
-                     }).Where(c => accountId.IndexOf(c.AccountID) >= 0).OrderBy(o => o.AccountID).ThenBy(o => o.Periode).ToList();
-            #region MyRegion
-            //if (String.IsNullOrEmpty(accountId) || String.IsNullOrWhiteSpace(accountId))
-            //{
-            //    items = (from p in IWSEntities.PeriodicBalances(accountId, CompanyID)
-            //            select new AccountBalanceViewModel()
-            //            {
-            //                AccountID=p.AccountId ,
-            //                AccountName=p.AccountName,
-            //                Periode=p.Periode,
-            //                OYear = p.OYear,
-            //                OMonth=p.OMonth,
-            //                Debit =(decimal)p.Debit,
-            //                Credit=(decimal)p.Credit,
-            //                InitialBalance=(decimal)p.InitialBalance,
-            //                FinalBalance=(decimal)p.FinalBalance,
-            //                SDebit = (decimal)p.SDebit,
-            //                SCredit = (decimal)p.SCredit,
-            //                Balance = (decimal)p.Balance,
-            //                Currency=p.Currency,
-            //                IsBalance=(bool)p.IsBalance,
-            //                CompanyID=p.CompanyId
-            //            }).OrderBy(o => o.AccountID).ThenBy(o => o.Periode).ToList();
-            //}
-            //else
-            //{
-            //    items = (from p in IWSEntities.PeriodicBalances(accountId, CompanyID)
-            //             select new AccountBalanceViewModel()
-            //             {
-            //                 AccountID = p.AccountId,
-            //                 AccountName = p.AccountName,
-            //                 Periode = p.Periode,
-            //                 OYear = p.OYear,
-            //                 OMonth = p.OMonth,
-            //                 Debit = (decimal)p.Debit,
-            //                 Credit = (decimal)p.Credit,
-            //                 InitialBalance = (decimal)p.InitialBalance,
-            //                 FinalBalance = (decimal)p.FinalBalance,
-            //                 SDebit = (decimal)p.SDebit,
-            //                 SCredit = (decimal)p.SCredit,
-            //                 Balance = (decimal)p.Balance,
-            //                 Currency = p.Currency,
-            //                 IsBalance = (bool)p.IsBalance,
-            //                 CompanyID = p.CompanyId
-            //             }).Where(c => accountId.IndexOf(c.AccountID) >= 0 ).OrderBy(o => o.AccountID).ThenBy(o=>o.Periode).ToList();
-            //}
-
-            #endregion
+                     }).Where(c => ExactMatch(accountId, c.AccountID)==true).OrderBy(o => o.AccountID).ThenBy(o => o.Periode).ToList();
             return items;
         }
         public static IEnumerable GetJournal(string start, string end, string accountId, string CompanyID, bool side)
         {
+
             string uiCulture = Thread.CurrentThread.CurrentUICulture.Name;
             List<JournalViewModel> journals = new List<JournalViewModel>();
-            journals = (from j in IWSEntities.GetJournal(start, end, uiCulture, CompanyID)
-                        select new JournalViewModel()
-                        {
-                            pk = j.ID,
-                            ItemID = j.ItemID,
-                            OID = j.OID,
-                            ItemType = j.LocalName,
-                            CustSupplierID = j.CustSupplierID,
-                            Owner = j.Owner,
-                            TransDate = j.TransDate,
-                            Periode = j.Periode,
-                            oYear = j.OYear,
-                            oMonth = j.oMonth,
-                            Account = j.Account,
-                            AccountName = j.AccountName,
-                            OAccount = j.OAccount,
-                            OAccountName = j.OAccountName,
-                            Amount = j.Amount,
-                            Side = j.Side,
-                            Currency = j.Currency,
-                            CompanyID = j.CompanyID,
-                            TypeJournal = j.TypeJournal
-                        }).Where(c => side==true ? accountId.IndexOf(c.Account) >= 0 : accountId.IndexOf(c.OAccount) >= 0).OrderBy(o => o.pk).ToList();
             #region MyRegion
-            //List<JournalViewModel> journals = new List<JournalViewModel>();
+            if (side == true)
+            {
+                journals = (from j in IWSEntities.GetJournal(start, end, uiCulture, CompanyID)
+                            select new JournalViewModel()
+                            {
+                                pk = j.ID,
+                                ItemID = j.ItemID,
+                                OID = j.OID,
+                                ItemType = j.LocalName,
+                                CustSupplierID = j.CustSupplierID,
+                                Owner = j.Owner,
+                                Info = j.Info,
+                                TransDate = j.TransDate,
+                                Periode = j.Periode,
+                                oYear = j.OYear,
+                                oMonth = j.oMonth,
+                                Account = j.Account,
+                                AccountName = j.AccountName,
+                                OAccount = j.OAccount,
+                                OAccountName = j.OAccountName,
+                                Amount = j.Amount,
+                                DebitBefore = j.DebitAvantImputationAmount,
+                                CreditBefore = j.CreditAvantImputationAmount,
+                                Side = j.Side,
+                                Currency = j.Currency,
+                                CompanyID = j.CompanyID,
+                                TypeJournal = j.TypeJournal,
+                            }).Where(c => (ExactMatch(accountId, c.Account) == true) && (c.Side == "Debit")).OrderBy(o => o.pk).ToList();
 
-            //if (String.IsNullOrEmpty(accountId) || String.IsNullOrWhiteSpace(accountId))
-            //{
-            // journals = (from j in IWSEntities.GetJournal(start, end, uiCulture, CompanyID)
-            //     select new JournalViewModel()
-            //     {
-            //         pk = j.ID,
-            //         ItemID = j.ItemID,
-            //         OID = j.OID,
-            //         ItemType = j.LocalName,
-            //         CustSupplierID = j.CustSupplierID,
-            //         Owner = j.Owner,
-            //         TransDate = j.TransDate,
-            //         Periode = j.Periode,
-            //         oYear = j.OYear,
-            //         oMonth = j.oMonth,
-            //         Account = j.Account,
-            //         AccountName=j.AccountName,
-            //         OAccount = j.OAccount,
-            //         OAccountName = j.OAccountName,
-            //         Amount = j.Amount,
-            //         Side = j.Side,
-            //         Currency = j.Currency,
-            //         CompanyID = j.CompanyID,
-            //         TypeJournal = j.TypeJournal,
-            //     }).OrderBy(o=>o.pk).ToList();
-            //}
-            //else
-            //{
-            //journals = (from j in IWSEntities.GetJournal(start, end, uiCulture, CompanyID)
-            //            select new JournalViewModel()
-            //            {
-            //                pk = j.ID,
-            //                ItemID = j.ItemID,
-            //                OID = j.OID,
-            //                ItemType = j.LocalName,
-            //                CustSupplierID = j.CustSupplierID,
-            //                Owner = j.Owner,
-            //                TransDate = j.TransDate,
-            //                Periode = j.Periode,
-            //                oYear = j.OYear,
-            //                oMonth = j.oMonth,
-            //                Account = j.Account,
-            //                AccountName = j.AccountName,
-            //                OAccount = j.OAccount,
-            //                OAccountName = j.OAccountName,
-            //                Amount = j.Amount,
-            //                Side = j.Side,
-            //                Currency = j.Currency,
-            //                CompanyID = j.CompanyID,
-            //                TypeJournal = j.TypeJournal
-            //            }).Where(c => accountId.IndexOf(c.Account) >= 0 || accountId.IndexOf(c.OAccount) >= 0).OrderBy(o => o.pk).ToList();
-            //}
+            }
+            if(side == false)
+            {
+                journals = (from j in IWSEntities.GetJournal(start, end, uiCulture, CompanyID)
+                            select new JournalViewModel()
+                            {
+                                pk = j.ID,
+                                ItemID = j.ItemID,
+                                OID = j.OID,
+                                ItemType = j.LocalName,
+                                CustSupplierID = j.CustSupplierID,
+                                Owner = j.Owner,
+                                Info = j.Info,
+                                TransDate = j.TransDate,
+                                Periode = j.Periode,
+                                oYear = j.OYear,
+                                oMonth = j.oMonth,
+                                Account = j.Account,
+                                AccountName = j.AccountName,
+                                OAccount = j.OAccount,
+                                OAccountName = j.OAccountName,
+                                Amount = j.Amount,
+                                DebitBefore = j.DebitAvantImputationAmount,
+                                CreditBefore = j.CreditAvantImputationAmount,
+                                Side = j.Side,
+                                Currency = j.Currency,
+                                CompanyID = j.CompanyID,
+                                TypeJournal = j.TypeJournal
+                            }).Where(c => (ExactMatch(accountId, c.Account) == true) && (c.Side == "Credit")).OrderBy(o => o.pk).ToList();
+            }
+
+            return journals;
             #endregion
-            return journals; 
+
+        }
+        static bool ExactMatch(string input, string match)
+        {
+            return Regex.IsMatch(input, string.Format(@"\b{0}\b", Regex.Escape(match)));
         }
         public static List<LineJournauxViewModel> GetLineJournaux(int transId)
         {
@@ -2705,8 +2745,8 @@
         }
         public enum DepreciationFrequency
         {
-            Yearly=360,
-            Monthly=30
+            Yearly=1,
+            Monthly=12
         }
         public enum Side
         {
@@ -2741,12 +2781,7 @@
                             .Union(IWSEntities.GetAccounts().Where(x => x.ParentId == accountId)
                             .SelectMany(x => GetChild(x.id)));
     }
-        private static Decimal StringToDecimal(string amount)
-        {
-            if (string.IsNullOrEmpty(amount))
-                amount = "0";
-            return Convert.ToDecimal(amount, CultureInfo.GetCultureInfo(Thread.CurrentThread.CurrentUICulture.Name).NumberFormat );
-        }
+
 
     }
 }

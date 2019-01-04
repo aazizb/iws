@@ -19,7 +19,6 @@ namespace IWSProject.Controllers
         // GET: Customers
         public ActionResult Index()
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
 
             ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
 
@@ -27,31 +26,17 @@ namespace IWSProject.Controllers
 
             ViewBag.Customer = IWSLookUp.GetCustomer();
 
-            sw.Stop();
-
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            //if (Session["DurationCust"] == null)
-            //{
-                Session["DurationCust"] = $"Data reading time: {elapsedTime} ms";
-
-            //}
-
             return View();
         }
 
         [ValidateInput(false)]
         public ActionResult CustomersGridViewPartial()
         {
-            System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
             ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
 
             ViewBag.VAT = IWSLookUp.GetVAT();
 
             ViewBag.Cust = IWSLookUp.GetCustomer();
-            sw.Stop();
-
-            string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            Session["DurationCust"] = $"Data reading time: {elapsedTime} ms";
             return PartialView("CustomersGridViewPartial", ViewBag.Cust);
         }
 

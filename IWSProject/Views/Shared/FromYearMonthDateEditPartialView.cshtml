@@ -34,7 +34,7 @@
 @Html.DevExpress().DateEdit(settings =>
 {
     settings.Name = "fromYearMonth";
-    settings.Date = DateTime.Now;
+    settings.Date = Convert.ToDateTime(DateTime.Now.Year.ToString() + "-01-01");
     settings.Properties.ValidationSettings.RequiredField.IsRequired = true;
     settings.Properties.ValidationSettings.ErrorDisplayMode = DevExpress.Web.ErrorDisplayMode.ImageWithTooltip;
 

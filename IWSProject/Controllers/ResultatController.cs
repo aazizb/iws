@@ -40,8 +40,7 @@ namespace IWSProject.Controllers
             bool isBalance = IWSLookUp.IsBalance(ClassId);
             Session["isBalance"] = isBalance;
             string company = (string)Session["CompanyID"];
-            List<ResultsViewModel> model = (List<ResultsViewModel>)IWSLookUp.GetResultat(ClassId, Start, End, 
-                                                                                            company, isBalance);
+            List<ResultsViewModel> model = (List<ResultsViewModel>)IWSLookUp.GetResultat(ClassId, Start, End, company, isBalance);
             Session["Results"] = model;
             return PartialView("_CallbackPartialView", model);
         }

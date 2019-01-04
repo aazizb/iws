@@ -19,7 +19,7 @@ namespace IWSProject.Content {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class IWSLocalResource {
@@ -691,6 +691,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Credit Before.
+        /// </summary>
+        public static string CreditBefore {
+            get {
+                return ResourceManager.GetString("CreditBefore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Currency.
         /// </summary>
         public static string Currency {
@@ -826,6 +835,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Debit Before.
+        /// </summary>
+        public static string DebitBefore {
+            get {
+                return ResourceManager.GetString("DebitBefore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Declining Rate.
         /// </summary>
         public static string DecliningRate {
@@ -858,6 +876,24 @@ namespace IWSProject.Content {
         public static string Depreciation {
             get {
                 return ResourceManager.GetString("Depreciation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please, validate the depreciation for the period of .
+        /// </summary>
+        public static string DepreciationValidate1 {
+            get {
+                return ResourceManager.GetString("DepreciationValidate1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to   and the corresponding general ledger before proceeding..
+        /// </summary>
+        public static string DepreciationValidate2 {
+            get {
+                return ResourceManager.GetString("DepreciationValidate2", resourceCulture);
             }
         }
         

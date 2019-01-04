@@ -20,8 +20,12 @@ namespace IWSProject.Controllers
             string end = (string)Session["End"];
             string selectedIDs = (string)Session["selectedIDs"];
             string company = (string)Session["CompanyID"];
-            bool side = (bool)Session["side"];
-            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, selectedIDs, company, side);
+            bool side = false;
+            if(Session["side"] != null)
+                side=(bool)Session["side"];
+            List<JournalViewModel> model = new  List<JournalViewModel>();
+            if(!String.IsNullOrEmpty(selectedIDs) && !String.IsNullOrWhiteSpace(selectedIDs))
+                model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, selectedIDs, company, side);
             return PartialView("JournalPartialView", model);
         }
         [ValidateInput(false)]
@@ -38,7 +42,9 @@ namespace IWSProject.Controllers
             Session["selectedIDs"] = selectedIDs;
             Session["side"] = side;
             string company = (string)Session["CompanyID"];
-            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, selectedIDs, company, side);
+            List<JournalViewModel> model = new List<JournalViewModel>();
+            if (!String.IsNullOrEmpty(selectedIDs) && !String.IsNullOrWhiteSpace(selectedIDs))
+                model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, selectedIDs, company, side);
             Session["Journal"] = model;
             return PartialView("_CallbackPartialView", model);
         }

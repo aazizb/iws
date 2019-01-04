@@ -495,8 +495,24 @@
             ((MVCxGridView)sender).ForceDataRowType(typeof(BankStatement));
         };
 
+        if (ViewData["GenericError"] != null)
+        {
+            settings.Settings.ShowFooter = true;
+            settings.SetFooterRowTemplateContent(c =>
+            {
+                Html.ViewContext.Writer.Write(ViewData["GenericError"]);
+            });
+        }
+
+    settings.Settings.ShowFooter = true;
+
+    settings.SettingsBehavior.AutoExpandAllGroups = true;
+    settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Betrag").ShowInGroupFooterColumn = "Betrag";
+    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Waehrung").ShowInGroupFooterColumn = "Waehrung";
     });
-    if (ViewData["GenericError"] != null)
+
+    @*if (ViewData["GenericError"] != null)
     {
         < script type = "text/javascript" >
         alert("@ViewData["GenericError"]");
@@ -506,6 +522,7 @@
     if (ViewData["GenericError"] != null)
     {
         grid.SetEditErrorText((string)ViewData["GenericError"]);
-    }
+    }*@
+
 }
 @grid.Bind(Model).GetHtml()

@@ -6,13 +6,12 @@
     var vClassId = null;
     var vStart = null;
     var vEnd = null;
-    function OnButtonClick(s, e) {
+    function OnSubmitClick(s, e) {
         vClassId = ClassId.GetValue();
-        vStart = Start.GetText();
-        vEnd = End.GetText();
+        vStart = fromYearMonth.GetText();
+        vEnd = toYearMonth.GetText();
         callbackPartialView.PerformCallback();
     }
-
     function OnBeginCallback(s, e) {
         e.customArgs["ClassId"] = vClassId;
         e.customArgs["Start"] = vStart;
@@ -24,61 +23,72 @@
     ViewBag.Title = IWSLocalResource.BalanceSheet;
 }
 
-@using (Html.BeginForm())
+@Html.DevExpress().FormLayout(settings =>
 {
-    @Html.DevExpress().TextBox(
-    settings =>
-    {
-        settings.Properties.Native = true;
-        settings.Name = "Start";
-        settings.Width = Unit.Pixel(100);
-        settings.Height = Unit.Pixel(23);
-        settings.Properties.NullText = IWSLocalResource.PeriodFrom;
-    }
-    ).GetHtml()
+    settings.Name = "FormLayout";
+    settings.Width = Unit.Percentage(100);
+    settings.Items.AddGroupItem(gsettings => {
+        gsettings.ColCount = 5;
+        gsettings.Caption = IWSLocalResource.QueryDetail;
 
-    @Html.DevExpress().TextBox(
-    settings =>
-    {
-        settings.Name = "End";
-        settings.Properties.Native = true;
-        settings.Width = Unit.Pixel(100);
-        settings.Height = Unit.Pixel(23);
-        settings.Properties.NullText = IWSLocalResource.PeriodTo;
-    }
-    ).GetHtml()
+        gsettings.Items.Add(comboItem =>
+        {
+            comboItem.Name = "ClassId";
+            comboItem.Caption = IWSLocalResource.classx;
+            comboItem.NestedExtension().ComboBox(cmb =>
+            {
+                cmb.Width = Unit.Pixel(180);
+                cmb.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+                cmb.Properties.ValueField = "ParentId";
+                cmb.Properties.TextField = "ParentName";
+                cmb.SelectedIndex = 0;
+                cmb.Properties.ValueType = typeof(string);
+                cmb.Properties.DataSource = ViewData["class"];
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = IWSLocalResource.PeriodFrom;
+            i.SetNestedContent(() => {
+                Html.RenderPartial("FromYearMonthDateEditPartialView");
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = IWSLocalResource.PeriodTo;
+            i.SetNestedContent(() =>
+            {
+                Html.RenderPartial("ToYearMonthDateEditPartialView");
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.Name = "btnSubmit";
+            i.NestedExtension().Button(e =>
+            {
+                e.Name = "btnOk";
+                e.Text = IWSLocalResource.Validate;
+                e.ControlStyle.CssClass = "button";
+                e.Width = Unit.Pixel(105);
+                e.ClientSideEvents.Click = "OnSubmitClick";
+                e.UseSubmitBehavior = true;
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.Name = "btnExp";
+            i.NestedExtension().Button(e =>
+            {
+                e.Name = "btnExport";
+                e.Text = IWSLocalResource.Export;
+                e.Width = Unit.Pixel(105);
+                e.UseSubmitBehavior = false;
+                e.RouteValues = new { Controller = "Resultat", Action = "Export" };
+            });
+        });
+    });
+}).GetHtml()
 
-    @Html.DevExpress().ComboBox(settings =>
-{
-    settings.Name = "ClassId";
-    settings.Width = Unit.Pixel(211);
-    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
-    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
-    settings.Properties.TextField = "ParentName";
-    settings.Properties.ValueField = "ParentId";
-    settings.SelectedIndex = 0;
-}).BindList(ViewData["class"]).GetHtml()
-
-    @Html.DevExpress().Button(
-    settings =>
-    {
-        settings.Name = "btnSubmit";
-        settings.ControlStyle.CssClass = "button";
-        settings.Text = IWSLocalResource.Validate;
-        settings.Width = Unit.Pixel(105);
-        settings.UseSubmitBehavior = false;
-        settings.ClientSideEvents.Click = "OnButtonClick";
-    }).GetHtml()
-    @Html.DevExpress().Button(
-    settings =>
-    {
-        settings.Name = "btnExport";
-        settings.ControlStyle.CssClass = "button";
-        settings.Text = IWSLocalResource.Export;
-        settings.Width = Unit.Pixel(105);
-        settings.UseSubmitBehavior = false;
-        settings.RouteValues = new { Controller = "Resultat", Action = "Export" };
-    }).GetHtml()
-    @Html.Partial("_CallbackPartialView")
-}
-
+@Html.Partial("_CallbackPartialView")

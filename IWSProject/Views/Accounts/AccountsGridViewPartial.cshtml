@@ -44,9 +44,9 @@
         settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
         //performance tuning
-        settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
+        //settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
         //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
-        settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
+        //settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;

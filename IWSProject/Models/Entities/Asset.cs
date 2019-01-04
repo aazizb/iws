@@ -20,6 +20,8 @@ namespace IWSProject.Models.Entities
 
         private System.Nullable<int> _LifeSpan;
 
+        private System.Nullable<int> _Frequency;
+
         private System.Nullable<int> _Depreciation;
 
         private System.Nullable<decimal> _Rate;
@@ -52,6 +54,8 @@ namespace IWSProject.Models.Entities
         partial void OnCurrencyChanged();
         partial void OnLifeSpanChanging(System.Nullable<int> value);
         partial void OnLifeSpanChanged();
+        partial void OnFrequencyChanging(System.Nullable<int> value);
+        partial void OnFrequencyChanged();
         partial void OnDepreciationChanging(System.Nullable<int> value);
         partial void OnDepreciationChanged();
         partial void OnRateChanging(System.Nullable<decimal> value);
@@ -173,6 +177,26 @@ namespace IWSProject.Models.Entities
                     this._LifeSpan = value;
                     this.SendPropertyChanged("LifeSpan");
                     this.OnLifeSpanChanged();
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_Frequency", DbType = "Int")]
+        public System.Nullable<int> Frequency
+        {
+            get
+            {
+                return this._Frequency;
+            }
+            set
+            {
+                if ((this._Frequency != value))
+                {
+                    this.OnFrequencyChanging(value);
+                    this.SendPropertyChanging();
+                    this._Frequency = value;
+                    this.SendPropertyChanged("Frequency");
+                    this.OnFrequencyChanged();
                 }
             }
         }

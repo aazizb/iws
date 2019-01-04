@@ -222,12 +222,10 @@ namespace IWSProject.Controllers
             }
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
-
         public ActionResult CompanyView()
         {
             return PartialView(IWSLookUp.GetCompany());
         }
-
     }
     public class CompaniesControllerUploadControlLogoSettings
     {

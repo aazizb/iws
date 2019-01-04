@@ -1,5 +1,4 @@
-﻿
-@using IWSProject.Models
+﻿@using IWSProject.Models
 @using IWSProject.Content
 @model List<AccountBalanceViewModel>
 
@@ -14,7 +13,7 @@
         vPeriod = fromYearMonth.GetText();
         vStart = fromYearMonth.GetText();
         vEnd = toYearMonth.GetText();
-        id = gridLookupIDs.GetText();
+
 
         callbackPartialView.PerformCallback();
     }
@@ -58,6 +57,7 @@
         TrackLayout(s.cpClientLayout);
     }
 </script>
+
 @Html.DevExpress().FormLayout(settings =>
 {
     settings.Name = "FormLayout";
@@ -65,6 +65,14 @@
     settings.Items.AddGroupItem(gsettings => {
         gsettings.ColCount = 6;
         gsettings.Caption = IWSLocalResource.QueryDetail;
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = IWSLocalResource.account;
+            i.SetNestedContent(() =>
+            {
+                Html.RenderPartial("GridLookupPartial");
+            });
+        });
         gsettings.Items.Add(i =>
         {
             i.Caption = IWSLocalResource.PeriodFrom;
@@ -78,14 +86,6 @@
             i.SetNestedContent(() =>
             {
                 Html.RenderPartial("ToYearMonthDateEditPartialView");
-            });
-        });
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = IWSLocalResource.account;
-            i.SetNestedContent(() =>
-            {
-                Html.RenderPartial("GridLookupPartial");
             });
         });
         gsettings.Items.Add(i =>

@@ -1,4 +1,5 @@
-﻿using IWSProject.Models;
+﻿using DevExpress.Web.Mvc;
+using IWSProject.Models;
 using System;
 using System.Web.Mvc;
 
@@ -10,7 +11,8 @@ namespace IWSProject.Controllers
         public ActionResult Index()
         {
             string companyId = (string)Session["CompanyID"];
-            return View(IWSLookUp.GetCurrentFiscalYear(companyId));
+            ViewBag.FiscalYear = IWSLookUp.GetFiscalYear(companyId);
+            return View();//ViewBag.FiscalYear);// IWSLookUp.GetCurrentFiscalYear(companyId));
         }
         public ActionResult GridViewPartialView()
         {
@@ -38,7 +40,12 @@ namespace IWSProject.Controllers
                 ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
             }
-            return PartialView("Index", IWSLookUp.GetCurrentFiscalYear(companyId));
+            return PartialView("PopupPartialView", IWSLookUp.GetCurrentFiscalYear(companyId));
+        }
+
+        public ActionResult CallbackPanelPartial()
+        {
+            return PartialView("_CallbackPanelPartial");
         }
     }
 }

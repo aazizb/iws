@@ -482,7 +482,6 @@ namespace IWSProject.Controllers
                             if (!results)
                                 return results;
                         }
-
                         #endregion
                         #region credit
                         var items = (from doc in docs
@@ -675,6 +674,7 @@ namespace IWSProject.Controllers
                 return results;
 
             }
+
             if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice))
             {
                 results = false;
@@ -826,6 +826,7 @@ namespace IWSProject.Controllers
                 }
                 return results;
             }
+
             if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment))
             {
                 results = false;
@@ -976,6 +977,7 @@ namespace IWSProject.Controllers
                 }
                 return results;
             }
+
             if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Settlement))
             {
                 results = false;
@@ -1127,6 +1129,7 @@ namespace IWSProject.Controllers
                 }
                 return results;
             }
+
             if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.GeneralLedger))
             {
 
@@ -1270,6 +1273,7 @@ namespace IWSProject.Controllers
                 return results;
 
             }
+
             return results;
         }
 
@@ -1364,10 +1368,10 @@ namespace IWSProject.Controllers
                              select new
                              {
                                  g.Key.Periode,
-                                 accountID = g.Key.OAccount,      ///?
+                                 accountID = g.Key.OAccount,
                                  amount = g.Sum(p => p.doc.Amount),
                                  currency = g.Key.Currency
-                             }).Distinct().ToList();            //.Single();
+                             }).Distinct().ToList();
                 foreach (var item in items)
                 {
                 results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
@@ -1390,14 +1394,18 @@ namespace IWSProject.Controllers
             }
             return results;
         }
-
+        
         protected static bool SendToJournal(List<Journal> journal)
         {
         bool results = false;
         try
         {
+
             foreach (Journal item in journal)
             {
+                BeforeAmountViewModel amount = IWSLookUp.GetBeforeAmount(item.Account, item.Periode);
+                item.DebitAvantImputationAmount = amount.Debit;
+                item.CreditAvantImputationAmount = amount.Credit;
                 db.Journals.InsertOnSubmit(item);
             }
             results = true;

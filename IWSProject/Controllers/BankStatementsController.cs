@@ -88,7 +88,8 @@
                         }
                         db.SubmitChanges();
 
-                        amount = Convert.ToDecimal(list[1]);
+
+                        amount = Convert.ToDecimal(list[1], CultureInfo.InvariantCulture);
 
                         IBAN = list[2];
 

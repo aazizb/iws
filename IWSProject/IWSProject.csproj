@@ -366,7 +366,7 @@
     <Content Include="Views\Masterfile\Masterfile.cshtml" />
     <Content Include="Views\Masterfile\MasterfilePartial.cshtml" />
     <Content Include="Views\Brouillard\PopupControl.cshtml" />
-    <Content Include="Views\FiscalYear\xxCallbackPanel.cshtml" />
+    <Content Include="Views\FiscalYear\CallbackPanel.cshtml" />
     <Content Include="Views\Brouillard\ValidatePartialView.cshtml" />
     <Content Include="Views\Balance\GridLookupPartial.cshtml" />
     <Content Include="Views\TypeJournal\TypeJournalView.cshtml" />
@@ -454,7 +454,7 @@
     <Content Include="Views\Brouillard\Index.cshtml" />
     <Content Include="Views\Roles\RoleView.cshtml" />
     <Content Include="Views\SalesInvoiceXR\Index.cshtml" />
-    <Content Include="Views\FiscalYear\XYIndex.cshtml" />
+    <Content Include="Views\FiscalYear\Index.cshtml" />
     <Content Include="Views\TimeSheets\Index.cshtml" />
     <Content Include="Views\TimeSheets\ImportTimeSheets.cshtml" />
     <Content Include="Views\TimeSheets\_TimeSheetsFileManagerPartial.cshtml" />
@@ -462,15 +462,18 @@
     <Content Include="Views\TimeSheets\DetailGridViewPartial.cshtml" />
     <Content Include="Views\TimeSheets\TimeSheetView.cshtml" />
     <Content Include="Views\TimeSheets\CallbackPanelPartialView.cshtml" />
-    <Content Include="Views\FiscalYear\xxFiscalYearView.cshtml" />
-    <Content Include="Views\FiscalYear\Index.cshtml" />
-    <Content Include="Views\FiscalYear\PopupPartialView.cshtml" />
-    <Content Include="Views\FiscalYear\xxFormLayoutPartial.cshtml" />
-    <Content Include="Views\FiscalYear\GridViewPartialView.cshtml" />
+    <Content Include="Views\FiscalYear\FiscalYearView.cshtml" />
+    <Content Include="Views\FiscalYear\zIndex.cshtml" />
+    <Content Include="Views\FiscalYear\zPopupPartialView.cshtml" />
+    <Content Include="Views\FiscalYear\FormLayoutPartial.cshtml" />
+    <Content Include="Views\FiscalYear\zGridViewPartialView.cshtml" />
     <Content Include="Views\Default\Index.cshtml" />
     <Content Include="Views\Default\PopupPartialView.cshtml" />
     <Content Include="Views\Shared\FromYearMonthDateEditPartialView.cshtml" />
     <Content Include="Views\Shared\ToYearMonthDateEditPartialView.cshtml" />
+    <Content Include="Views\Depreciation\GridLookupPartial.cshtml" />
+    <Content Include="Views\Default\PartialView.cshtml" />
+    <Content Include="Views\Default\View.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -722,7 +725,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62953</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:62953/</IISUrl>
+          <IISUrl>http://localhost:62960/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

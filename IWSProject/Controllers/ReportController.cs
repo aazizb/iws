@@ -60,22 +60,7 @@ namespace IWSProject.Controllers
         {
             return PartialView();
         }
-        //[ValidateInput(false)]
-        //public ActionResult PeriodicBalance()
-        //{
-        //    return View();
-        //}
-        //[ValidateInput(false)]
-        //public ActionResult SalesInvoiceXS()
-        //{
 
-        //    return View();
-        //}
-        //[ValidateInput(false)]
-        //public ActionResult PurchaseOrderXS()
-        //{
-        //    return View();
-        //}
     }
     public static class PivotGridHelper
     {
