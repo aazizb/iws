@@ -16,32 +16,41 @@ namespace IWSProject.Controllers
         public ActionResult Index()
         {
             string companyId = (string)Session["CompanyID"];
-            ViewBag.FiscalYear = IWSLookUp.GetFiscalYears(companyId);
+            ViewBag.FiscalYear = IWSLookUp.GetFiscalYear(companyId);
             return View(IWSLookUp.GetCurrentFiscalYear(companyId));
         }
-        [HttpGet]
+        //[HttpGet]
         public ActionResult GridViewPartialView()
         {
             string companyId = (string)Session["CompanyID"];
-            ViewBag.FiscalYear = IWSLookUp.GetFiscalYears(companyId);
+            ViewBag.FiscalYear = IWSLookUp.GetFiscalYear(companyId);
             //return PartialView("Index", IWSLookUp.GetCurrentFiscalYear(companyId));
-            return PartialView("GridViewPartialView", IWSLookUp.GetCurrentFiscalYear(companyId));
+            return PartialView("MasterGridViewPartial", IWSLookUp.GetCurrentFiscalYear(companyId));
         }
-        public ActionResult CallbackPanel()
+        [HttpGet]
+        public ActionResult FiscalYearView()
         {
-
+            string companyId = (string)Session["CompanyID"];
+            ViewBag.FiscalYear = IWSLookUp.GetFiscalYear(companyId);
+            return PartialView(IWSLookUp.GetCurrentFiscalYear(companyId));
+        }
+        public ActionResult CallbackPanel(string cpCStart, string cpCEnd, string cpOStart, string cpOEnd, string cpNStart, string cpNEnd)
+        {
             string companyId = (string)Session["CompanyID"];
             try
             {
-                int cstart = Convert.ToInt32(Request.Params["cpCStart"]);
-                int cend = Convert.ToInt32(Request.Params["cpCEnd"]);
-                int ostart = Convert.ToInt32(Request.Params["cpOStart"]);
-                int oend = Convert.ToInt32(Request.Params["cpOEnd"]);
-                int nstart = Convert.ToInt32(Request.Params["cpNStart"]);
-                int nend = Convert.ToInt32(Request.Params["cpNEnd"]);
-                string newYearStart = Request.Params["cpNStart"];
-                string newYearEnd = Request.Params["cpNEnd"];
-                if (nend >= nstart && nstart > cend && nend - nstart < 26)
+                
+                int cstart = Convert.ToInt32(cpCStart);
+                int cend = Convert.ToInt32(cpCEnd);
+                int ostart = Convert.ToInt32(cpOStart);
+                int oend = Convert.ToInt32(cpOEnd);
+                int nstart = Convert.ToInt32(cpNStart);
+                int nend = Convert.ToInt32(cpNEnd);
+                string newYearStart = cpNStart;
+                string newYearEnd = cpNEnd;
+                int dateDiffY = (Convert.ToInt32(newYearEnd.Substring(0, 4)) - Convert.ToInt32(newYearStart.Substring(0, 4))) * 12;
+                int dateDiffM = Convert.ToInt32(newYearEnd.Substring(4, 2)) - Convert.ToInt32(newYearStart.Substring(4, 2));
+                if (nend > nstart && nstart >= ostart && dateDiffY + dateDiffM < 26)
                 {
                     var model = IWSLookUp.CloseCurrentFiscalYear(companyId);
                     IWSLookUp.OpenNewFiscalYear(newYearStart, newYearEnd, companyId, true, true);

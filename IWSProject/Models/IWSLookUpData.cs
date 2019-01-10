@@ -823,14 +823,14 @@
                         join dc in IWSEntities.DetailDetailComptas on new { d.id } equals new { id = dc.TransId } into groupJoin
                         from j in groupJoin.DefaultIfEmpty()
                         where
-                          d.MasterCompta.id == masterId && d.ModelId==model
+                          d.MasterCompta.id == masterId && d.ModelId == model
                         group new { d.MasterCompta, j } by new
                         {
                             oTotal = (decimal?)d.MasterCompta.oTotal
                         } into g
                         select new
                         {
-                            Cummule = g.Key.oTotal - g.Sum(p => p.j.Amount)
+                            Cummule = (g.Sum(p => p.j.Amount))==null? 0 : g.Key.oTotal - g.Sum(p => p.j.Amount)
                         }).FirstOrDefault().Cummule.Value;
             }
             return 0;
@@ -1123,12 +1123,13 @@
             Where(c => c.CompanyId == companyId).
             Select(f => new FiscalYearViewModel()
             {
-                CompanyId = f.CompanyId,
+                //CompanyId = f.CompanyId,
                 CStart = f.CStart,
                 CEnd = f.CEnd,
                 OStart = f.OStart,
                 OEnd = f.OEnd
             }).FirstOrDefault();
+
         public static IEnumerable GetCash() => IWSEntities.Cashes.Where(c =>
                         c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).
                         OrderByDescending(o => o.Id).AsEnumerable();

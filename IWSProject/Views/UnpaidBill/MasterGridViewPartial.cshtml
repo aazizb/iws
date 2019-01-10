@@ -11,6 +11,10 @@
         settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
         settings.SettingsContextMenu.Enabled = true;
 
+        settings.SettingsContextMenu.RowMenuItemVisibility.DeleteRow = false;
+        settings.SettingsContextMenu.RowMenuItemVisibility.EditRow = false;
+        settings.SettingsContextMenu.RowMenuItemVisibility.NewRow = false;
+
         settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
 
         settings.ClientSideEvents.BeginCallback = "OnMBeginCallback";
@@ -207,7 +211,7 @@
                 e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
             }
         };
-        
+
         settings.SettingsBehavior.AutoExpandAllGroups = true;
         settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
         settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "amount").ShowInGroupFooterColumn = "amount";

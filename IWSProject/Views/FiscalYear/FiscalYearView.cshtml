@@ -1,18 +1,245 @@
-﻿@*<script type="text/javascript">
+﻿@using IWSProject.Content
+<script type="text/javascript">
+    var cxStart = null;
+    var cxEnd = null;
+    var oxStart = null;
+    var oxEnd = null;
+    var nxStart = null;
+    var nxEnd = null;
     function OnBeginCallback(s, e) {
-        e.customArgs["cpCStart"] = CStart.GetValue();
-        e.customArgs["cpCEnd"] = CEnd.GetValue();
-        e.customArgs["cpOStart"] = OStart.GetValue();
-        e.customArgs["cpOEnd"] = OEnd.GetValue();
-        e.customArgs["cpNStart"] = NStart.GetValue();
-        e.customArgs["cpNEnd"] = NEnd.GetValue();
+        e.customArgs["cpCStart"] = cxStart;
+        e.customArgs["cpCEnd"] = cxEnd;
+        e.customArgs["cpOStart"] = oxStart;
+        e.customArgs["cpOEnd"] = oxEnd;
+        e.customArgs["cpNStart"] = nxStart;
+        e.customArgs["cpNEnd"] = nxEnd;
     }
-    CStart.GetInputElement().readOnly = true;
-    CEnd.GetInputElement().readOnly = true;
-    OStart.GetInputElement().readOnly = true;
-    OEnd.GetInputElement().readOnly = true;
-</script>*@
+    function OnSubmitClick(s, e) {
+        cxStart = CStart.GetText();
+        cxEnd = CEnd.GetText();
+        oxStart = OStart.GetText();
+        oxEnd = OEnd.GetText();
+        nxStart = NStart.GetText();
+        nxEnd = NEnd.GetText();
+        callbackPartialView.PerformCallback();
+    }
 
+</script>
+<script type="text/javascript">
+    function OnDropDown(s, e) {
+        var calendar = s.GetCalendar();
+        var fastNav = calendar.fastNavigation;
+        fastNav.activeView = calendar.GetView(0, 0);
+        fastNav.Prepare();
+        fastNav.GetPopup().popupVerticalAlign = 'Below';
+        fastNav.GetPopup().ShowAtElement(s.GetMainElement())
+        fastNav.OnOkClick = function () {
+            var parentDateEdit = this.calendar.owner;
+            var currentDate = new Date(fastNav.activeYear, fastNav.activeMonth, 1);
+            parentDateEdit.SetDate(currentDate);
+            parentDateEdit.HideDropDown();
+            $.ajax({
+                //call controller action to handle the date selection change
+            });
+        }
+        fastNav.OnCancelClick = function () {
+            var parentDateEdit = this.calendar.owner;
+            parentDateEdit.HideDropDown();
+        }
+    }
 
-@Html.Partial("Index")
+    function OnDateChanged(s, e) {
+        var newDate = s.GetDate();
+        if (newDate == null) {
+            $.ajax({
+                //call controller action to handle the date selection change
+            });
+        }
+    }
+
+</script>
+<script type="text/javascript">
+    function OnButtonClick() {
+        if (fiscalYear.IsCustomizationWindowVisible()) {
+
+            fiscalYear.HideCustomizationWindow();
+        }
+        else {
+            fiscalYear.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = fiscalYear.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
+    function OnEndCallback(s, e) {
+        TrackLayout(s.cpClientLayout);
+    }
+</script>
+
+@Html.DevExpress().FormLayout(settings =>
+{
+    settings.Name = "contentFormLayout";
+    settings.Width = Unit.Percentage(100);
+    settings.ColCount = 8;
+    settings.Items.AddGroupItem(group =>
+    {
+        group.Name = "gCurrentFiscalYear";
+        group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
+        group.GroupBoxDecoration = GroupBoxDecoration.Default;
+        group.ShowCaption = DefaultBoolean.True;
+        group.Caption = IWSLocalResource.FiscalYearCurrent;
+        group.ColCount = 1;
+        group.Items.Add(dateEdit =>
+        {
+            dateEdit.FieldName = "CStart";
+            dateEdit.Name = "CStart";
+            dateEdit.Caption = IWSLocalResource.FiscalYearStart;
+            dateEdit.NestedExtension().TextBox(x =>
+            {
+                x.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                x.Properties.DisplayFormatInEditMode = false;
+                x.Width = System.Web.UI.WebControls.Unit.Pixel(180);
+                x.ReadOnly = true;
+                x.ShowModelErrors = true;
+            });
+        });
+        group.Items.Add(dateEdit =>
+        {
+            dateEdit.FieldName = "CEnd";
+            dateEdit.Name = "CEnd";
+            dateEdit.Caption = IWSLocalResource.FiscalYearEnd;
+            dateEdit.NestedExtension().TextBox(x =>
+            {
+                x.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                x.Properties.DisplayFormatInEditMode = false;
+                x.Width = System.Web.UI.WebControls.Unit.Pixel(180);
+                x.ReadOnly = true;
+                x.ShowModelErrors = true;
+            });
+        });
+    });
+    settings.Items.AddGroupItem(group =>
+    {
+        group.Name = "gOpenFiscalYear";
+        group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
+        group.GroupBoxDecoration = GroupBoxDecoration.Box;
+        group.ShowCaption = DefaultBoolean.True;
+        group.Caption = IWSLocalResource.FiscalYearOpen;
+        group.ColCount = 1;
+        group.Items.Add(dateEdit =>
+        {
+            dateEdit.FieldName = "OStart";
+            dateEdit.Name = "OStart";
+            dateEdit.Caption = IWSLocalResource.FiscalYearStart;
+            dateEdit.NestedExtension().TextBox(x =>
+            {
+                x.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                x.Properties.DisplayFormatInEditMode = false;
+                x.Width = System.Web.UI.WebControls.Unit.Pixel(180);
+                x.ReadOnly = true;
+                x.ShowModelErrors = true;
+            });
+        });
+        group.Items.Add(dateEdit =>
+        {
+            dateEdit.FieldName = "OEnd";
+            dateEdit.Name = "OEnd";
+            dateEdit.Caption = IWSLocalResource.FiscalYearEnd;
+            dateEdit.NestedExtension().TextBox(x =>
+            {
+                x.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                x.Properties.DisplayFormatInEditMode = false;
+                x.Width = System.Web.UI.WebControls.Unit.Pixel(180);
+                x.ReadOnly = true;
+                x.ShowModelErrors = true;
+            });
+        });
+    });
+    settings.Items.AddGroupItem(group =>
+    {
+        group.Name = "gNextFiscalYear";
+        group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
+        group.GroupBoxDecoration = GroupBoxDecoration.Box;
+        group.ShowCaption = DefaultBoolean.True;
+        group.ColCount = 1;
+        group.Caption = IWSLocalResource.FiscalYearNext;
+        group.Items.Add(dateEdit =>
+        {
+            dateEdit.Name = "NStart";
+            dateEdit.Caption = IWSLocalResource.FiscalYearStart;
+            dateEdit.NestedExtension().DateEdit(x =>
+            {
+                x.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                x.Properties.ClientSideEvents.DropDown = "OnDropDown";
+                x.Properties.DisplayFormatInEditMode = false;
+                x.Properties.DisplayFormatString = "yyyyMM";
+                x.Properties.EditFormatString = "yyyyMM";
+                x.Properties.ClientSideEvents.Init = @"function OnInit(s, e) {var calendar = s.GetCalendar();calendar.owner = s;calendar.GetMainElement().style.opacity = '0';}";
+                x.Properties.CalendarProperties.EnableYearNavigation = true;
+                x.Width = System.Web.UI.WebControls.Unit.Pixel(180);
+                x.Properties.ShowShadow = false;
+                x.ShowModelErrors = true;
+            });
+        });
+        group.Items.Add(dateEdit =>
+        {
+            dateEdit.Name = "NEnd";
+            dateEdit.Caption = IWSLocalResource.FiscalYearEnd;
+            dateEdit.NestedExtension().DateEdit(x =>
+            {
+                x.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                x.Properties.ClientSideEvents.DropDown = "OnDropDown";
+                x.Properties.DisplayFormatInEditMode = false;
+                x.Properties.DisplayFormatString = "yyyyMM";
+                x.Properties.EditFormatString = "yyyyMM";
+                x.Properties.ClientSideEvents.Init = @"function OnInit(s, e) {var calendar = s.GetCalendar();calendar.owner = s;calendar.GetMainElement().style.opacity = '0';}";
+                x.Properties.CalendarProperties.EnableYearNavigation = true;
+                x.Width = System.Web.UI.WebControls.Unit.Pixel(180);
+                x.Properties.ShowShadow = false;
+                x.ShowModelErrors = true;
+            });
+        });
+    });
+    settings.Items.AddGroupItem(group =>
+    {
+        group.Name = "btnSubmit";
+        group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
+        group.GroupBoxDecoration = GroupBoxDecoration.None;
+        group.ShowCaption = DefaultBoolean.True;
+        group.Width = Unit.Percentage(50);
+        group.ColCount = 4;
+        group.Items.AddEmptyItem();
+        group.Items.AddEmptyItem();
+        group.Items.Add(okButton =>
+        {
+            okButton.Name = "btnOk";
+            okButton.ShowCaption = DefaultBoolean.False;
+            okButton.NestedExtension().Button(x =>
+            {
+                x.Text = IWSLocalResource.Validate;
+                x.ControlStyle.CssClass = "button";
+                x.Width = Unit.Pixel(105);
+                x.ClientSideEvents.Click = "OnSubmitClick";
+                x.UseSubmitBehavior = false;
+            });
+        });
+        group.Items.Add(showButton =>
+        {
+            showButton.Name = "btnShow";
+            showButton.ShowCaption = DefaultBoolean.False;
+            showButton.SetNestedContent(() =>
+            {
+                Html.RenderPartial("ShowHideButtonPartialView");
+            });
+        });
+    });
+}).Bind(ViewBag.FiscalYear).GetHtml()
+
+@Html.Partial("CallbackPanel")
+
 

@@ -42,7 +42,6 @@ namespace IWSProject.Controllers
             }
             return PartialView("PopupPartialView", IWSLookUp.GetCurrentFiscalYear(companyId));
         }
-
         public ActionResult CallbackPanelPartial()
         {
             return PartialView("_CallbackPanelPartial");

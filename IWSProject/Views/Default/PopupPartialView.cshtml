@@ -29,11 +29,12 @@
 
             pc.TabPages.Add(IWSLocalResource.FiscalYearCurrent).SetContent(() =>
             {
-                @Html.DevExpress().FormLayout(fl =>
+                @Html.DevExpress().FormLayout(formLayout =>
                 {
-                    fl.Name = "flCourrent";
-                    fl.Width = Unit.Percentage(100);
-                    fl.Items.AddGroupItem(group =>
+                    formLayout.Name = "flCourrent";
+                    formLayout.Width = Unit.Percentage(100);
+
+                    formLayout.Items.AddGroupItem(group =>
                     {
                         group.Name = "gCurrentFiscalYear";
                         group.SettingsItemCaptions.Location = LayoutItemCaptionLocation.Top;
@@ -41,7 +42,6 @@
                         group.ShowCaption = DefaultBoolean.False;
                         group.Items.Add(dateEdit =>
                         {
-
                             dateEdit.FieldName = "CStart";
                             dateEdit.Name = "CStart";
                             dateEdit.Caption = IWSLocalResource.FiscalYearStart;
@@ -61,7 +61,6 @@
                     });
 
                 }).GetHtml();
-
             });
             pc.TabPages.Add(IWSLocalResource.FiscalYearOpen).SetContent(() =>
             {
@@ -69,6 +68,7 @@
                 {
                     fl.Name = "flOpen";
                     fl.Width = Unit.Percentage(100);
+
                     fl.Items.AddGroupItem(group =>
                     {
                         group.Name = "gCurrentFiscalYear";
@@ -94,6 +94,7 @@
                             dateEditSettings.ReadOnly = true;
                         });
                     });
+
                 }).GetHtml();
             });
             pc.TabPages.Add(IWSLocalResource.FiscalYearNext).SetContent(() =>
@@ -102,6 +103,7 @@
                 {
                     fl.Name = "flNext";
                     fl.Width = Unit.Percentage(100);
+
                     fl.Items.AddGroupItem(group =>
                     {
                         group.Name = "gNextFiscalYear";
@@ -149,6 +151,7 @@
                         ViewContext.Writer.Write("</div>");
 
                     });
+
                 }).GetHtml();
             });
         }).GetHtml();

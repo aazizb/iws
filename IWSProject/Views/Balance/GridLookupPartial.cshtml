@@ -39,13 +39,14 @@
         settings.Columns.Add(column =>
         {
             column.FieldName = "Id";
-            column.Width = Unit.Pixel(160);
+            column.Width = Unit.Percentage(20);
             column.Caption = IWSLocalResource.accountid;
             column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
         });
         settings.Columns.Add(column =>
         {
             column.FieldName = "Name";
+            column.Width = Unit.Pixel(80);
             column.Caption = IWSLocalResource.name;
             column.Settings.AutoFilterCondition = AutoFilterCondition.Contains;
         });
