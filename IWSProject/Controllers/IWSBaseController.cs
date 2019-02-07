@@ -1441,7 +1441,7 @@ namespace IWSProject.Controllers
         protected static bool UpdatePeriodicBalance(string Periode, string AccountID, decimal amount,
                                                     string currency, bool IsDebit, string companyID)
         {
-
+            bool result = false;
             var docs = db.PeriodicAccountBalances
                        .FirstOrDefault(p => p.Periode == Periode
                         && p.AccountId == AccountID
@@ -1452,33 +1452,50 @@ namespace IWSProject.Controllers
                     .Where(a => a.id == AccountID && a.CompanyID == companyID)
                     .Select(n => n.name)
                     .Single();
+                decimal iDebit = 0;
+                decimal iCredit = 0;
+
+                var initialDebitCredit = (from f in db.FiscalYears
+                                          join p in db.PeriodicAccountBalances on new { f.Period } equals new { Period = p.Periode }
+                                          where
+                                            f.Current == true &&
+                                            f.Open == true &&
+                                            Convert.ToInt32(p.Periode) < Convert.ToInt32(Periode) &&
+                                            p.AccountId == AccountID
+                                          orderby
+                                            f.Period descending
+                                          select new
+                                          {
+                                              Debit = (p.IDebit + p.Debit),
+                                              Credit = (p.ICredit + p.Credit)
+                                          }).Take(1);
+                if (initialDebitCredit.Count() != 0)
+                {
+                    iDebit = initialDebitCredit.Select(o => o.Debit).SingleOrDefault();
+                    iCredit = initialDebitCredit.Select(o => o.Credit).SingleOrDefault();
+                }
+
                 docs = new PeriodicAccountBalance
                 {
                     Name = name,
                     Periode = Periode,
                     AccountId = AccountID,
                     CompanyID = companyID,
-                    Debit = 0,
-                    Credit = 0,
+                    IDebit = iDebit,
+                    ICredit = iCredit,
+                    Debit = (IsDebit==true) ? amount : 0,
+                    Credit = (IsDebit == true) ? 0 : amount,
                     Currency = currency
                 };
-                if (IsDebit)
-                {
-                    docs.Debit = amount;
-                }
-                else
-                {
-                    docs.Credit = amount;
-                }
                 try
                 {
                     db.PeriodicAccountBalances.InsertOnSubmit(docs);
-                    return true;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
+                    result = false;
                     IWSLookUp.LogException(ex);
-                    return false;
                 }
             }
             else
@@ -1493,14 +1510,135 @@ namespace IWSProject.Controllers
                     {
                         docs.Credit += amount;
                     }
-                    return true;
+                    result = true;
                 }
                 catch (Exception ex)
                 {
+                    result = false;
                     IWSLookUp.LogException(ex);
-                    return false;
                 }
             }
+            if (result)
+                result = UpsertPeriodicBalance(Periode, AccountID, amount, currency, IsDebit, companyID);
+            return result;
+        }
+        public static bool UpsertPeriodicBalance(string period, string AccountID, decimal amount, string currency, bool IsDebit, string companyID)
+        {
+            bool result = false;
+
+            string nPeriod = GetNextPeriod(period);
+
+            var docs = db.PeriodicAccountBalances
+                         .FirstOrDefault(p => p.Periode == nPeriod && p.AccountId == AccountID  && p.CompanyID == companyID);
+            if (docs == null)
+            {
+                string name = db.GetAccounts()
+                            .Where(a => a.id == AccountID && a.CompanyID == companyID).Select(n => n.name).Single();
+
+                decimal iDebit = (IsDebit == true) ? amount : 0;
+                decimal iCredit = (IsDebit == true) ? 0 : amount;
+
+                var initialDebitCredit = (from f in db.FiscalYears
+                                          join p in db.PeriodicAccountBalances on new { f.Period } equals new { Period = p.Periode }
+                                          where
+                                            f.Current == true &&
+                                            f.Open == true &&
+                                            Convert.ToInt32(p.Periode) < Convert.ToInt32(period) &&
+                                            p.AccountId == AccountID
+                                          orderby
+                                            f.Period descending
+                                          select new
+                                          {
+                                              Debit = (p.IDebit + p.Debit),
+                                              Credit = (p.ICredit + p.Credit)
+                                          }).Take(1);
+                if (initialDebitCredit.Count() !=0)
+                { 
+                    iDebit +=  initialDebitCredit.Select(o => o.Debit).SingleOrDefault();  
+                    iCredit += initialDebitCredit.Select(o => o.Credit).SingleOrDefault(); 
+                }
+                docs = new PeriodicAccountBalance
+                {
+                    Name = name,
+                    Periode = nPeriod,
+                    AccountId = AccountID,
+                    CompanyID = companyID,
+                    IDebit = iDebit,    
+                    ICredit = iCredit,  
+                    Currency = currency
+                };
+                try
+                {
+                    db.PeriodicAccountBalances.InsertOnSubmit(docs);
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    result = false;
+                    IWSLookUp.LogException(ex);
+                }
+            }
+            else
+            {
+                try
+                {
+                    result = UpdateNextPeriod(AccountID, period, amount, IsDebit, companyID);
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    result = false;
+                    IWSLookUp.LogException(ex);
+                }
+            }
+            return result;
+        }
+        protected static bool UpdateNextPeriod(string accountId, string period, decimal amount, bool IsDebit, string companyID)
+        {
+            bool result = false;
+
+            var balance =
+                from p in db.PeriodicAccountBalances
+                where
+                  p.AccountId == accountId && p.CompanyID == companyID &&
+                  Convert.ToInt32(p.Periode) > Convert.ToInt32(period)
+                select p;
+            try
+            {
+                foreach (var b in balance)
+                {
+                    if (IsDebit)
+                    b.IDebit = (b.IDebit + amount);
+                    if (!IsDebit)
+                    b.ICredit = (b.ICredit + amount);
+                }
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                result = false;
+                IWSLookUp.LogException(ex);
+            }
+            return result;
+        }
+        private static string GetNextPeriod(string period)
+        {
+            DateTime nextPeriod;
+            string p=String.Empty;
+            string nextMonth = String.Empty;
+            int iYear = Convert.ToInt32(period.Substring(0,4));
+            int iMonth = Convert.ToInt32(period.Substring(4,2));
+            if (iMonth == 12)
+            {
+                nextPeriod = new DateTime(iYear + 1, 1, 1);
+            }
+            else
+            {
+                nextPeriod = new DateTime(iYear, iMonth + 1, 1);
+            }
+            nextMonth = (nextPeriod.Month < 10) ? "0" + nextPeriod.Month : nextPeriod.Month.ToString();
+            p = nextPeriod.Year.ToString() + nextMonth;
+            return p;
         }
         protected static void ProcessData(string selectedItems, string companyId, bool convertType, int modelId)
         {

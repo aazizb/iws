@@ -6,7 +6,7 @@
 
     settings.CallbackRouteValues = new { Controller = "FiscalYear", Action = "GridViewPartialView" };
 
-    //settings.CustomActionRouteValues = new { Controller = "Depreciation", Action = "CustomGridViewCallback" };
+    //settings.CustomActionRouteValues = new { Controller = "FiscalYear", Action = "CustomGridViewCallback" };
 
     settings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
     settings.SettingsContextMenu.Enabled = true;
@@ -41,7 +41,6 @@
     settings.CommandColumn.Visible = true;
     settings.CommandColumn.ShowEditButton = false;
     settings.CommandColumn.ShowDeleteButton = false;
-    settings.CommandColumn.ShowSelectCheckbox = true;
     settings.CommandColumn.Width = Unit.Percentage(8);
     settings.CommandColumn.ShowNewButtonInHeader = false;
 
@@ -77,16 +76,6 @@
                 break;
         }
     };
-    //settings.CommandButtonInitialize = (s, e) =>
-    //{
-    //    MVCxGridView Grid = s as MVCxGridView;
-    //    if (e.ButtonType == ColumnCommandButtonType.SelectCheckbox)
-    //    {
-    //        bool value = (bool)Grid.GetRowValues(e.VisibleIndex, "IsValidated");
-    //        if (value == true) e.Enabled = e.Visible = false;
-    //    }
-    //};
-
     settings.KeyFieldName = "Id";
 
     settings.Width = Unit.Percentage(100);
@@ -104,12 +93,6 @@
     settings.SettingsPager.PageSize = 19;
     settings.Columns.Add(column =>
     {
-        column.FieldName = "Id";
-        column.Caption = IWSLocalResource.id;
-        column.Width = Unit.Percentage(8);
-    });
-    settings.Columns.Add(column =>
-    {
         column.FieldName = "AccountId";
         column.Caption = IWSLocalResource.account;
         column.Width = Unit.Percentage(11);
@@ -120,37 +103,27 @@
         column.Caption = IWSLocalResource.name;
         column.Width = Unit.Percentage(38);
     });
-
     settings.Columns.Add(column =>
     {
         column.FieldName = "Periode";
         column.Caption = IWSLocalResource.periode;
         column.Width = Unit.Percentage(12);
-        //column.EditorProperties().TextBox(textBox =>
-        //{
-        //    textBox.DisplayFormatString = "N";
-        //});
     });
     settings.Columns.Add(column =>
     {
         column.FieldName = "oYear";
         column.Caption = IWSLocalResource.Year;
         column.Width = Unit.Percentage(12);
-        //column.EditorProperties().TextBox(textBox =>
-        //{
-        //    textBox.DisplayFormatString = "N";
-        //});
+        column.Visible = false;
     });
     settings.Columns.Add(column =>
     {
         column.FieldName = "oMonth";
-        column.Caption = IWSLocalResource.IsValidated;
+        column.Caption = IWSLocalResource.Month;
         column.Width = Unit.Percentage(7);
-        //column.EditorProperties().CheckBox(c =>
-        //{
-
-        //});
+        column.Visible = false;
     });
+
     settings.Columns.Add(column =>
     {
         column.FieldName = "Debit";
@@ -171,10 +144,11 @@
             textBox.DisplayFormatString = "N";
         });
     });
+
     settings.Columns.Add(column =>
     {
-        column.FieldName = "InitialBalance";
-        column.Caption = IWSLocalResource.FinalBalance;
+        column.FieldName = "IDebit";
+        column.Caption = IWSLocalResource.idebit;
         column.Width = Unit.Percentage(12);
         column.EditorProperties().TextBox(textBox =>
         {
@@ -183,52 +157,63 @@
     });
     settings.Columns.Add(column =>
     {
-        column.FieldName = "FinalBalance";
-        column.Caption = IWSLocalResource.InitialBalance;
+        column.FieldName = "ICredit";
+        column.Caption = IWSLocalResource.icredit;
         column.Width = Unit.Percentage(12);
         column.EditorProperties().TextBox(textBox =>
         {
             textBox.DisplayFormatString = "N";
         });
     });
+
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "FDebit";
+        column.Caption = IWSLocalResource.fdebit;
+        column.Width = Unit.Percentage(12);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "FCredit";
+        column.Caption = IWSLocalResource.fcredit;
+        column.Width = Unit.Percentage(12);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+
+    //settings.Columns.Add(column =>
+    //{
+    //    column.FieldName = "InitialBalance";
+    //    column.Caption = IWSLocalResource.FinalBalance;
+    //    column.Width = Unit.Percentage(12);
+    //    column.EditorProperties().TextBox(textBox =>
+    //    {
+    //        textBox.DisplayFormatString = "N";
+    //    });
+    //});
+    //settings.Columns.Add(column =>
+    //{
+    //    column.FieldName = "FinalBalance";
+    //    column.Caption = IWSLocalResource.InitialBalance;
+    //    column.Width = Unit.Percentage(12);
+    //    column.EditorProperties().TextBox(textBox =>
+    //    {
+    //        textBox.DisplayFormatString = "N";
+    //    });
+    //});
+
     settings.Columns.Add(column =>
     {
         column.FieldName = "Currency";
         column.Caption = IWSLocalResource.Currency;
         column.Width = Unit.Percentage(12);
     });
-
-    //settings.CustomSummaryCalculate = (s, e) =>
-    //{
-    //    ASPxSummaryItem item = ((ASPxSummaryItem)e.Item);
-
-    //    if (item.FieldName != "Currency")
-    //        return;
-
-    //    if (e.IsTotalSummary)
-    //    {
-    //        e.TotalValue = e.GetValue("Currency");
-    //    }
-    //};
-
-    //settings.SummaryDisplayText = (sender, e) =>
-    //{
-    //    if (e.IsTotalSummary && e.Item.FieldName != "Currency")
-    //    {
-    //        e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
-    //    }
-    //};
-
-    //settings.Settings.ShowFooter = true;
-    //settings.Settings.ShowFilterRow = true;
-    //settings.Settings.ShowGroupPanel = false;
-    //settings.Settings.ShowFilterRowMenu = true;
-
-    //settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
-    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "CostOfAsset").ShowInGroupFooterColumn = "CostOfAsset";
-    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "BookValue").ShowInGroupFooterColumn = "BookValue";
-    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Depreciation").ShowInGroupFooterColumn = "Depreciation";
-    //settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
 
     if (ViewData["GenericError"] != null)
     {

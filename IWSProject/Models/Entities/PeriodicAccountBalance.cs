@@ -5,6 +5,7 @@ using System.Data.Linq.Mapping;
 
 namespace IWSProject.Models.Entities
 {
+
     [TableAttribute(Name = "dbo.PeriodicAccountBalance")]
     public partial class PeriodicAccountBalance : INotifyPropertyChanging, INotifyPropertyChanged
     {
@@ -23,13 +24,21 @@ namespace IWSProject.Models.Entities
 
         private decimal _Credit;
 
+        private decimal _IDebit;
+
+        private decimal _ICredit;
+
+        private decimal _FDebit;
+
+        private decimal _FCredit;
+
         private string _CompanyID;
 
         private string _Currency;
 
-        private decimal _FinalBalance;
+        //private decimal _FinalBalance;
 
-        private decimal _InitialBalance;
+        //private decimal _InitialBalance;
 
         private string _oYear;
 
@@ -55,6 +64,14 @@ namespace IWSProject.Models.Entities
         partial void OnDebitChanged();
         partial void OnCreditChanging(decimal value);
         partial void OnCreditChanged();
+        partial void OnIDebitChanging(decimal value);
+        partial void OnIDebitChanged();
+        partial void OnICreditChanging(decimal value);
+        partial void OnICreditChanged();
+        partial void OnFDebitChanging(decimal value);
+        partial void OnFDebitChanged();
+        partial void OnFCreditChanging(decimal value);
+        partial void OnFCreditChanged();
         partial void OnCompanyIDChanging(string value);
         partial void OnCompanyIDChanged();
         partial void OnCurrencyChanging(string value);
@@ -201,6 +218,89 @@ namespace IWSProject.Models.Entities
             }
         }
 
+
+        [ColumnAttribute(Storage = "_IDebit", DbType = "Decimal(18,2) NOT NULL")]
+        public decimal IDebit
+        {
+            get
+            {
+                return this._IDebit;
+            }
+            set
+            {
+                if ((this._IDebit != value))
+                {
+                    this.OnIDebitChanging(value);
+                    this.SendPropertyChanging();
+                    this._IDebit = value;
+                    this.SendPropertyChanged("IDebit");
+                    this.OnIDebitChanged();
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_ICredit", DbType = "Decimal(18,2) NOT NULL")]
+        public decimal ICredit
+        {
+            get
+            {
+                return this._ICredit;
+            }
+            set
+            {
+                if ((this._ICredit != value))
+                {
+                    this.OnICreditChanging(value);
+                    this.SendPropertyChanging();
+                    this._ICredit = value;
+                    this.SendPropertyChanged("ICredit");
+                    this.OnICreditChanged();
+                }
+            }
+        }
+
+
+        [ColumnAttribute(Storage = "_FDebit", DbType = "Decimal(18,2) NOT NULL")]
+        public decimal FDebit
+        {
+            get
+            {
+                return this._FDebit;
+            }
+            set
+            {
+                if ((this._FDebit != value))
+                {
+                    this.OnFDebitChanging(value);
+                    this.SendPropertyChanging();
+                    this._FDebit = value;
+                    this.SendPropertyChanged("FDebit");
+                    this.OnFDebitChanged();
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_FCredit", DbType = "Decimal(18,2) NOT NULL")]
+        public decimal FCredit
+        {
+            get
+            {
+                return this._FCredit;
+            }
+            set
+            {
+                if ((this._FCredit != value))
+                {
+                    this.OnFCreditChanging(value);
+                    this.SendPropertyChanging();
+                    this._FCredit = value;
+                    this.SendPropertyChanged("FCredit");
+                    this.OnFCreditChanged();
+                }
+            }
+        }
+
+
         [ColumnAttribute(Storage = "_CompanyID", DbType = "NVarChar(50) NOT NULL", CanBeNull = false, IsPrimaryKey = true)]
         public string CompanyID
         {
@@ -241,45 +341,45 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_FinalBalance", DbType = "Decimal(18,2) NOT NULL")]
-        public decimal FinalBalance
-        {
-            get
-            {
-                return this._FinalBalance;
-            }
-            set
-            {
-                if ((this._FinalBalance != value))
-                {
-                    this.OnFinalBalanceChanging(value);
-                    this.SendPropertyChanging();
-                    this._FinalBalance = value;
-                    this.SendPropertyChanged("FinalBalance");
-                    this.OnFinalBalanceChanged();
-                }
-            }
-        }
+        //[ColumnAttribute(Storage = "_FinalBalance", DbType = "Decimal(18,2) NOT NULL")]
+        //public decimal FinalBalance
+        //{
+        //    get
+        //    {
+        //        return this._FinalBalance;
+        //    }
+        //    set
+        //    {
+        //        if ((this._FinalBalance != value))
+        //        {
+        //            this.OnFinalBalanceChanging(value);
+        //            this.SendPropertyChanging();
+        //            this._FinalBalance = value;
+        //            this.SendPropertyChanged("FinalBalance");
+        //            this.OnFinalBalanceChanged();
+        //        }
+        //    }
+        //}
 
-        [ColumnAttribute(Storage = "_InitialBalance", DbType = "Decimal(18,2) NOT NULL")]
-        public decimal InitialBalance
-        {
-            get
-            {
-                return this._InitialBalance;
-            }
-            set
-            {
-                if ((this._InitialBalance != value))
-                {
-                    this.OnInitialBalanceChanging(value);
-                    this.SendPropertyChanging();
-                    this._InitialBalance = value;
-                    this.SendPropertyChanged("InitialBalance");
-                    this.OnInitialBalanceChanged();
-                }
-            }
-        }
+        //[ColumnAttribute(Storage = "_InitialBalance", DbType = "Decimal(18,2) NOT NULL")]
+        //public decimal InitialBalance
+        //{
+        //    get
+        //    {
+        //        return this._InitialBalance;
+        //    }
+        //    set
+        //    {
+        //        if ((this._InitialBalance != value))
+        //        {
+        //            this.OnInitialBalanceChanging(value);
+        //            this.SendPropertyChanging();
+        //            this._InitialBalance = value;
+        //            this.SendPropertyChanged("InitialBalance");
+        //            this.OnInitialBalanceChanged();
+        //        }
+        //    }
+        //}
 
         [ColumnAttribute(Storage = "_oYear", AutoSync = AutoSync.Always, DbType = "Char(4)", IsDbGenerated = true, UpdateCheck = UpdateCheck.Never)]
         public string oYear
@@ -395,5 +495,6 @@ namespace IWSProject.Models.Entities
             }
         }
     }
+
 
 }

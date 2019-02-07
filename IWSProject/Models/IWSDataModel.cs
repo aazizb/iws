@@ -1738,13 +1738,21 @@ namespace IWSProject.Models
 
         private decimal _Credit;
 
+        private decimal _IDebit;
+
+        private decimal _ICredit;
+
+        private decimal _FDebit;
+
+        private decimal _FCredit;
+
         private string _CompanyID;
 
         private string _Currency;
 
-        private decimal _InitialBalance;
+        //private decimal _InitialBalance;
 
-        private decimal _FinalBalance;
+        //private decimal _FinalBalance;
 
         private string _oYear;
 
@@ -1850,6 +1858,70 @@ namespace IWSProject.Models
             }
         }
 
+        [ColumnAttribute(Storage = "_IDebit", DbType = "Decimal(18,2) NOT NULL")]
+        public decimal IDebit
+        {
+            get
+            {
+                return this._IDebit;
+            }
+            set
+            {
+                if ((this._IDebit != value))
+                {
+                    this._IDebit = value;
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_ICredit", DbType = "Decimal(18,2) NOT NULL")]
+        public decimal ICredit
+        {
+            get
+            {
+                return this._ICredit;
+            }
+            set
+            {
+                if ((this._ICredit != value))
+                {
+                    this._ICredit = value;
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_FDebit", DbType = "Decimal(18,2) NOT NULL")]
+        public decimal FDebit
+        {
+            get
+            {
+                return this._FDebit;
+            }
+            set
+            {
+                if ((this._FDebit != value))
+                {
+                    this._FDebit = value;
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_FCredit", DbType = "Decimal(18,2) NOT NULL")]
+        public decimal FCredit
+        {
+            get
+            {
+                return this._FCredit;
+            }
+            set
+            {
+                if ((this._FCredit != value))
+                {
+                    this._FCredit = value;
+                }
+            }
+        }
+
         [ColumnAttribute(Storage = "_CompanyID", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string CompanyID
         {
@@ -1882,37 +1954,37 @@ namespace IWSProject.Models
             }
         }
 
-        [ColumnAttribute(Storage = "_InitialBalance", DbType = "Decimal(18,2) NOT NULL")]
-        public decimal InitialBalance
-        {
-            get
-            {
-                return this._InitialBalance;
-            }
-            set
-            {
-                if ((this._InitialBalance != value))
-                {
-                    this._InitialBalance = value;
-                }
-            }
-        }
+        //[ColumnAttribute(Storage = "_InitialBalance", DbType = "Decimal(18,2) NOT NULL")]
+        //public decimal InitialBalance
+        //{
+        //    get
+        //    {
+        //        return this._InitialBalance;
+        //    }
+        //    set
+        //    {
+        //        if ((this._InitialBalance != value))
+        //        {
+        //            this._InitialBalance = value;
+        //        }
+        //    }
+        //}
 
-        [ColumnAttribute(Storage = "_FinalBalance", DbType = "Decimal(18,2) NOT NULL")]
-        public decimal FinalBalance
-        {
-            get
-            {
-                return this._FinalBalance;
-            }
-            set
-            {
-                if ((this._FinalBalance != value))
-                {
-                    this._FinalBalance = value;
-                }
-            }
-        }
+        //[ColumnAttribute(Storage = "_FinalBalance", DbType = "Decimal(18,2) NOT NULL")]
+        //public decimal FinalBalance
+        //{
+        //    get
+        //    {
+        //        return this._FinalBalance;
+        //    }
+        //    set
+        //    {
+        //        if ((this._FinalBalance != value))
+        //        {
+        //            this._FinalBalance = value;
+        //        }
+        //    }
+        //}
 
         [ColumnAttribute(Storage = "_oYear", DbType = "Char(4)")]
         public string oYear
@@ -2196,7 +2268,7 @@ namespace IWSProject.Models
 
         private string _AccountId;
 
-        private string _AccountName;
+        private string _Name;
 
         private string _Periode;
 
@@ -2208,19 +2280,23 @@ namespace IWSProject.Models
 
         private decimal? _Credit;
 
+        private decimal? _IDebit;
+
+        private decimal? _ICredit;
+
         private decimal? _InitialBalance;
 
         private decimal? _FinalBalance;
 
-        private decimal? _Balance;
+        //private decimal? _Balance;
 
-        private decimal? _SDebit;
+        private decimal? _FDebit;
 
-        private decimal? _SCredit;
+        private decimal? _FCredit;
 
         private string _Currency;
 
-        private Nullable<bool> _IsBalance;
+        //private Nullable<bool> _IsBalance;
 
         private string _CompanyId;
 
@@ -2260,18 +2336,18 @@ namespace IWSProject.Models
             }
         }
 
-        [ColumnAttribute(Storage = "_AccountName", DbType = "NVarChar(150)")]
-        public string AccountName
+        [ColumnAttribute(Storage = "_Name", DbType = "NVarChar(150)")]
+        public string Name
         {
             get
             {
-                return this._AccountName;
+                return this._Name;
             }
             set
             {
-                if ((this._AccountName != value))
+                if ((this._Name != value))
                 {
-                    this._AccountName = value;
+                    this._Name = value;
                 }
             }
         }
@@ -2356,6 +2432,40 @@ namespace IWSProject.Models
             }
         }
 
+
+        [ColumnAttribute(Storage = "_IDebit", DbType = "Money")]
+        public decimal? IDebit
+        {
+            get
+            {
+                return this._IDebit;
+            }
+            set
+            {
+                if ((this._IDebit != value))
+                {
+                    this._IDebit = value;
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_ICredit", DbType = "Money")]
+        public decimal? ICredit
+        {
+            get
+            {
+                return this._ICredit;
+            }
+            set
+            {
+                if ((this._ICredit != value))
+                {
+                    this._ICredit = value;
+                }
+            }
+        }
+
+
         [ColumnAttribute(Storage = "_InitialBalance", DbType = "Money")]
         public decimal? InitialBalance
         {
@@ -2388,50 +2498,50 @@ namespace IWSProject.Models
             }
         }
 
-        [ColumnAttribute(Storage = "_Balance", DbType = "Money")]
-        public decimal? Balance
+        //[ColumnAttribute(Storage = "_Balance", DbType = "Money")]
+        //public decimal? Balance
+        //{
+        //    get
+        //    {
+        //        return this._Balance;
+        //    }
+        //    set
+        //    {
+        //        if ((this._Balance != value))
+        //        {
+        //            this._Balance = value;
+        //        }
+        //    }
+        //}
+
+        [ColumnAttribute(Storage = "_FDebit", DbType = "Money")]
+        public decimal? FDebit
         {
             get
             {
-                return this._Balance;
+                return this._FDebit;
             }
             set
             {
-                if ((this._Balance != value))
+                if ((this._FDebit != value))
                 {
-                    this._Balance = value;
+                    this._FDebit = value;
                 }
             }
         }
 
-        [ColumnAttribute(Storage = "_SDebit", DbType = "Money")]
-        public decimal? SDebit
+        [ColumnAttribute(Storage = "_FCredit", DbType = "Money")]
+        public decimal? FCredit
         {
             get
             {
-                return this._SDebit;
+                return this._FCredit;
             }
             set
             {
-                if ((this._SDebit != value))
+                if ((this._FCredit != value))
                 {
-                    this._SDebit = value;
-                }
-            }
-        }
-
-        [ColumnAttribute(Storage = "_SCredit", DbType = "Money")]
-        public decimal? SCredit
-        {
-            get
-            {
-                return this._SCredit;
-            }
-            set
-            {
-                if ((this._SCredit != value))
-                {
-                    this._SCredit = value;
+                    this._FCredit = value;
                 }
             }
         }
@@ -2452,21 +2562,21 @@ namespace IWSProject.Models
             }
         }
 
-        [ColumnAttribute(Storage = "_IsBalance", DbType = "Bit")]
-        public Nullable<bool> IsBalance
-        {
-            get
-            {
-                return this._IsBalance;
-            }
-            set
-            {
-                if ((this._IsBalance != value))
-                {
-                    this._IsBalance = value;
-                }
-            }
-        }
+        //[ColumnAttribute(Storage = "_IsBalance", DbType = "Bit")]
+        //public Nullable<bool> IsBalance
+        //{
+        //    get
+        //    {
+        //        return this._IsBalance;
+        //    }
+        //    set
+        //    {
+        //        if ((this._IsBalance != value))
+        //        {
+        //            this._IsBalance = value;
+        //        }
+        //    }
+        //}
 
         [ColumnAttribute(Storage = "_CompanyId", DbType = "NVarChar(50) NOT NULL", CanBeNull = false)]
         public string CompanyId

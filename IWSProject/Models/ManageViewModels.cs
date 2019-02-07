@@ -235,15 +235,19 @@ namespace IWSProject.Models
 
         [Key]
         public string AccountID { get; set; }
-        public string AccountName { get; set; }
+        public string Name { get; set; }
         public string Periode { get; set; }
         public string OYear { get; set; }
         public string OMonth { get; set; }
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
+        public decimal IDebit { get; set; }
+        public decimal ICredit { get; set; }
         public decimal Balance { get; set; }
         public decimal InitialBalance { get; set; }
         public decimal FinalBalance { get; set; }
+        public decimal FDebit { get; set; }
+        public decimal FCredit { get; set; }
         public decimal SDebit { get; set; }
         public decimal SCredit { get; set; }
         public string Currency { get; set; }

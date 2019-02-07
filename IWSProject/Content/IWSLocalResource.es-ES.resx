@@ -1134,4 +1134,19 @@
   <data name="DepreciationValidate2" xml:space="preserve">
     <value>  and the corresponding general ledger before proceeding.</value>
   </data>
+  <data name="Inadequade" xml:space="preserve">
+    <value>desajuste o superposición de período</value>
+  </data>
+  <data name="fcredit" xml:space="preserve">
+    <value>Final Credit</value>
+  </data>
+  <data name="fdebit" xml:space="preserve">
+    <value>Final Debit</value>
+  </data>
+  <data name="icredit" xml:space="preserve">
+    <value>Initial Credit</value>
+  </data>
+  <data name="idebit" xml:space="preserve">
+    <value>Initial Debit</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
 ﻿using IWSProject.Models;
+using IWSProject.Content;
 using System;
 using System.Web.Mvc;
 namespace IWSProject.Controllers
@@ -19,12 +20,10 @@ namespace IWSProject.Controllers
             ViewBag.FiscalYear = IWSLookUp.GetFiscalYear(companyId);
             return View(IWSLookUp.GetCurrentFiscalYear(companyId));
         }
-        //[HttpGet]
         public ActionResult GridViewPartialView()
         {
             string companyId = (string)Session["CompanyID"];
             ViewBag.FiscalYear = IWSLookUp.GetFiscalYear(companyId);
-            //return PartialView("Index", IWSLookUp.GetCurrentFiscalYear(companyId));
             return PartialView("MasterGridViewPartial", IWSLookUp.GetCurrentFiscalYear(companyId));
         }
         [HttpGet]
@@ -50,12 +49,16 @@ namespace IWSProject.Controllers
                 string newYearEnd = cpNEnd;
                 int dateDiffY = (Convert.ToInt32(newYearEnd.Substring(0, 4)) - Convert.ToInt32(newYearStart.Substring(0, 4))) * 12;
                 int dateDiffM = Convert.ToInt32(newYearEnd.Substring(4, 2)) - Convert.ToInt32(newYearStart.Substring(4, 2));
-                if (nend > nstart && nstart >= ostart && dateDiffY + dateDiffM < 26)
+                if (nend > nstart && nstart >= ostart && dateDiffY + dateDiffM < 25)
                 {
                     var model = IWSLookUp.CloseCurrentFiscalYear(companyId);
                     IWSLookUp.OpenNewFiscalYear(newYearStart, newYearEnd, companyId, true, true);
                     ViewBag.FiscalYear = IWSLookUp.GetFiscalYears(companyId);
                     return PartialView("CallbackPanel", model);
+                }
+                else
+                {
+                    ViewData["GenericError"] = IWSLocalResource.Inadequade;
                 }
             }
             catch (Exception ex)

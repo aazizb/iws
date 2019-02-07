@@ -1134,4 +1134,19 @@
   <data name="DepreciationValidate2" xml:space="preserve">
     <value>  et la pièce correspondante avant de continuer.</value>
   </data>
+  <data name="Inadequade" xml:space="preserve">
+    <value>inadéquation ou chevauchement de période</value>
+  </data>
+  <data name="fcredit" xml:space="preserve">
+    <value>Crédit Final</value>
+  </data>
+  <data name="fdebit" xml:space="preserve">
+    <value>Débit Final</value>
+  </data>
+  <data name="icredit" xml:space="preserve">
+    <value>Crédit Initial</value>
+  </data>
+  <data name="idebit" xml:space="preserve">
+    <value>Débit Initial</value>
+  </data>
 </root>

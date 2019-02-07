@@ -1040,8 +1040,8 @@
             BeforeAmountViewModel amount = (from p in
                              (from item in IWSEntities.PeriodicAccountBalances
                               where
-                                item.AccountId == accountId &&
-                                item.Periode == period
+                                item.AccountId == accountId //&&
+                                //item.Periode == period
                               select new
                               {
                                   item.Debit ,
@@ -1108,9 +1108,10 @@
                     {
                         item.Id,                        item.AccountId,                     item.Name,                        item.Periode,
                         item.oYear,                     item.oMonth,                        item.Debit,                       item.Credit,
-                        item.InitialBalance,            item.FinalBalance,                  item.Currency,                    item.CompanyID
-                    }).ToList();
-                   return result;
+                        item.IDebit,                        item.ICredit,                        item.FDebit,                        item.FCredit,
+                        item.Currency,                    item.CompanyID
+                    }).ToList();//item.InitialBalance,            item.FinalBalance,                  
+            return result;
         }
 
         public static IEnumerable GetFiscalYears(string companyId) => IWSEntities.GetFiscalYears(companyId).
@@ -1776,7 +1777,7 @@
                                select new
                                {
                                    g.Key.AccountId,
-                                   balance = (decimal?)g.Sum(p => p.Debit - p.Credit + p.InitialBalance),
+                                   balance = (decimal?)g.Sum(p => p.Debit - p.Credit + p.IDebit-p.ICredit),// p.InitialBalance),
                                    g.Key.Currency
                                }).FirstOrDefault();
                 if(item != null)
@@ -1982,27 +1983,48 @@
             return companies.Union(customers).Union(suppliers).ToList();
 
         }
+        public static IEnumerable GetAccountsBalance(string start, string end, string accountId, string CompanyID)
+        {
+            List<AccountBalanceViewModel> items = new List<AccountBalanceViewModel>();
+            items = (from p in IWSEntities.PeriodicAccountBalances
+                     select new AccountBalanceViewModel()
+                     {
+                        AccountID = p.AccountId,
+                        Name = p.Name,
+                        Periode = p.Periode,
+                        OYear = p.oYear,
+                        OMonth = p.oMonth,
+                        IDebit = p.IDebit,
+                        ICredit = p.ICredit,
+                        Debit = p.Debit,
+                        Credit = p.Credit,
+                        FDebit = p.IDebit + p.Debit,
+                        FCredit = p.ICredit + p.Credit,
+                        Currency = p.Currency
+                     }).Where(c => ExactMatch(accountId, c.AccountID) == true
+                     ).OrderBy(o => o.AccountID).ThenBy(o => o.Periode).ToList();
+            return items; //&& Convert.ToInt32(c.Periode) >= Convert.ToInt32(start) && Convert.ToInt32(c.Periode) <= Convert.ToInt32(end) &&
+                            //c.CompanyID == CompanyID
+        }
 
-        public static IEnumerable GetAccountBalance(string start, string end, string accountId, string CompanyID)
+            public static IEnumerable GetAccountBalance(string start, string end, string accountId, string CompanyID)
         {
             List<AccountBalanceViewModel> items = new List<AccountBalanceViewModel>();
             items = (from p in IWSEntities.PeriodicBalances(start, end, accountId, CompanyID)
                      select new AccountBalanceViewModel()
                      {
                          AccountID = p.AccountId,
-                         AccountName = p.AccountName,
+                         Name = p.Name,
                          Periode = p.Periode,
                          OYear = p.OYear,
                          OMonth = p.OMonth,
                          Debit = (decimal)p.Debit,
                          Credit = (decimal)p.Credit,
-                         InitialBalance = (decimal)p.InitialBalance,
-                         FinalBalance = (decimal)p.FinalBalance,
-                         SDebit = (decimal)p.SDebit,
-                         SCredit = (decimal)p.SCredit,
-                         Balance = (decimal)p.Balance,
+                         SDebit = (decimal)p.FDebit,
+                         SCredit = (decimal)p.FCredit,
+                         IDebit = (decimal)p.IDebit,
+                         ICredit = (decimal)p.ICredit,
                          Currency = p.Currency,
-                         IsBalance = (bool)p.IsBalance,
                          CompanyID = p.CompanyId
                      }).Where(c => ExactMatch(accountId, c.AccountID)==true).OrderBy(o => o.AccountID).ThenBy(o => o.Periode).ToList();
             return items;

@@ -1105,6 +1105,24 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Final Credit.
+        /// </summary>
+        public static string fcredit {
+            get {
+                return ResourceManager.GetString("fcredit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Final Debit.
+        /// </summary>
+        public static string fdebit {
+            get {
+                return ResourceManager.GetString("fdebit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Final Balance.
         /// </summary>
         public static string FinalBalance {
@@ -1339,11 +1357,29 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Initial Credit.
+        /// </summary>
+        public static string icredit {
+            get {
+                return ResourceManager.GetString("icredit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ID.
         /// </summary>
         public static string id {
             get {
                 return ResourceManager.GetString("id", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initial Debit.
+        /// </summary>
+        public static string idebit {
+            get {
+                return ResourceManager.GetString("idebit", resourceCulture);
             }
         }
         
@@ -1407,6 +1443,15 @@ namespace IWSProject.Content {
         public static string ImportTimeSheets {
             get {
                 return ResourceManager.GetString("ImportTimeSheets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inadequate or overlapping period.
+        /// </summary>
+        public static string Inadequade {
+            get {
+                return ResourceManager.GetString("Inadequade", resourceCulture);
             }
         }
         
