@@ -37,7 +37,7 @@
         selectedIDs = values.join(';');
     }
     function OnSubmitClick(s, e) {
-        $("#selectedIDs").val(selectedIDs);
+        //$("#selectedIDs").val(selectedIDs);
         callbackPanelPartialView.PerformCallback();
     }
     function CheckedChanged(s, e) {
@@ -59,7 +59,7 @@
 
 @using (Html.BeginForm("Index", "TimeSheets"))
 {
-    @Html.Hidden("selectedIDs")
+    @*@Html.Hidden("selectedIDs")*@
 
     @Html.DevExpress().Button(settings =>
 {

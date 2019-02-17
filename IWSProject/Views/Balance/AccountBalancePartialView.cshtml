@@ -89,7 +89,7 @@
         column.Width = Unit.Percentage(5);
         column.Visible = false;
     });
-        settings.Columns.Add(column =>
+    settings.Columns.Add(column =>
     {
         column.FieldName = "IDebit";
         column.Caption = IWSLocalResource.idebit;
@@ -138,6 +138,7 @@
         {
             textBox.DisplayFormatString = "N";
         });
+        column.Visible = false;
     });
     settings.Columns.Add(column =>
     {
@@ -148,6 +149,7 @@
         {
             textBox.DisplayFormatString = "N";
         });
+        column.Visible = false;
     });
     settings.Columns.Add(column =>
     {

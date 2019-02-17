@@ -82,6 +82,10 @@ namespace IWSProject.Models.Entities
 
         private decimal _CreditAvantImputationAmount;
 
+        private decimal _DebitApresImputationAmount;
+
+        private decimal _CreditApresImputationAmount;
+
         #region Extensibility Method Definitions
         partial void OnLoaded();
         partial void OnValidate(ChangeAction action);
@@ -152,6 +156,10 @@ namespace IWSProject.Models.Entities
         partial void OnDebitAvantImputationAmountChanged();
         partial void OnCreditAvantImputationAmountChanging(decimal value);
         partial void OnCreditAvantImputationAmountChanged();
+        partial void OnDebitApresImputationAmountChanging(decimal value);
+        partial void OnDebitApresImputationAmountChanged();
+        partial void OnCreditApresImputationAmountChanging(decimal value);
+        partial void OnCreditApresImputationAmountChanged();
         #endregion
 
         public Journal()
@@ -893,6 +901,46 @@ namespace IWSProject.Models.Entities
                     this._CreditAvantImputationAmount = value;
                     this.SendPropertyChanged("CreditAvantImputationAmount");
                     this.OnCreditAvantImputationAmountChanged();
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_DebitApresImputationAmount", DbType = "Money NOT NULL")]
+        public decimal DebitApresImputationAmount
+        {
+            get
+            {
+                return this._DebitApresImputationAmount;
+            }
+            set
+            {
+                if ((this._DebitApresImputationAmount != value))
+                {
+                    this.OnDebitApresImputationAmountChanging(value);
+                    this.SendPropertyChanging();
+                    this._DebitApresImputationAmount = value;
+                    this.SendPropertyChanged("DebitApresImputationAmount");
+                    this.OnDebitApresImputationAmountChanged();
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_CreditApresImputationAmount", DbType = "Money NOT NULL")]
+        public decimal CreditApresImputationAmount
+        {
+            get
+            {
+                return this._CreditApresImputationAmount;
+            }
+            set
+            {
+                if ((this._CreditApresImputationAmount != value))
+                {
+                    this.OnCreditApresImputationAmountChanging(value);
+                    this.SendPropertyChanging();
+                    this._CreditApresImputationAmount = value;
+                    this.SendPropertyChanged("CreditApresImputationAmount");
+                    this.OnCreditApresImputationAmountChanged();
                 }
             }
         }

@@ -23,7 +23,7 @@ namespace IWSProject.Controllers
             string end = (string)Session["End"];
             string companyId = (string)Session["CompanyID"];
             string accountId = string.Empty;
-            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, companyId,true);
+            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, companyId);
             return PartialView("PivotGridPartial", model.ToList());
         }
         public ActionResult CallbackPanelPartial(string start, string end)
@@ -32,9 +32,9 @@ namespace IWSProject.Controllers
                 return PartialView("_CallbackPartialView");
             Session["Start"] = start;
             Session["End"] = end;
-            string company = (string)Session["CompanyID"];
+            string companyId = (string)Session["CompanyID"];
             string accountId = string.Empty;
-            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, company,true);
+            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, companyId);
             return PartialView("_CallbackPartialView", model);
         }
         public ActionResult ExportToXLS()
@@ -44,7 +44,7 @@ namespace IWSProject.Controllers
             string companyId = (string)Session["CompanyID"];
             string accountId = string.Empty;
             PivotXlsxExportOptions exportOptions = new PivotXlsxExportOptions() { ExportType = DevExpress.Export.ExportType.WYSIWYG };
-            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, companyId,true);
+            List<JournalViewModel> model = (List<JournalViewModel>)IWSLookUp.GetJournal(start, end, accountId, companyId);
             return PivotGridExtension.ExportToXlsx(PivotGridHelper.Settings, model.ToList(), exportOptions);
         }
         [ValidateInput(false)]

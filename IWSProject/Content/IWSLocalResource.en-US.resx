@@ -700,7 +700,7 @@
     <value>Entry Date</value>
   </data>
   <data name="ItemDate" xml:space="preserve">
-    <value>Item Date</value>
+    <value>Posted Date</value>
   </data>
   <data name="TransDate" xml:space="preserve">
     <value>Trans Date</value>
@@ -1139,5 +1139,11 @@
   </data>
   <data name="idebit" xml:space="preserve">
     <value>Initial Debit</value>
+  </data>
+  <data name="CreditAfter" xml:space="preserve">
+    <value>Credit After</value>
+  </data>
+  <data name="DebitAfter" xml:space="preserve">
+    <value>Debit After</value>
   </data>
 </root>

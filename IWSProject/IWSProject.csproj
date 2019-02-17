@@ -415,7 +415,6 @@
     <Content Include="Views\Immo\ImmoDetailGridViewPartial.cshtml" />
     <Content Include="Views\Depreciation\DepreciationView.cshtml" />
     <Content Include="Views\Depreciation\CallbackPanelPartialView.cshtml" />
-    <Content Include="Views\Depreciation\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Assets\Index.cshtml" />
     <Content Include="Views\Assets\AssetsGridViewPartial.cshtml" />
     <Content Include="Views\Account\ClearPassword.cshtml" />
@@ -470,6 +469,7 @@
     <Content Include="Views\FiscalYear\CallbackPanel.cshtml" />
     <Content Include="Views\FiscalYear\FiscalYearView.cshtml" />
     <Content Include="Views\FiscalYear\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\Depreciation\MasterGridViewPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -484,11 +484,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Content\IWSLocalResource.de-DE.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>IWSLocalResource.de-DE.resx</DependentUpon>
-    </Compile>
     <Compile Include="Content\IWSLocalResource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -508,6 +503,11 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>IWSLocalResource.fr-FR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Content\IWSLocalResource.de-DE.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>IWSLocalResource.de-DE.resx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AffectationJournalController.cs" />
@@ -644,11 +644,6 @@
     <Folder Include="Models\data\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Content\IWSLocalResource.de-DE.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>IWSLocalResource.de-DE.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Content\IWSLocalResource.en-US.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>IWSLocalResource.en-US.Designer.cs</LastGenOutput>
@@ -668,6 +663,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>IWSLocalResource.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Content\IWSLocalResource.de-DE.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>IWSLocalResource.de-DE.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Reports\AccountBalance.resx">
@@ -721,7 +720,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62953</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:62564/</IISUrl>
+          <IISUrl>http://localhost:62560/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

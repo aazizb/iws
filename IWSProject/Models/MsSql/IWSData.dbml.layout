@@ -14,5 +14,11 @@
         <elementListCompartment Id="50adbf4c-00d8-41bf-8c88-340b6d7216ca" absoluteBounds="7.265, 1.46, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
+    <classShape Id="1a0b6a38-f7d3-4f89-93bb-a22399c4a0d5" absoluteBounds="4.625, 0.75, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/IWSDataContext/DepreciationDetail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="d641472b-48be-408f-996c-a29d21ecfd3c" absoluteBounds="4.64, 1.21, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

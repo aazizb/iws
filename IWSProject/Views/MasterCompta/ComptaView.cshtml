@@ -87,6 +87,9 @@
         setGridHeaderCheckboxes(s, e);
         s.GetSelectedFieldValues("id", GetSelectedFieldValuesCallback);
     }
+    function GetSelectedFieldValuesCallback(values) {
+        selectedIDs = values.join(';');
+    }
     function OnMEndCallback(s, e) {
         if (expanded === true) {
             expanded = false;
@@ -107,12 +110,10 @@
         setGridHeaderCheckboxes(s, e);
         TrackLayout(s.cpClientLayout);
     }
-    function GetSelectedFieldValuesCallback(values) {
-        selectedIDs = values.join(';');
-    }
+
     function OnSubmitClick(s, e) {
         currentModelId = ComboBoxModelId.GetValue();
-        $("#selectedIDs").val(selectedIDs);
+        //$("#selectedIDs").val(selectedIDs);
         callbackPanelPartialView.PerformCallback();
     }
     function TrackLayout(layout) {
@@ -217,9 +218,10 @@
 @*@{
     ViewBag.Title = IWSLocalResource.Accounting;
 }*@
+
 @using (Html.BeginForm("Index", "MasterCompta"))
 {
-    @Html.Hidden("selectedIDs");
+    @*@Html.Hidden("selectedIDs");*@
 
     @Html.DevExpress().ComboBox(settings =>
 {
@@ -257,4 +259,3 @@
     
     @Html.Partial("CallbackPanelPartialView")
 }
-

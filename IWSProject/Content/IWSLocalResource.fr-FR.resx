@@ -1149,4 +1149,10 @@
   <data name="idebit" xml:space="preserve">
     <value>Débit Initial</value>
   </data>
+  <data name="CreditAfter" xml:space="preserve">
+    <value>Credit Après</value>
+  </data>
+  <data name="DebitAfter" xml:space="preserve">
+    <value>Debit Après</value>
+  </data>
 </root>

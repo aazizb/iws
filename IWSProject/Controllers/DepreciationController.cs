@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Data.Linq;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Web.Mvc;
 
 namespace IWSProject.Controllers
@@ -82,24 +81,12 @@ namespace IWSProject.Controllers
             {
                 if (asset != null)
                 {
-                    if (IsPreviousDepreciated(asset.Id, asset.StartDate, asset.AssetStartDate))
-                    {
-                        DeleteDepreciation(asset.Id, asset.StartDate);
-                        if(!IsPreviousDepreciated(asset.Id,asset.StartDate))
-                                    SetDepreciation(asset);
-                    }
-                    else
-                    {
-                        string p = DateToYM(asset.StartDate.AddMonths(-1));
-                        ViewData["GenericError"] = IWSLocalResource.DepreciationValidate1 + p + IWSLocalResource.DepreciationValidate2;
-                        string previousPeriod = DateToYMD(asset.StartDate.AddMonths(-1));
-                        ProcessDepreciation(previousPeriod, asset.Id);
-                    }
+                    SetDepreciation(asset);
                 }
             }
         }
-
-        public ActionResult CustomGridViewCallback(string currentPeriod, bool isChecked, string assetIDs)
+        
+        public ActionResult CustomGridViewCallback(bool isChecked, string currentPeriod, string assetIDs)
         {
             ViewBag.select = isChecked;
            
@@ -122,9 +109,9 @@ namespace IWSProject.Controllers
             foreach (string item in items)
             {
                 var list = item.Split(new string[] { "," }, StringSplitOptions.None);
-                IDx = list[0];
-                period = list[1];
-                amount = Convert.ToDecimal(list[2], CultureInfo.InvariantCulture);
+                IDx = list[1];
+                period = list[2];
+                amount = Convert.ToDecimal(list[3], CultureInfo.InvariantCulture);
                 ImmoDetailViewModel details = IWSLookUp.GetImmoDetail(IDx, period);
                 MasterCompta header = new MasterCompta()
                 {
@@ -212,7 +199,7 @@ namespace IWSProject.Controllers
             if (stringPeriod == stringAssetStartDate)
                 return true;
             string companyId = (string)Session["CompanyId"];
-            return db.DepreciationDetails.Any(c => c.TransId == assetId && c.Period == stringPeriod && c.CompanyId== companyId && c.IsValidated==true);
+            return db.DepreciationDetails.Any(c => c.TransId == assetId && c.Period == stringPeriod && c.CompanyId == companyId && c.IsValidated == true);
         }
         private bool IsPreviousDepreciated(string assetId, DateTime period)
         {
@@ -220,12 +207,19 @@ namespace IWSProject.Controllers
             string companyId = (string)Session["CompanyId"];
             return db.DepreciationDetails.Any(c => c.TransId == assetId && c.Period == stringPeriod && c.CompanyId == companyId && c.IsValidated == true);
         }
+        private bool IsPreviousDepreciated(string assetId, string period)
+        {
+            string companyId = (string)Session["CompanyId"];
+            return db.DepreciationDetails.Any(c => c.TransId == assetId && c.Period == period && c.CompanyId == companyId && c.IsValidated == true);
+        }
         #endregion
         #region compute depreciation
         private void SetDepreciation(AssetViewModel asset)
         {
+            DeleteDepreciation(asset.Id);
+
             List<DepreciationInfo> depreciationInfos = ComputeDepreciation((double)asset.BookValue, (double)asset.ScrapValue, asset.LifeSpan,
-                                   asset.Frequency, asset.DepreciationType, (double)asset.Rate, asset.Id, asset.StartDate, asset.Currency);
+                                   asset.Frequency, asset.DepreciationType, (double)asset.Rate, asset.Id, asset.Period, asset.Currency);
 
             var depreciationDetails = db.DepreciationDetails;
             string companyId = (string)Session["CompanyID"];
@@ -249,59 +243,71 @@ namespace IWSProject.Controllers
             db.SubmitChanges();
         }
 
-        private List<DepreciationInfo> ComputeDepreciation(double costValue, double scrapValue, int lifeSpan, int frequency,
-                                        int DepreciationType, double rate, string transId, DateTime startDate, string currency)
+        private List<DepreciationInfo> ComputeDepreciation(double bookValue, double scrapValue, int lifeSpan, int frequency,
+                                        int DepreciationType, double rate, string assetId, DateTime period, string currency)
         {
+            var depreciatedPeriod = IWSLookUp.GetLastDepreciatedPeriod(assetId);
+
             List<DepreciationInfo> depreciation = new List<DepreciationInfo>();
-            
-            if (costValue <= 0 || scrapValue < 0 || lifeSpan <= 0 || costValue <= scrapValue)
+            if (bookValue <= 0 || scrapValue < 0 || lifeSpan <= 0 || bookValue <= scrapValue)
                 return depreciation;
+
+            double newBookValue = Math.Round(bookValue,2);
+            newBookValue -= scrapValue;
+            //double depreciationValue = 0;
+            double depreciationValue = Math.Round((newBookValue * frequency) / lifeSpan, 2);
             DepreciationInfo dpInfo = new DepreciationInfo();
-            double bookValue = Math.Round(costValue,2);
-
-            bookValue -= scrapValue; 
-
-            double depreciationValue = Math.Round((bookValue*frequency) / lifeSpan , 2);
-
-            if (DepreciationType.Equals((int)IWSLookUp.DepreciationType.Degressive))
+            for (DateTime p = depreciatedPeriod; p <= period; p=p.AddMonths(1))
             {
-                if(lifeSpan > 1)
-                    depreciationValue = Math.Round(rate * bookValue,2);
-            }
-            if (depreciationValue >= bookValue)
-            {
-                bookValue = Math.Round(scrapValue,2);
-            }
-            else
-            {
-                if (DepreciationType.Equals((int)IWSLookUp.DepreciationType.StraightLine))
-                {
-                    bookValue -= Math.Round(depreciationValue / frequency,2);
-                }
+
+                //depreciationValue = Math.Round((newBookValue * frequency) / lifeSpan, 2);
+
                 if (DepreciationType.Equals((int)IWSLookUp.DepreciationType.Degressive))
                 {
-                    bookValue -= Math.Round(depreciationValue/frequency,2);
+                    if(lifeSpan > 1)
+                        //depreciationValue = Math.Round(rate * newBookValue,2);
+                        depreciationValue = Math.Round(rate * bookValue, 2);
                 }
+                if (depreciationValue >= newBookValue)
+                {
+                    newBookValue = Math.Round(scrapValue,2);
+                }
+                else
+                {
+                    //if (DepreciationType.Equals((int)IWSLookUp.DepreciationType.StraightLine))
+                    //{
+                    //    newBookValue -= Math.Round(depreciationValue / frequency,2);
+                    //}
+                    //if (DepreciationType.Equals((int)IWSLookUp.DepreciationType.Degressive))
+                    //{
+                    //    newBookValue -= Math.Round(depreciationValue/frequency,2);
+                    //}
+                    newBookValue -= Math.Round(depreciationValue / frequency, 2);
+                }
+                DateTime dateTimePeriod = p;
+                string stringMonth = dateTimePeriod.Month < 10 ?
+                        "0" + dateTimePeriod.Month.ToString() :
+                                    dateTimePeriod.Month.ToString();
+                string  stringPeriod = dateTimePeriod.Year.ToString() + stringMonth;
 
+                dpInfo = new DepreciationInfo
+                {
+                    TransId = assetId,
+                    Period = stringPeriod,
+                    StraightLineDepreciation = 0,
+                    StraightLineBookValue = 0,
+                    Depreciation = Math.Round(depreciationValue/frequency,2),
+                    Accumulation = 0,
+                    BookValue = newBookValue,           
+                    Percentage = 0,
+                    Currency = currency
+                };
+                if (!IsPreviousDepreciated(dpInfo.TransId, dpInfo.Period))
+                        depreciation.Add(dpInfo);
+
+                if (newBookValue <= 0 || newBookValue <= scrapValue)
+                    return depreciation;
             }
-            DateTime dateTimePeriod = startDate;
-            string stringMonth = dateTimePeriod.Month < 10 ?
-                    "0" + dateTimePeriod.Month.ToString() :
-                                dateTimePeriod.Month.ToString();
-            string  stringPeriod = dateTimePeriod.Year.ToString() + stringMonth;    //"-" +
-            dpInfo = new DepreciationInfo
-            {
-                TransId = transId,
-                Period = stringPeriod,
-                StraightLineDepreciation = 0,
-                StraightLineBookValue = 0,
-                Depreciation = Math.Round(depreciationValue/frequency,2),
-                Accumulation = 0,
-                BookValue = bookValue,
-                Percentage = 0,
-                Currency = currency
-            };
-            depreciation.Add(dpInfo);
             return depreciation;
         }
 
@@ -338,11 +344,10 @@ namespace IWSProject.Controllers
             string mo = m < 10 ? "0" + m.ToString() : m.ToString();
             return y + '-' + mo + '-' + d;
         }
-        private void DeleteDepreciation(string assetId, DateTime period)
+        private void DeleteDepreciation(string assetId)
         {
-            string stringPeriod = DateToYM(period);
             string companyId = (string)Session["CompanyId"];
-            var details = db.DepreciationDetails.Where(i => i.TransId == assetId && i.Period == stringPeriod &&
+            var details = db.DepreciationDetails.Where(i => i.TransId == assetId &&
                           i.CompanyId==companyId && i.IsValidated==false).Select(i => new { i.Id });
             foreach (var detail in details)
             {
@@ -363,6 +368,5 @@ namespace IWSProject.Controllers
         public double Accumulation { get; set; }
         public double Percentage { get; set; }
         public string Currency { get; set; }
-
     }
 }

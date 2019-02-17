@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DbFinalTest2" Class="IWSDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=(localdb)\mssqllocaldb;Initial Catalog=DbFinalTest2;Integrated Security=True;MultipleActiveResultSets=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="DefaultConnection" Provider="System.Data.SqlClient" />
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DB_A18F7E_xx" Class="IWSDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=(localdb)\mssqllocaldb;Initial Catalog=DB_A18F7E_xx;Integrated Security=True;MultipleActiveResultSets=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="DefaultConnection" Provider="System.Data.SqlClient" />
   <Table Name="dbo.PeriodicAccountBalance" Member="PeriodicAccountBalances">
     <Type Name="PeriodicAccountBalance">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -29,6 +29,20 @@
       <Column Name="[Current]" Member="Current" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="[Open]" Member="Open" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="ModelId" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.DepreciationDetail" Member="DepreciationDetails">
+    <Type Name="DepreciationDetail">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TransId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Period" Type="System.String" DbType="NVarChar(7) NOT NULL" CanBeNull="false" />
+      <Column Name="Depreciation" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Accumulated" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="BookValue" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Percentage" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Currency" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IsValidated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="CompanyId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
   <Function Name="dbo.account1To7" Method="account1To7">
@@ -296,13 +310,15 @@
     <Parameter Name="end" Type="System.String" DbType="NVarChar(6)" />
     <Parameter Name="uiculture" Type="System.String" DbType="NVarChar(5)" />
     <Parameter Name="Companyid" Parameter="companyid" Type="System.String" DbType="NVarChar(6)" />
-    <ElementType Name="GetJournalResult">
+    <ElementType Name="GetJournalResult1">
       <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="ItemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="OID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="LocalName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="CustSupplierID" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="TransDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ItemDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="EntryDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Periode" Type="System.String" DbType="NChar(6) NOT NULL" CanBeNull="false" />
       <Column Name="OYear" Type="System.String" DbType="Char(4)" CanBeNull="true" />
       <Column Name="oMonth" Type="System.String" DbType="Char(2)" CanBeNull="true" />

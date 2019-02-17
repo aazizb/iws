@@ -5,8 +5,8 @@
     var currentPeriod = null;
     var Id = null;
     function OnBeginCallback(s, e) {
-        e.customArgs["currentPeriod"] = currentPeriod;
         e.customArgs["selectedIDs"] = selectedIDs;
+        e.customArgs["currentPeriod"] = currentPeriod;
         e.customArgs["assetIDs"] = Id;
         selectedIDs = null;
     }
@@ -22,7 +22,7 @@
     }
     function OnSelectionChanged(s, e) {
         setGridHeaderCheckboxes(s, e);
-        s.GetSelectedFieldValues("Id;Period;Depreciation", GetSelectedFieldValues);
+        s.GetSelectedFieldValues("Id;TransId;Period;Depreciation", GetSelectedFieldValues);
     }
     function GetSelectedFieldValues(values) {
         selectedIDs = values.join(';');
@@ -51,6 +51,7 @@
         return size;
     };
 </script>
+
 <script type="text/javascript">
 
     function OnButtonClick() {
@@ -75,11 +76,14 @@
     }
 </script>
 
-@Html.DevExpress().FormLayout(settings =>
+@using (Html.BeginForm("Index", "Depreciation"))
+{
+    @Html.DevExpress().FormLayout(settings =>
 {
     settings.Name = "FormLayout";
     settings.Width = Unit.Percentage(100);
-    settings.Items.AddGroupItem(gsettings => {
+    settings.Items.AddGroupItem(gsettings =>
+    {
         gsettings.ColCount = 4;
         gsettings.Caption = IWSLocalResource.QueryDetail;
         gsettings.Items.Add(i =>
@@ -123,4 +127,5 @@
     });
 }).GetHtml()
 
-@Html.Partial("CallbackPanelPartialView")
+    @Html.Partial("CallbackPanelPartialView")
+}

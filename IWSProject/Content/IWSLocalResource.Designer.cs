@@ -691,6 +691,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Credit After.
+        /// </summary>
+        public static string CreditAfter {
+            get {
+                return ResourceManager.GetString("CreditAfter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Credit Before.
         /// </summary>
         public static string CreditBefore {
@@ -831,6 +840,15 @@ namespace IWSProject.Content {
         public static string debit {
             get {
                 return ResourceManager.GetString("debit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debit After.
+        /// </summary>
+        public static string DebitAfter {
+            get {
+                return ResourceManager.GetString("DebitAfter", resourceCulture);
             }
         }
         
@@ -1591,7 +1609,7 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Item Date.
+        ///   Looks up a localized string similar to Posted Date.
         /// </summary>
         public static string ItemDate {
             get {

@@ -291,6 +291,7 @@
         });
 
         #region Template Edit
+
         settings.SetEditFormTemplateContent(templateContent =>
         {
             var isValidated = DataBinder.Eval(templateContent.DataItem, "IsValidated");
@@ -488,6 +489,7 @@
         .Bind(ViewData["BankStatement"] ?? templateContent.DataItem)
         .Render();
         });
+        
         #endregion
 
         settings.DataBinding = (sender, e) =>

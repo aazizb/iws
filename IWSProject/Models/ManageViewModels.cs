@@ -74,7 +74,7 @@ namespace IWSProject.Models
         public string Owner { get; set; }
         public string StoreID { get; set; }
         public DateTime TransDate { get; set; }
-        public DateTime Itemdate { get; set; }
+        public DateTime ItemDate { get; set; }
         public DateTime EntryDate { get; set; }
         public string Periode { get; set; }
         public string oYear { get; set; }
@@ -86,6 +86,8 @@ namespace IWSProject.Models
         public decimal Amount { get; set; }
         public decimal DebitBefore { get; set; }
         public decimal CreditBefore { get; set; }
+        public decimal DebitAfter { get; set; }
+        public decimal CreditAfter { get; set; }
         public string Side { get; set; }
         public string CompanyID { get; set; }
         public string CompanyIBAN { get; set; }
@@ -366,7 +368,7 @@ namespace IWSProject.Models
         public string Name { get; set; }
         public string Account { get; set; }
         public string OAccount { get; set; }
-        public DateTime StartDate { get; set; }
+        public DateTime Period { get; set; }
         public DateTime AssetStartDate { get; set; }
         public int LifeSpan { get; set; }
         public int Frequency { get; set; }

@@ -3110,6 +3110,10 @@ namespace IWSProject.Models
 
         private System.DateTime _TransDate;
 
+        private System.DateTime _ItemDate;
+
+        private System.DateTime _EntryDate;
+
         private string _Periode;
 
         private string _OYear;
@@ -3129,6 +3133,10 @@ namespace IWSProject.Models
         private decimal _CreditAvantImputationAmount;
 
         private decimal _DebitAvantImputationAmount;
+
+        private decimal _CreditApresImputationAmount;
+
+        private decimal _DebitApresImputationAmount;
 
         private string _Side;
 
@@ -3241,7 +3249,37 @@ namespace IWSProject.Models
                 }
             }
         }
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_ItemDate", DbType = "DateTime NOT NULL")]
+        public System.DateTime ItemDate
+        {
+            get
+            {
+                return this._ItemDate;
+            }
+            set
+            {
+                if ((this._ItemDate != value))
+                {
+                    this._ItemDate = value;
+                }
+            }
+        }
 
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_EntryDate", DbType = "DateTime NOT NULL")]
+        public System.DateTime EntryDate
+        {
+            get
+            {
+                return this._EntryDate;
+            }
+            set
+            {
+                if ((this._EntryDate != value))
+                {
+                    this._EntryDate = value;
+                }
+            }
+        }
         [ColumnAttribute(Storage = "_Periode", DbType = "NChar(6) NOT NULL", CanBeNull = false)]
         public string Periode
         {
@@ -3398,6 +3436,38 @@ namespace IWSProject.Models
                 if ((this._DebitAvantImputationAmount != value))
                 {
                     this._DebitAvantImputationAmount = value;
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_CreditApresImputationAmount", DbType = "Money NOT NULL")]
+        public decimal CreditApresImputationAmount
+        {
+            get
+            {
+                return this._CreditApresImputationAmount;
+            }
+            set
+            {
+                if ((this._CreditApresImputationAmount != value))
+                {
+                    this._CreditApresImputationAmount = value;
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_DebitApresImputationAmount", DbType = "Money NOT NULL")]
+        public decimal DebitApresImputationAmount
+        {
+            get
+            {
+                return this._DebitApresImputationAmount;
+            }
+            set
+            {
+                if ((this._DebitApresImputationAmount != value))
+                {
+                    this._DebitApresImputationAmount = value;
                 }
             }
         }
