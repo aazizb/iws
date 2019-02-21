@@ -657,8 +657,8 @@
   <data name="Show" xml:space="preserve">
     <value>Montrer</value>
   </data>
-  <data name="IsUsed" xml:space="preserve">
-    <value>Est Utilisé?</value>
+  <data name="IsDebit" xml:space="preserve">
+    <value>Est Débit</value>
   </data>
   <data name="SubAccountOf" xml:space="preserve">
     <value>Sous-Compte de</value>

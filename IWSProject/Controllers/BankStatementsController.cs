@@ -418,7 +418,7 @@
                                     balance = Convert.ToDecimal(Fields[2]),
                                     CompanyID = companyId,
                                     ParentId = string.Empty,
-                                    IsUsed = true
+                                    IsDebit = true
                                 });
 
                             }
@@ -554,7 +554,7 @@
                                     balance = Convert.ToDecimal(dataSet.Tables[0].Rows[i][2].ToString()),
                                     CompanyID = companyId.ToString(),
                                     ParentId = string.Empty,
-                                    IsUsed = true
+                                    IsDebit = true
                                 };
                                 Accounts.Add(Account);
                             }

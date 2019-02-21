@@ -618,8 +618,8 @@
   <data name="IsService" xml:space="preserve">
     <value>Ist-Service?</value>
   </data>
-  <data name="IsUsed" xml:space="preserve">
-    <value>verwendet?</value>
+  <data name="IsDebit" xml:space="preserve">
+    <value>Is Debit</value>
   </data>
   <data name="IsValidated" xml:space="preserve">
     <value>Validiert?</value>

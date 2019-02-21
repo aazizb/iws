@@ -47,7 +47,7 @@ namespace IWSProject.Controllers
             item.ModelId = (int)IWSLookUp.MetaModelId.Account;
             item.Posted = DateTime.Now.Date;
             item.Updated = DateTime.Now.Date;
-            item.IsUsed = true;
+            item.IsDebit = true;
             ViewData["accounts"] = item;
             if (ModelState.IsValid)
             {

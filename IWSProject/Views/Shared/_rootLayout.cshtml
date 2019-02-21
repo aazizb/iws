@@ -26,8 +26,14 @@
         window.location = "/Account/LogOff";
     }
     function OnItemClick(s, e) {
-        var name = e.item.name;
-        CallbackPanel.PerformCallback({ itemName: name });
+        //var name = e.item.name;
+        //CallbackPanel.PerformCallback({ itemName: name });
+        var item = e.item.name;
+        s.SetSelectedItem(s.GetItemByName(item));
+
+        //alert("item: " + item);
+        //var group = e.item.group.name;
+        //alert("group: " + group);
     }
     function LoadData(e) {
         e.preventDefault();

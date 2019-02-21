@@ -1555,6 +1555,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Is Debit.
+        /// </summary>
+        public static string IsDebit {
+            get {
+                return ResourceManager.GetString("IsDebit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Result.
         /// </summary>
         public static string IsResultSheetAccount {
@@ -1569,15 +1578,6 @@ namespace IWSProject.Content {
         public static string IsService {
             get {
                 return ResourceManager.GetString("IsService", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Is Used?.
-        /// </summary>
-        public static string IsUsed {
-            get {
-                return ResourceManager.GetString("IsUsed", resourceCulture);
             }
         }
         

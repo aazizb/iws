@@ -224,10 +224,9 @@
                 Id = i.id,
                 Name = i.name,
                  i.CompanyID,
-                 i.IsUsed
+                 i.IsDebit
             })
-            .Where(c => c.CompanyID == companyID
-                            && c.IsUsed.Equals(true))
+            .Where(c => c.CompanyID == companyID)
             .OrderBy(o => o.Name);
             return account;
         }
@@ -1279,7 +1278,7 @@
             (
             from ac in IWSEntities.GetAccounts()
             where
-              (ac.CompanyID == companyID) && (ac.IsUsed.Equals(true))
+              (ac.CompanyID == companyID) 
             select new
             {
                 Id = ac.id,

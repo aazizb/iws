@@ -28,7 +28,7 @@ namespace IWSProject.Models.Entities
 
         private string _ParentId;
 
-        private bool _IsUsed;
+        private bool _IsDebit;
 
         private bool _IsBalanceSheetAccount;
 
@@ -86,8 +86,8 @@ namespace IWSProject.Models.Entities
         partial void OnCompanyIDChanged();
         partial void OnParentIdChanging(string value);
         partial void OnParentIdChanged();
-        partial void OnIsUsedChanging(bool value);
-        partial void OnIsUsedChanged();
+        partial void OnIsDebitChanging(bool value);
+        partial void OnIsDebitChanged();
         partial void OnIsBalanceSheetAccountChanging(bool value);
         partial void OnIsBalanceSheetAccountChanged();
         partial void OnPostedChanging(DateTime value);
@@ -279,22 +279,22 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_IsUsed", DbType = "Bit NOT NULL")]
-        public bool IsUsed
+        [ColumnAttribute(Storage = "_IsDebit", DbType = "Bit NOT NULL")]
+        public bool IsDebit
         {
             get
             {
-                return this._IsUsed;
+                return this._IsDebit;
             }
             set
             {
-                if ((this._IsUsed != value))
+                if ((this._IsDebit != value))
                 {
-                    this.OnIsUsedChanging(value);
+                    this.OnIsDebitChanging(value);
                     this.SendPropertyChanging();
-                    this._IsUsed = value;
-                    this.SendPropertyChanged("IsUsed");
-                    this.OnIsUsedChanged();
+                    this._IsDebit = value;
+                    this.SendPropertyChanged("IsDebit");
+                    this.OnIsDebitChanged();
                 }
             }
         }

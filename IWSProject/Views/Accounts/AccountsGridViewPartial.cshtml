@@ -65,7 +65,7 @@
             e.NewValues["dateofopen"] = DateTime.Now;
             e.NewValues["dateofclose"] = DateTime.Now;
             e.NewValues["balance"] = 0;
-            e.NewValues["IsUsed"] = true;
+            e.NewValues["IsDebit"] = true;
             e.NewValues["IsBalanceSheetAccount"] = false;
             e.NewValues["IsResultAccount"] = false;
         };
@@ -173,6 +173,15 @@
         });
         settings.Columns.Add(column =>
         {
+            column.FieldName = "IsDebit";
+            column.Caption = IWSLocalResource.IsDebit;
+            column.Width = Unit.Percentage(5);
+            column.EditorProperties().CheckBox(checkBox =>
+            {
+            });
+        });
+        settings.Columns.Add(column =>
+        {
             column.FieldName = "IsBalanceSheetAccount";
             column.Caption = IWSLocalResource.IsBalanceSheetAccount;
             column.Width = Unit.Percentage(5);
@@ -206,7 +215,6 @@
                 d.DisplayFormatInEditMode = true;
                 d.AllowUserInput = true;
                 d.AllowMouseWheel = true;
-
             });
         });
         settings.Columns.Add(column =>
@@ -368,11 +376,13 @@
                         d.Properties.AllowMouseWheel = true;
                     });
                 });
+                formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
-                    i.FieldName = "IsUsed";
-                    i.Visible = false;
-                    i.Caption = IWSLocalResource.IsUsed;
+                    i.FieldName = "IsDebit";
+                    i.Visible = true;
+                    i.Caption = IWSLocalResource.IsDebit;
                     i.NestedExtension().CheckBox(e =>
                     {
 

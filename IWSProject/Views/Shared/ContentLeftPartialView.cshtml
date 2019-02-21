@@ -17,13 +17,16 @@
     settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
     settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
 
-    settings.Styles.Item.SelectedStyle.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
-    settings.Styles.Item.SelectedStyle.Font.Bold = true;
-    settings.Styles.Item.SelectedStyle.Font.Underline = true;
+    //settings.Styles.Item.SelectedStyle.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+    //settings.Styles.Item.SelectedStyle.Font.Bold = true;
+    //settings.Styles.Item.SelectedStyle.Font.Underline = true;
+
+    //settings.SyncSelectionMode = SyncSelectionMode.CurrentPath;
 
     settings.ItemLinkMode = ItemLinkMode.TextOnly;
     settings.AllowSelectItem = true;
     settings.EnableHotTrack = true;
+    settings.ClientSideEvents.ItemClick= "function(s, e) { OnItemClick(s,e); }";
 
     ResourceManager rm = new ResourceManager(typeof(IWSLocalResource));
 
