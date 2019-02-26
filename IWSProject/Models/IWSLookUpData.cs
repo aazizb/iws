@@ -2466,8 +2466,9 @@
                                             TCredit = (Decimal)s.TCredit,
                                             SDebit = (Decimal)s.SDebit,
                                             SCredit = (Decimal)s.SCredit,
+                                            
                                             Currency=s.Currency,
-                                            Balance=(decimal)s.Balance
+                                            Balance = (s.IsDebit==true) ? (Decimal)s.TDebit - (Decimal)s.TCredit : (Decimal)s.TCredit - (Decimal)s.TDebit
                                         }).ToList();
             return r;
         }

@@ -264,7 +264,7 @@
     <Content Include="Views\Shared\HeaderMenuPartialView.cshtml" />
     <Content Include="Views\Accounts\AccountsGridViewPartial.cshtml" />
     <Content Include="Views\Accounts\Index.cshtml" />
-    <Content Include="Views\Articles\Index.cshtml" />
+    <Content Include="Views\Articles\XXIndex.cshtml" />
     <Content Include="Views\Balance\AccountBalancePartialView.cshtml" />
     <Content Include="Views\Balance\Index.cshtml" />
     <Content Include="Views\Balance\_CallbackPartialView.cshtml" />
@@ -667,6 +667,7 @@
     <EmbeddedResource Include="Content\IWSLocalResource.de-DE.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>IWSLocalResource.de-DE.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Reports\AccountBalance.resx">

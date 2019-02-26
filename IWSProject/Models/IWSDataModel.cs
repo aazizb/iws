@@ -2834,6 +2834,8 @@ namespace IWSProject.Models
 
         private Nullable<bool> _IsResult;
 
+        private Nullable<bool> _IsDebit;
+
         public AccountBalanceResult()
         {
         }
@@ -3090,6 +3092,22 @@ namespace IWSProject.Models
                 if ((this._IsResult != value))
                 {
                     this._IsResult = value;
+                }
+            }
+        }
+
+        [ColumnAttribute(Storage = "_IsDebit", DbType = "Bit")]
+        public Nullable<bool> IsDebit
+        {
+            get
+            {
+                return this._IsDebit;
+            }
+            set
+            {
+                if ((this._IsDebit != value))
+                {
+                    this._IsDebit = value;
                 }
             }
         }

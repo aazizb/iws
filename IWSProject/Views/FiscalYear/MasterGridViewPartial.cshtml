@@ -123,28 +123,6 @@
         column.Width = Unit.Percentage(7);
         column.Visible = false;
     });
-
-    settings.Columns.Add(column =>
-    {
-        column.FieldName = "Debit";
-        column.Caption = IWSLocalResource.debit;
-        column.Width = Unit.Percentage(12);
-        column.EditorProperties().TextBox(textBox =>
-        {
-            textBox.DisplayFormatString = "N";
-        });
-    });
-    settings.Columns.Add(column =>
-    {
-        column.FieldName = "Credit";
-        column.Caption = IWSLocalResource.credit;
-        column.Width = Unit.Percentage(12);
-        column.EditorProperties().TextBox(textBox =>
-        {
-            textBox.DisplayFormatString = "N";
-        });
-    });
-
     settings.Columns.Add(column =>
     {
         column.FieldName = "IDebit";
@@ -165,7 +143,26 @@
             textBox.DisplayFormatString = "N";
         });
     });
-
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Debit";
+        column.Caption = IWSLocalResource.debit;
+        column.Width = Unit.Percentage(12);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "Credit";
+        column.Caption = IWSLocalResource.credit;
+        column.Width = Unit.Percentage(12);
+        column.EditorProperties().TextBox(textBox =>
+        {
+            textBox.DisplayFormatString = "N";
+        });
+    });
     settings.Columns.Add(column =>
     {
         column.FieldName = "FDebit";
@@ -186,7 +183,6 @@
             textBox.DisplayFormatString = "N";
         });
     });
-
     //settings.Columns.Add(column =>
     //{
     //    column.FieldName = "InitialBalance";

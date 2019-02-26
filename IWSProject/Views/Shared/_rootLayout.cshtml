@@ -19,7 +19,7 @@
                     )
     <script type="text/javascript">
     var sessionTimeout = @Session.Timeout;
-    var timeout = parseInt(sessionTimeout) * 60 * 1000;
+    var timeout = parseInt(sessionTimeout) * 120 * 1000;
     setTimeout('SessionEnd()', timeout);
 
     function SessionEnd() {
@@ -30,7 +30,8 @@
         //CallbackPanel.PerformCallback({ itemName: name });
         var item = e.item.name;
         s.SetSelectedItem(s.GetItemByName(item));
-
+        e.Item.Text += " is clicked";
+        e.Item.Enable = false;
         //alert("item: " + item);
         //var group = e.item.group.name;
         //alert("group: " + group);

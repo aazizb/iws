@@ -108,15 +108,7 @@
     });
     settings.CustomSummaryCalculate = (s, e) =>
     {
-        ASPxSummaryItem item = ((ASPxSummaryItem)e.Item);
 
-        if (item.FieldName != "Currency")
-            return;
-
-        if (e.IsGroupSummary)
-        {
-            e.TotalValue = e.GetValue("Currency");
-        }
     };
     settings.SummaryDisplayText = (sender, e) =>
     {
@@ -125,11 +117,38 @@
             e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
         }
     };
+
+    settings.CustomSummaryCalculate = (s, e) =>
+    {
+        ASPxSummaryItem item = ((ASPxSummaryItem)e.Item);
+        //var grid = (MVCxGridView)s;
+        if (item.FieldName == "Balance")
+        {
+            if (e.IsGroupSummary)
+            {
+                ASPxSummaryItem debit = (s as ASPxGridView).GroupSummary["TDebit"];
+                ASPxSummaryItem credit = (s as ASPxGridView).GroupSummary["TCredit"];
+                decimal sumDebit = Convert.ToDecimal(e.GetGroupSummary(e.GroupRowHandle, debit));
+                decimal sumCredit = Convert.ToDecimal(e.GetGroupSummary(e.GroupRowHandle, credit));//Convert.ToDouble(e.GetGroupSummary(e.GroupRowHandle, gridView.GroupSummary["TCredit"]));
+                e.TotalValue = sumDebit - sumCredit;
+            }
+        }
+        if (item.FieldName == "Currency")
+        {
+            if (e.IsGroupSummary)
+            {
+                e.TotalValue = e.GetValue("Currency");
+            }
+        }
+
+
+    };
     settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleIfExpanded;
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TDebit").ShowInGroupFooterColumn = "TDebit";
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TCredit").ShowInGroupFooterColumn = "TCredit";
-    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Balance").ShowInGroupFooterColumn = "Balance";
+    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Balance").ShowInGroupFooterColumn = "Balance";
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
+
 
 }).Bind(Model).GetHtml()
 

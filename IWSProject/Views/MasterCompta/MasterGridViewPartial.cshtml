@@ -502,7 +502,7 @@
                         s.Width = Unit.Percentage(93);
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
-                        s.ReadOnly = true;
+                        //s.ReadOnly = true;
                         s.TabIndex = 6;
                     });
                 });
@@ -549,7 +549,7 @@
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
                         s.TabIndex = 7;
-                        s.ReadOnly = true;
+                        //s.ReadOnly = true;
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
@@ -602,7 +602,6 @@
             .Render();
         });
         #endregion
-
 
         settings.SetDetailRowTemplateContent(c =>
         {

@@ -479,6 +479,9 @@ namespace IWSProject.Models
         public decimal SCredit { get; set; }
         public decimal Balance { get; set; }
         public string Currency { get; set; }
+        public bool IsDebit { get; set; }
+        public decimal SumDebit { get; set; }
+        public decimal SumCredit { get; set; }
     }
     public class ResultsDialogViewModel
     {

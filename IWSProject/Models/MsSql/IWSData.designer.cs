@@ -22,7 +22,7 @@ namespace IWSProject.Models.MsSql
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="DB_A18F7E_xx")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="DB_A18F7E_iws_33")]
 	public partial class IWSDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -2891,8 +2891,10 @@ namespace IWSProject.Models.MsSql
 		private System.Nullable<bool> _IsBalance;
 		
 		private System.Nullable<bool> _IsResult;
-		
-		public AccountBalanceResult()
+
+        private System.Nullable<bool> _IsDebit;
+
+        public AccountBalanceResult()
 		{
 		}
 		
@@ -3151,7 +3153,22 @@ namespace IWSProject.Models.MsSql
 				}
 			}
 		}
-	}
+        [global::System.Data.Linq.Mapping.ColumnAttribute(Storage = "_IsDebit", DbType = "Bit")]
+        public System.Nullable<bool> IsDebit
+        {
+            get
+            {
+                return this._IsDebit;
+            }
+            set
+            {
+                if ((this._IsDebit != value))
+                {
+                    this._IsDebit = value;
+                }
+            }
+        }
+    }
 	
 	public partial class PeriodicBalancesResult
 	{
