@@ -267,7 +267,11 @@
         {
             return PartialView("ImportCSV", RootFolder);
         }
-
+        [ValidateInput(false)]
+        public ActionResult ImportMasterFiles()
+        {
+            return PartialView("ImportMasterFilesPartial", RootFolder);
+        }
         [ValidateInput(false)]
         public ActionResult ImportCSVPartial()
         {
@@ -1380,7 +1384,6 @@
                 ViewData["GenericError"] = ex.Message;
                 IWSLookUp.LogException(ex);
                 return false;
-                
             }
         }
         private class Helper

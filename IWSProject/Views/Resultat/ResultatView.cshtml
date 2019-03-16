@@ -5,24 +5,26 @@
 <script type="text/javascript">
     var vClassId = null;
     var vStart = null;
-    var vEnd = null;
+    
     function OnSubmitClick(s, e) {
         vClassId = ClassId.GetValue();
         vStart = fromYearMonth.GetText();
-        vEnd = toYearMonth.GetText();
+        
         callbackPartialView.PerformCallback();
     }
     function OnBeginCallback(s, e) {
         e.customArgs["ClassId"] = vClassId;
         e.customArgs["Start"] = vStart;
-        e.customArgs["End"] = vEnd;
+
     }
 </script>
 
 @{
     ViewBag.Title = IWSLocalResource.BalanceSheet;
 }
-
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.DevExpress().FormLayout(settings =>
 {
     settings.Name = "FormLayout";
@@ -48,19 +50,19 @@
         });
         gsettings.Items.Add(i =>
         {
-            i.Caption = IWSLocalResource.PeriodFrom;
+            i.Caption = IWSLocalResource.periode;
             i.SetNestedContent(() => {
                 Html.RenderPartial("FromYearMonthDateEditPartialView");
             });
         });
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = IWSLocalResource.PeriodTo;
-            i.SetNestedContent(() =>
-            {
-                Html.RenderPartial("ToYearMonthDateEditPartialView");
-            });
-        });
+        //gsettings.Items.Add(i =>
+        //{
+        //    i.Caption = IWSLocalResource.PeriodTo;
+        //    i.SetNestedContent(() =>
+        //    {
+        //        Html.RenderPartial("ToYearMonthDateEditPartialView");
+        //    });
+        //});
         gsettings.Items.Add(i =>
         {
             i.Caption = " ";

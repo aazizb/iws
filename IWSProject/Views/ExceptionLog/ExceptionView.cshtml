@@ -17,17 +17,11 @@
             s.ShowCustomizationWindow();
     }
 </script>
-@using IWSProject.Content
 @{
     ViewBag.Title = IWSLocalResource.LogException;
 }
-@*@Html.DevExpress().Button(settings =>
-{
-    settings.Name = "btnShowHide";
-    settings.Text = IWSLocalResource.Hide;
-    settings.Width = Unit.Pixel(100);
-    settings.UseSubmitBehavior = false;
-    settings.ClientSideEvents.Click = "OnButtonClick";
-}).GetHtml()*@
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Partial("ShowHideButtonPartialView")
 @Html.Action("ExceptionsGridViewPartial")

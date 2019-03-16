@@ -1456,6 +1456,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import SAGE.
+        /// </summary>
+        public static string ImportSage {
+            get {
+                return ResourceManager.GetString("ImportSage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import Time Sheets.
         /// </summary>
         public static string ImportTimeSheets {

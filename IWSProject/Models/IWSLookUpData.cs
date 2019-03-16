@@ -266,6 +266,12 @@
                        a.name
                    } ;
         }
+        public static bool IsIncomesStatementChild(string accountId, string companyID)
+        {
+            string incomesId = IWSEntities.Companies.SingleOrDefault(c => c.id == companyID).IncomesStatement;
+            bool isChild = IWSEntities.GetChildren(incomesId, companyID).Any(c => c.id == accountId);
+            return isChild;
+        }
         public static IEnumerable GetAccount(string account, string transType)
         {
             string accountid = String.Empty;
@@ -601,6 +607,7 @@
         //            });
         //    return detail;
         //}
+
         public static IEnumerable GetDepreciation() =>
             IWSEntities.Depreciations.Where(c => 
             c.CompanyId == (string)HttpContext.Current.Session["CompanyID"]).AsEnumerable();
@@ -830,7 +837,7 @@
                         } into g
                         select new
                         {
-                            Cummule = g.Sum(p => p.j.Amount)==null? 0 : g.Key.oTotal - g.Sum(p => p.j.Amount)
+                            Cummule = g.Key.oTotal - g.Sum(p => p.j.Amount) //g.Sum(p => p.j.Amount)==null? 0 :
                         }).FirstOrDefault().Cummule.Value;
             }
             return 0;
@@ -1034,33 +1041,72 @@
 
             return lines;
         }
-        public static BeforeAmountViewModel GetBeforeAmount(string accountId, string period)
+        public static BeforeAmountViewModel GetBeforeAmount(string accountId, string period, string companyId)
         {
-
-            BeforeAmountViewModel amount = (from p in
-                             (from item in IWSEntities.PeriodicAccountBalances
-                              where
-                                item.AccountId == accountId &&
-                                item.Periode == period
-                              select new
-                              {
-                                  item.Debit ,
-                                  item.Credit,
-                                  Dummy = "x"
-                              })
-                                             group p by new { p.Dummy } into g
+            bool isIncomesChild = IsIncomesStatementChild(accountId, companyId);
+            BeforeAmountViewModel amount = new BeforeAmountViewModel();
+            if (isIncomesChild)
+            {
+                string oYear = period.Substring(0, 4);
+                amount = (from p in IWSEntities.PeriodicAccountBalances
+                        where
+                            p.AccountId == accountId &&
+                            p.CompanyID == companyId &&
+                            p.oYear == oYear &&
+                            Convert.ToInt32(p.Periode) < Convert.ToInt32(period)
+                        orderby
+                            Convert.ToInt32(p.Periode) descending
+                        select new BeforeAmountViewModel()
+                        {
+                            IDebit = p.IDebit,
+                            ICredit = p.ICredit,
+                            Debit = p.Debit,
+                            Credit = p.Credit
+                        }).FirstOrDefault();
+            }
+            else
+            {
+                amount = (from p in IWSEntities.PeriodicAccountBalances
+                        where
+                        p.AccountId == accountId &&
+                        p.CompanyID == p.CompanyID &&
+                        Convert.ToInt32(p.Periode) < Convert.ToInt32(period)
+                        orderby
+                        Convert.ToInt32(p.Periode) descending
+                        select new BeforeAmountViewModel()
+                        {
+                            IDebit = p.IDebit,
+                            ICredit = p.ICredit,
+                            Debit = p.Debit,
+                            Credit = p.Credit
+                        }).FirstOrDefault();
+            }
+            if (amount == null)
+                amount = new BeforeAmountViewModel() { IDebit = 0, ICredit = 0, Debit = 0, Credit = 0 };
+            return amount;
+        }
+        public static BeforeAmountViewModel GetBeforeAmount(string accountId)
+        {
+            BeforeAmountViewModel amount = (from p in IWSEntities.PeriodicAccountBalances
+                                             where
+                                               p.AccountId == accountId
+                                             orderby
+                                               Convert.ToInt32(p.Periode) descending
                                              select new BeforeAmountViewModel()
                                              {
-                                                 Debit = Convert.ToDecimal(g.Sum(p => p.Debit)),
-                                                 Credit = Convert.ToDecimal(g.Sum(p => p.Credit))
-                                             }).SingleOrDefault();
+                                                 IDebit = p.IDebit,
+                                                 ICredit = p.ICredit,
+                                                 Debit = p.Debit,
+                                                 Credit = p.Credit
+                                             }).FirstOrDefault();
             if (amount == null)
             {
-                amount = new BeforeAmountViewModel() { Debit = 0, Credit = 0 };
-
+                amount = new BeforeAmountViewModel() {IDebit =0, ICredit = 0, Debit = 0, Credit = 0 };
             }
             return amount;
         }
+
+
         public static List<DetailDetailViewModel> GetNewLineDetailDetail(int detailId, int OID, int modelId)
         {
             List<DetailDetailViewModel> detail = new List<DetailDetailViewModel>( from d in IWSEntities.DetailComptas
@@ -2004,7 +2050,7 @@
                          ICredit = (decimal)p.ICredit,
                          Currency = p.Currency,
                          CompanyID = p.CompanyId
-                     }).Where(c => ExactMatch(accountId, c.AccountID)==true).OrderBy(o => o.AccountID).ThenBy(o => o.Periode).ToList();
+                     }).Where(c => (c.Debit!=0 || c.Credit!=0) && ExactMatch(accountId, c.AccountID)==true ).OrderBy(o => o.AccountID).ThenBy(o => o.Periode).ToList();
             return items;
         }
 
@@ -2124,6 +2170,11 @@
                                     Currency = j.Currency,
                                     CompanyID = j.CompanyID,
                                     TypeJournal = j.TypeJournal,
+                                    ModelId = j.ModelId,
+                                    CompanyIBAN = j.CompanyIBAN,
+                                    IBAN = j.IBAN,
+                                    StoreName = j.StoreName,
+                                    CostCenterName = j.CostCenterName
                                 }).Where(c => (ExactMatch(accountId, c.Account) == true) && (c.Side == "Debit")).OrderBy(o => o.pk).ToList();
 
                 }
@@ -2159,6 +2210,11 @@
                                     Currency = j.Currency,
                                     CompanyID = j.CompanyID,
                                     TypeJournal = j.TypeJournal,
+                                    ModelId = j.ModelId,
+                                    CompanyIBAN = j.CompanyIBAN,
+                                    IBAN = j.IBAN,
+                                    StoreName = j.StoreName,
+                                    CostCenterName = j.CostCenterName
                                 }).Where(c => c.Side == "Debit").OrderBy(o => o.pk).ToList();
 
                 }
@@ -2195,7 +2251,12 @@
                                     Side = j.Side,
                                     Currency = j.Currency,
                                     CompanyID = j.CompanyID,
-                                    TypeJournal = j.TypeJournal
+                                    TypeJournal = j.TypeJournal,
+                                    ModelId = j.ModelId,
+                                    CompanyIBAN = j.CompanyIBAN,
+                                    IBAN = j.IBAN,
+                                    StoreName = j.StoreName,
+                                    CostCenterName = j.CostCenterName
                                 }).Where(c => (ExactMatch(accountId, c.Account) == true) && (c.Side == "Credit")).OrderBy(o => o.pk).ToList();
 
                 }
@@ -2229,7 +2290,12 @@
                                     Side = j.Side,
                                     Currency = j.Currency,
                                     CompanyID = j.CompanyID,
-                                    TypeJournal = j.TypeJournal
+                                    TypeJournal = j.TypeJournal,
+                                    ModelId = j.ModelId,
+                                    CompanyIBAN = j.CompanyIBAN,
+                                    IBAN = j.IBAN,
+                                    StoreName = j.StoreName,
+                                    CostCenterName = j.CostCenterName
                                 }).Where(c => c.Side == "Credit").OrderBy(o => o.pk).ToList();
                 }
             }
@@ -2450,9 +2516,9 @@
             return report;
         }
  
-        public static IEnumerable GetResultat(string classId, string start, string end, string company, bool isBalance)
+        public static IEnumerable GetResultat(string classId, string start,  string company, bool isBalance)
         {
-            List<ResultsViewModel> r = (from s in IWSEntities.AccountBalance(classId, start, end, company, isBalance)
+            List<ResultsViewModel> r = (from s in IWSEntities.AccountBalance(classId, start, company, isBalance)
                                         where s.SDebit != s.SCredit
                                         select new ResultsViewModel()
                                         {
@@ -2466,7 +2532,6 @@
                                             TCredit = (Decimal)s.TCredit,
                                             SDebit = (Decimal)s.SDebit,
                                             SCredit = (Decimal)s.SCredit,
-                                            
                                             Currency=s.Currency,
                                             Balance = (s.IsDebit==true) ? (Decimal)s.TDebit - (Decimal)s.TCredit : (Decimal)s.TCredit - (Decimal)s.TDebit
                                         }).ToList();
@@ -2830,6 +2895,7 @@
             string userName = (string)HttpContext.Current.Session["UserName"];
             int result = IWSEntities.LogException(msg, type, source, url, target, companyID, userName);
         }
+
         public static string GetModelSateErrors(System.Web.Mvc.ModelStateDictionary modelState)
         {
             return string.Join("; ", modelState.Values

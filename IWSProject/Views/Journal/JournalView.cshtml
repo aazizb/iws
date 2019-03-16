@@ -55,82 +55,88 @@
     }
 </script>
 
-    @Html.DevExpress().FormLayout(settings =>
+@{
+    ViewBag.Title = IWSLocalResource.journal;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
+@Html.DevExpress().FormLayout(settings =>
 {
-    settings.Name = "FormLayout";
-    settings.Width = Unit.Percentage(100);
-    settings.Items.AddGroupItem(gsettings => {
-        gsettings.ColCount = 7;
-        gsettings.Caption = IWSLocalResource.QueryDetail;
-        gsettings.Items.Add(i =>
+settings.Name = "FormLayout";
+settings.Width = Unit.Percentage(100);
+settings.Items.AddGroupItem(gsettings => {
+    gsettings.ColCount = 7;
+    gsettings.Caption = IWSLocalResource.QueryDetail;
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = IWSLocalResource.account;
+        i.SetNestedContent(() =>
         {
-            i.Caption = IWSLocalResource.account;
-            i.SetNestedContent(() =>
-            {
-                Html.RenderPartial("GridLookupPartial");
-            });
-        });
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = IWSLocalResource.PeriodFrom;
-            i.SetNestedContent(() => {
-                Html.RenderPartial("FromYearMonthDateEditPartialView");
-            });
-        });
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = IWSLocalResource.PeriodTo;
-            i.SetNestedContent(() =>
-            {
-                Html.RenderPartial("ToYearMonthDateEditPartialView");
-            });
-        });
-
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = IWSLocalResource.debit;
-            i.Name = "side";
-            i.NestedExtension().CheckBox(e =>
-            {
-                e.Checked = true;
-            });
-        });
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = " ";
-            i.Name = "btnSubmit";
-            i.NestedExtension().Button(e =>
-            {
-                e.Name = "btnOk";
-                e.Text = IWSLocalResource.Validate;
-                e.ControlStyle.CssClass = "button";
-                e.Width = Unit.Pixel(105);
-                e.ClientSideEvents.Click = "OnSubmitClick";
-                e.UseSubmitBehavior = false;
-            });
-        });
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = " ";
-            i.Name = "btnExp";
-            i.NestedExtension().Button(e =>
-            {
-                e.Name = "btnExport";
-                e.Text = IWSLocalResource.Export;
-                e.Width = Unit.Pixel(105);
-                e.UseSubmitBehavior = false;
-                e.RouteValues = new { Controller = "Journal", Action = "Export" };
-            });
-        });
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = " ";
-            i.SetNestedContent(() =>
-            {
-                Html.RenderPartial("ShowHideButtonPartialView");
-            });
+            Html.RenderPartial("GridLookupPartial");
         });
     });
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = IWSLocalResource.PeriodFrom;
+        i.SetNestedContent(() => {
+            Html.RenderPartial("FromYearMonthDateEditPartialView");
+        });
+    });
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = IWSLocalResource.PeriodTo;
+        i.SetNestedContent(() =>
+        {
+            Html.RenderPartial("ToYearMonthDateEditPartialView");
+        });
+    });
+
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = IWSLocalResource.debit;
+        i.Name = "side";
+        i.NestedExtension().CheckBox(e =>
+        {
+            e.Checked = true;
+        });
+    });
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = " ";
+        i.Name = "btnSubmit";
+        i.NestedExtension().Button(e =>
+        {
+            e.Name = "btnOk";
+            e.Text = IWSLocalResource.Validate;
+            e.ControlStyle.CssClass = "button";
+            e.Width = Unit.Pixel(105);
+            e.ClientSideEvents.Click = "OnSubmitClick";
+            e.UseSubmitBehavior = false;
+        });
+    });
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = " ";
+        i.Name = "btnExp";
+        i.NestedExtension().Button(e =>
+        {
+            e.Name = "btnExport";
+            e.Text = IWSLocalResource.Export;
+            e.Width = Unit.Pixel(105);
+            e.UseSubmitBehavior = false;
+            e.RouteValues = new { Controller = "Journal", Action = "Export" };
+        });
+    });
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = " ";
+        i.SetNestedContent(() =>
+        {
+            Html.RenderPartial("ShowHideButtonPartialView");
+        });
+    });
+});
 }).GetHtml()
 
 @Html.Partial("_CallbackPartialView")

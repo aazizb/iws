@@ -1,5 +1,12 @@
 ﻿@using IWSProject.Content;
 @model string
+
+@{
+    ViewBag.Title = IWSLocalResource.ImportCash;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.DevExpress().FileManager(settings =>
 {
     settings.Name = "FileManager";

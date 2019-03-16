@@ -17,20 +17,19 @@
     settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
     settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
 
+    settings.Styles.Item.HoverStyle.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
     settings.Styles.Item.SelectedStyle.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
-    settings.ItemLinkMode = ItemLinkMode.TextOnly;
+    //settings.ItemLinkMode = ItemLinkMode.TextOnly;
 
-    //settings.Styles.Item.SelectedStyle.Font.Bold = true;
+    settings.AllowSelectItem = true;
+    settings.EnableHotTrack = true;
+    settings.EnableClientSideAPI = true;
+    settings.Styles.Item.SelectedStyle.Font.Bold = true;
     //settings.Styles.Item.SelectedStyle.Font.Underline = true;
     settings.Styles.Link.HoverColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
     settings.Styles.Link.Color= System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
-    //settings.SyncSelectionMode = SyncSelectionMode.CurrentPath;
-    //settings.AllowSelectItem = true;
-    //settings.EnableHotTrack = true;
-    //settings.EncodeHtml = false;
-    settings.EnableClientSideAPI = true;
     settings.ClientSideEvents.ItemClick= "function(s, e) { OnItemClick(s,e); }";
 
     ResourceManager rm = new ResourceManager(typeof(IWSLocalResource));
@@ -62,7 +61,7 @@
                         item.Text = rm.GetString(mc.Name);
                         item.SetTextTemplateContent(c =>
                         {
-                            ViewContext.Writer.Write(Ajax.ActionLink(item.Text, mc.Action, mc.Controller, new AjaxOptions
+                            ViewContext.Writer.Write(Ajax.ActionLink(item.Text, mc.Action, mc.Controller, new { _item = item.Text }, new AjaxOptions
                             {
                                 HttpMethod = "GET",
                                 InsertionMode = InsertionMode.Replace,
@@ -70,6 +69,18 @@
                             }).ToString());
                         });
                     });
+
+
+                    //group.Items.Add(item =>
+                    //{
+                    //    item.Name = mc.Name;
+                    //    item.Text = rm.GetString(mc.Name);
+                    //    item.SetTextTemplateContent(c =>
+                    //    {
+                    //        ViewContext.Writer.Write(Html.ActionLink(item.Text, mc.Action, mc.Controller, new { _item = item.Text }, new { onclick = "LoadData(event)" }).ToString());
+                    //    });
+                    //});
+
                 }
             });
         }

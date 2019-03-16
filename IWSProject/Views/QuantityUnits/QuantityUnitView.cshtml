@@ -1,4 +1,5 @@
-﻿@model IEnumerable<IWSProject.Models.Entities.QuantityUnit>
+﻿@using IWSProject.Content
+@model IEnumerable<IWSProject.Models.Entities.QuantityUnit>
 <script type="text/javascript">
 
     function OnButtonClick() {
@@ -26,7 +27,12 @@
         $("#LastLayoutQu").text(layout)
     }
 </script>
-
+@{
+    ViewBag.Title = IWSLocalResource.quantityunit;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Partial("ShowHideButtonPartialView")
 
 @Html.Action("QuantityUnitsGridViewPartial", Model)

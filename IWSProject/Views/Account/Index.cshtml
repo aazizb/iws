@@ -3,10 +3,15 @@
     function OnRowClicked(s, e, url) {
 
         var destUrl = url + "/" + s.GetRowKey(e.visibleIndex);
-        window.location.href = destUrl;}
+        window.location.href = destUrl;
+    }
 </script>
+
 @{
-    ViewBag.Title = IWSLocalResource.IWS;
+    ViewBag.Title = IWSLocalResource.RolesAssignement;
 }
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Partial("UsersList")
 

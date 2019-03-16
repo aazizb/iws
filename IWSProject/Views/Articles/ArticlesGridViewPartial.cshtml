@@ -34,10 +34,10 @@
 
         settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
-        ////performance tuning
-        settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
-        //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
-        settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
+////performance tuning
+settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
+//settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
+settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
@@ -258,9 +258,9 @@
         });
 
 
-        #region Template Edit
+#region Template Edit
 
-        settings.SetEditFormTemplateContent(templateContent =>
+settings.SetEditFormTemplateContent(templateContent =>
         {
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
@@ -613,10 +613,10 @@
             .Render();
         });
 
-        #endregion
+#endregion
 
 
-        settings.DataBinding = (sender, e) =>
+settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(Article));
         };

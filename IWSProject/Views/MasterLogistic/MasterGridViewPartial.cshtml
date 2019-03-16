@@ -245,6 +245,42 @@
         });
         settings.Columns.Add(column =>
         {
+            column.FieldName = "ItemDate";
+            column.Caption = IWSLocalResource.ItemDate;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(8);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormatString = "MM/dd/yyyy";
+                d.NullDisplayText = "MM/dd/yyyy";
+                d.EditFormat = EditFormat.Custom;
+                d.Width = Unit.Percentage(100);
+                d.DisplayFormatString = "yyyy-MM-dd";
+                d.DisplayFormatInEditMode = true;
+                d.AllowUserInput = true;
+                d.AllowMouseWheel = true;
+            });
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "EntryDate";
+            column.Caption = IWSLocalResource.EntryDate;
+            column.ColumnType = MVCxGridViewColumnType.DateEdit;
+            column.Width = Unit.Percentage(8);
+            column.EditorProperties().DateEdit(d =>
+            {
+                d.EditFormatString = "MM/dd/yyyy";
+                d.NullDisplayText = "MM/dd/yyyy";
+                d.EditFormat = EditFormat.Custom;
+                d.Width = Unit.Percentage(100);
+                d.DisplayFormatString = "yyyy-MM-dd";
+                d.DisplayFormatInEditMode = true;
+                d.AllowUserInput = true;
+                d.AllowMouseWheel = true;
+            });
+        });
+        settings.Columns.Add(column =>
+        {
             column.FieldName = "oPeriode";
             column.Caption = IWSLocalResource.periode;
             column.Width = Unit.Percentage(6);

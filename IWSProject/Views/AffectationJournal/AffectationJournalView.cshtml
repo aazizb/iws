@@ -1,4 +1,5 @@
-﻿@model IEnumerable<IWSProject.Models.Entities.AffectationJournal>
+﻿@using IWSProject.Content
+@model IEnumerable<IWSProject.Models.Entities.AffectationJournal>
 <script type="text/javascript">
     //function OnSelectedIndexChanged(s, e) {
     //    grid.AutoFilterByColumn("AccountID", s.GetText());
@@ -29,6 +30,12 @@
     }
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.AffectationJournal;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Partial("ShowHideButtonPartialView")
 
 @Html.Partial("AffectationJournalGridViewPartial", Model)

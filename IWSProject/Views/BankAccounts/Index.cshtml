@@ -5,9 +5,12 @@
     function TrackLayout(layout) {
         $("#LastLayoutBA").text(layout)
     }
-</script>        
+</script>
 @using IWSProject.Content
 @{
     ViewBag.Title = IWSLocalResource.bankaccount;
 }
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Action("BankAccountsGridViewPartial")

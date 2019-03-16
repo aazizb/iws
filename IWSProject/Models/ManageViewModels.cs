@@ -71,8 +71,10 @@ namespace IWSProject.Models
         public int OID { get; set; }
         public string ItemType { get; set; }
         public string CustSupplierID { get; set; }
+        public string CustSupplierName { get; set; }
         public string Owner { get; set; }
         public string StoreID { get; set; }
+        public string StoreName { get; set; }
         public DateTime TransDate { get; set; }
         public DateTime ItemDate { get; set; }
         public DateTime EntryDate { get; set; }
@@ -96,6 +98,7 @@ namespace IWSProject.Models
         public string Info { get; set; }
         public string TypeJournal { get; set; }
         public string CostCenterId { get; set; }
+        public string CostCenterName { get; set; }
         public int ModelId { get; set; }
     }
     public class JournauxViewModel
@@ -149,6 +152,8 @@ namespace IWSProject.Models
     }
     public class BeforeAmountViewModel
     {
+        public decimal IDebit { get; set; }
+        public decimal ICredit { get; set; }
         public decimal Debit { get; set; }
         public decimal Credit { get; set; }
     }

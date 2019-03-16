@@ -26,7 +26,13 @@
         $("#LastLayoutSu").text(layout)
     }
 </script>
-
+@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.supplier;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Partial("ShowHideButtonPartialView")
 
 @Html.Partial("SuppliersGridViewPartial", Model)

@@ -1,2 +1,9 @@
-﻿@model List<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>
+﻿@using IWSProject.Content
+@model List<Microsoft.AspNet.Identity.EntityFramework.IdentityRole>
+@{
+    ViewBag.Title = IWSLocalResource.rolesmanagement;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Partial("RolesGridViewPartial", Model)

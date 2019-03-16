@@ -264,7 +264,7 @@
     <Content Include="Views\Shared\HeaderMenuPartialView.cshtml" />
     <Content Include="Views\Accounts\AccountsGridViewPartial.cshtml" />
     <Content Include="Views\Accounts\Index.cshtml" />
-    <Content Include="Views\Articles\XXIndex.cshtml" />
+    <Content Include="Views\Articles\Index.cshtml" />
     <Content Include="Views\Balance\AccountBalancePartialView.cshtml" />
     <Content Include="Views\Balance\Index.cshtml" />
     <Content Include="Views\Balance\_CallbackPartialView.cshtml" />
@@ -470,6 +470,7 @@
     <Content Include="Views\FiscalYear\FiscalYearView.cshtml" />
     <Content Include="Views\FiscalYear\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Depreciation\MasterGridViewPartial.cshtml" />
+    <Content Include="Views\BankStatements\ImportMasterFilesPartial.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -672,9 +673,11 @@
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Reports\AccountBalance.resx">
       <DependentUpon>AccountBalance.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\PeriodicBalance.resx">
       <DependentUpon>PeriodicBalance.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\PurchaseOrderXS.resx">
       <DependentUpon>PurchaseOrderXS.cs</DependentUpon>

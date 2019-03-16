@@ -1,1 +1,8 @@
-﻿@Html.Partial("DocumentViewerPartial")
+﻿@using IWSProject.Content
+@{
+    ViewBag.Title = IWSLocalResource.SalesInvoice;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
+@Html.Partial("DocumentViewerPartial")

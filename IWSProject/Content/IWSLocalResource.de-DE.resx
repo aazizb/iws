@@ -1146,4 +1146,7 @@
   <data name="zip" xml:space="preserve">
     <value>PLZ</value>
   </data>
+  <data name="ImportSage" xml:space="preserve">
+    <value>Import SAGE</value>
+  </data>
 </root>

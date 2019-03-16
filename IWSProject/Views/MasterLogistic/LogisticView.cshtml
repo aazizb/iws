@@ -240,9 +240,12 @@
         }
     }
 </script>
-@*@{
+@{
     ViewBag.Title = IWSLocalResource.Logistic;
-}*@
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @using (Html.BeginForm("Index", "MasterLogistic"))
 {
     @Html.Hidden("selectedIDs");

@@ -47,11 +47,14 @@
     }
 </script>
 @{
-    ViewBag.Title = IWSLocalResource.Draft;
+    ViewBag.Title = IWSLocalResource.DraftImport;
 }
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @using (Html.BeginForm())
 {
     @Html.Action("BrouillardPartial");
-    @Html.Partial("PopupControl")  ;
+    @Html.Partial("PopupControl");
 }
 

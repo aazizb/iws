@@ -2,6 +2,7 @@
 using IWSProject.Models;
 using IWSProject.Models.Entities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -31,7 +32,7 @@ namespace IWSProject.Controllers
                 var item = db.MasterLogistics.SingleOrDefault(o => o.id.Equals(itemId));
                 if(item != null)
                 {
-                    item.EntryDate = DateTime.Today;
+                    item.ItemDate = DateTime.Today;
                     results = true;
                 }
             }
@@ -44,11 +45,10 @@ namespace IWSProject.Controllers
                 var item = db.MasterComptas.SingleOrDefault(o => o.id.Equals(itemId));
                 if (item != null)
                 {
-                    item.EntryDate = DateTime.Today;
+                    item.ItemDate = DateTime.Today;
                     results = true;
                 }
             }
-
             return results;
         }
         protected static bool Validate(int itemId, int modelId)
@@ -248,7 +248,6 @@ namespace IWSProject.Controllers
             }
             return results;
         }
-
         protected static bool ValidateMasters(int itemId, int modelId, string companyId)
         {
             string iban = string.Empty;
@@ -568,8 +567,7 @@ namespace IWSProject.Controllers
 
                         foreach (var doc in docs)
                         {
-                            results = UpdatePeriodicBalance(doc.Periode,
-                                            doc.Account, doc.Amount, doc.Currency, true, companyId);
+                            results = UpdatePeriodicBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
 
                             if (!results)
                                 return results;
@@ -1276,8 +1274,6 @@ namespace IWSProject.Controllers
 
             return results;
         }
-
- 
         #endregion
 
 
@@ -1403,18 +1399,25 @@ namespace IWSProject.Controllers
 
             foreach (Journal item in journal)
             {
-                BeforeAmountViewModel amount = IWSLookUp.GetBeforeAmount(item.Account, item.Periode);
-                item.DebitAvantImputationAmount = amount.Debit;
-                item.CreditAvantImputationAmount = amount.Credit;
+                if (item.Account == item.OAccount)
+                {
+                    results = false;
+                    string msg = IWSLocalResource.GenericError;
+                    throw new Exception(msg);
+                }
+                item.ItemDate = DateTime.Today;
+                BeforeAmountViewModel amount = IWSLookUp.GetBeforeAmount(item.Account);
+                item.DebitAvantImputationAmount = amount.IDebit + amount.Debit;
+                item.CreditAvantImputationAmount = amount.ICredit + amount.Credit;
                 if(item.Side.Equals(IWSLookUp.Side.Debit.ToString()))
                 {
-                    item.DebitApresImputationAmount = amount.Debit + item.Amount;
-                    item.CreditApresImputationAmount = amount.Credit;
+                    item.DebitApresImputationAmount = item.DebitAvantImputationAmount + item.Amount;
+                    item.CreditApresImputationAmount = item.CreditAvantImputationAmount;
                 }
                 else
                 {
-                    item.DebitApresImputationAmount = amount.Debit;
-                    item.CreditApresImputationAmount = amount.Credit + item.Amount;
+                    item.DebitApresImputationAmount = item.DebitAvantImputationAmount;
+                    item.CreditApresImputationAmount = item.CreditAvantImputationAmount + item.Amount;
                 }
                 db.Journals.InsertOnSubmit(item);
             }
@@ -1448,47 +1451,66 @@ namespace IWSProject.Controllers
             }
             return false;
         }
-        protected static bool UpdatePeriodicBalance(string Periode, string AccountID, decimal amount,
+
+        protected static bool UpdatePeriodicBalance(string period, string AccountID, decimal amount,
                                                     string currency, bool IsDebit, string companyID)
         {
             bool result = false;
             var docs = db.PeriodicAccountBalances
-                       .FirstOrDefault(p => p.Periode == Periode
+                       .FirstOrDefault(p => p.Periode == period
                         && p.AccountId == AccountID
                         && p.CompanyID == companyID);
+
             if (docs == null)
             {
-                string name = db.GetAccounts()
-                    .Where(a => a.id == AccountID && a.CompanyID == companyID)
-                    .Select(n => n.name)
-                    .Single();
+                string name = GetName(AccountID, companyID);
                 decimal iDebit = 0;
                 decimal iCredit = 0;
 
-                var initialDebitCredit = (from f in db.FiscalYears
-                                          join p in db.PeriodicAccountBalances on new { f.Period } equals new { Period = p.Periode }
-                                          where
-                                            f.Current == true &&
-                                            f.Open == true &&
-                                            Convert.ToInt32(p.Periode) < Convert.ToInt32(Periode) &&
-                                            p.AccountId == AccountID
-                                          orderby
-                                            f.Period descending
-                                          select new
-                                          {
-                                              Debit = (p.IDebit + p.Debit),
-                                              Credit = (p.ICredit + p.Credit)
-                                          }).Take(1);
-                if (initialDebitCredit.Count() != 0)
+                #region New
+
+                bool isJanuary = period.Substring(period.Length - 2) == "01";
+                bool isDecember = period.Substring(period.Length - 2) == "12";
+                bool isIncomesChild = IWSLookUp.IsIncomesStatementChild(AccountID, companyID);
+                BeforeAmountViewModel beforeAmount = IWSLookUp.GetBeforeAmount(AccountID,period, companyID);
+                if (isIncomesChild )
                 {
-                    iDebit = initialDebitCredit.Select(o => o.Debit).SingleOrDefault();
-                    iCredit = initialDebitCredit.Select(o => o.Credit).SingleOrDefault();
+                    if (isJanuary)
+                    {
+                        iDebit = 0;
+                        iCredit = 0;
+                    }
+                    else
+                    {
+                        iDebit = beforeAmount.IDebit + beforeAmount.Debit;
+                        iCredit = beforeAmount.ICredit + beforeAmount.Credit;
+                    }
                 }
+                else
+                {
+                    if (isJanuary)
+                    {
+                        if (AccountSide(AccountID, companyID))
+                        {
+                            iDebit = (beforeAmount.IDebit + beforeAmount.Debit) - (beforeAmount.ICredit + beforeAmount.Credit);
+                        }
+                        else
+                        {
+                            iCredit = (beforeAmount.ICredit + beforeAmount.Credit) - (beforeAmount.IDebit + beforeAmount.Debit);
+                        }
+                    }
+                    else
+                    {
+                        iDebit = beforeAmount.IDebit + beforeAmount.Debit;
+                        iCredit = beforeAmount.ICredit + beforeAmount.Credit;
+                    }
+                }
+                #endregion
 
                 docs = new PeriodicAccountBalance
                 {
                     Name = name,
-                    Periode = Periode,
+                    Periode = period,
                     AccountId = AccountID,
                     CompanyID = companyID,
                     IDebit = iDebit,
@@ -1528,99 +1550,62 @@ namespace IWSProject.Controllers
                     IWSLookUp.LogException(ex);
                 }
             }
+
             if (result)
-                result = UpsertPeriodicBalance(Periode, AccountID, amount, currency, IsDebit, companyID);
+               result = UpdateNextPeriod(AccountID, period, amount, IsDebit, companyID);
             return result;
         }
-        public static bool UpsertPeriodicBalance(string period, string AccountID, decimal amount, string currency, bool IsDebit, string companyID)
+
+        protected static string GetName(string accountId, string companyId)
         {
-            bool result = false;
-
-            string nPeriod = GetNextPeriod(period);
-
-            var docs = db.PeriodicAccountBalances
-                         .FirstOrDefault(p => p.Periode == nPeriod && p.AccountId == AccountID  && p.CompanyID == companyID);
-            if (docs == null)
-            {
-                string name = db.GetAccounts()
-                            .Where(a => a.id == AccountID && a.CompanyID == companyID).Select(n => n.name).Single();
-
-                decimal iDebit = (IsDebit == true) ? amount : 0;
-                decimal iCredit = (IsDebit == true) ? 0 : amount;
-
-                var initialDebitCredit = (from f in db.FiscalYears
-                                          join p in db.PeriodicAccountBalances on new { f.Period } equals new { Period = p.Periode }
-                                          where
-                                            f.Current == true &&
-                                            f.Open == true &&
-                                            Convert.ToInt32(p.Periode) < Convert.ToInt32(period) &&
-                                            p.AccountId == AccountID
-                                          orderby
-                                            f.Period descending
-                                          select new
-                                          {
-                                              Debit = (p.IDebit + p.Debit),
-                                              Credit = (p.ICredit + p.Credit)
-                                          }).Take(1);
-                if (initialDebitCredit.Count() !=0)
-                { 
-                    iDebit +=  initialDebitCredit.Select(o => o.Debit).SingleOrDefault();  
-                    iCredit += initialDebitCredit.Select(o => o.Credit).SingleOrDefault(); 
-                }
-                docs = new PeriodicAccountBalance
-                {
-                    Name = name,
-                    Periode = nPeriod,
-                    AccountId = AccountID,
-                    CompanyID = companyID,
-                    IDebit = iDebit,    
-                    ICredit = iCredit,  
-                    Currency = currency
-                };
-                try
-                {
-                    db.PeriodicAccountBalances.InsertOnSubmit(docs);
-                    result = true;
-                }
-                catch (Exception ex)
-                {
-                    result = false;
-                    IWSLookUp.LogException(ex);
-                }
-            }
-            else
-            {
-                try
-                {
-                    result = UpdateNextPeriod(AccountID, period, amount, IsDebit, companyID);
-                    result = true;
-                }
-                catch (Exception ex)
-                {
-                    result = false;
-                    IWSLookUp.LogException(ex);
-                }
-            }
-            return result;
+            return db.GetAccounts().Where(a => a.id == accountId && a.CompanyID == companyId).Select(n => n.name).Single();
         }
+        protected static bool AccountSide(string accountId, string companyId)
+        {
+            return db.GetAccounts().Where(a => a.id == accountId && a.CompanyID == companyId).Select(x => x.IsDebit).Single();
+        }
+       
         protected static bool UpdateNextPeriod(string accountId, string period, decimal amount, bool IsDebit, string companyID)
         {
             bool result = false;
-
-            var balance =
-                from p in db.PeriodicAccountBalances
-                where
-                  p.AccountId == accountId && p.CompanyID == companyID &&
-                  Convert.ToInt32(p.Periode) > Convert.ToInt32(period)
-                select p;
             try
             {
-                foreach (var b in balance)
+                string oYear = period.Substring(0, 4);
+                var items =
+                    from p in db.PeriodicAccountBalances
+                    where
+                      p.AccountId == accountId && p.CompanyID == companyID &&
+                      Convert.ToInt32(p.Periode) > Convert.ToInt32(period)
+                    select p;
+                foreach (var item in items)
                 {
-                    if (IsDebit)
-                    b.IDebit = (b.IDebit + amount);
-                    if (!IsDebit)
-                    b.ICredit = (b.ICredit + amount);
+                    bool isJanuary = item.oMonth == "01";
+                    bool isIncomesChild = IWSLookUp.IsIncomesStatementChild(item.AccountId, companyID);
+                    if(isIncomesChild)
+                    {
+                        if (isJanuary)
+                        {
+                            item.IDebit = 0;
+                            item.ICredit = 0;
+                        }
+                        else
+                        {
+                            if (item.oYear == oYear)
+                            {
+                                if (IsDebit)
+                                    item.IDebit += amount;
+                                if (!IsDebit)
+                                    item.ICredit += amount;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (IsDebit)
+                            item.IDebit += amount;
+                        if (!IsDebit)
+                            item.ICredit += amount;
+                    }
                 }
                 result = true;
             }
@@ -1667,19 +1652,19 @@ namespace IWSProject.Controllers
                     itemId = Convert.ToInt32(list[0]);
                     #region check period
                     //results = IWSLookUp.CheckPeriod(itemId, DocumentType, CompanyId, true, true);
-
                     //if (!results)
                     //{
                     //    string msg = IWSLocalResource.CheckPeriod;
                     //    throw new Exception(msg);
                     //}
-
                     #endregion
-                    if (IWSLookUp.CkeckIfAmountsBalanced(itemId) !=0)
-                    {
-                        msg = IWSLocalResource.BalancedAmount;
-                        throw new Exception(msg);
-                    }
+                    #region check amounts
+                    //if (IWSLookUp.CkeckIfAmountsBalanced(itemId) !=0)
+                    //{
+                    //    msg = IWSLocalResource.BalancedAmount;
+                    //    throw new Exception(msg);
+                    //}
+                    #endregion
                     results = UpdateEntryDate(itemId, modelId);
                     if (!results)
                     {
@@ -1712,5 +1697,6 @@ namespace IWSProject.Controllers
                 }
             }
         }
+
     }
 }

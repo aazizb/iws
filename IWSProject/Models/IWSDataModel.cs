@@ -656,12 +656,11 @@ namespace IWSProject.Models
         }
 
         [FunctionAttribute(Name = "dbo.AccountBalance")]
-        public ISingleResult<AccountBalanceResult> AccountBalance([ParameterAttribute(Name = "class", DbType = "NVarChar(50)")] string @class, [ParameterAttribute(DbType = "NVarChar(6)")] string start, [ParameterAttribute(DbType = "NVarChar(6)")] string end, [ParameterAttribute(DbType = "NVarChar(6)")] string companyid, [ParameterAttribute(DbType = "Bit")] Nullable<bool> isBalance)
-        {
-            IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), @class, start, end, companyid, isBalance);
+        public ISingleResult<AccountBalanceResult> AccountBalance([ParameterAttribute(Name = "class", DbType = "NVarChar(50)")] string @class, [ParameterAttribute(DbType = "NVarChar(6)")] string start, [ParameterAttribute(DbType = "NVarChar(6)")] string companyid, [ParameterAttribute(DbType = "Bit")] Nullable<bool> isBalance)
+        {//[ParameterAttribute(DbType = "NVarChar(6)")] string end, 
+            IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), @class, start,  companyid, isBalance);//end,
             return ((ISingleResult<AccountBalanceResult>)(result.ReturnValue));
         }
-
         [FunctionAttribute(Name = "dbo.SetJournal")]
         public int SetJournal([ParameterAttribute(DbType = "Int")] Nullable<int> transid, [ParameterAttribute(DbType = "NVarChar(50)")] string companyid)
         {
@@ -3168,6 +3167,16 @@ namespace IWSProject.Models
 
         private string _Info;
 
+        private int _ModelId;
+
+        private string _CompanyIBAN;
+
+        private string _IBAN;
+
+        private string _StoreName;
+
+        private string _CostCenterName;
+
         public GetJournalResult()
         {
         }
@@ -3582,6 +3591,81 @@ namespace IWSProject.Models
                 if ((this._Info != value))
                 {
                     this._Info = value;
+                }
+            }
+        }
+        [ColumnAttribute(Storage = "_ModelId", DbType = "Int NOT NULL")]
+        public int ModelId
+        {
+            get
+            {
+                return this._ModelId;
+            }
+            set
+            {
+                if ((this._ModelId != value))
+                {
+                    this._ModelId = value;
+                }
+            }
+        }
+        [ColumnAttribute(Storage = "_CompanyIBAN", DbType = "NVarChar(255)")]
+        public string CompanyIBAN
+        {
+            get
+            {
+                return this._CompanyIBAN;
+            }
+            set
+            {
+                if ((this._CompanyIBAN != value))
+                {
+                    this._CompanyIBAN = value;
+                }
+            }
+        }
+        [ColumnAttribute(Storage = "_IBAN", DbType = "NVarChar(255)")]
+        public string IBAN
+        {
+            get
+            {
+                return this._IBAN;
+            }
+            set
+            {
+                if ((this._IBAN != value))
+                {
+                    this._IBAN = value;
+                }
+            }
+        }
+        [ColumnAttribute(Storage = "_StoreName", DbType = "NVarChar(255)")]
+        public string StoreName
+        {
+            get
+            {
+                return this._StoreName;
+            }
+            set
+            {
+                if ((this._StoreName != value))
+                {
+                    this._StoreName = value;
+                }
+            }
+        }
+        [ColumnAttribute(Storage = "_CostCenterName", DbType = "NVarChar(255)")]
+        public string CostCenterName
+        {
+            get
+            {
+                return this._CostCenterName;
+            }
+            set
+            {
+                if ((this._CostCenterName != value))
+                {
+                    this._CostCenterName = value;
                 }
             }
         }

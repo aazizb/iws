@@ -1,4 +1,5 @@
-﻿@model IEnumerable<IWSProject.Models.Entities.Account>
+﻿@using IWSProject.Content
+@model IEnumerable<IWSProject.Models.Entities.Account>
 
 <script type="text/javascript">
 
@@ -27,7 +28,12 @@
     }
 </script>
 
-
+@{
+    ViewBag.Title = IWSLocalResource.account;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Partial("ShowHideButtonPartialView")
 
 @Html.Action("AccountsGridViewPartial")

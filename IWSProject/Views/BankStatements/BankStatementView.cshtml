@@ -1,5 +1,4 @@
-﻿
-@using IWSProject.Content
+﻿@using IWSProject.Content
 
 <script type="text/javascript">
 
@@ -58,14 +57,14 @@
     };
 </script>
 
-
-@*@{
+@{
     ViewBag.Title = IWSLocalResource.BankStatement;
-}*@
-
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @using (Html.BeginForm("Index", "BankStatements"))
 {
-    @*@Html.Hidden("selectedIDs")*@
 
     @Html.DevExpress().Button(settings =>
 {

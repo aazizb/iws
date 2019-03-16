@@ -52,9 +52,12 @@
 </script>
 
 @{
-    ViewBag.Title = IWSLocalResource.Accounting;
+    ViewBag.Title = IWSLocalResource.BankReconciliation;
 }
 
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @using (Html.BeginForm("Index", "UnpaidBill"))
 {
 

@@ -1,4 +1,6 @@
-﻿@model IEnumerable<IWSProject.Models.Entities.Article>
+﻿@using IWSProject.Content
+@model IEnumerable<IWSProject.Models.Entities.Article>
+
 <script type="text/javascript">
 
     function OnButtonClick() {
@@ -29,7 +31,12 @@
         $("#LastLayoutAr").text(layout);
     }
 </script>
-
+@{
+    ViewBag.Title = IWSLocalResource.articles;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Partial("ShowHideButtonPartialView")
 
 @Html.Partial("ArticlesGridViewPartial", Model)

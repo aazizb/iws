@@ -1,4 +1,5 @@
 ﻿
+@using IWSProject.Content
 @model string
 
 <script type="text/javascript">
@@ -28,6 +29,12 @@
         }
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.ImportTimeSheets;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @using (Html.BeginForm())
 {
     @Html.Partial("_TimeSheetsFileManagerPartial", Model)

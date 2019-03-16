@@ -1,5 +1,5 @@
-﻿@using IWSProject.Content
-@model string
+﻿@model string
+@using IWSProject.Content
 <script type="text/javascript">
     function OnCustomCommand(s, e) {
         if (e.commandName == "UploadToDB") {
@@ -29,6 +29,9 @@
 @{
     ViewBag.Title = IWSLocalResource.ImportBankStatement;
 }
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @using (Html.BeginForm())
 {
     @Html.Partial("ImportCSVPartial", Model)

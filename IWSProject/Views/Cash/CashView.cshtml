@@ -97,7 +97,9 @@
 @{
     ViewBag.Title = IWSLocalResource.Cash;
 }
-
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @using (Html.BeginForm("Index", "Cash"))
 {
     @Html.DevExpress().Button(

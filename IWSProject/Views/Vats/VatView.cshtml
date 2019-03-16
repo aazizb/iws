@@ -1,4 +1,5 @@
-﻿@model IEnumerable<IWSProject.Models.Entities.Vat>
+﻿@using IWSProject.Content
+@model IEnumerable<IWSProject.Models.Entities.Vat>
 
 <script type="text/javascript">
 
@@ -27,6 +28,12 @@
     }
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.vat;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Partial("ShowHideButtonPartialView")
 
 @Html.Partial("VatsGridViewPartial", Model)

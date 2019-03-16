@@ -80,7 +80,12 @@
         TrackLayout(s.cpClientLayout);
     }
 </script>
-
+@{
+    ViewBag.Title = IWSLocalResource.FiscalYear;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.DevExpress().FormLayout(settings =>
 {
     settings.Name = "contentFormLayout";

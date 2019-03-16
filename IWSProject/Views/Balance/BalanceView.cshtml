@@ -58,6 +58,12 @@
     }
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.balance;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.DevExpress().FormLayout(settings =>
 {
     settings.Name = "FormLayout";

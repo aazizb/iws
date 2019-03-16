@@ -1,5 +1,4 @@
 ﻿@using IWSProject.Models
-@*@using IWSProject.Models.Entities*@
 @using IWSProject.Content
 @model List<JournauxViewModel>
 
@@ -38,6 +37,9 @@
 @{
     ViewBag.Title = IWSLocalResource.journal;
 }
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @using (Html.BeginForm("Index", "Journaux"))
 {
     @Html.DevExpress().TextBox(

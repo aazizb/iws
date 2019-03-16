@@ -44,7 +44,12 @@
     popupControl.Show();
     }
 </script>
-
+@{
+    ViewBag.Title = IWSLocalResource.company;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
 @Html.Partial("ShowHideButtonPartialView")
 
 @Html.Partial("CallbackPanelPartialView")

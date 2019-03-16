@@ -124,6 +124,41 @@
     });
     settings.Columns.Add(column =>
     {
+        column.FieldName = "ModelId";
+        column.Caption = IWSLocalResource.modelid;
+        column.Width = Unit.Percentage(5);
+        column.Visible = false;
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "CompanyIBAN";
+        column.Caption = IWSLocalResource.CompanyIBAN;
+        column.Width = Unit.Percentage(10);
+        column.Visible = false;
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "IBAN";
+        column.Caption = IWSLocalResource.IBAN;
+        column.Width = Unit.Percentage(10);
+        column.Visible = false;
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "StoreName";
+        column.Caption = IWSLocalResource.store;
+        column.Width = Unit.Percentage(10);
+        column.Visible = false;
+    });
+    settings.Columns.Add(column =>
+    {
+        column.FieldName = "CostCenterName";
+        column.Caption = IWSLocalResource.costcenters;
+        column.Width = Unit.Percentage(10);
+        column.Visible = false;
+    });
+    settings.Columns.Add(column =>
+    {
         column.FieldName = "TransDate";
         column.Caption = IWSLocalResource.duedate;
         column.Width = Unit.Percentage(8);

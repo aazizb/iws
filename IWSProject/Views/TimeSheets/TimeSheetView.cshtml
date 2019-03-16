@@ -57,6 +57,13 @@
     };
 </script>
 
+@{
+    ViewBag.Title = IWSLocalResource.TimeSheets;
+}
+<div class="accountHeader">
+    <h2>@ViewBag.Title</h2>
+</div>
+
 @using (Html.BeginForm("Index", "TimeSheets"))
 {
     @*@Html.Hidden("selectedIDs")*@

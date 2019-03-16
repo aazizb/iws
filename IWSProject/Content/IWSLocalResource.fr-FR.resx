@@ -1155,4 +1155,7 @@
   <data name="DebitAfter" xml:space="preserve">
     <value>Debit Après</value>
   </data>
+  <data name="ImportSage" xml:space="preserve">
+    <value>Importer SAGE</value>
+  </data>
 </root>
