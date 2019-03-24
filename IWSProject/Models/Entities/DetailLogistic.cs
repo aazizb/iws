@@ -252,7 +252,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_text", DbType = "NVarChar(250)")]
+        [ColumnAttribute(Storage = "_text", DbType = "NVarChar(550)")]
         public string text
         {
             get
@@ -352,7 +352,7 @@ namespace IWSProject.Models.Entities
             }
         }
 
-        [ColumnAttribute(Storage = "_Terms", DbType = "VarChar(250)")]
+        [ColumnAttribute(Storage = "_Terms", DbType = "VarChar(550)")]
         public string Terms
         {
             get

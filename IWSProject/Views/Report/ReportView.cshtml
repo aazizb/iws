@@ -7,8 +7,8 @@
     var vStart = null;
     var vEnd = null;
     function OnButtonClick(s, e) {
-        vStart = Start.GetText();
-        vEnd = End.GetText();
+        vStart = fromYearMonth.GetText();
+        vEnd = toYearMonth.GetText();
         callbackPartialView.PerformCallback();
     }
     function OnBeginCallback(s, e) {
@@ -26,50 +26,59 @@
 
 @using (Html.BeginForm("ExportToXLS", "Report"))
 {
-    @Html.DevExpress().TextBox(
-    settings =>
-    {
-        settings.Properties.Native = true;
-        settings.Name = "Start";
-        settings.Width = Unit.Pixel(101);
-        settings.Height = Unit.Pixel(21);
-        settings.Properties.NullText = IWSLocalResource.PeriodFrom;
-    }
-    ).GetHtml()
+    @Html.DevExpress().FormLayout(settings =>
+        {
+            settings.Name = "FormLayout";
+            settings.Width = Unit.Percentage(100);
+            settings.Items.AddGroupItem(gsettings => {
+                gsettings.ColCount = 5;
+                gsettings.Caption = IWSLocalResource.QueryDetail;
 
-    @Html.DevExpress().TextBox(
-    settings =>
-    {
-        settings.Name = "End";
-        settings.Properties.Native = true;
-        settings.Width = Unit.Pixel(101);
-        settings.Height = Unit.Pixel(21);
-        settings.Properties.NullText = IWSLocalResource.PeriodTo;
-    }
-    ).GetHtml()
+                gsettings.Items.Add(i =>
+                {
+                    i.Caption = IWSLocalResource.StartedDate;
+                    i.SetNestedContent(() =>
+                    {
+                        Html.RenderPartial("FromYearMonthDateEditPartialView");
+                    });
+                });
 
-    @Html.DevExpress().Button(
-    settings =>
-    {
-        settings.Name = "btnSubmit";
-        settings.ControlStyle.CssClass = "button";
-        settings.Text = IWSLocalResource.Validate;
-        settings.Width = Unit.Pixel(120);
-        settings.UseSubmitBehavior = false;
-        settings.ClientSideEvents.Click = "OnButtonClick";
-    }
-    ).GetHtml()
+                gsettings.Items.Add(i =>
+                {
+                    i.Caption = IWSLocalResource.EntryDate;
+                    i.SetNestedContent(() => {
+                        Html.RenderPartial("ToYearMonthDateEditPartialView");
+                    });
+                });
+                gsettings.Items.Add(i =>
+                {
+                    i.Caption = " ";
+                    i.Name = "btnSubmit";
+                    i.NestedExtension().Button(e =>
+                    {
+                        e.Name = "btnOk";
+                        e.Text = IWSLocalResource.Validate;
+                        e.ControlStyle.CssClass = "button";
+                        e.Width = Unit.Pixel(105);
+                        e.ClientSideEvents.Click = "OnButtonClick";
+                        e.UseSubmitBehavior = false;
+                    });
+                });
+                gsettings.Items.Add(i =>
+                {
+                    i.Caption = " ";
+                    i.Name = "btnExp";
+                    i.NestedExtension().Button(e =>
+                    {
+                        e.Name = "btnExport";
+                        e.Text = IWSLocalResource.Export;
+                        e.Width = Unit.Pixel(105);
+                        e.ClientSideEvents.Click = "OnClick";
+                        e.UseSubmitBehavior = true;
+                    });
+                });
+            });
+        }).GetHtml()
+        @Html.Partial("_CallbackPartialView")
 
-    @Html.DevExpress().Button(btn =>
-    {
-        btn.Name = "btnExport";
-        btn.Text = IWSLocalResource.Export;
-        btn.Width = Unit.Pixel(120);
-        btn.UseSubmitBehavior = true;
-        btn.ClientSideEvents.Click = "OnClick";
-    }).GetHtml()
-
-    @Html.Partial("_CallbackPartialView")
 }
-
-

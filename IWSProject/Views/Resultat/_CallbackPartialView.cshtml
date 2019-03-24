@@ -1,12 +1,19 @@
-﻿@Html.DevExpress().CallbackPanel(settings =>
+﻿@using IWSProject.Content;
+
+@Html.DevExpress().CallbackPanel(settings =>
 {
     settings.Name = "callbackPartialView";
     settings.CallbackRouteValues = new { Controller = "Resultat", Action = "CallbackPanelPartial" };
 
     settings.SetContent(() =>
     {
-        @Html.RenderPartial("ResultatPartialView");
+    @Html.RenderPartial("ResultatPartialView", Session["Results"]);
 
-    });
+    ViewContext.Writer.Write("<div style='width: 100%; text-align: center'>");
+    ViewContext.Writer.Write(IWSLocalResource.IncomesStatement + " - " + IWSLocalResource.BalanceSheet);
+    ViewContext.Writer.Write("</div>");
+
+    @Html.RenderPartial("IncomesAndBalancePartialView", Session["IncomesAndBalance"]);
+});
     settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
 }).GetHtml()

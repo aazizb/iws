@@ -92,6 +92,23 @@
     function TrackLayout(layout) {
         $("#LastLayout").text(layout)
     }
+    function OnButtonClick() {
+        if (Cash.IsCustomizationWindowVisible()) {
+
+            Cash.HideCustomizationWindow();
+        }
+        else {
+            Cash.ShowCustomizationWindow();
+        }
+        UpdateButtonText();
+    }
+    function CustomizationWindowCloseUp(s, e) {
+        UpdateButtonText();
+    }
+    function UpdateButtonText() {
+        var text = unpaid.IsCustomizationWindowVisible() ? "Hide" : "Show";
+        btShowCustomizationWindow.SetText(text);
+    }
 
 </script>
 @{
@@ -102,17 +119,40 @@
 </div>
 @using (Html.BeginForm("Index", "Cash"))
 {
-    @Html.DevExpress().Button(
-    settings =>
+
+    @Html.DevExpress().FormLayout(settings =>
+{
+    settings.Name = "FormLayout";
+    settings.Width = Unit.Percentage(100);
+    settings.Items.AddGroupItem(gsettings =>
     {
-        settings.Name = "btnSubmit";
-        settings.ControlStyle.CssClass = "button";
-        settings.Text = IWSLocalResource.Validate;
-        settings.Width = Unit.Pixel(150);
-        settings.UseSubmitBehavior = false;
-        settings.ClientSideEvents.Click = "OnSubmitClick";
-    }
-    ).GetHtml()
+        gsettings.ColCount = 2;
+        gsettings.Caption = IWSLocalResource.QueryDetail;
+
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.Name = "btnSubmit";
+            i.NestedExtension().Button(e =>
+            {
+                e.Name = "btnOk";
+                e.Text = IWSLocalResource.Validate;
+                e.ControlStyle.CssClass = "button";
+                e.Width = Unit.Pixel(105);
+                e.ClientSideEvents.Click = "OnSubmitClick";
+                e.UseSubmitBehavior = false;
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.SetNestedContent(() =>
+            {
+                Html.RenderPartial("ShowHideButtonPartialView");
+            });
+        });
+    });
+}).GetHtml()
 
     @Html.Partial("CallbackPanelPartialView")
 }

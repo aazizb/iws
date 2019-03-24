@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DB_A18F7E_iws_33" Class="IWSDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=(localdb)\mssqllocaldb;Initial Catalog=DB_A18F7E_iws_33;Integrated Security=True;MultipleActiveResultSets=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="DefaultConnection" Provider="System.Data.SqlClient" />
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="DB_A18F7E_iws_07" Class="IWSDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=(localdb)\mssqllocaldb;Initial Catalog=DB_A18F7E_iws_07;Integrated Security=True;MultipleActiveResultSets=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="DefaultConnection" Provider="System.Data.SqlClient" />
   <Table Name="dbo.PeriodicAccountBalance" Member="PeriodicAccountBalances">
     <Type Name="PeriodicAccountBalance">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -19,6 +19,7 @@
       <Column Name="ICredit" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="FDebit" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="FCredit" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Association Name="Account_PeriodicAccountBalance" Member="Account" ThisKey="AccountId" OtherKey="id" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.FiscalYear" Member="FiscalYears">
@@ -43,6 +44,41 @@
       <Column Name="Currency" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="IsValidated" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="CompanyId" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.xxBalance" Member="xxBalances">
+    <Type Name="xxBalance">
+      <Column Name="ClassId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ClassName" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="SubClassId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="SubClassName" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="AccountId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="AccountName" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="TDebit" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="TCredit" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="Currency" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="IsDebit" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Account" Member="Accounts">
+    <Type Name="Account">
+      <Column Name="id" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="description" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="dateofopen" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Column Name="dateofclose" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Column Name="balance" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="CompanyID" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="ParentId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="IsDebit" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsBalanceSheetAccount" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Posted" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Column Name="Updated" Type="System.DateTime" DbType="DateTime2 NOT NULL" CanBeNull="false" />
+      <Column Name="TypeJournal" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="ModelId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsResultAccount" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsIncomeStatementAccount" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Account_PeriodicAccountBalance" Member="PeriodicAccountBalances" ThisKey="id" OtherKey="AccountId" Type="PeriodicAccountBalance" />
     </Type>
   </Table>
   <Function Name="dbo.account1To7" Method="account1To7">
@@ -251,7 +287,7 @@
       <Column Name="ParentName" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
     </ElementType>
   </Function>
-  <Function Name="dbo.AccountBalance" Method="AccountBalance">
+  <Function Name="dbo.AccountBalance" Method="AccountBalance1">
     <Parameter Name="class" Type="System.String" DbType="NVarChar(50)" />
     <Parameter Name="start" Type="System.String" DbType="NVarChar(6)" />
     <Parameter Name="end" Type="System.String" DbType="NVarChar(6)" />
@@ -335,6 +371,29 @@
       <Column Name="Owner" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
       <Column Name="TypeJournal" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
       <Column Name="Info" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.ClassAccountBalance" Method="ClassAccountBalance1" IsComposable="true">
+    <Parameter Name="class" Type="System.String" DbType="NVarChar(12)" />
+    <Parameter Name="start" Type="System.String" DbType="NVarChar(6)" />
+    <Parameter Name="end" Type="System.String" DbType="NVarChar(6)" />
+    <Parameter Name="companyid" Type="System.String" DbType="NVarChar(6)" />
+    <Return Type="object" />
+  </Function>
+  <Function Name="dbo.IncomesAndBalance" Method="IncomesAndBalance">
+    <Parameter Name="period" Type="System.String" DbType="NVarChar(6)" />
+    <Parameter Name="companyid" Type="System.String" DbType="NVarChar(6)" />
+    <ElementType Name="IncomesAndBalanceResult">
+      <Column Name="ClassId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="ClassName" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="SubClassId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="SubClassName" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="AccountId" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="AccountName" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="TDebit" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="TCredit" Type="System.Decimal" DbType="Money" CanBeNull="true" />
+      <Column Name="Currency" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="IsDebit" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
     </ElementType>
   </Function>
 </Database>

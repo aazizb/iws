@@ -132,7 +132,7 @@
         settings.KeyFieldName = "id";
 
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel= true;
+        settings.Settings.ShowGroupPanel= false;
         settings.Settings.ShowFilterRowMenu = true;
         settings.SettingsBehavior.AllowFocusedRow = true;
 
@@ -140,7 +140,7 @@
 
         settings.Width = Unit.Percentage(100);
 
-        settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(1);
         settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
 
@@ -506,25 +506,13 @@
             });
         }
 
-    settings.Settings.ShowFooter = true;
+    //settings.Settings.ShowFooter = true;
 
     settings.SettingsBehavior.AutoExpandAllGroups = true;
     settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
     settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Betrag").ShowInGroupFooterColumn = "Betrag";
     settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Waehrung").ShowInGroupFooterColumn = "Waehrung";
     });
-
-    @*if (ViewData["GenericError"] != null)
-    {
-        < script type = "text/javascript" >
-        alert("@ViewData["GenericError"]");
-        </ script >
-    }
-
-    if (ViewData["GenericError"] != null)
-    {
-        grid.SetEditErrorText((string)ViewData["GenericError"]);
-    }*@
 
 }
 @grid.Bind(Model).GetHtml()

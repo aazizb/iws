@@ -20,5 +20,24 @@
         <elementListCompartment Id="d641472b-48be-408f-996c-a29d21ecfd3c" absoluteBounds="4.64, 1.21, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
+    <classShape Id="27cc1779-cf74-4465-b5de-4b2bc58b41b3" absoluteBounds="2.125, 1.75, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/IWSDataContext/xxBalance" />
+      <nestedChildShapes>
+        <elementListCompartment Id="fb1d529d-ecf3-4092-a924-51e741f19aba" absoluteBounds="2.14, 2.21, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="7bfa3aa0-e24a-4d02-a8e7-c38f3bb24a34" absoluteBounds="1.25, 1, 2, 3.8862125651041666">
+      <DataClassMoniker Name="/IWSDataContext/Account" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6326bcd4-8ba7-4cb3-b45c-325e2eb4ff74" absoluteBounds="1.2650000000000001, 1.46, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(3.25 : 4.71555826822917); (4.375 : 4.71555826822917)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/IWSDataContext/Account/Account_PeriodicAccountBalance" />
+      <nodes>
+        <classShapeMoniker Id="7bfa3aa0-e24a-4d02-a8e7-c38f3bb24a34" />
+        <classShapeMoniker Id="453032ba-1246-41d1-97cb-546c6edaad03" />
+      </nodes>
+    </associationConnector>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

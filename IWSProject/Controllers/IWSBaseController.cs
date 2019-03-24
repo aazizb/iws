@@ -1276,7 +1276,6 @@ namespace IWSProject.Controllers
         }
         #endregion
 
-
         protected static string GetItemType(string ItemType)
         {
             return db.Localizations.Where(i => i.LocalName == ItemType)
@@ -1452,14 +1451,11 @@ namespace IWSProject.Controllers
             return false;
         }
 
-        protected static bool UpdatePeriodicBalance(string period, string AccountID, decimal amount,
-                                                    string currency, bool IsDebit, string companyID)
+        protected static bool UpdatePeriodicBalance(string period, string AccountID, decimal amount, string currency, bool side, string companyID)
         {
             bool result = false;
             var docs = db.PeriodicAccountBalances
-                       .FirstOrDefault(p => p.Periode == period
-                        && p.AccountId == AccountID
-                        && p.CompanyID == companyID);
+                       .FirstOrDefault(p => p.Periode == period && p.AccountId == AccountID && p.CompanyID == companyID);
 
             if (docs == null)
             {
@@ -1468,7 +1464,6 @@ namespace IWSProject.Controllers
                 decimal iCredit = 0;
 
                 #region New
-
                 bool isJanuary = period.Substring(period.Length - 2) == "01";
                 bool isDecember = period.Substring(period.Length - 2) == "12";
                 bool isIncomesChild = IWSLookUp.IsIncomesStatementChild(AccountID, companyID);
@@ -1515,8 +1510,8 @@ namespace IWSProject.Controllers
                     CompanyID = companyID,
                     IDebit = iDebit,
                     ICredit = iCredit,
-                    Debit = (IsDebit==true) ? amount : 0,
-                    Credit = (IsDebit == true) ? 0 : amount,
+                    Debit = (side==true) ? amount : 0,
+                    Credit = (side == true) ? 0 : amount,
                     Currency = currency
                 };
                 try
@@ -1534,7 +1529,7 @@ namespace IWSProject.Controllers
             {
                 try
                 {
-                    if (IsDebit)
+                    if (side)
                     {
                         docs.Debit += amount;
                     }
@@ -1552,7 +1547,7 @@ namespace IWSProject.Controllers
             }
 
             if (result)
-               result = UpdateNextPeriod(AccountID, period, amount, IsDebit, companyID);
+               result = UpdateNextPeriod(AccountID, period, amount, side, companyID);
             return result;
         }
 
@@ -1565,7 +1560,7 @@ namespace IWSProject.Controllers
             return db.GetAccounts().Where(a => a.id == accountId && a.CompanyID == companyId).Select(x => x.IsDebit).Single();
         }
        
-        protected static bool UpdateNextPeriod(string accountId, string period, decimal amount, bool IsDebit, string companyID)
+        protected static bool UpdateNextPeriod(string accountId, string period, decimal amount, bool side, string companyID)
         {
             bool result = false;
             try
@@ -1579,33 +1574,7 @@ namespace IWSProject.Controllers
                     select p;
                 foreach (var item in items)
                 {
-                    bool isJanuary = item.oMonth == "01";
-                    bool isIncomesChild = IWSLookUp.IsIncomesStatementChild(item.AccountId, companyID);
-                    if(isIncomesChild)
-                    {
-                        if (isJanuary)
-                        {
-                            item.IDebit = 0;
-                            item.ICredit = 0;
-                        }
-                        else
-                        {
-                            if (item.oYear == oYear)
-                            {
-                                if (IsDebit)
-                                    item.IDebit += amount;
-                                if (!IsDebit)
-                                    item.ICredit += amount;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (IsDebit)
-                            item.IDebit += amount;
-                        if (!IsDebit)
-                            item.ICredit += amount;
-                    }
+                    UpdatePeriodicBalance(amount, side, companyID, oYear, item);
                 }
                 result = true;
             }
@@ -1616,10 +1585,41 @@ namespace IWSProject.Controllers
             }
             return result;
         }
+
+        private static void UpdatePeriodicBalance(decimal amount, bool side, string companyID, string oYear, PeriodicAccountBalance item)
+        {
+            bool isJanuary = item.oMonth == "01";
+            bool isIncomesChild = IWSLookUp.IsIncomesStatementChild(item.AccountId, companyID);
+            if (isIncomesChild)
+            {
+                if (isJanuary)
+                {
+                    item.IDebit = 0;
+                    item.ICredit = 0;
+                }
+                else
+                {
+                    if (item.oYear == oYear)
+                    {
+                        if (side)
+                            item.IDebit += amount;
+                        if (!side)
+                            item.ICredit += amount;
+                    }
+                }
+            }
+            else
+            {
+                if (side)
+                    item.IDebit += amount;
+                if (!side)
+                    item.ICredit += amount;
+            }
+        }
+
         private static string GetNextPeriod(string period)
         {
             DateTime nextPeriod;
-            string p=String.Empty;
             string nextMonth = String.Empty;
             int iYear = Convert.ToInt32(period.Substring(0,4));
             int iMonth = Convert.ToInt32(period.Substring(4,2));
@@ -1632,8 +1632,8 @@ namespace IWSProject.Controllers
                 nextPeriod = new DateTime(iYear, iMonth + 1, 1);
             }
             nextMonth = (nextPeriod.Month < 10) ? "0" + nextPeriod.Month : nextPeriod.Month.ToString();
-            p = nextPeriod.Year.ToString() + nextMonth;
-            return p;
+            return nextPeriod.Year.ToString() + nextMonth;
+
         }
         protected static void ProcessData(string selectedItems, string companyId, bool convertType, int modelId)
         {

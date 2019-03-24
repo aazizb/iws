@@ -26,6 +26,7 @@
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowEllipsisInText = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.EnableCustomizationWindow = true;
         settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
@@ -132,9 +133,9 @@
                     break;
             }
         };
-#region Column
+        #region Column
 
-settings.KeyFieldName = "Id";
+        settings.KeyFieldName = "Id";
 
         settings.Columns.Add(column =>
         {
@@ -253,11 +254,11 @@ settings.KeyFieldName = "Id";
             column.ColumnType = MVCxGridViewColumnType.Memo;
         });
 
-#endregion
+        #endregion
 
-#region DetailTemplate
+        #region DetailTemplate
 
-settings.SetDetailRowTemplateContent(c =>
+        settings.SetDetailRowTemplateContent(c =>
         {
             Session["transid"] = DataBinder.Eval(c.DataItem, "ID");
             Session["IsValidated"] = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
@@ -269,8 +270,8 @@ settings.SetDetailRowTemplateContent(c =>
             });
         });
 
-#endregion
-});
+        #endregion
+    });
 
     if (ViewData["GenericError"] != null)
     {

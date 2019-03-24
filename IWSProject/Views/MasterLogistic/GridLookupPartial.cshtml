@@ -1,0 +1,18 @@
+﻿@using IWSProject.Content
+@Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "ComboBoxModelId";
+    settings.Width = Unit.Pixel(185);
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+    settings.Properties.Items.Add("",0000);
+    settings.Properties.Items.Add(IWSLocalResource.PurchaseOrder, 101);
+    settings.Properties.Items.Add(IWSLocalResource.GoodReceiving, 104);
+    settings.Properties.Items.Add(IWSLocalResource.InventoryInvoice, 110);
+    settings.Properties.Items.Add(IWSLocalResource.SalesOrder, 116);
+    settings.Properties.Items.Add(IWSLocalResource.BillOfDelivery, 118);
+    settings.Properties.Items.Add(IWSLocalResource.SalesInvoice, 120);
+    settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s, e) { OnModelIdSelectionChanged(); }";
+    settings.SelectedIndex = 0;
+}).GetHtml()
+

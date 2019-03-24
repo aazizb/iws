@@ -22,7 +22,7 @@
         settings.KeyFieldName = "LogId";
 
         settings.Settings.ShowFilterRow = true;
-        settings.Settings.ShowGroupPanel= true;
+        settings.Settings.ShowGroupPanel= false;
         settings.Settings.ShowFilterRowMenu = true;
 
         settings.SettingsBehavior.EnableCustomizationWindow = true;
@@ -34,7 +34,7 @@
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
         settings.Width = Unit.Percentage(100);
-        settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(1);
         settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
         settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
 
@@ -50,7 +50,7 @@
         settings.SettingsPager.FirstPageButton.Visible = true;
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
-        settings.SettingsPager.PageSize = 19;
+        settings.SettingsPager.PageSize = 24;
 
         settings.Columns.Add(column =>
         {

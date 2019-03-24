@@ -488,6 +488,11 @@ namespace IWSProject.Models
         public decimal SumDebit { get; set; }
         public decimal SumCredit { get; set; }
     }
+    public class IncomesAndBalanceViewModel
+    {
+        public List<ResultsViewModel> ResultsView { get; set; }
+        public List<ResultsViewModel> IncomesAndBalanceView { get; set; }
+    }
     public class ResultsDialogViewModel
     {
         public string Start { get; set; }

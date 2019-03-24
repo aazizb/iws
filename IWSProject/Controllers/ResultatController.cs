@@ -1,8 +1,8 @@
 ﻿using DevExpress.XtraReports.UI;
 using IWSProject.Models;
+using IWSProject.Content;
 using System.Collections.Generic;
 using System.Web.Mvc;
-
 
 namespace IWSProject.Controllers
 {
@@ -17,38 +17,64 @@ namespace IWSProject.Controllers
 
             return View();
         }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult CallbackPanelPartial(string ClassId, string Start)
+        {
+            if (string.IsNullOrWhiteSpace(Start))
+                return PartialView("_CallbackPartialView");
+            try
+            {
+                string account = IWSLookUp.HasNoParent(Start);
+                if (account != "")
+                {
+                    string message = $"{account} {IWSLocalResource.HasNoParent}";
+                    throw new System.Exception(message);
+                }
+                Session["ClassId"] = ClassId;
+                Session["txtStart"] = Start;
+                string company = (string)Session["CompanyID"];
+                List<ResultsViewModel> resultsView = (List<ResultsViewModel>)IWSLookUp.GetResultat(ClassId, Start, company);
+                List<ResultsViewModel> incomesAndBalanceView = (List<ResultsViewModel>)IWSLookUp.GetIncomesAndBalance(ClassId, Start, company);
+                IncomesAndBalanceViewModel models = new IncomesAndBalanceViewModel { ResultsView = resultsView, IncomesAndBalanceView = incomesAndBalanceView };
+                Session["Results"] = resultsView;
+                Session["IncomesAndBalance"] = incomesAndBalanceView;
+                return PartialView("_CallbackPartialView");
+            }
+            catch (System.Exception ex)
+            {
+                ViewData["GenericError"] = ex.Message;
+                IWSLookUp.LogException(ex);
+                return PartialView("_CallbackPartialView");
+            }
+        }
+
+        [ValidateInput(false)]
+        public ActionResult IncomesAndBalancePartial()
+        {
+            string classId = (string)Session["ClassId"];
+            string start = (string)Session["txtStart"];
+            string company = (string)Session["CompanyID"];
+            List<ResultsViewModel> model = (List<ResultsViewModel>)IWSLookUp.GetIncomesAndBalance(classId, start, company);
+            return PartialView("IncomesAndBalancePartialView", model);
+        }
         [ValidateInput(false)]
         public ActionResult ResultatPartial()
         {
             string classId = (string)Session["ClassId"];
             string start = (string)Session["txtStart"];
-            //string end = (string)Session["txtEnd"];
-            bool isBalance = (bool)Session["isBalance"];
             string company = (string)Session["CompanyID"];
-            List<ResultsViewModel> model = (List<ResultsViewModel>)IWSLookUp.GetResultat(classId, start, company, isBalance);//end,
+            List<ResultsViewModel> model = (List<ResultsViewModel>)IWSLookUp.GetResultat(classId, start, company);
             return PartialView("ResultatPartialView", model);
         }
-        [HttpPost, ValidateInput(false)]
-        public ActionResult CallbackPanelPartial(string ClassId, string Start)//, string End
-        {
-            if (string.IsNullOrWhiteSpace(Start))// || string.IsNullOrWhiteSpace(End))
-                return PartialView("_CallbackPartialView"); 
-            Session["ClassId"] = ClassId;
-            Session["txtStart"] = Start;
-            //Session["txtEnd"] = End;
-            bool isBalance = IWSLookUp.IsBalance(ClassId);
-            Session["isBalance"] = isBalance;
-            string company = (string)Session["CompanyID"];
-            List<ResultsViewModel> model = (List<ResultsViewModel>)IWSLookUp.GetResultat(ClassId, Start, company, isBalance);// End, 
-            Session["Results"] = model;
-            return PartialView("_CallbackPartialView", model);
-        }
+        [ValidateInput(false)]
         public ActionResult ResultatView()
         {
+            Session["Results"] = null;
+            Session["IncomesAndBalance"] = null;
             ViewData["class"] = IWSLookUp.GetClass();
             return PartialView();
         }
-        public  ActionResult Export()
+        public ActionResult Export()
         {
             var model = Session["Results"];
 

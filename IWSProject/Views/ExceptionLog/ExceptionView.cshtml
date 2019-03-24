@@ -23,5 +23,25 @@
 <div class="accountHeader">
     <h2>@ViewBag.Title</h2>
 </div>
-@Html.Partial("ShowHideButtonPartialView")
+
+@Html.DevExpress().FormLayout(settings =>
+{
+settings.Name = "FormLayout";
+settings.Width = Unit.Percentage(100);
+settings.Items.AddGroupItem(gsettings => {
+    gsettings.ColCount = 1;
+    gsettings.Caption = IWSLocalResource.QueryDetail;
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = " ";
+        i.SetNestedContent(() =>
+        {
+            Html.RenderPartial("ShowHideButtonPartialView");
+        });
+    });
+});
+}).GetHtml()
 @Html.Action("ExceptionsGridViewPartial")
+
+
+@*@Html.Partial("ShowHideButtonPartialView")*@

@@ -2312,6 +2312,45 @@
         {
             return Regex.IsMatch(input, string.Format(@"\b{0}\b", Regex.Escape(match)));
         }
+        public static string HasNoParent(string period)
+        {
+            string accountName = string.Empty;
+            int oYear = Convert.ToInt32(period.Substring(0,4));
+            bool hasNoparents = (from a in IWSEntities.GetAccounts()
+                      where
+                            ((from p in IWSEntities.PeriodicAccountBalances
+                              where
+                             Convert.ToInt32(p.oYear) == oYear
+                              select new
+                              {
+                                  p.AccountId
+                              }).Distinct()).Contains(new { AccountId = a.id }) &&
+                        a.ParentId == ""
+                      orderby
+                        a.ParentId
+                      select new
+                      {
+                          a.name
+                      }).Any();
+            if (hasNoparents)
+                accountName = (from a in IWSEntities.GetAccounts()
+                            where
+                                  ((from p in IWSEntities.PeriodicAccountBalances
+                                    where
+                                   Convert.ToInt32(p.Periode) <= Convert.ToInt32(period)
+                                    select new
+                                    {
+                                        p.AccountId
+                                    }).Distinct()).Contains(new { AccountId = a.id }) &&
+                              a.ParentId == ""
+                            orderby
+                              a.ParentId
+                            select new
+                            {
+                                a.name
+                            }).FirstOrDefault().name;
+            return accountName;
+        }
         public static List<LineJournauxViewModel> GetLineJournaux(int transId)
         {
             return null;
@@ -2516,9 +2555,9 @@
             return report;
         }
  
-        public static IEnumerable GetResultat(string classId, string start,  string company, bool isBalance)
+        public static IEnumerable GetResultat(string classId, string period,  string company)
         {
-            List<ResultsViewModel> r = (from s in IWSEntities.AccountBalance(classId, start, company, isBalance)
+            List<ResultsViewModel> r = (from s in IWSEntities.AccountBalance(classId, period, company)
                                         where s.SDebit != s.SCredit
                                         select new ResultsViewModel()
                                         {
@@ -2528,12 +2567,32 @@
                                             SubClassName =s.SubClassName,
                                             AccountId = s.AccountId,
                                             AccountName = s.AccountName,
-                                            TDebit = (Decimal)s.TDebit,
-                                            TCredit = (Decimal)s.TCredit,
-                                            SDebit = (Decimal)s.SDebit,
-                                            SCredit = (Decimal)s.SCredit,
-                                            Currency=s.Currency,
-                                            Balance = (s.IsDebit==true) ? (Decimal)s.TDebit - (Decimal)s.TCredit : (Decimal)s.TCredit - (Decimal)s.TDebit
+                                            TDebit = (decimal)s.TDebit,
+                                            TCredit = (decimal)s.TCredit,
+                                            Currency =s.Currency,
+                                            Balance = (s.IsDebit==true) ? (decimal)s.TDebit - (decimal)s.TCredit : (decimal)s.TCredit - (decimal)s.TDebit
+                                        }).ToList();
+            return r;
+        }
+        public static IEnumerable GetIncomesAndBalance(string classId, string period, string companyId)
+        {
+            List<ResultsViewModel> r = (from x in IWSEntities.IncomesAndBalance(classId, period, companyId)
+                                        where
+                                          x.TDebit != x.TCredit
+                                        group x by new
+                                        {
+                                            x.ClassName,
+                                            x.SubClassName,
+                                            x.IsDebit,
+                                            x.Currency
+                                        } into g
+                                        select new ResultsViewModel()
+                                        {
+                                            ClassName = g.Key.ClassName,
+                                            SubClassName = g.Key.SubClassName,
+                                            Balance = (g.Key.IsDebit == true) ? g.Sum(p => (decimal)p.TDebit - (decimal)p.TCredit) : g.Sum(p => (decimal)p.TCredit - (decimal)p.TDebit),
+                                            Currency = g.Key.Currency,
+                                            IsDebit = (bool)g.Key.IsDebit
                                         }).ToList();
             return r;
         }

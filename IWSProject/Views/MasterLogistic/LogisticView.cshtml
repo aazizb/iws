@@ -248,40 +248,50 @@
 </div>
 @using (Html.BeginForm("Index", "MasterLogistic"))
 {
-    @Html.Hidden("selectedIDs");
 
-    @Html.DevExpress().ComboBox(settings =>
+    @Html.DevExpress().FormLayout(settings =>
 {
-    settings.Name = "ComboBoxModelId";
-    settings.Width = Unit.Pixel(185);
-    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
-    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
-    settings.Properties.Items.Add("",0000);
-    settings.Properties.Items.Add(IWSLocalResource.PurchaseOrder, 101);
-    settings.Properties.Items.Add(IWSLocalResource.GoodReceiving, 104);
-    settings.Properties.Items.Add(IWSLocalResource.InventoryInvoice, 110);
-    settings.Properties.Items.Add(IWSLocalResource.SalesOrder, 116);
-    settings.Properties.Items.Add(IWSLocalResource.BillOfDelivery, 118);
-    settings.Properties.Items.Add(IWSLocalResource.SalesInvoice, 120);
-    settings.Properties.ClientSideEvents.SelectedIndexChanged = "function(s, e) { OnModelIdSelectionChanged(); }";
-    settings.SelectedIndex = 0;
-}).GetHtml()
+    settings.Name = "FormLayout";
+    settings.Width = Unit.Percentage(100);
+    settings.Items.AddGroupItem(gsettings =>
+    {
+        gsettings.ColCount = 3;
+        gsettings.Caption = IWSLocalResource.QueryDetail;
 
-    @Html.DevExpress().Button(settings =>
+        gsettings.Items.Add(i =>
         {
-            settings.Name = "btnSubmit";
-            settings.ControlStyle.CssClass = "button";
-            settings.Text = IWSLocalResource.Validate;
-            settings.ToolTip = IWSLocalResource.Validate;
-            settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-            settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
-            settings.Width = Unit.Pixel(80);
-            settings.UseSubmitBehavior = false;
-            settings.ClientSideEvents.Click = "OnSubmitClick";
-        }).GetHtml()
-
-    @Html.Partial("ShowHideButtonPartialView")
+            i.Caption = IWSLocalResource.Logistic;
+            i.SetNestedContent(() =>
+            {
+                Html.RenderPartial("GridLookupPartial");
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.Name = "btnSubmit";
+            i.NestedExtension().Button(e =>
+            {
+                e.Name = "btnOk";
+                e.Text = IWSLocalResource.Validate;
+                e.ControlStyle.CssClass = "button";
+                e.Width = Unit.Pixel(105);
+                e.ClientSideEvents.Click = "OnSubmitClick";
+                e.UseSubmitBehavior = false;
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.SetNestedContent(() =>
+            {
+                Html.RenderPartial("ShowHideButtonPartialView");
+            });
+        });
+    });
+}).GetHtml()
 
     @Html.Partial("CallbackPanelPartialView")
 }
+
 

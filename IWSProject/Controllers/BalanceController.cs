@@ -38,7 +38,7 @@ namespace IWSProject.Controllers
             Session["endBalance"] = end;
             string company = (string)Session["CompanyID"];
             List<AccountBalanceViewModel> model = (List<AccountBalanceViewModel>)IWSLookUp.GetAccountBalance(start, end, selectedIDs, company);
-            Session["Results"] = model;
+            ViewBag.Results = model;
             return PartialView("_CallbackPartialView", model);
         }
         public ActionResult BalanceView()
@@ -47,7 +47,7 @@ namespace IWSProject.Controllers
         }
         public ActionResult Export()
         {
-            var model = Session["Results"];
+            var model = ViewBag.Results;
 
             MVCxGridViewState gridViewState = (MVCxGridViewState)Session["gridViewState"];
 

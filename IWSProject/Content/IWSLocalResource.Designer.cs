@@ -1339,6 +1339,15 @@ namespace IWSProject.Content {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Has no parent set.
+        /// </summary>
+        public static string HasNoParent {
+            get {
+                return ResourceManager.GetString("HasNoParent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Header.
         /// </summary>
         public static string HeaderText {

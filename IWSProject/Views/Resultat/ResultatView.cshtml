@@ -1,21 +1,18 @@
 ﻿@using IWSProject.Content
-@using IWSProject.Models
-@model List<ResultsViewModel>
 
 <script type="text/javascript">
     var vClassId = null;
     var vStart = null;
-    
+
     function OnSubmitClick(s, e) {
         vClassId = ClassId.GetValue();
         vStart = fromYearMonth.GetText();
-        
+
         callbackPartialView.PerformCallback();
     }
     function OnBeginCallback(s, e) {
         e.customArgs["ClassId"] = vClassId;
         e.customArgs["Start"] = vStart;
-
     }
 </script>
 
@@ -25,72 +22,68 @@
 <div class="accountHeader">
     <h2>@ViewBag.Title</h2>
 </div>
+
 @Html.DevExpress().FormLayout(settings =>
 {
-    settings.Name = "FormLayout";
-    settings.Width = Unit.Percentage(100);
-    settings.Items.AddGroupItem(gsettings => {
-        gsettings.ColCount = 5;
-        gsettings.Caption = IWSLocalResource.QueryDetail;
+settings.Name = "FormLayout";
+settings.Width = Unit.Percentage(100);
+settings.Items.AddGroupItem(gsettings =>
+{
+    gsettings.ColCount = 5;
+    gsettings.Caption = IWSLocalResource.QueryDetail;
 
-        gsettings.Items.Add(comboItem =>
+    gsettings.Items.Add(comboItem =>
+    {
+        comboItem.Name = "ClassId";
+        comboItem.Caption = IWSLocalResource.classx;
+        comboItem.NestedExtension().ComboBox(cmb =>
         {
-            comboItem.Name = "ClassId";
-            comboItem.Caption = IWSLocalResource.classx;
-            comboItem.NestedExtension().ComboBox(cmb =>
-            {
-                cmb.Width = Unit.Pixel(180);
-                cmb.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
-                cmb.Properties.ValueField = "ParentId";
-                cmb.Properties.TextField = "ParentName";
-                cmb.SelectedIndex = 0;
-                cmb.Properties.ValueType = typeof(string);
-                cmb.Properties.DataSource = ViewData["class"];
-            });
-        });
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = IWSLocalResource.periode;
-            i.SetNestedContent(() => {
-                Html.RenderPartial("FromYearMonthDateEditPartialView");
-            });
-        });
-        //gsettings.Items.Add(i =>
-        //{
-        //    i.Caption = IWSLocalResource.PeriodTo;
-        //    i.SetNestedContent(() =>
-        //    {
-        //        Html.RenderPartial("ToYearMonthDateEditPartialView");
-        //    });
-        //});
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = " ";
-            i.Name = "btnSubmit";
-            i.NestedExtension().Button(e =>
-            {
-                e.Name = "btnOk";
-                e.Text = IWSLocalResource.Validate;
-                e.ControlStyle.CssClass = "button";
-                e.Width = Unit.Pixel(105);
-                e.ClientSideEvents.Click = "OnSubmitClick";
-                e.UseSubmitBehavior = true;
-            });
-        });
-        gsettings.Items.Add(i =>
-        {
-            i.Caption = " ";
-            i.Name = "btnExp";
-            i.NestedExtension().Button(e =>
-            {
-                e.Name = "btnExport";
-                e.Text = IWSLocalResource.Export;
-                e.Width = Unit.Pixel(105);
-                e.UseSubmitBehavior = false;
-                e.RouteValues = new { Controller = "Resultat", Action = "Export" };
-            });
+            cmb.Width = Unit.Pixel(180);
+            cmb.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+            cmb.Properties.ValueField = "ParentId";
+            cmb.Properties.TextField = "ParentName";
+            cmb.SelectedIndex = 0;
+            cmb.Properties.ValueType = typeof(string);
+            cmb.Properties.DataSource = ViewData["class"];
         });
     });
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = IWSLocalResource.periode;
+        i.SetNestedContent(() =>
+        {
+            Html.RenderPartial("FromYearMonthDateEditPartialView");
+        });
+    });
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = " ";
+        i.Name = "btnSubmit";
+        i.NestedExtension().Button(e =>
+        {
+            e.Name = "btnOk";
+            e.Text = IWSLocalResource.Validate;
+            e.ControlStyle.CssClass = "button";
+            e.Width = Unit.Pixel(105);
+            e.ClientSideEvents.Click = "OnSubmitClick";
+            e.UseSubmitBehavior = true;
+        });
+    });
+    gsettings.Items.Add(i =>
+    {
+        i.Caption = " ";
+        i.Name = "btnExp";
+        i.NestedExtension().Button(e =>
+        {
+            e.Name = "btnExport";
+            e.Text = IWSLocalResource.Export;
+            e.Width = Unit.Pixel(105);
+            e.UseSubmitBehavior = false;
+            e.RouteValues = new { Controller = "Resultat", Action = "Export" };
+        });
+    });
+});
 }).GetHtml()
 
 @Html.Partial("_CallbackPartialView")
+

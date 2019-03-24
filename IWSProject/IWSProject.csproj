@@ -471,6 +471,11 @@
     <Content Include="Views\FiscalYear\MasterGridViewPartial.cshtml" />
     <Content Include="Views\Depreciation\MasterGridViewPartial.cshtml" />
     <Content Include="Views\BankStatements\ImportMasterFilesPartial.cshtml" />
+    <Content Include="Views\MasterCompta\GridLookupPartial.cshtml" />
+    <Content Include="Views\PdfUpdate\GridLookupPartial.cshtml" />
+    <Content Include="Views\UnpaidBill\GridlookupPartial.cshtml" />
+    <Content Include="Views\MasterLogistic\GridLookupPartial.cshtml" />
+    <Content Include="Views\Resultat\IncomesAndBalancePartialView.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

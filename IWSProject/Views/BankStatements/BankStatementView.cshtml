@@ -65,23 +65,38 @@
 </div>
 @using (Html.BeginForm("Index", "BankStatements"))
 {
-
-    @Html.DevExpress().Button(settings =>
+    @Html.DevExpress().FormLayout(settings =>
 {
-    settings.Name = "btnSubmit";
-
-    settings.Text = IWSLocalResource.Validate;
-    settings.ToolTip = IWSLocalResource.Validate;
-    settings.Style[HtmlTextWriterStyle.MarginRight] = "5px";
-    settings.Images.Image.IconID = IconID.ContentCheckbox16x16;
-    settings.Width = Unit.Pixel(80);
-    settings.UseSubmitBehavior = false;
-    settings.ClientSideEvents.Click = "OnSubmitClick";
+    settings.Name = "FormLayout";
+    settings.Width = Unit.Percentage(100);
+    settings.Items.AddGroupItem(gsettings =>
+    {
+        gsettings.ColCount = 2;
+        gsettings.Caption = IWSLocalResource.QueryDetail;
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.Name = "btnSubmit";
+            i.NestedExtension().Button(e =>
+            {
+                e.Name = "btnOk";
+                e.Text = IWSLocalResource.Validate;
+                e.ControlStyle.CssClass = "button";
+                e.Width = Unit.Pixel(105);
+                e.ClientSideEvents.Click = "OnSubmitClick";
+                e.UseSubmitBehavior = false;
+            });
+        });
+        gsettings.Items.Add(i =>
+        {
+            i.Caption = " ";
+            i.SetNestedContent(() =>
+            {
+                Html.RenderPartial("ShowHideButtonPartialView");
+            });
+        });
+    });
 }).GetHtml()
 
-    @Html.Partial("ShowHideButtonPartialView")
-
     @Html.Partial("CallbackPanelPartialView")
-
 }
-

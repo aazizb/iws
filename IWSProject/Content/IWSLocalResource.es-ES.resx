@@ -1158,4 +1158,7 @@
   <data name="ImportSage" xml:space="preserve">
     <value>Importar SAGE</value>
   </data>
+  <data name="HasNoParent" xml:space="preserve">
+    <value>No tiene padres establecidos</value>
+  </data>
 </root>

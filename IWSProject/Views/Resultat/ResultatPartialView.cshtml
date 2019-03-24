@@ -1,5 +1,6 @@
 ﻿@using IWSProject.Content
 @using IWSProject.Controllers
+
 @Html.DevExpress().GridView(settings =>
 {
     settings.Name = "ResultatPartialView";
@@ -28,6 +29,7 @@
     settings.SettingsBehavior.AllowFocusedRow = true;
 
     settings.Width = Unit.Percentage(100);
+    settings.Height = Unit.Percentage(80);
 
     settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
     settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
@@ -39,7 +41,7 @@
     settings.SettingsPager.LastPageButton.Visible = true;
     settings.SettingsPager.PageSizeItemSettings.Visible = true;
 
-    settings.SettingsPager.PageSize = 24;
+    settings.SettingsPager.PageSize = 12;
 
     settings.Images.CollapsedButton.IconID = IconID.ActionsAdd16x16;
     settings.Images.ExpandedButton.IconID = IconID.ActionsRemove16x16;
@@ -128,7 +130,8 @@
                 ASPxSummaryItem debit = (s as ASPxGridView).GroupSummary["TDebit"];
                 ASPxSummaryItem credit = (s as ASPxGridView).GroupSummary["TCredit"];
                 decimal sumDebit = Convert.ToDecimal(e.GetGroupSummary(e.GroupRowHandle, debit));
-                decimal sumCredit = Convert.ToDecimal(e.GetGroupSummary(e.GroupRowHandle, credit));//Convert.ToDouble(e.GetGroupSummary(e.GroupRowHandle, gridView.GroupSummary["TCredit"]));
+                decimal sumCredit = Convert.ToDecimal(e.GetGroupSummary(e.GroupRowHandle, credit));
+                //Convert.ToDouble(e.GetGroupSummary(e.GroupRowHandle, gridView.GroupSummary["TCredit"]));
                 e.TotalValue = sumDebit - sumCredit;
             }
         }
@@ -142,12 +145,21 @@
 
 
     };
+
+    if (ViewData["GenericError"] != null)
+    {
+        settings.Settings.ShowFooter = true;
+        settings.SetFooterRowTemplateContent(c =>
+        {
+            Html.ViewContext.Writer.Write(ViewData["GenericError"]);
+        });
+    }
+
     settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleIfExpanded;
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TDebit").ShowInGroupFooterColumn = "TDebit";
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "TCredit").ShowInGroupFooterColumn = "TCredit";
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Balance").ShowInGroupFooterColumn = "Balance";
     settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
-
 
 }).Bind(Model).GetHtml()
 
