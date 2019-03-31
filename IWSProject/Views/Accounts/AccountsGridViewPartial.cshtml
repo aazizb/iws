@@ -249,7 +249,13 @@
                 p.Width = Unit.Percentage(100);
             });
         });
-
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "description";
+            column.Caption = IWSLocalResource.description;
+            column.Width = Unit.Percentage(20);
+            column.Visible = false;
+        });
         #region Template Edit
         settings.SetEditFormTemplateContent(templateContent =>
         {

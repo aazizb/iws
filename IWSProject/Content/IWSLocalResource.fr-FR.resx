@@ -1161,4 +1161,7 @@
   <data name="HasNoParent" xml:space="preserve">
     <value>N'a pas de parents</value>
   </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Résumé</value>
+  </data>
 </root>

@@ -84,7 +84,16 @@
             e.NewValues["Depreciation"] = (int)IWSLookUp.DepreciationType.StraightLine;
             e.NewValues["Frequency"] = (int)IWSLookUp.DepreciationFrequency.Yearly;
         };
+        settings.CustomColumnDisplayText = (sender, e) =>
+        {
 
+            if (e.Column.FieldName == "Depreciation")
+            {
+                e.DisplayText = IWSLocalResource.StraightLine;
+                if (Convert.ToInt32(e.Value) == (int)IWSLookUp.DepreciationType.Degressive)
+                    e.DisplayText = IWSLocalResource.Degressive;
+            }
+        };
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
@@ -141,69 +150,6 @@
             });
             column.Width = Unit.Percentage(6);
         });
-        //settings.Columns.Add(column =>
-        //{
-        //    column.FieldName = "Frequency";
-        //    column.Caption = IWSLocalResource.Frequency;
-        //    column.EditorProperties().ComboBox(combo =>
-        //    {
-        //        combo.TextField = "Name";
-        //        combo.ValueField = "id";
-        //        combo.ValueType = typeof(string);
-        //        combo.DataSource = ViewBag.PackUnit;
-        //        //combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
-        //        combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
-        //        combo.TextFormatString = "{0}";
-        //    });
-        //    column.Width = Unit.Percentage(15);
-        //    column.Visible = false;
-        //});
-        //settings.Columns.Add(column =>
-        //{
-        //    //settings.Name = "ComboBoxModelId";
-        //    //settings.Width = Unit.Pixel(185);
-        //    //settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
-        //    //settings.Properties.DropDownStyle = DropDownStyle.DropDown;
-        //    //settings.Properties.Items.Add("", 0000);
-        //    //settings.Properties.Items.Add(IWSLocalResource.vendorinvoice, 112);
-        //    //settings.Properties.Items.Add(IWSLocalResource.payment, 114);
-        //    column.FieldName = "Frequency";
-        //    column.Caption = IWSLocalResource.Frequency;
-        //    column.EditorProperties().ComboBox(combo =>
-        //    {
-        //        combo.nam
-        //        //cbSettings.Properties.Items.Add("Cancel", "Cancel");
-        //        //cbSettings.Properties.Items.Add("Issue", "Issue");
-        //        combo.Items.Add(IWSLocalResource.debit, 2);
-        //        combo.Items.Add(IWSLocalResource.credit, 4);
-        //    });
-        //    column.Width = Unit.Percentage(6);
-        //});
-
-        //settings.Columns.Add(column =>
-        //{
-        //    column.FieldName = "Frequency";
-        //    column.Caption = IWSLocalResource.Frequency;
-        //    //column.UnboundType = DevExpress.Data.UnboundColumnType.String;
-        //    column.SetDataItemTemplateContent(c =>
-        //    {
-        //        Html.DevExpress().ComboBox(combo =>
-        //        {
-        //            combo.Name = "cb" + c.KeyValue;
-        //            combo.Width = System.Web.UI.WebControls.Unit.Percentage(100);
-        //            combo.Properties.Items.Add(IWSLocalResource.debit, 2);
-        //            combo.Properties.Items.Add(IWSLocalResource.credit, 4);
-
-        //            //combo.CustomJSProperties = (send, evargs) =>
-        //            //{
-        //            //    evargs.Properties["cpKeyValue"] = c.KeyValue;
-        //            //};
-
-        //            //combo.Properties.ClientSideEvents.SelectedIndexChanged = "OnActionChanged";
-        //        }).GetHtml();      //.Bind(c.Text != "&nbsp;" ? c.Text : "").Render();
-        //    });
-        //});
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "Account";
@@ -265,7 +211,25 @@
             });
             column.Width = Unit.Percentage(8);
         });
-
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Description";
+            column.Caption = IWSLocalResource.description;
+            column.Width = Unit.Percentage(25);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Rate";
+            column.Caption = IWSLocalResource.DecliningRate;
+            column.Width = Unit.Percentage(10);
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Depreciation";
+            column.Caption = IWSLocalResource.Depreciation;
+            column.ColumnType = MVCxGridViewColumnType.Default;
+            column.Width = Unit.Percentage(25);
+        });
         #region Template Edit
         settings.SetEditFormTemplateContent(templateContent =>
         {
@@ -411,7 +375,6 @@
                         s.Properties.ValidationSettings.RequiredField.IsRequired = true;
                         s.TabIndex = 8;
                         //s.Properties.ClientSideEvents.ValueChanged = "OnValueChanged";
-
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();

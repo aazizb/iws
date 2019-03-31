@@ -135,11 +135,68 @@
         settings.Columns.Add(column =>
         {
             column.FieldName = "PVat";
-            column.Caption = IWSLocalResource.vat;
+            column.Caption = IWSLocalResource.percent;
             column.Width = Unit.Percentage(30);
 
         });
-
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "description";
+            column.Caption = IWSLocalResource.description;
+            column.Width = Unit.Percentage(60);
+            column.Visible = false;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "inputvataccountid";
+            column.Caption = IWSLocalResource.inputvataccountid;
+            column.Width = Unit.Percentage(4);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = ViewBag.ComboAccountId;
+                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+                combo.TextFormatString = "{0}-{1}";
+            });
+            column.Visible = false;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "outputvataccountid";
+            column.Caption = IWSLocalResource.outputvataccountid;
+            column.Width = Unit.Percentage(4);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = ViewBag.ComboAccountId;
+                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+                combo.TextFormatString = "{0}-{1}";
+            });
+            column.Visible = false;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "revenueaccountid";
+            column.Caption = IWSLocalResource.revenueaccountid;
+            column.Width = Unit.Percentage(4);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = ViewBag.ComboAccountId;
+                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+                combo.TextFormatString = "{0}-{1}";
+            });
+            column.Visible = false;
+        });
         #region Template Edit
         settings.SetEditFormTemplateContent(templateContent =>
         {
@@ -208,7 +265,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;// IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -241,7 +298,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId; // IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -274,7 +331,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;// IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = ViewBag.ComboAccountId;
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";

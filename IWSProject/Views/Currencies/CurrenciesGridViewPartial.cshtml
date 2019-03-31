@@ -123,9 +123,14 @@
                 d.DisplayFormatString = "yyyy-MM-dd";
             });
         });
-
-#region Template Edit
-settings.SetEditFormTemplateContent(templateContent =>
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Description";
+            column.Caption = IWSLocalResource.description;
+            column.Width = Unit.Percentage(25);
+        });
+        #region Template Edit
+        settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -219,9 +224,9 @@ settings.SetEditFormTemplateContent(templateContent =>
             .Bind(ViewBag.Currencies ?? templateContent.DataItem)
             .Render();
         });
-#endregion
+        #endregion
 
-settings.DataBinding = (sender, e) =>
+        settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(Currency));
         };

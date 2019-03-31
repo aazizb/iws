@@ -157,10 +157,25 @@
             column.Caption = IWSLocalResource.zip;
             column.Width = Unit.Percentage(10);
         });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "accountid";
+            column.Caption = IWSLocalResource.accountid;
+            column.Width = Unit.Percentage(15);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+                combo.TextFormatString = "{0}-{1}";
+            });
+        });
+        #region Template Edit
 
-#region Template Edit
-
-settings.SetEditFormTemplateContent(templateContent =>
+        settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -321,9 +336,9 @@ settings.SetEditFormTemplateContent(templateContent =>
             .Bind(ViewData["stores"] ?? templateContent.DataItem)
             .Render();
         });
-#endregion
+        #endregion
 
-settings.DataBinding = (sender, e) =>
+        settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(Store));
         };

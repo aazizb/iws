@@ -1152,4 +1152,7 @@
   <data name="HasNoParent" xml:space="preserve">
     <value>Has no parent set</value>
   </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Summary</value>
+  </data>
 </root>

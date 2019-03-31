@@ -34,10 +34,10 @@
 
         settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
-////performance tuning
-settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
-//settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
-settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
+        ////performance tuning
+        settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
+        //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
+        settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
 
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
@@ -255,12 +255,69 @@ settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
             });
+            column.Visible = false;
         });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "ExpenseAccount";
+            column.Caption = IWSLocalResource.expenseaccountid;
+            column.Width = Unit.Percentage(4);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+                combo.TextFormatString = "{0}-{1}";
+            });
+            column.Visible = false;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "RevenuAccountId";
+            column.Caption = IWSLocalResource.revenueaccountid;
+            column.Width = Unit.Percentage(4);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+                combo.TextFormatString = "{0}-{1}";
+            });
+            column.Visible = false;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "StockAccount";
+            column.Caption = IWSLocalResource.stockaccountid;
+            column.Width = Unit.Percentage(4);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+                combo.TextFormatString = "{0}-{1}";
+            });
+            column.Visible = false;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "description";
+            column.Caption = IWSLocalResource.description;
+            column.Width = Unit.Percentage(25);
+            column.Visible = false;
+        });
+        #region Template Edit
 
-
-#region Template Edit
-
-settings.SetEditFormTemplateContent(templateContent =>
+        settings.SetEditFormTemplateContent(templateContent =>
         {
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
@@ -613,10 +670,10 @@ settings.SetEditFormTemplateContent(templateContent =>
             .Render();
         });
 
-#endregion
+        #endregion
 
 
-settings.DataBinding = (sender, e) =>
+        settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(Article));
         };

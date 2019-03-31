@@ -2337,14 +2337,14 @@
                             where
                                   ((from p in IWSEntities.PeriodicAccountBalances
                                     where
-                                   Convert.ToInt32(p.Periode) <= Convert.ToInt32(period)
+                                   Convert.ToInt32(p.oYear) == oYear
                                     select new
                                     {
                                         p.AccountId
                                     }).Distinct()).Contains(new { AccountId = a.id }) &&
                               a.ParentId == ""
                             orderby
-                              a.ParentId
+                              a.id
                             select new
                             {
                                 a.name

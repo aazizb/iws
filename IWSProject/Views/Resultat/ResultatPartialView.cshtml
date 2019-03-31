@@ -108,10 +108,10 @@
         column.Caption = IWSLocalResource.Currency;
         column.Width = Unit.Percentage(6);
     });
-    settings.CustomSummaryCalculate = (s, e) =>
-    {
+    //settings.CustomSummaryCalculate = (s, e) =>
+    //{
 
-    };
+    //};
     settings.SummaryDisplayText = (sender, e) =>
     {
         if (e.IsGroupSummary && e.Item.FieldName != "Currency")
@@ -142,8 +142,6 @@
                 e.TotalValue = e.GetValue("Currency");
             }
         }
-
-
     };
 
     if (ViewData["GenericError"] != null)

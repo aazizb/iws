@@ -158,18 +158,6 @@
         column.Caption = IWSLocalResource.Currency;
         column.Width = Unit.Percentage(10);
     });
-    settings.CustomSummaryCalculate = (s, e) =>
-    {
-        ASPxSummaryItem item = ((ASPxSummaryItem)e.Item);
-
-        if (item.FieldName != "Currency")
-            return;
-
-        if (e.IsGroupSummary)
-        {
-            e.TotalValue = e.GetValue("Currency");
-        }
-    };
     settings.SummaryDisplayText = (sender, e) =>
     {
         if (e.IsGroupSummary && e.Item.FieldName != "Currency")
@@ -177,6 +165,18 @@
             e.Text = string.Format(IWSLocalResource.Total + ": {0:N}", e.Value);
         }
     };
+    settings.CustomSummaryCalculate = (s, e) =>
+    {
+        ASPxSummaryItem item = ((ASPxSummaryItem)e.Item);
+        if (item.FieldName == "Currency")
+        {
+            if (e.IsTotalSummary)
+            {
+                e.TotalValue = e.GetValue("Currency");
+            }
+        }
+    };
+
     settings.Settings.ShowFooter = true;
     settings.SettingsBehavior.AutoExpandAllGroups = true;
     settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
@@ -188,9 +188,4 @@
     settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").ShowInGroupFooterColumn = "Debit";
     settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").ShowInGroupFooterColumn = "Credit";
     settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
-
-    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Debit").ShowInGroupFooterColumn = "Debit";
-    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Credit").ShowInGroupFooterColumn = "Credit";
-    settings.GroupSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Currency").ShowInGroupFooterColumn = "Currency";
-
 }).Bind(Model).GetHtml()
