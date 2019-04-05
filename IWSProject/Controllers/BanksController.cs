@@ -28,11 +28,12 @@ namespace IWSProject.Controllers
         public ActionResult BanksGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Bank item)
         {
             var model = db.Banks;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
             ViewData["bank"] = item;
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Banks;
-            item.Posted = DateTime.Now.Date;
-            item.Updated = DateTime.Now.Date;
+            item.Posted = dateTime;// DateTime.Now.Date;
+            item.Updated = dateTime;// DateTime.Now.Date;
             if (ModelState.IsValid)
             {
                 try

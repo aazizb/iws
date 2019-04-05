@@ -11,7 +11,7 @@ using System.Web.Mvc;
 namespace IWSProject.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : IWSBaseController
     {
         ApplicationSignInManager _signInManager;
         public ApplicationSignInManager SignInManager {
@@ -65,14 +65,15 @@ namespace IWSProject.Controllers
                         if (Session["CompanyID"] != null)
                             Session["CompanyID"] = null;
 
-                        string companyID= IWSLookUp.GetCompany(model.UserName);
+                        string companyId= IWSLookUp.GetCompany(model.UserName);
 
-                        Session["CompanyID"] = companyID;
+                        Session["CompanyID"] = companyId;
 
-                            
+                        Session["TimeZoneId"] = IWSLookUp.GetTimeZoneId(companyId);
+
                         if (Session["Menus"] == null)
                         {
-                            Session["Menus"] = IWSLookUp.GetMenu(companyID);
+                            Session["Menus"] = IWSLookUp.GetMenu(companyId);
                         }
 
                         return RedirectToLocal(returnUrl);
@@ -94,6 +95,7 @@ namespace IWSProject.Controllers
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             Session["Menus"] = null;
             Session["CompanyID"] = null;
+            Session["TimeZoneId"] = null;
             return Redirect("/");
         }
 

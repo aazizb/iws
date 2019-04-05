@@ -533,7 +533,8 @@
         }
         public static ImmoDetailViewModel GetImmoDetail(string IDs, string period)
         {
-            string companyId = (string)HttpContext.Current.Session["CompanyID"]; 
+            string companyId = (string)HttpContext.Current.Session["CompanyID"];
+            DateTime dateTime = GetCurrentDateTime();
             ImmoDetailViewModel detail = 
                 (from d in IWSEntities.Assets
                  join p in IWSEntities.DepreciationDetails on new { d.Id } equals new { Id = p.TransId }
@@ -544,13 +545,13 @@
                  select new ImmoDetailViewModel()
                  {
                      CostCenter = "100",
-                     TransDate = DateTime.Now,
-                     ItemDate = DateTime.Now,
-                     EntryDate = DateTime.Now,
+                     TransDate = dateTime,// DateTime.Now,
+                     ItemDate = dateTime,//DateTime.Now,
+                     EntryDate = dateTime,//DateTime.Now,
                      Account = d.Account,
                      Side = true,
                      OAccount = d.OAccount,
-                     DueDate = DateTime.Now,
+                     DueDate = dateTime,//DateTime.Now,
                      CompanyId = d.CompanyId,
                      Currency = d.Currency
                  }).SingleOrDefault<ImmoDetailViewModel>();
@@ -560,6 +561,7 @@
         {
 
             string companyId = (string)HttpContext.Current.Session["CompanyID"];
+            DateTime dateTime = GetCurrentDateTime();
             List<ImmoDetailViewModel> detail = new List<ImmoDetailViewModel>
                 (from d in IWSEntities.Assets
                  join p in IWSEntities.DepreciationDetails on new { d.Id } equals new { Id = p.TransId }
@@ -570,13 +572,13 @@
                  select new ImmoDetailViewModel()
                  {
                      CostCenter = "100",
-                     TransDate = DateTime.Now,
-                     ItemDate = DateTime.Now,
-                     EntryDate = DateTime.Now,
+                     TransDate = dateTime,//DateTime.Now,
+                     ItemDate = dateTime,//DateTime.Now,
+                     EntryDate = dateTime,//DateTime.Now,
                      Account = d.Account,
                      Side = true,
                      OAccount = d.OAccount,
-                     DueDate = DateTime.Now,
+                     DueDate = dateTime,//DateTime.Now,
                      CompanyId = d.CompanyId,
                      Currency = d.Currency
                  });
@@ -1206,6 +1208,7 @@
 
         public static List<BrouillardViewModel> GetBrouillard(string TypeDoc, string NumPiece, string CompanyId, int ItemId)
         {
+            DateTime dateTime = GetCurrentDateTime();
             List<BrouillardViewModel> d = (from b in IWSEntities.GetBrouillard(TypeDoc, NumPiece, CompanyId, ItemId)
                                              select new BrouillardViewModel()
                                              {
@@ -1214,7 +1217,7 @@
                                                  TransDate = Convert.ToDateTime(b.Period),
                                                  ItemDate= Convert.ToDateTime(b.Period),
                                                  DueDate=Convert.ToDateTime(b.Period),
-                                                 EntryDate=DateTime.Now,
+                                                 EntryDate=dateTime,//DateTime.Now,
                                                  AccountID = b.AccountID,
                                                  Side= Convert.ToBoolean(b.Side),
                                                  OAccountID = b.OAccountID,
@@ -2668,6 +2671,15 @@
             string companyID = (string)HttpContext.Current.Session["CompanyID"];
             return IWSEntities.Articles.FirstOrDefault(c => 
                 c.id == id && c.CompanyID == companyID).packunit;
+        }
+        public static DateTime GetCurrentDateTime()
+        {
+            string timeZone = (string)HttpContext.Current.Session["TimeZoneId"];
+            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Today, TimeZoneInfo.Local.Id, timeZone);
+        }
+        public static string GetTimeZoneId(string companyId)
+        {
+            return IWSEntities.Companies.SingleOrDefault(c => c.id == companyId).TimeZone ?? "GMT Standard Time";
         }
         public static string GetCompany(string UserName)
         {

@@ -1,4 +1,5 @@
 ﻿@using IWSProject.Content
+@using IWSProject.Models
 @using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -62,8 +63,9 @@
 
         settings.InitNewRow = (s, e) =>
         {
-            e.NewValues["dateofopen"] = DateTime.Now;
-            e.NewValues["dateofclose"] = DateTime.Now;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+            e.NewValues["dateofopen"] = dateTime;// DateTime.Now;
+            e.NewValues["dateofclose"] = dateTime;// DateTime.Now;
             e.NewValues["balance"] = 0;
             e.NewValues["IsDebit"] = true;
             e.NewValues["IsBalanceSheetAccount"] = false;

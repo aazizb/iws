@@ -588,6 +588,8 @@
         [FunctionAttribute(Name = "dbo.LogException")]
         public int LogException([ParameterAttribute(Name = "Message", DbType = "NVarChar(256)")] string message, [ParameterAttribute(Name = "Type", DbType = "NVarChar(256)")] string type, [ParameterAttribute(Name = "Source", DbType = "NVarChar(256)")] string source, [ParameterAttribute(Name = "URL", DbType = "NVarChar(256)")] string uRL, [ParameterAttribute(Name = "Target", DbType = "NVarChar(256)")] string target, [ParameterAttribute(Name = "ComapnyId", DbType = "NVarChar(6)")] string comapnyId, [ParameterAttribute(Name = "UserName", DbType = "NVarChar(6)")] string userName)
         {
+            if (!string.IsNullOrWhiteSpace(message))
+                return 0;
             IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), message, type, source, uRL, target, comapnyId, userName);
             return ((int)(result.ReturnValue));
         }

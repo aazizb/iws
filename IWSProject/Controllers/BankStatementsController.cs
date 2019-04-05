@@ -406,7 +406,7 @@
                         if (Headers.Equals(accounts))
                         {
                             option = IWSLocalResource.account;
-
+                            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
                             List<Account> Account = new List<Account>();
                             foreach (var line in Lines)
                             {
@@ -417,8 +417,8 @@
                                     id = Fields[0],
                                     name = Fields[1],
                                     description = Fields[3],
-                                    dateofopen = DateTime.Now,
-                                    dateofclose = DateTime.Now,
+                                    dateofopen = dateTime,// DateTime.Now,
+                                    dateofclose = dateTime,// DateTime.Now,
                                     balance = Convert.ToDecimal(Fields[2]),
                                     CompanyID = companyId,
                                     ParentId = string.Empty,
@@ -544,7 +544,7 @@
 
                         if (account.SequenceEqual(columnNames))
                         {
-
+                            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
                             List<Account> Accounts = new List<Account>();
                             for (int i = 0; i < dataSet.Tables[0].Rows.Count; i++)
                             {
@@ -553,8 +553,8 @@
                                     id = dataSet.Tables[0].Rows[i][0].ToString(),
                                     name = dataSet.Tables[0].Rows[i][1].ToString(),
                                     description = dataSet.Tables[0].Rows[i][3].ToString(),
-                                    dateofopen = DateTime.Now,
-                                    dateofclose = DateTime.Now,
+                                    dateofopen = dateTime,// DateTime.Now,
+                                    dateofclose = dateTime,// DateTime.Now,
                                     balance = Convert.ToDecimal(dataSet.Tables[0].Rows[i][2].ToString()),
                                     CompanyID = companyId.ToString(),
                                     ParentId = string.Empty,
@@ -707,7 +707,7 @@
             List<DetailCompta> detailCompta = new List<DetailCompta>();
             StatementDetailViewModel bankStatement = new StatementDetailViewModel();
             InvoiceViewModel invoice = new InvoiceViewModel();
-
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
             var maxId = db.MasterComptas.Count(i => i.id > 0);
             if (maxId != 0)
                 newOID += db.MasterComptas.Max(i => i.id);
@@ -746,7 +746,7 @@
                     HeaderText = bankStatement.Verwendungszweck,
                     TransDate = bankStatement.Valutadatum,
                     ItemDate = bankStatement.Buchungstag,
-                    EntryDate = DateTime.Today,
+                    EntryDate = dateTime,// DateTime.Today,
                     CompanyId = companyId,
                     ModelId = modelId,
                     IsValidated = false
@@ -762,7 +762,7 @@
                     HeaderText = bankStatement.Verwendungszweck,
                     TransDate = bankStatement.Valutadatum,
                     ItemDate = bankStatement.Buchungstag,
-                    EntryDate = DateTime.Today,
+                    EntryDate =dateTime,// DateTime.Today,
                     CompanyId = companyId,
                     ModelId = modelId,
                     IsValidated = false

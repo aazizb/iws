@@ -19,23 +19,17 @@ namespace IWSProject.Controllers
         // GET: Customers
         public ActionResult Index()
         {
-
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
-            ViewBag.VAT = IWSLookUp.GetVAT();
-
-            ViewBag.Customer = IWSLookUp.GetCustomer();
-
             return View();
         }
 
         [ValidateInput(false)]
         public ActionResult CustomersGridViewPartial()
         {
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
+            if (Session["ComboAccounts"] == null)
+            {
+                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
+            }
             ViewBag.VAT = IWSLookUp.GetVAT();
-
             ViewBag.Cust = IWSLookUp.GetCustomer();
             return PartialView("CustomersGridViewPartial", ViewBag.Cust);
         }
@@ -46,8 +40,9 @@ namespace IWSProject.Controllers
             var model = db.Customers;
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Customer;
-            item.Posted = DateTime.Now.Date;
-            item.Updated = DateTime.Now.Date;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+            item.Posted = dateTime;// DateTime.Now.Date;
+            item.Updated = dateTime;// DateTime.Now.Date;
             ViewData["customer"] = item;
             if (ModelState.IsValid)
             {
@@ -209,6 +204,10 @@ namespace IWSProject.Controllers
 
         public ActionResult CustomerView()
         {
+            if (Session["ComboAccounts"] == null)
+            {
+                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
+            }
             return PartialView(IWSLookUp.GetCustomer());
         }
     }

@@ -1,4 +1,5 @@
-﻿<script type="text/javascript">
+﻿@using IWSProject.Models
+<script type="text/javascript">
     function OnDropDown(s, e) {
         var calendar = s.GetCalendar();
         var fastNav = calendar.fastNavigation;
@@ -34,7 +35,8 @@
 @Html.DevExpress().DateEdit(settings =>
 {
     settings.Name = "fromYearMonth";
-    settings.Date = Convert.ToDateTime(DateTime.Now.Year.ToString() + "-01-01");
+    DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+    settings.Date = Convert.ToDateTime(dateTime.Year.ToString() + "-01-01");
     settings.Properties.ValidationSettings.RequiredField.IsRequired = true;
     settings.Properties.ValidationSettings.ErrorDisplayMode = DevExpress.Web.ErrorDisplayMode.ImageWithTooltip;
 

@@ -8,7 +8,7 @@ using IWSProject.Content;
 namespace IWSProject.Controllers
 {
     [Authorize]
-    public class AccountsController : Controller
+    public class AccountsController : IWSBaseController
     {
         IWSDataContext db;
         public AccountsController()
@@ -42,11 +42,12 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult AccountsGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Account item)
         {
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
             var model = db.GetAccounts();
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Account;
-            item.Posted = DateTime.Now.Date;
-            item.Updated = DateTime.Now.Date;
+            item.Posted = dateTime;// DateTime.Now.Date;
+            item.Updated = dateTime;// DateTime.Now.Date;
             item.IsDebit = true;
             ViewData["accounts"] = item;
             if (ModelState.IsValid)

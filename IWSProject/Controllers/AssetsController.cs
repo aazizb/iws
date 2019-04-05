@@ -33,10 +33,11 @@ namespace IWSProject.Controllers
         public ActionResult AssetsGridViewAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Asset item)
         {
             var model = db.Assets;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
             item.CompanyId = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Asset;
-            item.Posted = DateTime.Now.Date;
-            item.Updated = DateTime.Now.Date;
+            item.Posted = dateTime;// DateTime.Now.Date;
+            item.Updated = dateTime;// DateTime.Now.Date;
             if (item.Rate == null)
                 item.Rate = 1;
             item.Frequency = 12;

@@ -18,20 +18,16 @@ namespace IWSProject.Controllers
         // GET: suppliers
         public ActionResult Index()
         {
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
-            ViewBag.VAT = IWSLookUp.GetVAT();
-
-            ViewBag.Supplier = IWSLookUp.GetSupplier();
-
             return View();
         }
 
         [ValidateInput(false)]
         public ActionResult SuppliersGridViewPartial()
         {
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
+            if (Session["ComboAccounts"] == null)
+            {
+                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
+            }
             ViewBag.VAT = IWSLookUp.GetVAT();
 
             ViewBag.Sup = IWSLookUp.GetSupplier();
@@ -45,8 +41,9 @@ namespace IWSProject.Controllers
             var model = db.Suppliers;
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Supplier;
-            item.Posted = DateTime.Now.Date;
-            item.Updated = DateTime.Now.Date;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+            item.Posted = dateTime;// DateTime.Now.Date;
+            item.Updated = dateTime;// DateTime.Now.Date;
             ViewData["supplier"] = item;
             if (ModelState.IsValid)
             {
@@ -214,6 +211,10 @@ namespace IWSProject.Controllers
 
         public ActionResult SupplierView()
         {
+            if (Session["ComboAccounts"] == null)
+            {
+                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
+            }
             return PartialView(IWSLookUp.GetSupplier());
         }
     }

@@ -77,7 +77,8 @@
 
         settings.InitNewRow = (s, e) =>
         {
-            e.NewValues["Datum"] = DateTime.Today;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+            e.NewValues["Datum"] = dateTime;// DateTime.Today;
         };
         settings.CellEditorInitialize = (s, e) =>
         {

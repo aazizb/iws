@@ -33,8 +33,9 @@ namespace IWSProject.Controllers
             var model = db.QuantityUnits;
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.QuantityUnit;
-            item.Posted = DateTime.Now.Date;
-            item.Updated = DateTime.Now.Date;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+            item.Posted = dateTime;// DateTime.Now.Date;
+            item.Updated = dateTime;// DateTime.Now.Date;
             ViewData["quantityunit"] = item;
             if (ModelState.IsValid)
             {

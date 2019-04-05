@@ -1,4 +1,5 @@
 ﻿@using IWSProject.Content
+@using IWSProject.Models
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
@@ -75,9 +76,10 @@
         };
         settings.InitNewRow = (s, e) =>
         {
-            e.NewValues["Posted"] = DateTime.Today;
-            e.NewValues["Updated"] = DateTime.Today;
-            e.NewValues["Started"] = DateTime.Today;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+            e.NewValues["Posted"] = dateTime;// DateTime.Today;
+            e.NewValues["Updated"] = dateTime;// DateTime.Today;
+            e.NewValues["Started"] = dateTime;// DateTime.Today;
             e.NewValues["IsValidated"] = false;
             e.NewValues["ScrapValue"] = 0;
         };

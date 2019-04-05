@@ -141,9 +141,10 @@
 
         settings.InitNewRow = (s, e) =>
         {
-            e.NewValues["TransDate"] = DateTime.Today;
-            e.NewValues["ItemDate"] = DateTime.Today;
-            e.NewValues["EntryDate"] = DateTime.Today;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+            e.NewValues["TransDate"] = dateTime;// DateTime.Today;
+            e.NewValues["ItemDate"] = dateTime;//DateTime.Today;
+            e.NewValues["EntryDate"] = dateTime;//DateTime.Today;
             e.NewValues["IsValidated"] = false;
             e.NewValues["oid"] = 0;
         };

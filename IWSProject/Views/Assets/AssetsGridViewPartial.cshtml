@@ -76,9 +76,10 @@
         };
         settings.InitNewRow = (s, e) =>
         {
-            e.NewValues["Posted"] = DateTime.Today;
-            e.NewValues["Updated"] = DateTime.Today;
-            e.NewValues["Started"] = DateTime.Today;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+            e.NewValues["Posted"] = dateTime;// DateTime.Today;
+            e.NewValues["Updated"] = dateTime;// DateTime.Today;
+            e.NewValues["Started"] = dateTime;// DateTime.Today;
             e.NewValues["ScrapValue"] = 0;
             e.NewValues["Rate"] = 1.00;
             e.NewValues["Depreciation"] = (int)IWSLookUp.DepreciationType.StraightLine;

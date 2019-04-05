@@ -15,7 +15,7 @@ namespace IWSProject.Controllers
 {
 
     [Authorize]
-    public class CompaniesController : Controller
+    public class CompaniesController : IWSBaseController
     {
         IWSDataContext db;
 
@@ -33,6 +33,12 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult CompaniesGridViewPartial()
         {
+            if (Session["ComboAccounts"] == null)
+            {
+                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
+            }
+            if (Session["TimeZones"] == null)
+                GetTimeZoneInfo();
             return PartialView("CompaniesGridViewPartial", IWSLookUp.GetCompany());
         }
 
@@ -69,6 +75,12 @@ namespace IWSProject.Controllers
             ViewData["company"] = item;
             if (ModelState.IsValid)
             {
+                if (Session["ComboAccounts"] == null)
+                {
+                    Session["ComboAccounts"] = IWSLookUp.GetAccounts();
+                }
+                if (Session["TimeZones"] == null)
+                    GetTimeZoneInfo();
                 try
                 {
                     var modelItem = model.FirstOrDefault(it => it.id == item.id);
@@ -224,6 +236,12 @@ namespace IWSProject.Controllers
         }
         public ActionResult CompanyView()
         {
+            if (Session["ComboAccounts"] == null)
+            {
+                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
+            }
+            if (Session["TimeZones"] == null)
+                GetTimeZoneInfo();
             return PartialView(IWSLookUp.GetCompany());
         }
     }

@@ -33,12 +33,6 @@
 
         settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
-
-        //performance tuning
-        //settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
-        //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
-        //settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
-
         settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
         settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
         settings.SettingsCommandButton.NewButton.Text = " ";
@@ -197,7 +191,7 @@
                 combo.TextField = "name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.ComboAccountId;
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -214,7 +208,7 @@
                 combo.TextField = "name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.ComboAccountId;
+                combo.DataSource = Session["ComboAccounts"]; 
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -370,7 +364,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -402,7 +396,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";

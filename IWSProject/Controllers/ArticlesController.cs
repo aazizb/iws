@@ -29,11 +29,12 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult ArticlesGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Article item)
         {
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
             var model = db.Articles;
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Article;
-            item.Posted = DateTime.Now.Date;
-            item.Updated = DateTime.Now.Date;
+            item.Posted = dateTime;// DateTime.Now.Date;
+            item.Updated = dateTime;// DateTime.Now.Date;
             ViewData["article"] = item;
             if (ModelState.IsValid)
             {

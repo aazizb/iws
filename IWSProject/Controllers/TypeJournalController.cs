@@ -54,15 +54,16 @@ namespace IWSProject.Controllers
             var model = db.TypeJournals;
             item.CompanyId = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.TypeJournal;
-            item.Posted = DateTime.Now.Date;
-            item.Updated = DateTime.Now.Date;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+            item.Posted = dateTime;// DateTime.Now.Date;
+            item.Updated = dateTime;// DateTime.Now.Date;
             ViewData["typeDraft"] = item;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    item.Posted = DateTime.Now;
-                    item.Updated = DateTime.Now;
+                    item.Posted = dateTime;// DateTime.Now;
+                    item.Updated = dateTime;// DateTime.Now;
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
                 }
@@ -90,7 +91,7 @@ namespace IWSProject.Controllers
                     var modelItem = model.FirstOrDefault(it => it.Id == item.Id);
                     if (modelItem != null)
                     {
-                        modelItem.Updated = DateTime.Now;
+                        modelItem.Updated = IWSLookUp.GetCurrentDateTime();// DateTime.Now;
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
                     }

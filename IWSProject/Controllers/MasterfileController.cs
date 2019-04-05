@@ -70,7 +70,7 @@ namespace IWSProject.Controllers
                 string path = Path.Combine(Server.MapPath(Helper.RootFolder), fileName);
 
                 string extension = Path.GetExtension(fileName).ToLower();
-
+                DateTime dateTime = IWSLookUp.GetCurrentDateTime();
                 switch (extension)
                 {
                     case ".txt":
@@ -107,8 +107,8 @@ namespace IWSProject.Controllers
                                     id = Fields[0],
                                     name = Fields[1],
                                     description = Fields[3],
-                                    dateofopen = DateTime.Now,
-                                    dateofclose = DateTime.Now,
+                                    dateofopen = dateTime,// DateTime.Now,
+                                    dateofclose = dateTime,// DateTime.Now,
                                     balance = Convert.ToDecimal(Fields[2]),
                                     CompanyID = companyId,
                                     ParentId = string.Empty,
@@ -242,8 +242,8 @@ namespace IWSProject.Controllers
                                     id = dataSet.Tables[0].Rows[i][0].ToString(),
                                     name = dataSet.Tables[0].Rows[i][1].ToString(),
                                     description = dataSet.Tables[0].Rows[i][3].ToString(),
-                                    dateofopen = DateTime.Now,
-                                    dateofclose = DateTime.Now,
+                                    dateofopen = dateTime,// DateTime.Now,
+                                    dateofclose = dateTime,// DateTime.Now,
                                     balance = Convert.ToDecimal(dataSet.Tables[0].Rows[i][2].ToString()),
                                     CompanyID = companyId.ToString(),
                                     ParentId = string.Empty,

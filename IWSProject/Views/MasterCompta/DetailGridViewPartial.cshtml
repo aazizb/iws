@@ -86,7 +86,7 @@
         settings.InitNewRow = (s, e) =>
         {
             e.NewValues["Currency"] = ViewBag.DefaultCurrency;
-            e.NewValues["duedate"] = DateTime.Today;
+            e.NewValues["duedate"] = IWSLookUp.GetCurrentDateTime();// DateTime.Today;
             e.NewValues["side"] = true;
         };
         settings.PreRender = (sender, e) =>

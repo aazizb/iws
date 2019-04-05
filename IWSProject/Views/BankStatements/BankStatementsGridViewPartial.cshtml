@@ -1,4 +1,5 @@
 ﻿@using IWSProject.Content
+@using IWSProject.Models
 @using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
@@ -93,8 +94,9 @@
 
         settings.InitNewRow = (s, e) =>
         {
-            e.NewValues["Buchungstag"] = DateTime.Today;
-            e.NewValues["Valutadatum"] = DateTime.Today;
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
+            e.NewValues["Buchungstag"] = dateTime;// DateTime.Today;
+            e.NewValues["Valutadatum"] = dateTime;// DateTime.Today;
         };
 
         settings.CustomJSProperties = (s, e) =>

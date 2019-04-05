@@ -79,6 +79,8 @@ namespace IWSProject.Models.Entities
 
         private string _Email;
 
+        private string _TimeZone;
+
         private EntitySet<AffectationJournal> _AffectationJournals;
 
         private EntitySet<MasterCompta> _MasterComptas;
@@ -846,7 +848,25 @@ namespace IWSProject.Models.Entities
                 }
             }
         }
-
+        [ColumnAttribute(Storage = "_TimeZone", DbType = "NVarChar(150)")]
+        public string TimeZone
+        {
+            get
+            {
+                return this._TimeZone;
+            }
+            set
+            {
+                if ((this._TimeZone != value))
+                {
+                    this.OnEmailChanging(value);
+                    this.SendPropertyChanging();
+                    this._TimeZone = value;
+                    this.SendPropertyChanged("TimeZone");
+                    this.OnEmailChanged();
+                }
+            }
+        }
         [AssociationAttribute(Name = "Company_AffectationJournal", Storage = "_AffectationJournals", ThisKey = "id", OtherKey = "CompanyID")]
         public EntitySet<AffectationJournal> AffectationJournals
         {

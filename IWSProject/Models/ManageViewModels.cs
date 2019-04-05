@@ -507,5 +507,10 @@ namespace IWSProject.Models
         public string ParentId { get; set; }
         public string ParentName { get; set; }
     }
+    public class TimeZoneViewModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
 }
 

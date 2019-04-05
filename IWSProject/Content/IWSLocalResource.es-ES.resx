@@ -1164,4 +1164,7 @@
   <data name="Summary" xml:space="preserve">
     <value>Breve Informe</value>
   </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>Zona horaria</value>
+  </data>
 </root>

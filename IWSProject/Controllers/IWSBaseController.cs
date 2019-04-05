@@ -21,7 +21,7 @@ namespace IWSProject.Controllers
         protected static bool UpdateEntryDate(int itemId, int modelId)
         {
             bool results = false;
-
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
             if (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.PurchaseOrder) ||
                 modelId.Equals((int)IWSLookUp.LogisticMasterModelId.GoodReceiving) ||
                     modelId.Equals((int)IWSLookUp.LogisticMasterModelId.InventoryInvoice) ||
@@ -32,7 +32,7 @@ namespace IWSProject.Controllers
                 var item = db.MasterLogistics.SingleOrDefault(o => o.id.Equals(itemId));
                 if(item != null)
                 {
-                    item.ItemDate = DateTime.Today;
+                    item.ItemDate = dateTime;//DateTime.Today;
                     results = true;
                 }
             }
@@ -45,7 +45,7 @@ namespace IWSProject.Controllers
                 var item = db.MasterComptas.SingleOrDefault(o => o.id.Equals(itemId));
                 if (item != null)
                 {
-                    item.ItemDate = DateTime.Today;
+                    item.ItemDate = dateTime;//DateTime.Today;
                     results = true;
                 }
             }
@@ -1395,7 +1395,7 @@ namespace IWSProject.Controllers
         bool results = false;
         try
         {
-
+            DateTime dateTime = IWSLookUp.GetCurrentDateTime();
             foreach (Journal item in journal)
             {
                 if (item.Account == item.OAccount)
@@ -1404,7 +1404,7 @@ namespace IWSProject.Controllers
                     string msg = IWSLocalResource.GenericError;
                     throw new Exception(msg);
                 }
-                item.ItemDate = DateTime.Today;
+                    item.ItemDate = dateTime;// DateTime.Today;
                 BeforeAmountViewModel amount = IWSLookUp.GetBeforeAmount(item.Account);
                 item.DebitAvantImputationAmount = amount.IDebit + amount.Debit;
                 item.CreditAvantImputationAmount = amount.ICredit + amount.Credit;
@@ -1698,5 +1698,15 @@ namespace IWSProject.Controllers
             }
         }
 
+        protected void GetTimeZoneInfo()
+        {
+            var timeZones = TimeZoneInfo.GetSystemTimeZones();
+            List<TimeZoneViewModel> results = timeZones.Select(t => new TimeZoneViewModel()
+            {
+                Name = t.DisplayName,
+                Id = t.Id
+            }).ToList();
+            Session["TimeZones"] = results;
+        }
     }
 }

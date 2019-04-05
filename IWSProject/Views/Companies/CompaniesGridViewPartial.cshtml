@@ -16,6 +16,9 @@
         settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
         settings.SettingsContextMenu.Enabled = true;
 
+        settings.SettingsContextMenu.RowMenuItemVisibility.DeleteRow = false;
+        settings.SettingsContextMenu.RowMenuItemVisibility.NewRow = false;
+
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
 
@@ -90,11 +93,6 @@
         settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
         settings.SettingsPager.Visible = false;
-        //settings.SettingsPager.Position = PagerPosition.Bottom;
-        //settings.SettingsPager.FirstPageButton.Visible = true;
-        //settings.SettingsPager.LastPageButton.Visible = true;
-        //settings.SettingsPager.PageSizeItemSettings.Visible = true;
-        //settings.SettingsPager.PageSize = 3;
 
         settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
         settings.SettingsDetail.ShowDetailRow = true;
@@ -204,11 +202,11 @@
             column.EditorProperties().ComboBox(combo =>
             {
                 combo.TextField = "Name";
-                combo.ValueField = "id";
+                combo.ValueField = "Id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
-                combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
-                combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
+                combo.DataSource = Session["ComboAccounts"];
+                combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(50));
+                combo.Columns.Add("Name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
             });
             column.Visible = false;
@@ -223,7 +221,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -240,7 +238,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -257,7 +255,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -274,7 +272,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -291,7 +289,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -308,7 +306,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -325,7 +323,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -342,7 +340,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -359,7 +357,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -376,7 +374,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -462,6 +460,25 @@
             column.Width = Unit.Percentage(10);
             column.Visible = false;
         });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "TimeZone";
+            column.Caption = IWSLocalResource.TimeZone;
+            column.Width = Unit.Percentage(14);
+            column.EditorProperties().ComboBox(combo =>
+            {
+                combo.TextField = "Name";
+                combo.ValueField = "Id";
+                combo.ValueType = typeof(string);
+                combo.DataSource = Session["TimeZones"];
+                combo.Columns.Add("Id", IWSLocalResource.TimeZone, Unit.Percentage(50));
+                combo.Columns.Add("Name", IWSLocalResource.TimeZone, Unit.Percentage(50));
+                combo.TextFormatString = "{1}";
+            });
+            column.Visible = false;
+        });
+
+
         #region Template Edit
 
         settings.SetEditFormTemplateContent(templateContent =>
@@ -491,7 +508,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -534,7 +551,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -576,7 +593,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -619,7 +636,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -662,7 +679,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -705,7 +722,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -748,7 +765,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -791,7 +808,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -832,7 +849,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -853,7 +870,37 @@
                         s.Width = Unit.Percentage(80);
                     });
                 });
-                formLayoutSettings.Items.AddEmptyItem();
+
+                formLayoutSettings.Items.Add(i =>
+                {
+                    i.FieldName = "TimeZone";
+                    i.Caption = IWSLocalResource.TimeZone;
+                    i.NestedExtension().ComboBox(s =>
+                    {
+                        s.Properties.TextField = "Name";
+                        s.Properties.ValueField = "Id";
+                        s.Properties.ValueType = typeof(string);
+                        s.Properties.DataSource = Session["TimeZones"];
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "Id";
+                            column.Caption = IWSLocalResource.TimeZone;
+                            column.Width = Unit.Percentage(40);
+                        });
+                        s.Properties.Columns.Add(column =>
+                        {
+                            column.FieldName = "Name";
+                            column.Caption = IWSLocalResource.TimeZone;
+                            column.Width = Unit.Percentage(60);
+                        });
+                        s.Properties.TextFormatString = "{0}-{1}";
+                        s.Properties.CallbackPageSize = 15;
+                        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
+                        s.ShowModelErrors = true;
+                        s.Width = Unit.Percentage(80);
+                    });
+                });
+
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "ClassCash";
@@ -863,7 +910,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -884,6 +931,7 @@
                         s.Width = Unit.Percentage(80);
                     });
                 });
+
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "Currency";
@@ -923,7 +971,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";

@@ -20,12 +20,12 @@ namespace IWSProject.Controllers
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartial(string ClassId, string Start)
         {
-            if (string.IsNullOrWhiteSpace(Start))
+            if (string.IsNullOrWhiteSpace(Start) || string.IsNullOrWhiteSpace(ClassId))
                 return PartialView("_CallbackPartialView");
             try
             {
                 string account = IWSLookUp.HasNoParent(Start);
-                if (account != "")
+                if (!string.IsNullOrEmpty(account))
                 {
                     string message = $"{account} {IWSLocalResource.HasNoParent}";
                     throw new System.Exception(message);
@@ -34,10 +34,14 @@ namespace IWSProject.Controllers
                 Session["txtStart"] = Start;
                 string company = (string)Session["CompanyID"];
                 List<ResultsViewModel> resultsView = (List<ResultsViewModel>)IWSLookUp.GetResultat(ClassId, Start, company);
-                List<ResultsViewModel> incomesAndBalanceView = (List<ResultsViewModel>)IWSLookUp.GetIncomesAndBalance(ClassId, Start, company);
-                IncomesAndBalanceViewModel models = new IncomesAndBalanceViewModel { ResultsView = resultsView, IncomesAndBalanceView = incomesAndBalanceView };
                 Session["Results"] = resultsView;
+                List<ResultsViewModel> incomesAndBalanceView = (List<ResultsViewModel>)IWSLookUp.GetIncomesAndBalance(ClassId, Start, company);
                 Session["IncomesAndBalance"] = incomesAndBalanceView;
+                IncomesAndBalanceViewModel models = new IncomesAndBalanceViewModel
+                {
+                    ResultsView = (List<ResultsViewModel>)Session["Results"],
+                    IncomesAndBalanceView = (List<ResultsViewModel>)Session["IncomesAndBalance"]
+                };
                 return PartialView("_CallbackPartialView");
             }
             catch (System.Exception ex)
@@ -54,8 +58,12 @@ namespace IWSProject.Controllers
             string classId = (string)Session["ClassId"];
             string start = (string)Session["txtStart"];
             string company = (string)Session["CompanyID"];
-            List<ResultsViewModel> model = (List<ResultsViewModel>)IWSLookUp.GetIncomesAndBalance(classId, start, company);
-            return PartialView("IncomesAndBalancePartialView", model);
+            if (Session["IncomesAndBalance"] == null)
+            {
+                List<ResultsViewModel> model = (List<ResultsViewModel>)IWSLookUp.GetIncomesAndBalance(classId, start, company);
+                Session["IncomesAndBalance"] = model;
+            }
+            return PartialView("IncomesAndBalancePartialView", Session["IncomesAndBalance"]);
         }
         [ValidateInput(false)]
         public ActionResult ResultatPartial()
@@ -63,8 +71,12 @@ namespace IWSProject.Controllers
             string classId = (string)Session["ClassId"];
             string start = (string)Session["txtStart"];
             string company = (string)Session["CompanyID"];
-            List<ResultsViewModel> model = (List<ResultsViewModel>)IWSLookUp.GetResultat(classId, start, company);
-            return PartialView("ResultatPartialView", model);
+            if (Session["Results"] == null)
+            {
+                List<ResultsViewModel> model = (List<ResultsViewModel>)IWSLookUp.GetResultat(classId, start, company);
+                Session["Results"] = model;
+            }
+            return PartialView("ResultatPartialView", Session["Results"]);
         }
         [ValidateInput(false)]
         public ActionResult ResultatView()
