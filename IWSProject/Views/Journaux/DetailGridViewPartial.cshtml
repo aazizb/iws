@@ -12,7 +12,7 @@
         //settings.CallbackRouteValues = new { Controller = "Home", Action = "GridViewDetailPartial", RoomID = ViewData["RoomID"] };
 
         settings.SettingsContextMenu.Enabled = true;
-
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.AllowFocusedRow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;

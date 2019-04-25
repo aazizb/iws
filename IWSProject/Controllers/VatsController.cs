@@ -19,14 +19,12 @@ namespace IWSProject.Controllers
         // GET: Vats
         public ActionResult Index()
         {
-            return View();// IWSLookUp.GetVats());
+            return View();
         }
         [ValidateInput(false)]
         public ActionResult VatsGridViewPartial()
         {
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
-            return PartialView("VatsGridViewPartial", IWSLookUp.GetVats());
+            return PartialView(Session["VAT"]);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult VatsGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Vat item)
@@ -35,9 +33,9 @@ namespace IWSProject.Controllers
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.VAT;
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
-            ViewData["vats"] = item;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
+            ViewBag.VAT = item;
             if (ModelState.IsValid)
             {
                 try
@@ -45,7 +43,8 @@ namespace IWSProject.Controllers
                     model.InsertOnSubmit(item);
 
                     db.SubmitChanges();
-                    return PartialView("VatsGridViewPartial", IWSLookUp.GetVats());
+                    Session["VAT"] = IWSLookUp.GetVats();
+                    return PartialView("VatsGridViewPartial", Session["VAT"]);
                 }
                 catch (Exception e)
                 {
@@ -63,8 +62,7 @@ namespace IWSProject.Controllers
         public ActionResult VatsGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Vat item)
         {
             var model = db.Vats;
-
-            ViewData["vats"] = item;
+            ViewBag.VAT = item;
             if (ModelState.IsValid)
             {
                 try
@@ -75,7 +73,8 @@ namespace IWSProject.Controllers
                         this.UpdateModel(modelItem);
 
                         db.SubmitChanges();
-                        return PartialView("VatsGridViewPartial", IWSLookUp.GetVats());
+                        Session["VAT"] = IWSLookUp.GetVats();
+                        return PartialView("VatsGridViewPartial", Session["VAT"]);
                     }
                 }
                 catch (Exception e)
@@ -103,6 +102,7 @@ namespace IWSProject.Controllers
                         model.DeleteOnSubmit(item);
 
                     db.SubmitChanges();
+                    Session["VAT"] = IWSLookUp.GetVats();
                 }
                 catch (Exception e)
                 {
@@ -111,11 +111,11 @@ namespace IWSProject.Controllers
 
                 }
             }
-            return PartialView("VatsGridViewPartial", IWSLookUp.GetVats());
+            return PartialView("VatsGridViewPartial", Session["VAT"]);
         }
         public ActionResult VatView()
         {
-            return PartialView(IWSLookUp.GetVats());
+            return PartialView(Session["VAT"]);
         }
     }
 }

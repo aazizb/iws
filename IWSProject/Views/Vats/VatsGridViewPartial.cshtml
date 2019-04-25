@@ -13,12 +13,12 @@
 
         settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
 
-        settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
+        settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
         settings.SettingsContextMenu.Enabled = true;
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
-        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowEditButton = false;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
 
@@ -39,19 +39,7 @@
         settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
         settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
-        settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
-
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
-
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
         settings.KeyFieldName = "id";
         settings.CustomJSProperties = (s, e) =>
@@ -90,7 +78,8 @@
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
 
-        settings.SettingsPager.PageSize = 19;
+        settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "20", "25", "30", "40", "45", "50" };
+        settings.SettingsPager.PageSize = 20;
 
         settings.Columns.Add(column =>
         {
@@ -156,7 +145,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.ComboAccountId;
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -173,7 +162,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.ComboAccountId;
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -190,13 +179,14 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.ComboAccountId;
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
             });
             column.Visible = false;
         });
+
         #region Template Edit
         settings.SetEditFormTemplateContent(templateContent =>
         {
@@ -265,7 +255,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -298,7 +288,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -331,7 +321,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -401,7 +391,7 @@
                 }).Render();
                 });
             })
-            .Bind(ViewData["article"] ?? templateContent.DataItem)
+            .Bind(ViewBag.VAT ?? templateContent.DataItem)
             .Render();
         });
         #endregion

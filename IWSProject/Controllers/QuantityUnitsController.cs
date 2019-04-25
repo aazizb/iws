@@ -24,7 +24,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult QuantityUnitsGridViewPartial()
         {
-            return PartialView("QuantityUnitsGridViewPartial", IWSLookUp.GetQuantityUnits());
+            return PartialView(Session["QuantityUnits"]);
         }
 
         [HttpPost, ValidateInput(false)]
@@ -34,9 +34,9 @@ namespace IWSProject.Controllers
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.QuantityUnit;
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
-            ViewData["quantityunit"] = item;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
+            ViewBag.QuantityUnit = item;
             if (ModelState.IsValid)
             {
                 try
@@ -44,7 +44,8 @@ namespace IWSProject.Controllers
                     model.InsertOnSubmit(item);
 
                     db.SubmitChanges();
-                    return PartialView("QuantityUnitsGridViewPartial", IWSLookUp.GetQuantityUnits());
+                    Session["QuantityUnits"] = IWSLookUp.GetQuantityUnits();
+                    return PartialView("QuantityUnitsGridViewPartial", Session["QuantityUnits"]);
                 }
                 catch (Exception e)
                 {
@@ -63,7 +64,7 @@ namespace IWSProject.Controllers
         {
             var model = db.QuantityUnits;
 
-            ViewData["quantityunit"] = item;
+            ViewBag.QuantityUnit = item;
             if (ModelState.IsValid)
             {
                 try
@@ -74,7 +75,8 @@ namespace IWSProject.Controllers
                         this.UpdateModel(modelItem);
 
                         db.SubmitChanges();
-                        return PartialView("QuantityUnitsGridViewPartial", IWSLookUp.GetQuantityUnits());
+                        Session["QuantityUnits"] = IWSLookUp.GetQuantityUnits();
+                        return PartialView("QuantityUnitsGridViewPartial", Session["QuantityUnits"]);
                     }
                 }
                 catch (Exception e)
@@ -100,8 +102,8 @@ namespace IWSProject.Controllers
                     var item = model.FirstOrDefault(it => it.id == id);
                     if (item != null)
                         model.DeleteOnSubmit(item);
-
                     db.SubmitChanges();
+                    Session["QuantityUnits"] = IWSLookUp.GetQuantityUnits();
                 }
                 catch (Exception e)
                 {
@@ -113,7 +115,7 @@ namespace IWSProject.Controllers
         }
         public ActionResult QuantityUnitView()
         {
-            return PartialView(IWSLookUp.GetQuantityUnits());
+            return PartialView(Session["QuantityUnits"]);
         }
     }
 }

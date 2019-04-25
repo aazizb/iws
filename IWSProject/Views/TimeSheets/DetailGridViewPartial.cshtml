@@ -10,16 +10,9 @@
         settings.SettingsDetail.MasterGridName = "TimeSheet";
         settings.CallbackRouteValues = new { Controller = "TimeSheets", Action = "DetailGridViewPartial", transid = Session["transid"] };
 
-        //settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "TimeSheets", Action = "DetailGridViewPartialAddNew", transid = Session["transid"] };
-        //settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "TimeSheets", Action = "DetailGridViewPartialUpdate", transid = Session["transid"] };
-        //settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "TimeSheets", Action = "DetailGridViewPartialDelete", transid = Session["transid"] };
-
         settings.SettingsEditing.Mode = GridViewEditingMode.Inline;
         settings.SettingsContextMenu.Enabled = true;
 
-        //settings.ClientSideEvents.RowClick = "OnDRowClick";
-        //settings.ClientSideEvents.RowDblClick = "OnDRowClick";
-        //settings.ClientSideEvents.Init = "OnDInit";
 
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.AllowFocusedRow = true;
@@ -44,40 +37,25 @@
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
-        settings.CommandColumn.ShowNewButtonInHeader = true;
-        settings.CommandColumn.ShowEditButton = true;
-        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowNewButtonInHeader = false;
+        settings.CommandColumn.ShowEditButton = false;
+        settings.CommandColumn.ShowDeleteButton = false;
         settings.CommandColumn.ShowUpdateButton = false;
         settings.CommandColumn.ShowCancelButton = false;
 
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Position = PagerPosition.Bottom;
+        settings.SettingsPager.FirstPageButton.Visible = true;
+        settings.SettingsPager.LastPageButton.Visible = true;
+        settings.SettingsPager.PageSizeItemSettings.Visible = true;
 
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
+        settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "11", "16", "32"};
+        settings.SettingsPager.PageSize = 16;
 
         settings.SettingsDataSecurity.AllowDelete = !(bool)Session["IsValidated"];
         settings.SettingsDataSecurity.AllowEdit = !(bool)Session["IsValidated"];
         settings.SettingsDataSecurity.AllowInsert = !(bool)Session["IsValidated"];
 
-        settings.SettingsCommandButton.UpdateButton.Image.IconID = IconID.ActionsApply16x16;
-        settings.SettingsCommandButton.UpdateButton.Image.ToolTip = IWSLocalResource.btnUpdate;
-        settings.SettingsCommandButton.UpdateButton.Text = " ";
-
-        settings.SettingsCommandButton.CancelButton.Image.IconID = IconID.ActionsCancel16x16;
-        settings.SettingsCommandButton.CancelButton.Image.ToolTip = IWSLocalResource.btnCancel;
-        settings.SettingsCommandButton.CancelButton.Text = " ";
-
-        settings.InitNewRow = (s, e) =>
-        {
-            //e.NewValues["Datum"] = DateTime.Today;
-        };
         settings.CellEditorInitialize = (s, e) =>
         {
             ASPxEdit editor = (ASPxEdit)e.Editor;
@@ -92,6 +70,9 @@
                 g.AddNewRow();
             }
         };
+
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
+
         settings.KeyFieldName = "Id";
         settings.Columns.Add(column =>
         {

@@ -16,7 +16,7 @@
 
         settings.ClientSideEvents.SelectionChanged = "OnSelectionChanged";
         settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
-
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowSelectByRowClick = false;
         settings.SettingsBehavior.AllowEllipsisInText = true;
@@ -207,16 +207,16 @@
 
         settings.SetDetailRowTemplateContent(c =>
         {
-    //Session["transid"] = DataBinder.Eval(c.DataItem, "ID");
-    //Session["supplierId"] = DataBinder.Eval(c.DataItem, "account");
-    //Session["IsValidated"] = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
-    //Html.RenderAction("DetailGridViewPartial", new
-    //{
-    //    transid = Session["transid"],
-    //    //IsValidated = Session["IsValidated"],
-    //    //newKeyValue = ViewData["NewKeyValue"]
-    //});
-    Html.RenderAction("DetailGridViewPartial", new { transid = DataBinder.Eval(c.DataItem, "ID") });
+            //Session["transid"] = DataBinder.Eval(c.DataItem, "ID");
+            //Session["supplierId"] = DataBinder.Eval(c.DataItem, "account");
+            //Session["IsValidated"] = (bool)DataBinder.Eval(c.DataItem, "IsValidated");
+            //Html.RenderAction("DetailGridViewPartial", new
+            //{
+            //    transid = Session["transid"],
+            //    //IsValidated = Session["IsValidated"],
+            //    //newKeyValue = ViewData["NewKeyValue"]
+            //});
+            Html.RenderAction("DetailGridViewPartial", new { transid = DataBinder.Eval(c.DataItem, "ID") });
         });
     });
 

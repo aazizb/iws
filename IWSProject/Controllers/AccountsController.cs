@@ -18,11 +18,6 @@ namespace IWSProject.Controllers
         // GET: Accounts
         public ActionResult Index()
         {
-            ViewBag.Accounts = IWSLookUp.GetAccount();
-
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
-            ViewBag.Journal = IWSLookUp.GetTypeJournal();
       
             return View();
         }
@@ -30,13 +25,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult AccountsGridViewPartial()
         {
-            ViewBag.Acc = IWSLookUp.GetAccount();
-
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-
-            ViewBag.Journal = IWSLookUp.GetTypeJournal();
-
-            return PartialView("AccountsGridViewPartial", ViewBag.Acc);
+            return PartialView("AccountsGridViewPartial", Session["Accounts"]);
         }
 
         [HttpPost, ValidateInput(false)]
@@ -46,17 +35,19 @@ namespace IWSProject.Controllers
             var model = db.GetAccounts();
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Account;
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
             item.IsDebit = true;
-            ViewData["accounts"] = item;
+            ViewBag.Account = item;
             if (ModelState.IsValid)
             {
                 try
                 {
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
-                    return PartialView("AccountsGridViewPartial", IWSLookUp.GetAccount());
+
+                    Session["Accounts"] = IWSLookUp.GetAccount();
+                    return PartialView("AccountsGridViewPartial", Session["Accounts"]);
                 }
                 catch (Exception e)
                 {
@@ -75,7 +66,7 @@ namespace IWSProject.Controllers
         public ActionResult AccountsGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))]Account item)
         {
             var model = db.GetAccounts();
-            ViewData["accounts"] = item;
+            ViewBag.Account = item;
             if (ModelState.IsValid)
             {
                 try
@@ -85,7 +76,8 @@ namespace IWSProject.Controllers
                     {
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
-                        return PartialView("AccountsGridViewPartial", IWSLookUp.GetAccount());
+                        Session["Accounts"] = IWSLookUp.GetAccount();
+                        return PartialView("AccountsGridViewPartial", Session["Accounts"]);
                     }
                 }
                 catch (Exception e)
@@ -112,6 +104,7 @@ namespace IWSProject.Controllers
                     if (item != null)
                         model.DeleteOnSubmit(item);
                     db.SubmitChanges();
+                    Session["Accounts"] = IWSLookUp.GetAccount();
                 }
                 catch (Exception e)
                 {
@@ -119,11 +112,11 @@ namespace IWSProject.Controllers
                     IWSLookUp.LogException(e);
                 }
             }
-            return PartialView("AccountsGridViewPartial",   IWSLookUp.GetAccount());
-            }
+            return PartialView("AccountsGridViewPartial", Session["Accounts"]);
+        }
         public ActionResult AccountsView()
         {
-            return PartialView(IWSLookUp.GetAccount());
+            return PartialView(Session["Accounts"]);
         }
     }
 }

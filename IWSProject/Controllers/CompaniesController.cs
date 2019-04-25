@@ -33,20 +33,13 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult CompaniesGridViewPartial()
         {
-            if (Session["ComboAccounts"] == null)
-            {
-                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
-            }
-            if (Session["TimeZones"] == null)
-                GetTimeZoneInfo();
-            return PartialView("CompaniesGridViewPartial", IWSLookUp.GetCompany());
+            return PartialView(Session["Company"]);
         }
-
         [HttpPost, ValidateInput(false)]
         public ActionResult CompaniesGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))]Company item)
         {
             var model = db.Companies;
-            ViewData["company"] = item;
+            ViewBag.Company = item;
             item.ModelId = (int)IWSLookUp.MetaModelId.Company;
             if (ModelState.IsValid)
             {
@@ -54,7 +47,8 @@ namespace IWSProject.Controllers
                 {
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
-                    return PartialView("CompaniesGridViewPartial", IWSLookUp.GetCompany());
+                    Session["Company"] = IWSLookUp.GetCompany();
+                    return PartialView("CompaniesGridViewPartial", Session["Company"]);
                 }
                 catch (Exception e)
                 {
@@ -72,15 +66,9 @@ namespace IWSProject.Controllers
         public ActionResult CompaniesGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))]Company item)
         {
             var model = db.Companies;
-            ViewData["company"] = item;
+            ViewBag.Company = item;
             if (ModelState.IsValid)
             {
-                if (Session["ComboAccounts"] == null)
-                {
-                    Session["ComboAccounts"] = IWSLookUp.GetAccounts();
-                }
-                if (Session["TimeZones"] == null)
-                    GetTimeZoneInfo();
                 try
                 {
                     var modelItem = model.FirstOrDefault(it => it.id == item.id);
@@ -88,7 +76,8 @@ namespace IWSProject.Controllers
                     {
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
-                        return PartialView("CompaniesGridViewPartial", IWSLookUp.GetCompany());
+                        Session["Company"] = IWSLookUp.GetCompany();
+                        return PartialView("CompaniesGridViewPartial", Session["Company"]);
                     }
                 }
                 catch (Exception e)
@@ -115,6 +104,7 @@ namespace IWSProject.Controllers
                     if (item != null)
                         model.DeleteOnSubmit(item);
                     db.SubmitChanges();
+                    Session["Company"] = IWSLookUp.GetCompany();
                 }
                 catch (Exception e)
                 {
@@ -122,13 +112,13 @@ namespace IWSProject.Controllers
                     IWSLookUp.LogException(e);
                 }
             }
-            return PartialView("CompaniesGridViewPartial", IWSLookUp.GetCompany());
+            return PartialView("CompaniesGridViewPartial", Session["Company"]);
         }
 
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView()
         {
-            return PartialView("CallbackPanelPartialView", IWSLookUp.GetCompany());
+            return PartialView("CallbackPanelPartialView", Session["Company"]);
                     
         }
         public ActionResult UploadFile(string compId)
@@ -147,6 +137,10 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(string owner)
         {
+            if(Session["BankChildren"] == null)
+            {
+                Session["BankChildren"] = IWSLookUp.GetBankChildren();
+            }
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
         [HttpPost, ValidateInput(false)]
@@ -157,7 +151,7 @@ namespace IWSProject.Controllers
 
             line.Owner = owner;
             line.CompanyID = (string)Session["CompanyID"];
-            ViewData["bankAccount"] = line;
+            ViewBag.BankAccount = line;
 
             if (ModelState.IsValid)
             {
@@ -166,6 +160,7 @@ namespace IWSProject.Controllers
                     model.InsertOnSubmit(line);
 
                     db.SubmitChanges();
+                    return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
                 }
                 catch (Exception e)
                 {
@@ -177,7 +172,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
+            return PartialView("DetailGridViewPartial", line);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] BankAccount line, string owner)
@@ -186,7 +181,7 @@ namespace IWSProject.Controllers
 
             line.Owner = owner;
 
-            ViewData["bankAccount"] = line;
+            ViewBag.BankAccount = line;
             if (ModelState.IsValid)
             {
                 try
@@ -198,6 +193,7 @@ namespace IWSProject.Controllers
                         this.UpdateModel(modelItem);
 
                         db.SubmitChanges();
+                        return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
                     }
                 }
                 catch (Exception e)
@@ -210,7 +206,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
+            return PartialView("DetailGridViewPartial", line);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialDelete(string iban, string owner)
@@ -236,13 +232,7 @@ namespace IWSProject.Controllers
         }
         public ActionResult CompanyView()
         {
-            if (Session["ComboAccounts"] == null)
-            {
-                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
-            }
-            if (Session["TimeZones"] == null)
-                GetTimeZoneInfo();
-            return PartialView(IWSLookUp.GetCompany());
+            return PartialView(Session["Company"]);
         }
     }
     public class CompaniesControllerUploadControlLogoSettings

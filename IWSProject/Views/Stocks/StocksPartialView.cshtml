@@ -16,6 +16,7 @@
         settings.Width = Unit.Percentage(100);
         settings.SettingsPager.PageSize = 19;
 
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
         settings.ControlStyle.Paddings.Padding = Unit.Pixel(0);
         settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);

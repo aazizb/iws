@@ -16,7 +16,7 @@
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
-        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowEditButton = false;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
 
@@ -32,18 +32,6 @@
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
         settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
-
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
-
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
 
         settings.KeyFieldName = "id";
         settings.CustomJSProperties = (s, e) =>
@@ -66,6 +54,7 @@
                     break;
             }
         };
+
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
@@ -94,9 +83,7 @@
 
         settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
         settings.SettingsDetail.ShowDetailRow = true;
-
-        settings.Images.DetailCollapsedButton.IconID = IconID.ActionsAdd16x16;
-        settings.Images.DetailExpandedButton.IconID = IconID.ActionsRemove16x16;
+        settings.SettingsDetail.ShowDetailButtons = true;
 
         settings.Columns.Add(column =>
         {
@@ -208,7 +195,7 @@
                 combo.TextField = "name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = Session["ComboAccounts"]; 
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -225,7 +212,7 @@
                 combo.TextField = "name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.VAT;
+                combo.DataSource = Session["ComboVAT"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -428,7 +415,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.VAT;
+                        s.Properties.DataSource = Session["ComboVAT"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -532,7 +519,7 @@
                 }).Render();
                 });
             })
-            .Bind(ViewData["Supplier"] ?? c.DataItem)
+            .Bind(ViewBag.Supplier ?? c.DataItem)
             .Render();
         });
         #endregion

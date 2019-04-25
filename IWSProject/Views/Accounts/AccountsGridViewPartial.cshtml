@@ -21,7 +21,7 @@
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
-        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowEditButton = false;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
 
@@ -42,30 +42,13 @@
         settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
         settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
-        settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
-
-        //performance tuning
-        //settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
-        //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
-        //settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
-
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
-
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
         settings.InitNewRow = (s, e) =>
         {
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            e.NewValues["dateofopen"] = dateTime;// DateTime.Now;
-            e.NewValues["dateofclose"] = dateTime;// DateTime.Now;
+            e.NewValues["dateofopen"] = dateTime;
+            e.NewValues["dateofclose"] = dateTime;
             e.NewValues["balance"] = 0;
             e.NewValues["IsDebit"] = true;
             e.NewValues["IsBalanceSheetAccount"] = false;
@@ -96,12 +79,12 @@
                     break;
             }
         };
+
         settings.KeyFieldName = "id";
 
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
-
 
         settings.Width = Unit.Percentage(100);
 
@@ -114,8 +97,8 @@
         settings.SettingsPager.FirstPageButton.Visible = true;
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
-        //settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "5", "10", "19", "25", "30", "50" };
-        settings.SettingsPager.PageSize = 19;
+        settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "20", "25", "30", "40", "45", "50" };
+        settings.SettingsPager.PageSize = 20;
 
         settings.Columns.Add(column =>
         {
@@ -137,10 +120,12 @@
             column.Width = Unit.Percentage(6);
             column.EditorProperties().DateEdit(d =>
             {
-                d.EditFormatString = "MM/dd/yyyy";
+                d.EditFormatString = "yyyy-MM-dd";
+                d.NullDisplayText = "yyyy-MM-dd";
                 d.EditFormat = EditFormat.Custom;
                 d.Width = Unit.Percentage(100);
                 d.DisplayFormatString = "yyyy-MM-dd";
+                d.DisplayFormatInEditMode = true;
             });
         });
         settings.Columns.Add(column =>
@@ -151,9 +136,13 @@
             column.Width = Unit.Percentage(6);
             column.EditorProperties().DateEdit(d =>
             {
+                d.EditFormatString = "yyyy-MM-dd";
+                d.NullDisplayText = "yyyy-MM-dd";
                 d.EditFormat = EditFormat.Custom;
                 d.Width = Unit.Percentage(100);
                 d.DisplayFormatString = "yyyy-MM-dd";
+                d.DisplayFormatInEditMode = true;
+
             });
         });
         settings.Columns.Add(column =>
@@ -166,7 +155,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.ComboAccountId;
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("name", IWSLocalResource.SubAccountOf, Unit.Percentage(75));
                 combo.Width = Unit.Percentage(100);
@@ -258,6 +247,7 @@
             column.Width = Unit.Percentage(20);
             column.Visible = false;
         });
+
         #region Template Edit
         settings.SetEditFormTemplateContent(templateContent =>
         {
@@ -305,7 +295,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.ComboAccountId;// IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
                         s.Properties.Columns.Add("name", IWSLocalResource.SubAccountOf, Unit.Percentage(75));
                         s.Properties.TextFormatString = "{0}-{1}";
@@ -314,42 +304,6 @@
                         s.Width = Unit.Percentage(75);
                     });
                 });
-                //formLayoutSettings.Items.AddEmptyItem();
-                //formLayoutSettings.Items.AddEmptyItem();
-                //formLayoutSettings.Items.Add(i =>
-                //{
-                //    i.FieldName = "TypeJournal";
-                //    i.Caption = IWSLocalResource.TypeJournal;
-                //    i.NestedExtension().ComboBox(s =>
-                //    {
-                //        s.Properties.TextField = "Name";
-                //        s.Properties.ValueField = "Id";
-                //        s.Properties.ValueType = typeof(string);
-                //        s.Properties.DataSource = ViewBag.Journal;// IWSLookUp.GetTypeJournal();
-                //        s.Properties.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
-                //        s.Properties.Columns.Add("Name", IWSLocalResource.TypeJournal, Unit.Percentage(75));
-                //        s.Properties.TextFormatString = "{0}-{1}";
-                //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                //        s.ShowModelErrors = true;
-                //        s.Width = Unit.Percentage(75);
-                //    });
-                //});
-                //formLayoutSettings.Items.AddEmptyItem();
-                //formLayoutSettings.Items.AddEmptyItem();
-                //formLayoutSettings.Items.Add(i =>
-                //{
-                //    i.FieldName = "balance";
-                //    i.Caption = IWSLocalResource.balance;
-                //    i.Width = Unit.Percentage(50);
-                //    i.NestedExtension().TextBox(s =>
-                //    {
-                //        s.Properties.ValidationSettings.ErrorDisplayMode = ErrorDisplayMode.ImageWithTooltip;
-                //        s.ShowModelErrors = true;
-                //        s.Width = Unit.Percentage(75);
-                //        s.Properties.DisplayFormatString = "N";
-                //        s.ReadOnly = true;
-                //    });
-                //});
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
@@ -360,9 +314,12 @@
                     i.NestedExtension().DateEdit(d =>
                     {
                         d.Properties.UseMaskBehavior = true;
-                        d.Properties.EditFormat = EditFormat.Date;
-                        d.Properties.EditFormatString = "d";
-                        d.Width = Unit.Percentage(69);
+                        d.Properties.NullText = "yyyy-MM-dd";
+                        d.Properties.EditFormat = EditFormat.Custom;
+                        d.Properties.EditFormatString = "yyyy-MM-dd";
+                        d.Width = Unit.Percentage(70);
+                        d.Properties.DisplayFormatString = "yyyy-MM-dd";
+                        d.Properties.DisplayFormatInEditMode = true;
                         d.Properties.AllowUserInput = true;
                         d.Properties.AllowMouseWheel = true;
                     });
@@ -377,9 +334,12 @@
                     i.NestedExtension().DateEdit(d =>
                     {
                         d.Properties.UseMaskBehavior = true;
-                        d.Properties.EditFormat = EditFormat.Date;
-                        d.Properties.EditFormatString = "d";
-                        d.Width = Unit.Percentage(69);
+                        d.Properties.NullText = "yyyy-MM-dd";
+                        d.Properties.EditFormat = EditFormat.Custom;
+                        d.Properties.EditFormatString = "yyyy-MM-dd";
+                        d.Width = Unit.Percentage(70);
+                        d.Properties.DisplayFormatString = "yyyy-MM-dd";
+                        d.Properties.DisplayFormatInEditMode = true;
                         d.Properties.AllowUserInput = true;
                         d.Properties.AllowMouseWheel = true;
                     });
@@ -467,7 +427,7 @@
                 }).Render();
                 });
             })
-            .Bind(ViewData["accounts"] ?? templateContent.DataItem)
+            .Bind(ViewBag.Account ?? templateContent.DataItem)
             .Render();
         });
         #endregion

@@ -7,7 +7,7 @@
     {
         settings.Name = "DetailGridView";
         settings.Width = Unit.Percentage(100);
-        settings.Caption = IWSLocalResource.LineInventoryInvoice;
+        settings.Caption = IWSLocalResource.Detail;
         settings.SettingsDetail.MasterGridName = "MasterGridViewPartial";
         settings.CallbackRouteValues = new { Controller = "MasterLogistic", Action = "DetailGridViewPartial", transid = Session["transid"] };
 
@@ -18,14 +18,15 @@
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
         settings.SettingsContextMenu.Enabled = true;
 
-        settings.ClientSideEvents.RowClick = "OnDRowClick";
-        settings.ClientSideEvents.RowDblClick = "OnDRowClick";
+        //settings.ClientSideEvents.RowClick = "OnDRowClick";
+        //settings.ClientSideEvents.RowDblClick = "OnDRowClick";
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
         settings.ClientSideEvents.Init = "OnDInit";
 
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.AllowFocusedRow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
         settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
         settings.SettingsBehavior.AllowEllipsisInText = true;
         settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
@@ -46,20 +47,8 @@
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
         settings.CommandColumn.ShowNewButtonInHeader = true;
-        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowEditButton = false;
         settings.CommandColumn.ShowDeleteButton = true;
-
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
-
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
 
         settings.SettingsDataSecurity.AllowDelete = !(bool)Session["IsValidated"];
         settings.SettingsDataSecurity.AllowEdit = !(bool)Session["IsValidated"];
@@ -78,6 +67,7 @@
                 g.AddNewRow();
             }
         };
+
         settings.KeyFieldName = "id";
 
         settings.Columns.Add(column =>
@@ -191,15 +181,15 @@
             column.Width = Unit.Percentage(20);
         });
 
-#region Template
+        #region Template
 
-settings.SetEditFormTemplateContent(templateContent =>
+        settings.SetEditFormTemplateContent(templateContent =>
         {
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
 
-        #region Button
-        formLayoutSettings.Items.AddEmptyItem();
+                #region Button
+                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
@@ -233,9 +223,9 @@ settings.SetEditFormTemplateContent(templateContent =>
                     btnSettings.TabIndex = 10;
                 }).Render();
                 });
-        #endregion
+                #endregion
 
-        formLayoutSettings.Name = "DetailGridViewEdit";
+                formLayoutSettings.Name = "DetailGridViewEdit";
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 3;
                 formLayoutSettings.Items.Add(i =>
@@ -277,9 +267,10 @@ settings.SetEditFormTemplateContent(templateContent =>
                     i.Caption = IWSLocalResource.duedate;
                     i.NestedExtension().DateEdit(d =>
                     {
-                        d.Properties.EditFormatString = "MM/dd/yyyy";
-                        d.Properties.NullDisplayText = "MM/dd/yyyy";
+                        d.Properties.UseMaskBehavior = true;
+                        d.Properties.NullText = "yyyy-MM-dd";
                         d.Properties.EditFormat = EditFormat.Custom;
+                        d.Properties.EditFormatString = "yyyy-MM-dd";
                         d.Width = Unit.Percentage(92);
                         d.Properties.DisplayFormatString = "yyyy-MM-dd";
                         d.Properties.DisplayFormatInEditMode = true;
@@ -410,9 +401,9 @@ settings.SetEditFormTemplateContent(templateContent =>
             .Render();
         });
 
-#endregion
+        #endregion
 
-settings.DataBinding = (sender, e) =>
+        settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(DetailLogistic));
         };

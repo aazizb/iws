@@ -23,11 +23,9 @@ namespace IWSProject.Controllers
             return View();
         }
         [ValidateInput(false)]
-        public ActionResult AssetsGridView()
+        public ActionResult AssetsGridViewPartial()
         {
-            ViewBag.ComboAccountId = IWSLookUp.GetAccounts();
-            ViewBag.Currency = IWSLookUp.GetCurrency();
-            return PartialView("AssetsGridViewPartial", IWSLookUp.GetAssets());
+            return PartialView(Session["Assets"]);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult AssetsGridViewAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Asset item)
@@ -36,8 +34,8 @@ namespace IWSProject.Controllers
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
             item.CompanyId = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Asset;
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
             if (item.Rate == null)
                 item.Rate = 1;
             item.Frequency = 12;
@@ -49,7 +47,8 @@ namespace IWSProject.Controllers
                     model.InsertOnSubmit(item);
 
                     db.SubmitChanges();
-                    return PartialView("AssetsGridViewPartial", IWSLookUp.GetAssets());
+                    Session["Assets"] = IWSLookUp.GetAssets();
+                    return PartialView("AssetsGridViewPartial", Session["Assets"]);
                 }
                 catch (Exception e)
                 {
@@ -79,7 +78,8 @@ namespace IWSProject.Controllers
                         this.UpdateModel(modelItem);
 
                         db.SubmitChanges();
-                        return PartialView("AssetsGridViewPartial", IWSLookUp.GetAssets());
+                        Session["Assets"] = IWSLookUp.GetAssets();
+                        return PartialView("AssetsGridViewPartial", Session["Assets"]);
                     }
                 }
                 catch (Exception e)
@@ -107,6 +107,7 @@ namespace IWSProject.Controllers
                         model.DeleteOnSubmit(item);
 
                     db.SubmitChanges();
+                    Session["Assets"] = IWSLookUp.GetAssets();
                 }
                 catch (Exception e)
                 {
@@ -114,11 +115,11 @@ namespace IWSProject.Controllers
                     IWSLookUp.LogException(e);
                 }
             }
-            return PartialView("AssetsGridViewPartial", IWSLookUp.GetAssets());
+            return PartialView("AssetsGridViewPartial", Session["Assets"]);
         }
         public ActionResult AssetView()
         {
-            return PartialView(IWSLookUp.GetAssets());
+            return PartialView(Session["Assets"]);
         }
     }
 }

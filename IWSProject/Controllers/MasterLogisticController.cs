@@ -26,16 +26,25 @@ namespace IWSProject.Controllers
         {
             int modelId = (int)IWSLookUp.LogisticMasterModelId.Default;
 
-            if (Session["ModelId"] != null)
-            {
-                modelId = (int)Session["ModelId"];
-            }
             if (Session["IsVending"] == null)
             {
                 Session["IsVending"] = "SU";
             }
-            return PartialView("MasterGridViewPartial",
-                    IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
+            if (Session["ModelId"] != null)
+            {
+                modelId = (int)Session["ModelId"];
+                Session["IsVending"] = IsVending(modelId);
+            }
+
+            Session["ComboOwner"] = IWSLookUp.GetOwners((string)Session["IsVending"]);
+
+            if (Session["LogisticOID"] == null)
+            {
+                Session["LogisticOID"] = IWSLookUp.GetMasterLogisticOID();
+            }
+
+            Session["MasterLogistic"] = IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId);
+            return PartialView(Session["MasterLogistic"]);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(string selectedIDs, int currentModelId)
@@ -44,23 +53,26 @@ namespace IWSProject.Controllers
 
             Session["IsVending"] = IsVending(currentModelId);
 
+            Session["ComboOwner"] = IWSLookUp.GetOwners((string)Session["IsVending"]);
+
             if (!String.IsNullOrWhiteSpace(selectedIDs) && (currentModelId > 0))
             {
                 string companyID = (string)Session["CompanyID"];
 
                 ProcessData(selectedIDs, companyID, false, currentModelId);
             }
-            return PartialView("CallbackPanelPartialView", 
-                IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)currentModelId));
+            Session["MasterLogistic"] = IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)currentModelId);
+            return PartialView(Session["MasterLogistic"]);
         }
         public ActionResult CustomGridViewCallback(bool isChecked)
         {
             ViewBag.select = isChecked;
             int modelId = (int)IWSLookUp.ComptaMasterModelId.Default;
             if (Session["ModelId"] != null)
+            {
                 modelId = (int)Session["ModelId"];
-            return PartialView("MasterGridViewPartial",
-                    IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
+            }
+            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] MasterLogistic item)
@@ -74,7 +86,7 @@ namespace IWSProject.Controllers
                 item.CompanyId = (string)Session["CompanyID"];
                 int itemOID = item.oid;
                 item.ModelId = modelId;
-                ViewData["item"] = item;
+                ViewBag.MasterLogistic = item;
                 bool result = false;
                 try
                 {
@@ -109,15 +121,14 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("MasterGridViewPartial", 
-                    IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
+            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] MasterLogistic item)
         {
             var model = db.MasterLogistics;
             int modelId = (int)Session["Modelid"];
-            ViewData["item"] = item;
+            ViewBag.MasterLogistic = item;
             if (ModelState.IsValid)
             {
                 try
@@ -138,8 +149,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("MasterGridViewPartial", 
-                    IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
+            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterLogistic((IWSLookUp.LogisticMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialDelete(int id)
@@ -259,7 +269,6 @@ namespace IWSProject.Controllers
             }
             return PartialView("DetailGridViewPartial", IWSLookUp.GetDetailLogistic(transId));
         }
-
         public ActionResult LogisticView()
         {
             return PartialView(IWSLookUp.GetMasterLogistic(IWSLookUp.LogisticMasterModelId.Default));

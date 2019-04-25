@@ -22,25 +22,26 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult BanksGridViewPartial()
         {
-             return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
+            return PartialView(Session["Banks"]);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult BanksGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Bank item)
         {
             var model = db.Banks;
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            ViewData["bank"] = item;
+            ViewBag.Bank = item;
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Banks;
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
             if (ModelState.IsValid)
             {
                 try
                 {
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
-                    return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
+                    Session["Banks"] = IWSLookUp.GetBanks();
+                    return PartialView("BanksGridViewPartial", Session["Banks"]);
                 }
                 catch (Exception e)
                 {
@@ -58,7 +59,7 @@ namespace IWSProject.Controllers
         public ActionResult BanksGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Bank item)
         {                                               
             var model = db.Banks;
-            ViewData["bank"] = item;
+            ViewBag.Bank = item;
             if (ModelState.IsValid)
             {
                 try
@@ -68,7 +69,8 @@ namespace IWSProject.Controllers
                     {
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
-                        return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
+                        Session["Banks"] = IWSLookUp.GetBanks();
+                        return PartialView("BanksGridViewPartial", Session["Banks"]);
                     }
                 }
                 catch (Exception e)
@@ -94,8 +96,8 @@ namespace IWSProject.Controllers
                     var item = model.FirstOrDefault(it => it.id == id);
                     if (item != null)
                         model.DeleteOnSubmit(item);
-
                     db.SubmitChanges();
+                    Session["Banks"] = IWSLookUp.GetBanks();
                 }
                 catch (Exception e)
                 {
@@ -103,12 +105,12 @@ namespace IWSProject.Controllers
                     IWSLookUp.LogException(e);
                 }
             }
-            return PartialView("BanksGridViewPartial", IWSLookUp.GetBanks());
+            return PartialView("BanksGridViewPartial", Session["Banks"]);
         }
 
         public ActionResult BankView()
         {
-            return PartialView(IWSLookUp.GetBanks());
+            return PartialView(Session["Banks"]);
         }
     }
 }

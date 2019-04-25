@@ -210,9 +210,15 @@
             return IWSEntities.ClassChild(accountid, companyID).Select(i => 
                                                 new { id = i.ChildId, name = i.ChildName });
         }
-        public static string GetComptaDetailCaption(int ModeliD)
+        public static string GetComptaDetailCaption(int ModelId)
         {
-            ComptaMasterModelId caption = (ComptaMasterModelId)ModeliD;
+            ComptaMasterModelId caption = (ComptaMasterModelId)ModelId;
+
+            return caption.ToString();
+        }
+        public static string GetLogisticDetailCaption(int ModelId)
+        {
+            LogisticMasterModelId caption = (LogisticMasterModelId)ModelId;
 
             return caption.ToString();
         }
@@ -545,13 +551,13 @@
                  select new ImmoDetailViewModel()
                  {
                      CostCenter = "100",
-                     TransDate = dateTime,// DateTime.Now,
-                     ItemDate = dateTime,//DateTime.Now,
-                     EntryDate = dateTime,//DateTime.Now,
+                     TransDate = dateTime,
+                     ItemDate = dateTime,
+                     EntryDate = dateTime,
                      Account = d.Account,
                      Side = true,
                      OAccount = d.OAccount,
-                     DueDate = dateTime,//DateTime.Now,
+                     DueDate = dateTime,
                      CompanyId = d.CompanyId,
                      Currency = d.Currency
                  }).SingleOrDefault<ImmoDetailViewModel>();
@@ -572,13 +578,13 @@
                  select new ImmoDetailViewModel()
                  {
                      CostCenter = "100",
-                     TransDate = dateTime,//DateTime.Now,
-                     ItemDate = dateTime,//DateTime.Now,
-                     EntryDate = dateTime,//DateTime.Now,
+                     TransDate = dateTime,
+                     ItemDate = dateTime,
+                     EntryDate = dateTime,
                      Account = d.Account,
                      Side = true,
                      OAccount = d.OAccount,
-                     DueDate = dateTime,//DateTime.Now,
+                     DueDate = dateTime,
                      CompanyId = d.CompanyId,
                      Currency = d.Currency
                  });
@@ -1217,7 +1223,7 @@
                                                  TransDate = Convert.ToDateTime(b.Period),
                                                  ItemDate= Convert.ToDateTime(b.Period),
                                                  DueDate=Convert.ToDateTime(b.Period),
-                                                 EntryDate=dateTime,//DateTime.Now,
+                                                 EntryDate=dateTime,
                                                  AccountID = b.AccountID,
                                                  Side= Convert.ToBoolean(b.Side),
                                                  OAccountID = b.OAccountID,
@@ -2674,8 +2680,11 @@
         }
         public static DateTime GetCurrentDateTime()
         {
-            string timeZone = (string)HttpContext.Current.Session["TimeZoneId"];
-            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Today, TimeZoneInfo.Local.Id, timeZone);
+            string timeZoneId = (string)HttpContext.Current.Session["TimeZoneId"];
+            //return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Today, TimeZoneInfo.Local.Id, timeZoneId);
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            DateTime dateTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tzi);
+            return dateTime;
         }
         public static string GetTimeZoneId(string companyId)
         {

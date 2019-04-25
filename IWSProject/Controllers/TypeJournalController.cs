@@ -7,7 +7,6 @@ using System.Web.Mvc;
 namespace IWSProject.Controllers
 {
     [Authorize]
-    //[HandleError()]
     public class TypeJournalController : Controller
     {
         IWSDataContext db;
@@ -18,34 +17,13 @@ namespace IWSProject.Controllers
         // GET: TypeJournal
         public ActionResult Index()
         {
-            
-            //System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-
-            //ViewBag.TypeJournal = IWSLookUp.GetTypeJournals();
-
-            //sw.Stop();
-
-            //string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            ////if (Session["DurationTypeJ"] == null)
-            ////{
-            //    Session["DurationTypeJ"] = $"Data reading time: {elapsedTime} ms";
-
-            ////}
             return View();
         }
 
         [ValidateInput(false)]
         public ActionResult TypeJournalsGridViewPartial()
         {
-            
-            //System.Diagnostics.Stopwatch sw = System.Diagnostics.Stopwatch.StartNew();
-            //ViewBag.TypeJour = IWSLookUp.GetTypeJournals();
-            //var p = IWSLookUp.GetTypeJournals();
-            //sw.Stop();
-
-            //string elapsedTime = sw.ElapsedMilliseconds.ToString();
-            //Session["DurationTypeJ"] = $"Data reading time: {elapsedTime} ms";
-            return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
+            return PartialView(Session["TypeJournal"]);
         }
 
         [HttpPost, ValidateInput(false)]
@@ -55,17 +33,19 @@ namespace IWSProject.Controllers
             item.CompanyId = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.TypeJournal;
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
-            ViewData["typeDraft"] = item;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
+            ViewBag.TypeDraft = item;
             if (ModelState.IsValid)
             {
                 try
                 {
-                    item.Posted = dateTime;// DateTime.Now;
-                    item.Updated = dateTime;// DateTime.Now;
+                    item.Posted = dateTime;
+                    item.Updated = dateTime;
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
+                    Session["TypeJournal"] = IWSLookUp.GetTypeJournals();
+
                 }
                 catch (Exception e)
                 {
@@ -76,13 +56,13 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
+            return PartialView("TypeJournalsGridViewPartial", item);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult TypeJournalsGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] TypeJournal item)
         {
             var model = db.TypeJournals;
-            ViewData["typeJournal"] = item;
+            ViewBag.TypeDraft = item;
 
             if (ModelState.IsValid)
             {
@@ -91,9 +71,10 @@ namespace IWSProject.Controllers
                     var modelItem = model.FirstOrDefault(it => it.Id == item.Id);
                     if (modelItem != null)
                     {
-                        modelItem.Updated = IWSLookUp.GetCurrentDateTime();// DateTime.Now;
+                        modelItem.Updated = IWSLookUp.GetCurrentDateTime();
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
+                        Session["TypeJournal"] = IWSLookUp.GetTypeJournals();
                     }
                 }
                 catch (Exception e)
@@ -105,7 +86,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
+            return PartialView("TypeJournalsGridViewPartial", item);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult TypeJournalsGridViewPartialDelete(string id)
@@ -118,19 +99,19 @@ namespace IWSProject.Controllers
                     var item = model.FirstOrDefault(it => it.Id == id);
                     if (item != null)
                         model.DeleteOnSubmit(item);
-
                     db.SubmitChanges();
+                    Session["TypeJournal"] = IWSLookUp.GetTypeJournals();
                 }
                 catch (Exception e)
                 {
                     ViewData["GenericError"] = e.Message;
                 }
             }
-            return PartialView("TypeJournalsGridViewPartial", IWSLookUp.GetTypeJournals());
+            return PartialView("TypeJournalsGridViewPartial", Session["TypeJournal"]);
         }
         public ActionResult TypeJournalView()
         {
-            return PartialView(IWSLookUp.GetTypeJournals());
+            return PartialView(Session["TypeJournal"]);
         }
     }
 }

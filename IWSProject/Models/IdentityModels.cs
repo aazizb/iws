@@ -48,14 +48,6 @@ namespace IWSProject.Models
         {
             return new ApplicationDbContext();
         }
-
-        //public System.Data.Entity.DbSet<AffectationJournal> AffectationJournals { get; set; }
-
-        //public System.Data.Entity.DbSet<Account> Accounts { get; set; }
-
-        //public System.Data.Entity.DbSet<Company> Companies { get; set; }
-
-        //public System.Data.Entity.DbSet<TypeJournal> TypeJournals { get; set; }
     }
 }
 

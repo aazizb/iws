@@ -35,8 +35,8 @@ namespace IWSProject.Controllers
             item.CompanyId = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Asset;
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
             ViewData["immo"] = item;
             if (ModelState.IsValid)
             {

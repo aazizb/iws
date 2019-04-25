@@ -2,10 +2,11 @@
 using IWSProject.Models;
 using IWSProject.Models.Entities;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web.Mvc;
+
 
 namespace IWSProject.Controllers
 {
@@ -251,7 +252,6 @@ namespace IWSProject.Controllers
         protected static bool ValidateMasters(int itemId, int modelId, string companyId)
         {
             string iban = string.Empty;
-
             bool results = true;
 
             if (modelId.Equals((int)IWSLookUp.LogisticMasterModelId.BillOfDelivery))
@@ -268,26 +268,26 @@ namespace IWSProject.Controllers
                        d.CompanyId.Equals(companyId) && d.itemId.Equals(itemId)).iban;
 
                 List<JournalViewModel> docs = (from l in db.DetailLogistics
-                    where
-                        l.MasterLogistic.id == itemId
-                    select new JournalViewModel()
-                    {
-                        ItemID = l.MasterLogistic.id,
-                        OID = l.MasterLogistic.oid,
-                        Currency = l.MasterLogistic.oCurrency,
-                        CustSupplierID = l.MasterLogistic.account,
-                        StoreID = l.MasterLogistic.store,
-                        TransDate = l.MasterLogistic.TransDate,
-                        ItemDate = l.MasterLogistic.ItemDate,
-                        EntryDate = l.MasterLogistic.EntryDate,
-                        Periode = l.MasterLogistic.oPeriode,
-                        Amount = (decimal)l.MasterLogistic.oTotal,
-                        Account = l.MasterLogistic.Company.salesclearingaccountid,
-                        OAccount = l.Article.RevenuAccountId,
-                        CompanyIBAN = l.MasterLogistic.Company.IBAN,
-                        IBAN = iban,
-                        Info = l.MasterLogistic.HeaderText ?? "NA"
-                    }).Distinct().ToList();
+                                               where
+                                                   l.MasterLogistic.id == itemId
+                                               select new JournalViewModel()
+                                               {
+                                                   ItemID = l.MasterLogistic.id,
+                                                   OID = l.MasterLogistic.oid,
+                                                   Currency = l.MasterLogistic.oCurrency,
+                                                   CustSupplierID = l.MasterLogistic.account,
+                                                   StoreID = l.MasterLogistic.store,
+                                                   TransDate = l.MasterLogistic.TransDate,
+                                                   ItemDate = l.MasterLogistic.ItemDate,
+                                                   EntryDate = l.MasterLogistic.EntryDate,
+                                                   Periode = l.MasterLogistic.oPeriode,
+                                                   Amount = (decimal)l.MasterLogistic.oTotal,
+                                                   Account = l.MasterLogistic.Company.salesclearingaccountid,
+                                                   OAccount = l.Article.RevenuAccountId,
+                                                   CompanyIBAN = l.MasterLogistic.Company.IBAN,
+                                                   IBAN = iban,
+                                                   Info = l.MasterLogistic.HeaderText ?? "NA"
+                                               }).Distinct().ToList();
                 if (docs.Any())
                 {
                     results = ValidateBillOfDelivery(docs, companyId);
@@ -297,7 +297,7 @@ namespace IWSProject.Controllers
                 docs = (from l in db.DetailLogistics
                         where
                             (l.Article.IsService == false)
-                        group new { l.MasterLogistic, l.Article, l.MasterLogistic.Company,  l } by new 
+                        group new { l.MasterLogistic, l.Article, l.MasterLogistic.Company, l } by new
                         {
                             l.MasterLogistic.id,
                             l.MasterLogistic.oid,
@@ -375,61 +375,134 @@ namespace IWSProject.Controllers
                      i.MasterLogistic.oCurrency,
                      i.MasterLogistic.HeaderText
                  }))
-                    group o by new
-                    {
-                        o.id,
-                        o.oid,
-                        o.account,
-                        o.store,
-                        o.TransDate,
-                        o.ItemDate,
-                        o.EntryDate,
-                        o.oPeriode,
-                        o.StockAccount,
-                        o.purchasingclearingaccountid,
-                        o.IBAN,
-                        o.IBAN2,
-                        o.oCurrency,
-                        o.HeaderText
-                    } into g
-                    where g.Key.id == itemId
-                    select new JournalViewModel()
-                    {
-                        ItemID = g.Key.id,
-                        OID = g.Key.oid,
-                        CustSupplierID = g.Key.account,
-                        StoreID = g.Key.store,
-                        TransDate = g.Key.TransDate,
-                        ItemDate = g.Key.ItemDate,
-                        EntryDate = g.Key.EntryDate,
-                        Periode = g.Key.oPeriode,
-                        Account = g.Key.StockAccount,
-                        OAccount = g.Key.purchasingclearingaccountid,
-                        Amount = Convert.ToDecimal(g.Sum(p => p.sAmount)),
-                        CompanyIBAN = g.Key.IBAN,
-                        IBAN = g.Key.IBAN2.ToString(),
-                        Currency = g.Key.oCurrency,
-                        Info = g.Key.HeaderText ?? "NA",
-                        ModelId = modelId
-                    }).Distinct().ToList();                
+                                               group o by new
+                                               {
+                                                   o.id,
+                                                   o.oid,
+                                                   o.account,
+                                                   o.store,
+                                                   o.TransDate,
+                                                   o.ItemDate,
+                                                   o.EntryDate,
+                                                   o.oPeriode,
+                                                   o.StockAccount,
+                                                   o.purchasingclearingaccountid,
+                                                   o.IBAN,
+                                                   o.IBAN2,
+                                                   o.oCurrency,
+                                                   o.HeaderText
+                                               } into g
+                                               where g.Key.id == itemId
+                                               select new JournalViewModel()
+                                               {
+                                                   ItemID = g.Key.id,
+                                                   OID = g.Key.oid,
+                                                   CustSupplierID = g.Key.account,
+                                                   StoreID = g.Key.store,
+                                                   TransDate = g.Key.TransDate,
+                                                   ItemDate = g.Key.ItemDate,
+                                                   EntryDate = g.Key.EntryDate,
+                                                   Periode = g.Key.oPeriode,
+                                                   Account = g.Key.StockAccount,
+                                                   OAccount = g.Key.purchasingclearingaccountid,
+                                                   Amount = Convert.ToDecimal(g.Sum(p => p.sAmount)),
+                                                   CompanyIBAN = g.Key.IBAN,
+                                                   IBAN = g.Key.IBAN2.ToString(),
+                                                   Currency = g.Key.oCurrency,
+                                                   Info = g.Key.HeaderText ?? "NA",
+                                                   ModelId = modelId
+                                               }).Distinct().ToList();
 
                 if (docs.Any())
                 {
                     try
                     {
+
+                        List<DetailComptaViewModel> itemsDebit = (from doc in docs
+                                                                  group new { doc } by new
+                                                                  {
+                                                                      doc.Periode,
+                                                                      doc.Account,
+                                                                      doc.Currency
+                                                                  } into g
+                                                                  select new DetailComptaViewModel()
+                                                                  {
+                                                                      Period = g.Key.Periode,
+                                                                      AccountId = g.Key.Account,
+                                                                      Amount = g.Sum(p => p.doc.Amount),
+                                                                      Currency = g.Key.Currency
+                                                                  }).ToList();
+                        List<DetailComptaViewModel> itemsCredit = (from doc in docs
+                                                                   group new { doc } by new
+                                                                   {
+                                                                       doc.Periode,
+                                                                       doc.OAccount,
+                                                                       doc.Currency
+                                                                   } into g
+                                                                   select new DetailComptaViewModel()
+                                                                   {
+                                                                       Period = g.Key.Periode,
+                                                                       AccountId = g.Key.OAccount,
+                                                                       Amount = g.Sum(p => p.doc.Amount),
+                                                                       Currency = g.Key.Currency
+                                                                   }).ToList();
                         #region debit
+
+                        foreach (var item in itemsDebit)
+                        {
+                            if (itemsCredit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                decimal oAmount = itemsCredit.SingleOrDefault(s => s.AccountId == item.AccountId).Amount;
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, oAmount, item.Currency, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, oAmount, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                            else
+                            {
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, item.Currency, true, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, true, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region credit
+
+                        foreach (var item in itemsCredit)
+                        {
+                            if (!itemsDebit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                results = UpdatePeriodicBalance(item.Period, item.AccountId, item.Amount, item.Currency, false, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, false, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region journal
+
                         foreach (var doc in docs)
                         {
-
-                            results = UpdatePeriodicBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
-
-                            if (!results)
-                                return results;
-
-                            results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
-
-                            if (!results)
-                                return results;
 
                             List<Journal> journal = new List<Journal> {
                             new Journal {
@@ -482,35 +555,6 @@ namespace IWSProject.Controllers
                                 return results;
                         }
                         #endregion
-                        #region credit
-                        var items = (from doc in docs
-                                     group new { doc } by new
-                                     {
-                                         doc.Periode,
-                                         doc.OAccount,
-                                         doc.Currency
-                                     } into g
-                                     select new
-                                     {
-                                         g.Key.Periode,
-                                         accountID = g.Key.OAccount,
-                                         amount = g.Sum(p => p.doc.Amount),
-                                         currency = g.Key.Currency
-                                     }).Distinct().ToList();
-                        foreach (var item in items)
-                        {
-                        results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
-
-                        if (!results)
-                            return results;
-
-                        results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
-
-                        if (!results)
-                            return results;
-
-                        }
-                        #endregion
                     }
                     catch (Exception ex)
                     {
@@ -524,7 +568,7 @@ namespace IWSProject.Controllers
             if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.VendorInvoice))
             {
                 results = false;
-                
+
                 iban = db.MasterComptas.Join(db.Suppliers,
                         m => m.account, s => s.accountid, (m, s) => new
                         {
@@ -561,21 +605,96 @@ namespace IWSProject.Controllers
 
                 if (docs.Any())
                 {
+
+
                     try
                     {
+
+                        List<DetailComptaViewModel> itemsDebit = (from doc in docs
+                                                                  group new { doc } by new
+                                                                  {
+                                                                      doc.Periode,
+                                                                      doc.Account,
+                                                                      doc.Currency
+                                                                  } into g
+                                                                  select new DetailComptaViewModel()
+                                                                  {
+                                                                      Period = g.Key.Periode,
+                                                                      AccountId = g.Key.Account,
+                                                                      Amount = g.Sum(p => p.doc.Amount),
+                                                                      Currency = g.Key.Currency
+                                                                  }).ToList();
+                        List<DetailComptaViewModel> itemsCredit = (from doc in docs
+                                                                   group new { doc } by new
+                                                                   {
+                                                                       doc.Periode,
+                                                                       doc.OAccount,
+                                                                       doc.Currency
+                                                                   } into g
+                                                                   select new DetailComptaViewModel()
+                                                                   {
+                                                                       Period = g.Key.Periode,
+                                                                       AccountId = g.Key.OAccount,
+                                                                       Amount = g.Sum(p => p.doc.Amount),
+                                                                       Currency = g.Key.Currency
+                                                                   }).ToList();
                         #region debit
+
+                        foreach (var item in itemsDebit)
+                        {
+                            if (itemsCredit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                decimal oAmount = itemsCredit.SingleOrDefault(s => s.AccountId == item.AccountId).Amount;
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, oAmount, item.Currency, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, oAmount, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                            else
+                            {
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, item.Currency, true, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, true, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region credit
+
+                        foreach (var item in itemsCredit)
+                        {
+                            if (!itemsDebit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                results = UpdatePeriodicBalance(item.Period, item.AccountId, item.Amount, item.Currency, false, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, false, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region journal
 
                         foreach (var doc in docs)
                         {
-                            results = UpdatePeriodicBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
-
-                            if (!results)
-                                return results;
-
-                            results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
-
-                            if (!results)
-                                return results;
 
                             List<Journal> journal = new List<Journal> {
                             new Journal {
@@ -632,36 +751,7 @@ namespace IWSProject.Controllers
                                 return results;
                         }
                         #endregion
-                        #region credit
 
-                        var items = (from doc in docs
-                                    group new { doc } by new
-                                    {
-                                        doc.Periode,
-                                        doc.OAccount,
-                                        doc.Currency
-                                    } into g
-                                    select new
-                                    {
-                                        g.Key.Periode,
-                                        accountID = g.Key.OAccount,
-                                        amount = g.Sum(p => p.doc.Amount),
-                                        currency = g.Key.Currency
-                                    }).Distinct().ToList();
-
-                        foreach (var item in items)
-                        {
-                            results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
-
-                            if (!results)
-                                return results;
-
-                            results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
-
-                            if (!results)
-                                return results;
-                        }
-                        #endregion
                     }
                     catch (Exception ex)
                     {
@@ -670,7 +760,6 @@ namespace IWSProject.Controllers
                     }
                 }
                 return results;
-
             }
 
             if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.CustomerInvoice))
@@ -715,20 +804,92 @@ namespace IWSProject.Controllers
                 {
                     try
                     {
+
+                        List<DetailComptaViewModel> itemsDebit = (from doc in docs
+                                                                  group new { doc } by new
+                                                                  {
+                                                                      doc.Periode,
+                                                                      doc.Account,
+                                                                      doc.Currency
+                                                                  } into g
+                                                                  select new DetailComptaViewModel()
+                                                                  {
+                                                                      Period = g.Key.Periode,
+                                                                      AccountId = g.Key.Account,
+                                                                      Amount = g.Sum(p => p.doc.Amount),
+                                                                      Currency = g.Key.Currency
+                                                                  }).ToList();
+                        List<DetailComptaViewModel> itemsCredit = (from doc in docs
+                                                                   group new { doc } by new
+                                                                   {
+                                                                       doc.Periode,
+                                                                       doc.OAccount,
+                                                                       doc.Currency
+                                                                   } into g
+                                                                   select new DetailComptaViewModel()
+                                                                   {
+                                                                       Period = g.Key.Periode,
+                                                                       AccountId = g.Key.OAccount,
+                                                                       Amount = g.Sum(p => p.doc.Amount),
+                                                                       Currency = g.Key.Currency
+                                                                   }).ToList();
                         #region debit
+
+                        foreach (var item in itemsDebit)
+                        {
+                            if (itemsCredit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                decimal oAmount = itemsCredit.SingleOrDefault(s => s.AccountId == item.AccountId).Amount;
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, oAmount, item.Currency, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, oAmount, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                            else
+                            {
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, item.Currency, true, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, true, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region credit
+
+                        foreach (var item in itemsCredit)
+                        {
+                            if (!itemsDebit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                results = UpdatePeriodicBalance(item.Period, item.AccountId, item.Amount, item.Currency, false, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, false, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region journal
+
                         foreach (var doc in docs)
                         {
-
-                            results = UpdatePeriodicBalance(doc.Periode, doc.OAccount, doc.Amount, doc.Currency, false, companyId);
-
-                            if (!results)
-                                return results;
-
-                            results = UpdateAccountBalance(doc.OAccount, doc.Amount, false, companyId);
-
-                            if (!results)
-                                return results;
-
                             List<Journal> journal = new List<Journal> {
                             new Journal {
                                 ItemID =doc.ItemID,
@@ -783,38 +944,8 @@ namespace IWSProject.Controllers
                             if (!results)
                                 return results;
                         }
-
                         #endregion
-                        #region credit
 
-                        var items = (from doc in docs
-                                     group new { doc } by new
-                                     {
-                                         doc.Periode,
-                                         doc.Account,
-                                         doc.Currency
-                                     } into g
-                                     select new
-                                     {
-                                         g.Key.Periode,
-                                         accountID = g.Key.Account,
-                                         amount = g.Sum(p => p.doc.Amount),
-                                         currency = g.Key.Currency
-                                     }).Distinct().ToList();
-                        foreach (var item in items)
-                        {
-
-                        results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, true, companyId);
-
-                        if (!results)
-                            return results;
-
-                        results = UpdateAccountBalance(item.accountID, item.amount, true, companyId);
-
-                        if (!results)
-                            return results;
-                        }
-                        #endregion
                     }
                     catch (Exception ex)
                     {
@@ -828,7 +959,7 @@ namespace IWSProject.Controllers
             if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.Payment))
             {
                 results = false;
-           
+
                 iban = db.MasterComptas.Join(db.Suppliers,
                         m => m.account, s => s.accountid, (m, s) => new
                         {
@@ -868,20 +999,92 @@ namespace IWSProject.Controllers
                 {
                     try
                     {
+
+                        List<DetailComptaViewModel> itemsDebit = (from doc in docs
+                                                                  group new { doc } by new
+                                                                  {
+                                                                      doc.Periode,
+                                                                      doc.Account,
+                                                                      doc.Currency
+                                                                  } into g
+                                                                  select new DetailComptaViewModel()
+                                                                  {
+                                                                      Period = g.Key.Periode,
+                                                                      AccountId = g.Key.Account,
+                                                                      Amount = g.Sum(p => p.doc.Amount),
+                                                                      Currency = g.Key.Currency
+                                                                  }).ToList();
+                        List<DetailComptaViewModel> itemsCredit = (from doc in docs
+                                                                   group new { doc } by new
+                                                                   {
+                                                                       doc.Periode,
+                                                                       doc.OAccount,
+                                                                       doc.Currency
+                                                                   } into g
+                                                                   select new DetailComptaViewModel()
+                                                                   {
+                                                                       Period = g.Key.Periode,
+                                                                       AccountId = g.Key.OAccount,
+                                                                       Amount = g.Sum(p => p.doc.Amount),
+                                                                       Currency = g.Key.Currency
+                                                                   }).ToList();
                         #region debit
 
+                        foreach (var item in itemsDebit)
+                        {
+                            if (itemsCredit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                decimal oAmount = itemsCredit.SingleOrDefault(s => s.AccountId == item.AccountId).Amount;
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, oAmount, item.Currency, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, oAmount, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                            else
+                            {
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, item.Currency, true, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, true, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region credit
+
+                        foreach (var item in itemsCredit)
+                        {
+                            if (!itemsDebit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                results = UpdatePeriodicBalance(item.Period, item.AccountId, item.Amount, item.Currency, false, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, false, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+
+                        #region journal
                         foreach (var doc in docs)
                         {
-                            results = UpdatePeriodicBalance(doc.Periode,
-                                            doc.Account, doc.Amount, doc.Currency, true, companyId);
-
-                            if (!results)
-                                return results;
-
-                            results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
-
-                            if (!results)
-                                return results;
 
                             List<Journal> journal = new List<Journal> {
                             new Journal {
@@ -935,35 +1138,6 @@ namespace IWSProject.Controllers
                             results = SendToJournal(journal);
                             if (!results)
                                 return results;
-                        }
-                        #endregion
-                        #region credit
-
-                        var items = (from doc in docs
-                                     group new { doc } by new
-                                     {
-                                         doc.Periode,
-                                         doc.OAccount,
-                                         doc.Currency
-                                     } into g
-                                     select new
-                                     {
-                                         g.Key.Periode,
-                                         accountID = g.Key.OAccount,
-                                         amount = g.Sum(p => p.doc.Amount),
-                                         currency = g.Key.Currency
-                                     }).Distinct().ToList();
-                        foreach (var item in items)
-                        {
-
-                        results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
-
-                        if (!results)
-                            return results;
-                        results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
-
-                        if (!results)
-                            return results;
                         }
                         #endregion
                     }
@@ -1018,20 +1192,92 @@ namespace IWSProject.Controllers
                 {
                     try
                     {
-                        #region debit   
+
+                        List<DetailComptaViewModel> itemsDebit = (from doc in docs
+                                                                  group new { doc } by new
+                                                                  {
+                                                                      doc.Periode,
+                                                                      doc.Account,
+                                                                      doc.Currency
+                                                                  } into g
+                                                                  select new DetailComptaViewModel()
+                                                                  {
+                                                                      Period = g.Key.Periode,
+                                                                      AccountId = g.Key.Account,
+                                                                      Amount = g.Sum(p => p.doc.Amount),
+                                                                      Currency = g.Key.Currency
+                                                                  }).ToList();
+                        List<DetailComptaViewModel> itemsCredit = (from doc in docs
+                                                                   group new { doc } by new
+                                                                   {
+                                                                       doc.Periode,
+                                                                       doc.OAccount,
+                                                                       doc.Currency
+                                                                   } into g
+                                                                   select new DetailComptaViewModel()
+                                                                   {
+                                                                       Period = g.Key.Periode,
+                                                                       AccountId = g.Key.OAccount,
+                                                                       Amount = g.Sum(p => p.doc.Amount),
+                                                                       Currency = g.Key.Currency
+                                                                   }).ToList();
+
+                        #region debit
+
+                        foreach (var item in itemsDebit)
+                        {
+                            if (itemsCredit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                decimal oAmount = itemsCredit.SingleOrDefault(s => s.AccountId == item.AccountId).Amount;
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, oAmount, item.Currency, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, oAmount, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                            else
+                            {
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, item.Currency, true, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, true, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region credit
+
+                        foreach (var item in itemsCredit)
+                        {
+                            if (!itemsDebit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                results = UpdatePeriodicBalance(item.Period, item.AccountId, item.Amount, item.Currency, false, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, false, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region journal
                         foreach (var doc in docs)
                         {
-                            results = UpdatePeriodicBalance(doc.Periode,
-                                            doc.Account, doc.Amount, doc.Currency, true, companyId);
-
-                            if (!results)
-                                return results;
-
-                            results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
-
-                            if (!results)
-                                return results;
-
                             List<Journal> journal = new List<Journal> {
                             new Journal {
                                 ItemID =doc.ItemID,
@@ -1085,36 +1331,6 @@ namespace IWSProject.Controllers
 
                             if (!results)
                                 return results;
-                        }
-
-                        #endregion
-                        #region credit
-                        var items = (from doc in docs
-                                     group new { doc } by new
-                                     {
-                                         doc.Periode,
-                                         doc.OAccount,
-                                         doc.Currency
-                                     } into g
-                                     select new
-                                     {
-                                         g.Key.Periode,
-                                         accountID = g.Key.OAccount,
-                                         amount = g.Sum(p => p.doc.Amount),
-                                         currency = g.Key.Currency
-                                     }).Distinct().ToList();        //.Single();
-                        foreach (var item in items)
-                        {
-                        results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
-
-                        if (!results)
-                            return results;
-
-                        results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
-
-                        if (!results)
-                            return results;
-
                         }
 
                         #endregion
@@ -1161,20 +1377,91 @@ namespace IWSProject.Controllers
                 {
                     try
                     {
+                        List<DetailComptaViewModel> itemsDebit = (from doc in docs
+                                                                  group new { doc } by new
+                                                                  {
+                                                                      doc.Periode,
+                                                                      doc.Account,
+                                                                      doc.Currency
+                                                                  } into g
+                                                                  select new DetailComptaViewModel()
+                                                                  {
+                                                                      Period = g.Key.Periode,
+                                                                      AccountId = g.Key.Account,
+                                                                      Amount = g.Sum(p => p.doc.Amount),
+                                                                      Currency = g.Key.Currency
+                                                                  }).ToList();
+                        List<DetailComptaViewModel> itemsCredit = (from doc in docs
+                                                                   group new { doc } by new
+                                                                   {
+                                                                       doc.Periode,
+                                                                       doc.OAccount,
+                                                                       doc.Currency
+                                                                   } into g
+                                                                   select new DetailComptaViewModel()
+                                                                   {
+                                                                       Period = g.Key.Periode,
+                                                                       AccountId = g.Key.OAccount,
+                                                                       Amount = g.Sum(p => p.doc.Amount),
+                                                                       Currency = g.Key.Currency
+                                                                   }).ToList();
+
                         #region debit
+
+                        foreach (var item in itemsDebit)
+                        {
+                            if (itemsCredit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                decimal oAmount = itemsCredit.SingleOrDefault(s => s.AccountId == item.AccountId).Amount;
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, oAmount, item.Currency, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, oAmount, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                            else
+                            {
+                                results = UpdatePeriodicBalance(item.Period,
+                                item.AccountId, item.Amount, item.Currency, true, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, true, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region credit
+
+                        foreach (var item in itemsCredit)
+                        {
+                            if (!itemsDebit.Any(s => s.AccountId == item.AccountId))
+                            {
+                                results = UpdatePeriodicBalance(item.Period, item.AccountId, item.Amount, item.Currency, false, companyId);
+
+                                if (!results)
+                                    return results;
+
+                                results = UpdateAccountBalance(item.AccountId, item.Amount, false, companyId);
+
+                                if (!results)
+                                    return results;
+                            }
+                        }
+                        #endregion
+
+                        #region journal
                         foreach (var doc in docs)
                         {
-                            results = UpdatePeriodicBalance(doc.Periode,
-                                            doc.Account, doc.Amount, doc.Currency, true, companyId);
-
-                            if (!results)
-                                return results;
-
-                            results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
-
-                            if (!results)
-                                return results;
-
                             List<Journal> journal = new List<Journal> {
                             new Journal {
                                 ItemID =doc.ItemID,
@@ -1229,38 +1516,8 @@ namespace IWSProject.Controllers
                             if (!results)
                                 return results;
                         }
-
                         #endregion
-                        #region credit
-                        var items = (from doc in docs
-                                     group new { doc } by new
-                                     {
-                                         doc.Periode,
-                                         doc.OAccount,
-                                         doc.Currency
-                                     } into g
-                                     select new
-                                     {
-                                         g.Key.Periode,
-                                         accountID = g.Key.OAccount,
-                                         amount = g.Sum(p => p.doc.Amount),
-                                         currency = g.Key.Currency
-                                     });
-                        foreach (var item in items)
-                        {
 
-                            results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
-
-                            if (!results)
-                                return results;
-
-                            results = UpdateAccountBalance(item.accountID, item.amount, false, companyId);
-
-                            if (!results)
-                                return results;
-                        }
-
-                        #endregion
                     }
                     catch (Exception ex)
                     {
@@ -1289,15 +1546,36 @@ namespace IWSProject.Controllers
             try
             {
                 #region debit
-                foreach (var doc in docs)
+                var items = (from doc in docs
+                             group new { doc } by new
+                             {
+                                 doc.Periode,
+                                 doc.Account,
+                                 doc.Currency
+                             } into g
+                             select new
+                             {
+                                 g.Key.Periode,
+                                 accountID = g.Key.Account,
+                                 amount = g.Sum(p => p.doc.Amount),
+                                 currency = g.Key.Currency
+                             }).Distinct().ToList();
+                foreach (var item in items)
                 {
-
-                    results = UpdatePeriodicBalance(doc.Periode, doc.Account, doc.Amount, doc.Currency, true, companyId);
+                    results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, true, companyId);
 
                     if (!results)
                         return results;
 
-                    results = UpdateAccountBalance(doc.Account, doc.Amount, true, companyId);
+                    results = UpdateAccountBalance(item.accountID, item.amount, true, companyId);
+
+                }
+                #endregion
+
+                #region journal
+
+                foreach (var doc in docs)
+                {
 
                     List<Journal> journal = new List<Journal> {
                             new Journal {
@@ -1348,25 +1626,24 @@ namespace IWSProject.Controllers
                         return results;
 
                 }
-
                 #endregion
+                
                 #region credit
 
-
-                var items = (from doc in docs
-                             group new { doc } by new
-                             {
-                                 doc.Periode,
-                                 doc.OAccount,
-                                 doc.Currency
-                             } into g
-                             select new
-                             {
-                                 g.Key.Periode,
-                                 accountID = g.Key.OAccount,
-                                 amount = g.Sum(p => p.doc.Amount),
-                                 currency = g.Key.Currency
-                             }).Distinct().ToList();
+                items = (from doc in docs
+                            group new { doc } by new
+                            {
+                                doc.Periode,
+                                doc.OAccount,
+                                doc.Currency
+                            } into g
+                            select new
+                            {
+                                g.Key.Periode,
+                                accountID = g.Key.OAccount,
+                                amount = g.Sum(p => p.doc.Amount),
+                                currency = g.Key.Currency
+                            }).Distinct().ToList();
                 foreach (var item in items)
                 {
                 results = UpdatePeriodicBalance(item.Periode, item.accountID, item.amount, item.currency, false, companyId);
@@ -1450,7 +1727,25 @@ namespace IWSProject.Controllers
             }
             return false;
         }
+        protected static bool UpdateAccountBalance(string accountID, decimal amount, decimal oAmount, string companyId)
+        {
+            try
+            {
+                decimal saldo = amount - oAmount;
 
+                var docs = db.GetAccounts().FirstOrDefault(a => a.id == accountID && a.CompanyID == companyId);
+                if (docs != null)
+                {
+                    docs.balance += saldo;
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                IWSLookUp.LogException(ex);
+            }
+            return false;
+        }
         protected static bool UpdatePeriodicBalance(string period, string AccountID, decimal amount, string currency, bool side, string companyID)
         {
             bool result = false;
@@ -1459,15 +1754,15 @@ namespace IWSProject.Controllers
 
             if (docs == null)
             {
+                #region New
                 string name = GetName(AccountID, companyID);
                 decimal iDebit = 0;
                 decimal iCredit = 0;
-
-                #region New
+                
                 bool isJanuary = period.Substring(period.Length - 2) == "01";
                 bool isDecember = period.Substring(period.Length - 2) == "12";
                 bool isIncomesChild = IWSLookUp.IsIncomesStatementChild(AccountID, companyID);
-                BeforeAmountViewModel beforeAmount = IWSLookUp.GetBeforeAmount(AccountID,period, companyID);
+                BeforeAmountViewModel beforeAmount = IWSLookUp.GetBeforeAmount(AccountID, period, companyID);
                 if (isIncomesChild )
                 {
                     if (isJanuary)
@@ -1500,7 +1795,7 @@ namespace IWSProject.Controllers
                         iCredit = beforeAmount.ICredit + beforeAmount.Credit;
                     }
                 }
-                #endregion
+                
 
                 docs = new PeriodicAccountBalance
                 {
@@ -1514,6 +1809,7 @@ namespace IWSProject.Controllers
                     Credit = (side == true) ? 0 : amount,
                     Currency = currency
                 };
+
                 try
                 {
                     db.PeriodicAccountBalances.InsertOnSubmit(docs);
@@ -1524,9 +1820,11 @@ namespace IWSProject.Controllers
                     result = false;
                     IWSLookUp.LogException(ex);
                 }
+                #endregion
             }
             else
             {
+                #region Update
                 try
                 {
                     if (side)
@@ -1544,10 +1842,110 @@ namespace IWSProject.Controllers
                     result = false;
                     IWSLookUp.LogException(ex);
                 }
+
+                #endregion
             }
 
             if (result)
                result = UpdateNextPeriod(AccountID, period, amount, side, companyID);
+            return result;
+        }
+        protected static bool UpdatePeriodicBalance(string period, string AccountID, decimal amount, decimal oAmount, string currency, string companyID)
+        {
+            bool result = false;
+            var docs = db.PeriodicAccountBalances
+                       .FirstOrDefault(p => p.Periode == period && p.AccountId == AccountID && p.CompanyID == companyID);
+
+            if (docs == null)
+            {
+                #region New
+                string name = GetName(AccountID, companyID);
+                decimal iDebit = 0;
+                decimal iCredit = 0;
+
+                bool isJanuary = period.Substring(period.Length - 2) == "01";
+                bool isDecember = period.Substring(period.Length - 2) == "12";
+                bool isIncomesChild = IWSLookUp.IsIncomesStatementChild(AccountID, companyID);
+                BeforeAmountViewModel beforeAmount = IWSLookUp.GetBeforeAmount(AccountID, period, companyID);
+                if (isIncomesChild)
+                {
+                    if (isJanuary)
+                    {
+                        iDebit = 0;
+                        iCredit = 0;
+                    }
+                    else
+                    {
+                        iDebit = beforeAmount.IDebit + beforeAmount.Debit;
+                        iCredit = beforeAmount.ICredit + beforeAmount.Credit;
+                    }
+                }
+                else
+                {
+                    if (isJanuary)
+                    {
+                        if (AccountSide(AccountID, companyID))
+                        {
+                            iDebit = (beforeAmount.IDebit + beforeAmount.Debit) - (beforeAmount.ICredit + beforeAmount.Credit);
+                        }
+                        else
+                        {
+                            iCredit = (beforeAmount.ICredit + beforeAmount.Credit) - (beforeAmount.IDebit + beforeAmount.Debit);
+                        }
+                    }
+                    else
+                    {
+                        iDebit = beforeAmount.IDebit + beforeAmount.Debit;
+                        iCredit = beforeAmount.ICredit + beforeAmount.Credit;
+                    }
+                }
+
+
+                docs = new PeriodicAccountBalance
+                {
+                    Name = name,
+                    Periode = period,
+                    AccountId = AccountID,
+                    CompanyID = companyID,
+                    IDebit = iDebit,
+                    ICredit = iCredit,
+                    Debit = amount,
+                    Credit = oAmount,
+                    Currency = currency
+                };
+
+                try
+                {
+                    db.PeriodicAccountBalances.InsertOnSubmit(docs);
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    result = false;
+                    IWSLookUp.LogException(ex);
+                }
+                #endregion
+            }
+            else
+            {
+                #region Update
+                try
+                {
+                    docs.Debit += amount;
+                    docs.Credit += oAmount;
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    result = false;
+                    IWSLookUp.LogException(ex);
+                }
+
+                #endregion
+            }
+
+            if (result)
+                result = UpdateNextPeriod(AccountID, period, amount, oAmount, companyID);
             return result;
         }
 
@@ -1566,15 +1964,15 @@ namespace IWSProject.Controllers
             try
             {
                 string oYear = period.Substring(0, 4);
-                var items =
+                var periodicAccountBalances =
                     from p in db.PeriodicAccountBalances
                     where
                       p.AccountId == accountId && p.CompanyID == companyID &&
                       Convert.ToInt32(p.Periode) > Convert.ToInt32(period)
                     select p;
-                foreach (var item in items)
+                foreach (var periodicAccountBalance in periodicAccountBalances)
                 {
-                    UpdatePeriodicBalance(amount, side, companyID, oYear, item);
+                    UpdatePeriodicBalance(amount, side, companyID, oYear, periodicAccountBalance);
                 }
                 result = true;
             }
@@ -1586,37 +1984,88 @@ namespace IWSProject.Controllers
             return result;
         }
 
-        private static void UpdatePeriodicBalance(decimal amount, bool side, string companyID, string oYear, PeriodicAccountBalance item)
+        protected static bool UpdateNextPeriod(string accountId, string period, decimal amount, decimal oAmount, string companyID)
         {
-            bool isJanuary = item.oMonth == "01";
-            bool isIncomesChild = IWSLookUp.IsIncomesStatementChild(item.AccountId, companyID);
+            bool result = false;
+            try
+            {
+                string oYear = period.Substring(0, 4);
+                var periodicAccountBalances =
+                    from p in db.PeriodicAccountBalances
+                    where
+                      p.AccountId == accountId && p.CompanyID == companyID &&
+                      Convert.ToInt32(p.Periode) > Convert.ToInt32(period)
+                    select p;
+                foreach (var periodicAccountBalance in periodicAccountBalances)
+                {
+                    UpdatePeriodicBalance(amount, oAmount, companyID, oYear, periodicAccountBalance);
+                }
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                result = false;
+                IWSLookUp.LogException(ex);
+            }
+            return result;
+        }
+        
+        private static void UpdatePeriodicBalance(decimal amount, bool side, string companyID, string oYear, PeriodicAccountBalance periodicAccountbalance)
+        {
+            bool isJanuary = periodicAccountbalance.oMonth == "01";
+            bool isIncomesChild = IWSLookUp.IsIncomesStatementChild(periodicAccountbalance.AccountId, companyID);
             if (isIncomesChild)
             {
                 if (isJanuary)
                 {
-                    item.IDebit = 0;
-                    item.ICredit = 0;
+                    periodicAccountbalance.IDebit = 0;
+                    periodicAccountbalance.ICredit = 0;
                 }
                 else
                 {
-                    if (item.oYear == oYear)
+                    if (periodicAccountbalance.oYear == oYear)
                     {
                         if (side)
-                            item.IDebit += amount;
+                            periodicAccountbalance.IDebit += amount;
                         if (!side)
-                            item.ICredit += amount;
+                            periodicAccountbalance.ICredit += amount;
                     }
                 }
             }
             else
             {
                 if (side)
-                    item.IDebit += amount;
+                    periodicAccountbalance.IDebit += amount;
                 if (!side)
-                    item.ICredit += amount;
+                    periodicAccountbalance.ICredit += amount;
             }
         }
-
+        private static void UpdatePeriodicBalance(decimal amount, decimal oAmount, string companyID, string oYear, PeriodicAccountBalance periodicAccountbalance)
+        {
+            bool isJanuary = periodicAccountbalance.oMonth == "01";
+            bool isIncomesChild = IWSLookUp.IsIncomesStatementChild(periodicAccountbalance.AccountId, companyID);
+            if (isIncomesChild)
+            {
+                if (isJanuary)
+                {
+                    periodicAccountbalance.IDebit = 0;
+                    periodicAccountbalance.ICredit = 0;
+                }
+                else
+                {
+                    if (periodicAccountbalance.oYear == oYear)
+                    {
+                        periodicAccountbalance.IDebit += amount;
+                        periodicAccountbalance.ICredit += oAmount;
+                    }
+                }
+            }
+            else
+            {
+                periodicAccountbalance.IDebit += amount;
+                periodicAccountbalance.ICredit += oAmount;
+            }
+        }
         private static string GetNextPeriod(string period)
         {
             DateTime nextPeriod;
@@ -1648,7 +2097,7 @@ namespace IWSProject.Controllers
                 try
                 {
                     var list = item.Split(new string[] { "," }, StringSplitOptions.None);
-
+                    
                     itemId = Convert.ToInt32(list[0]);
                     #region check period
                     //results = IWSLookUp.CheckPeriod(itemId, DocumentType, CompanyId, true, true);
@@ -1697,7 +2146,6 @@ namespace IWSProject.Controllers
                 }
             }
         }
-
         protected void GetTimeZoneInfo()
         {
             var timeZones = TimeZoneInfo.GetSystemTimeZones();

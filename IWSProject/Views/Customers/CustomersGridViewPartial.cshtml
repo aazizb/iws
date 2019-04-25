@@ -1,11 +1,8 @@
 ﻿@using IWSProject.Content
-@using IWSProject.Models
-@using IWSProject.Models.Entities
 @{
     var grid = Html.DevExpress().GridView(settings =>
     {
         settings.Name = "CustomersGridView";
-
 
         settings.CallbackRouteValues = new { Controller = "Customers", Action = "CustomersGridViewPartial" };
 
@@ -14,37 +11,30 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Customers", Action = "CustomersGridViewPartialDelete" };
 
         settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
-
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
         settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
         settings.SettingsContextMenu.Enabled = true;
 
         settings.CommandColumn.Visible = true;
-        settings.CommandColumn.Width = Unit.Percentage(5);
-        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowEditButton = false;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.CommandColumn.Width = Unit.Percentage(5);
 
         settings.SettingsBehavior.EnableCustomizationWindow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
         settings.SettingsBehavior.AllowEllipsisInText = true;
         settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+        settings.SettingsBehavior.ConfirmDelete = true;
+        settings.SettingsBehavior.AllowSelectSingleRowOnly = true;
+
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
-        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
-
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
-
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
+        settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
+        settings.SettingsDetail.ShowDetailRow = true;
+        settings.SettingsDetail.ShowDetailButtons = true;
 
         settings.KeyFieldName = "id";
 
@@ -68,11 +58,7 @@
                     break;
             }
         };
-        settings.SettingsBehavior.ConfirmDelete = true;
-        settings.SettingsBehavior.EnableRowHotTrack = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = false;
-        settings.SettingsBehavior.AllowEllipsisInText = true;
-        settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
@@ -98,13 +84,6 @@
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
         settings.SettingsPager.PageSize = 19;
-
-        settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
-        settings.SettingsDetail.ShowDetailRow = true;
-
-        settings.Images.DetailCollapsedButton.IconID = IconID.ActionsAdd16x16;
-        settings.Images.DetailExpandedButton.IconID = IconID.ActionsRemove16x16;
-
 
         settings.Columns.Add(column =>
         {
@@ -194,7 +173,7 @@
         {
             column.FieldName = "accountid";
             column.Caption = IWSLocalResource.account;
-            column.Width = Unit.Percentage(4);
+            column.Width = Unit.Percentage(15);
             column.EditorProperties().ComboBox(combo =>
             {
                 combo.TextField = "name";
@@ -211,7 +190,7 @@
         {
             column.FieldName = "Produit";
             column.Caption = IWSLocalResource.product;
-            column.Width = Unit.Percentage(4);
+            column.Width = Unit.Percentage(15);
             column.EditorProperties().ComboBox(combo =>
             {
                 combo.TextField = "name";
@@ -228,13 +207,13 @@
         {
             column.FieldName = "VatCode";
             column.Caption = IWSLocalResource.vatcode;
-            column.Width = Unit.Percentage(4);
+            column.Width = Unit.Percentage(10);
             column.EditorProperties().ComboBox(combo =>
             {
                 combo.TextField = "name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = ViewBag.VAT;
+                combo.DataSource = Session["ComboVAT"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -437,7 +416,7 @@
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = ViewBag.VAT;
+                        s.Properties.DataSource = Session["ComboVAT"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -460,7 +439,6 @@
                 });
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "IBAN";
@@ -507,7 +485,6 @@
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.ShowCaption = DefaultBoolean.False;
@@ -540,7 +517,7 @@
                 }).Render();
                 });
             })
-            .Bind(ViewData["customer"] ?? c.DataItem)
+            .Bind(ViewBag.Customer ?? c.DataItem)
             .Render();
         });
 

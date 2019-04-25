@@ -23,7 +23,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult CurrenciesGridViewPartial()
         {
-            return PartialView("CurrenciesGridViewPartial", IWSLookUp.GetCurrencies());
+            return PartialView(Session["Currencies"]);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult CurrenciesGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Currency item)
@@ -32,9 +32,9 @@ namespace IWSProject.Controllers
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Currency;
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
-            ViewBag.Currencies = item;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
+            ViewBag.Currency = item;
             if (ModelState.IsValid)
             {
                 try
@@ -42,7 +42,8 @@ namespace IWSProject.Controllers
                     model.InsertOnSubmit(item);
 
                     db.SubmitChanges();
-                    return PartialView("CurrenciesGridViewPartial", IWSLookUp.GetCurrencies());
+                    Session["Currencies"] = IWSLookUp.GetCurrencies();
+                    return PartialView("CurrenciesGridViewPartial", Session["Currencies"]);
                 }
                 catch (Exception e)
                 {
@@ -61,8 +62,8 @@ namespace IWSProject.Controllers
         {
             var model = db.Currencies;
 
-            ViewBag.Currencies = item;
-            
+            ViewBag.Currency = item;
+
             if (ModelState.IsValid)
             {
                 try
@@ -73,7 +74,8 @@ namespace IWSProject.Controllers
                         this.UpdateModel(modelItem);
 
                         db.SubmitChanges();
-                        return PartialView("CurrenciesGridViewPartial", IWSLookUp.GetCurrencies());
+                        Session["Currencies"] = IWSLookUp.GetCurrencies();
+                        return PartialView("CurrenciesGridViewPartial", Session["Currencies"]);
                     }
                 }
                 catch (Exception e)
@@ -99,8 +101,8 @@ namespace IWSProject.Controllers
                     var item = model.FirstOrDefault(it => it.Id == id);
                     if (item != null)
                         model.DeleteOnSubmit(item);
-
                     db.SubmitChanges();
+                    Session["Currencies"] = IWSLookUp.GetCurrencies();
                 }
                 catch (Exception e)
                 {
@@ -108,11 +110,11 @@ namespace IWSProject.Controllers
                     IWSLookUp.LogException(e);
                 }
             }
-            return PartialView("CurrenciesGridViewPartial", IWSLookUp.GetCurrencies());
+            return PartialView("CurrenciesGridViewPartial", Session["Currencies"]);
         }
         public ActionResult CurrencyView()
         {
-            return PartialView(IWSLookUp.GetCurrencies());
+            return PartialView(Session["Currencies"]);
         }
     }
 }

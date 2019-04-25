@@ -42,8 +42,7 @@ namespace IWSProject.Controllers
             {
                 Session["IsVending"] = "SU";
             }
-            return PartialView("MasterGridViewPartial", 
-                        IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            return PartialView(IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult CallbackPanelPartialView(string selectedIDs, int currentModelId)
@@ -55,8 +54,7 @@ namespace IWSProject.Controllers
                 string companyID = (string)Session["CompanyID"];
                 ProcessData(selectedIDs, companyID, false, currentModelId);
             }
-            return PartialView("CallbackPanelPartialView", 
-                    IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)currentModelId));
+            return PartialView(IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)currentModelId));
         }
 
         public ActionResult CustomGridViewCallback(bool isChecked)
@@ -64,9 +62,10 @@ namespace IWSProject.Controllers
             ViewBag.select = isChecked;
             int modelId = (int)IWSLookUp.ComptaMasterModelId.Default;
             if (Session["ModelId"] != null)
+            {
                 modelId = (int)Session["ModelId"];
-            return PartialView("MasterGridViewPartial",
-                    IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            }
+            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] MasterCompta item)
@@ -79,9 +78,11 @@ namespace IWSProject.Controllers
                 item.CompanyId = (string)Session["CompanyID"];
                 int itemOID = item.oid;
                 if (modelId.Equals((int)IWSLookUp.ComptaMasterModelId.GeneralLedger))
+                {
                     item.account = "6222";
+                }
                 item.ModelId = modelId;
-                ViewData["item"] = item;
+                ViewBag.MasterCompta = item;
                 bool result = false;
                 try
                 {
@@ -121,15 +122,14 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("MasterGridViewPartial", 
-                        IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] MasterCompta item)
         {
             var model = db.MasterComptas;
             int modelId = (int)Session["Modelid"];
-            ViewData["item"] = item;
+            ViewBag.MasterCompta = item;
             if (ModelState.IsValid)
             {
                 try
@@ -150,8 +150,7 @@ namespace IWSProject.Controllers
             {
               ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("MasterGridViewPartial",
-                                IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult MasterGridViewPartialDelete(int id)
@@ -176,8 +175,7 @@ namespace IWSProject.Controllers
                     ViewData["GenericError"] = e.Message;
                 }
             }
-            return PartialView("MasterGridViewPartial",
-                                IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
+            return PartialView("MasterGridViewPartial", IWSLookUp.GetMasterCompta((IWSLookUp.ComptaMasterModelId)modelId));
         }
         public ActionResult ComptaView()
         {
@@ -207,7 +205,7 @@ namespace IWSProject.Controllers
 
             line.transid = transId;
             line.ModelId = modelId;
-            ViewData["line"] = line;
+            ViewBag.DetailCompta = line;
             if (ModelState.IsValid)
             {
                 try
@@ -233,7 +231,7 @@ namespace IWSProject.Controllers
         {
             var model = db.DetailComptas;
             line.transid = transId;
-            ViewData["line"] = line;
+            ViewBag.DetailCompta = line;
             if (ModelState.IsValid)
             {
                 try

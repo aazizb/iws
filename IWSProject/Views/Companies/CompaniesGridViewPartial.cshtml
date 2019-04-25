@@ -12,49 +12,58 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Companies", Action = "CompaniesGridViewPartialDelete" };
 
         settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
-        settings.ClientSideEvents.EndCallback = "OnEndCallback";
+
         settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
         settings.SettingsContextMenu.Enabled = true;
 
         settings.SettingsContextMenu.RowMenuItemVisibility.DeleteRow = false;
         settings.SettingsContextMenu.RowMenuItemVisibility.NewRow = false;
 
-        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.Visible = false;
         settings.CommandColumn.Width = Unit.Percentage(5);
 
         settings.SettingsBehavior.EnableCustomizationWindow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = false;
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
         settings.SettingsBehavior.AllowEllipsisInText = true;
-        settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
 
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
-        settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
-        //performance tuning
         settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
         //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
-        settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
+        //settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
 
-        settings.CommandColumn.ShowNewButtonInHeader = false;
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
+        settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
+        settings.SettingsDetail.ShowDetailRow = true;
+        settings.SettingsDetail.ShowDetailButtons = true;
 
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-        settings.CommandColumn.ShowEditButton = true;
+        settings.Settings.ShowFilterRow = false;
+        settings.Settings.ShowGroupPanel = false;
+        settings.Settings.ShowFilterRowMenu = false;
 
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
-        settings.CommandColumn.ShowDeleteButton = false;
+        settings.Width = Unit.Percentage(100);
+        settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
+        settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
+        settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
+
+        settings.Styles.RowHotTrack.Cursor = "pointer";
+        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
+        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
+        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
+
+        settings.SettingsPager.Visible = false;
+
+        settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
+        settings.SettingsDetail.ShowDetailRow = true;
 
         settings.KeyFieldName = "id";
+
         settings.CustomJSProperties = (s, e) =>
         {
             MVCxGridView g = (MVCxGridView)s;
@@ -75,31 +84,6 @@
                     break;
             }
         };
-        settings.Settings.ShowFilterRow = false;
-        settings.Settings.ShowGroupPanel = false;
-        settings.Settings.ShowFilterRowMenu = false;
-
-        settings.Width = Unit.Percentage(100);
-        settings.ControlStyle.Paddings.Padding = Unit.Pixel(10);
-        settings.ControlStyle.Border.BorderWidth = Unit.Pixel(0);
-        settings.ControlStyle.BorderBottom.BorderWidth = Unit.Pixel(1);
-
-
-        settings.Styles.RowHotTrack.Cursor = "pointer";
-        settings.Styles.RowHotTrack.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
-        settings.Styles.AlternatingRow.Enabled = DefaultBoolean.True;
-        settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
-        settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
-        settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
-
-        settings.SettingsPager.Visible = false;
-
-        settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
-        settings.SettingsDetail.ShowDetailRow = true;
-
-        settings.Images.DetailCollapsedButton.IconID = IconID.ActionsAdd16x16;
-        settings.Images.DetailExpandedButton.IconID = IconID.ActionsRemove16x16;
-
 
         settings.Columns.Add(column =>
         {
@@ -130,7 +114,6 @@
                 }).Render();
             });
         });
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "name";
@@ -391,7 +374,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetCurrency();
+                combo.DataSource = Session["ComboCurrency"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(50));
                 combo.Columns.Add("name", IWSLocalResource.vat, Unit.Percentage(50));
                 combo.TextFormatString = "{0}-{1}";
@@ -477,7 +460,6 @@
             });
             column.Visible = false;
         });
-
 
         #region Template Edit
 
@@ -941,7 +923,7 @@
                         s.Properties.TextField = "Name";
                         s.Properties.ValueField = "Id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetCurrency();
+                        s.Properties.DataSource = Session["ComboCurrency"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "Id";
@@ -1114,7 +1096,7 @@
                 }).Render();
                 });
             })
-            .Bind(ViewData["company"] ?? templateContent.DataItem)
+            .Bind(ViewBag.Company ?? templateContent.DataItem)
             .Render();
         });
 

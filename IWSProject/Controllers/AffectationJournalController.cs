@@ -26,20 +26,22 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartial()
         {
-            return PartialView("AffectationJournalGridViewPartial", IWSLookUp.GetAffectationJournal());
+            return PartialView(Session["AffectationJournal"]);
         }
 
         [HttpPost, ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] AffectationJournal item)
         {
             item.CompanyID = (string)Session["CompanyID"];
-            ViewData["affectationJournal"] = item;
+            ViewBag.AffectationDraft = item;
             if (ModelState.IsValid)
             {
                 try
                 {
                     db.AffectationJournals.InsertOnSubmit(item);
                     db.SubmitChanges();
+                    Session["AffectationJournal"] = IWSLookUp.GetAffectationJournal();
+                    return PartialView("AffectationJournalGridViewPartial", Session["AffectationJournal"]);
                 }
                 catch (Exception e)
                 {
@@ -51,14 +53,14 @@ namespace IWSProject.Controllers
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
             ViewBag.Aff = IWSLookUp.GetAffectationJournal();
-            return PartialView("AffectationJournalGridViewPartial", ViewBag.Aff);
+            return PartialView("AffectationJournalGridViewPartial", item);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] AffectationJournal item)
         {
             var model = db.AffectationJournals;
             item.CompanyID = (string)Session["CompanyID"];
-            ViewData["affectationJournal"] = item;
+            ViewBag.AffectationDraft = item;
             if (ModelState.IsValid)
             {
                 try
@@ -72,6 +74,8 @@ namespace IWSProject.Controllers
                     {
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
+                        Session["AffectationJournal"] = IWSLookUp.GetAffectationJournal();
+                        return PartialView("AffectationJournalGridViewPartial", Session["AffectationJournal"]);
                     }
                 }
                 catch (Exception e)
@@ -83,8 +87,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            ViewBag.Aff = IWSLookUp.GetAffectationJournal();
-            return PartialView("AffectationJournalGridViewPartial", ViewBag.Aff);
+            return PartialView("AffectationJournalGridViewPartial", item);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult AffectationJournalGridViewPartialDelete(string accountID, bool side, string oaccountID)
@@ -100,28 +103,26 @@ namespace IWSProject.Controllers
                                                     );
                 if (item != null)
                     model.DeleteOnSubmit(item);
-
                 db.SubmitChanges();
+                Session["AffectationJournal"] = IWSLookUp.GetAffectationJournal();
             }
             catch (Exception e)
             {
                 ViewData["GenericError"] = e.Message;
             }
-            ViewBag.Aff = IWSLookUp.GetAffectationJournal();
-            return PartialView("AffectationJournalGridViewPartial", ViewBag.Aff);
+            return PartialView("AffectationJournalGridViewPartial", Session["AffectationJournal"]);
         }
         public ActionResult AccountIdComboBox()
         {
-            object dataObject = IWSLookUp.GetAccounts();
+            object dataObject = Session["ComboAccounts"];
 
             MVCxColumnComboBoxProperties combo = IWSComboBoxHelper.CreateComboBox("AffectationJournal", "AccountIdComboBox", 
                                                                             "Name", "id", dataObject);
-
             return GridViewExtension.GetComboBoxCallbackResult(combo);
         }
         public ActionResult AffectationJournalView()
         {
-            return PartialView(IWSLookUp.GetAffectationJournal());
+            return PartialView(Session["AffectationJournal"]);
         }
     }
 }

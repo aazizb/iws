@@ -24,7 +24,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult StoresGridViewPartial()
         {
-            return PartialView("StoresGridViewPartial", IWSLookUp.GetStores());
+            return PartialView(Session["Stores"]);
         }
 
         [HttpPost, ValidateInput(false)]
@@ -34,16 +34,17 @@ namespace IWSProject.Controllers
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Store;
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
-            ViewData["stores"] = item;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
+            ViewBag.Store = item;
             if (ModelState.IsValid)
             {
                 try
                 {
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
-                    return PartialView("StoresGridViewPartial", IWSLookUp.GetStores());
+                    Session["Stores"] = IWSLookUp.GetStores();
+                    return PartialView("StoresGridViewPartial", Session["Stores"]);
                 }
                 catch (Exception e)
                 {
@@ -61,7 +62,7 @@ namespace IWSProject.Controllers
         public ActionResult StoresGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Store item)
         {
             var model = db.Stores;
-            ViewData["stores"] = item;
+            ViewBag.Store = item;
             if (ModelState.IsValid)
             {
                 try
@@ -71,7 +72,8 @@ namespace IWSProject.Controllers
                     {
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
-                        return PartialView("StoresGridViewPartial", IWSLookUp.GetStores());
+                        Session["Stores"] = IWSLookUp.GetStores();
+                        return PartialView("StoresGridViewPartial", Session["Stores"]);
                     }
                 }
                 catch (Exception e)
@@ -109,7 +111,7 @@ namespace IWSProject.Controllers
         }
         public ActionResult StoreView()
         {
-            return PartialView(IWSLookUp.GetStores());
+            return PartialView(Session["Stores"]);
         }
     }
 }

@@ -6,7 +6,7 @@
     {
         settings.Name = "DetailGridView";
         settings.Width = Unit.Percentage(100);
-        settings.Caption = IWSLookUp.GetComptaDetailCaption((int)Session["ModelId"]);
+        settings.Caption = IWSLocalResource.Detail;
         settings.SettingsDetail.MasterGridName = "MasterGridViewPartial";
         settings.CallbackRouteValues = new { Controller = "MasterCompta", Action = "DetailGridViewPartial", transid = Session["transid"] };
 
@@ -17,8 +17,9 @@
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
         settings.SettingsContextMenu.Enabled = true;
 
-        settings.ClientSideEvents.RowClick = "OnDRowClick";
-        settings.ClientSideEvents.RowDblClick = "OnDRowClick";
+        //settings.ClientSideEvents.RowClick = "OnDRowClick";
+        //settings.ClientSideEvents.RowDblClick = "OnDRowClick";
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
         settings.ClientSideEvents.Init = "OnDInit";
 
         settings.SettingsBehavior.EnableCustomizationWindow = true;
@@ -64,20 +65,20 @@
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
         settings.CommandColumn.ShowNewButtonInHeader = true;
-        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowEditButton = false;
         settings.CommandColumn.ShowDeleteButton = true;
 
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
+        //settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
+        //settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
+        //settings.SettingsCommandButton.NewButton.Text = " ";
 
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
+        //settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
+        //settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
+        //settings.SettingsCommandButton.EditButton.Text = " ";
 
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
+        //settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
+        //settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
+        //settings.SettingsCommandButton.DeleteButton.Text = " ";
 
         settings.SettingsDataSecurity.AllowDelete = !(bool)Session["IsValidated"];
         settings.SettingsDataSecurity.AllowEdit = !(bool)Session["IsValidated"];
@@ -86,7 +87,7 @@
         settings.InitNewRow = (s, e) =>
         {
             e.NewValues["Currency"] = ViewBag.DefaultCurrency;
-            e.NewValues["duedate"] = IWSLookUp.GetCurrentDateTime();// DateTime.Today;
+            e.NewValues["duedate"] = IWSLookUp.GetCurrentDateTime();
             e.NewValues["side"] = true;
         };
         settings.PreRender = (sender, e) =>
@@ -97,6 +98,16 @@
                 g.AddNewRow();
             }
         };
+        // settings.CommandColumn.SetHeaderTemplateContent(c =>
+        // {
+        //     Html.DevExpress().Button(btnSettings =>
+        //     {
+        //         btnSettings.Name = "btnNewDetail";
+        //         btnSettings.Text = IWSLocalResource.btnAddNew;
+        //         btnSettings.Images.Image.IconID = IconID.ActionsAdditem16x16;
+        //         btnSettings.ClientSideEvents.Click = string.Format("function(s, e) {{ {0}.AddNewRow(); }}", settings.Name);
+        //     }).Render();
+        // });
         settings.KeyFieldName = "id";
 
         settings.Columns.Add(column =>
@@ -109,7 +120,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id").Caption = IWSLocalResource.id;
                 combo.Columns.Add("name").Caption = IWSLocalResource.item;
                 combo.Width = Unit.Percentage(100);
@@ -135,7 +146,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetAccounts();
+                combo.DataSource = Session["ComboAccounts"];
                 combo.Columns.Add("id").Caption = IWSLocalResource.id;
                 combo.Columns.Add("name").Caption = IWSLocalResource.item;
                 combo.Width = Unit.Percentage(100);
@@ -165,7 +176,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetCurrency();
+                combo.DataSource = Session["ComboCurrency"];
                 combo.Columns.Add("id").Caption = IWSLocalResource.id;
                 combo.Columns.Add("name").Caption = IWSLocalResource.Currency;
                 combo.Width = Unit.Percentage(100);
@@ -197,17 +208,17 @@
             column.Width = Unit.Percentage(20);
         });
 
-#region Template
+        #region Template
 
-settings.SetEditFormTemplateContent(templateContent =>
+        settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
             {
 
-        #region Button
+                #region Button
 
-        formLayoutSettings.Items.AddEmptyItem();
+                formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
@@ -241,9 +252,9 @@ settings.SetEditFormTemplateContent(templateContent =>
                     btnSettings.TabIndex = 9;
                 }).Render();
                 });
-        #endregion
+                #endregion
 
-        formLayoutSettings.Name = "DetailGridViewEdit";
+                formLayoutSettings.Name = "DetailGridViewEdit";
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 3;
                 formLayoutSettings.Items.Add(i =>
@@ -255,7 +266,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -286,9 +297,10 @@ settings.SetEditFormTemplateContent(templateContent =>
                     i.NestedExtensionType = FormLayoutNestedExtensionItemType.DateEdit;
                     i.NestedExtension().DateEdit(d =>
                     {
-                        d.Properties.EditFormatString = "MM/dd/yyyy";
-                        d.Properties.NullDisplayText = "MM/dd/yyyy";
+                        d.Properties.UseMaskBehavior = true;
+                        d.Properties.NullText = "yyyy-MM-dd";
                         d.Properties.EditFormat = EditFormat.Custom;
+                        d.Properties.EditFormatString = "yyyy-MM-dd";
                         d.Width = Unit.Percentage(92);
                         d.Properties.DisplayFormatString = "yyyy-MM-dd";
                         d.Properties.DisplayFormatInEditMode = true;
@@ -306,7 +318,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetAccounts();
+                        s.Properties.DataSource = Session["ComboAccounts"];
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -362,7 +374,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetCurrency();
+                        s.Properties.DataSource = Session["ComboCurrency"];
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -396,13 +408,13 @@ settings.SetEditFormTemplateContent(templateContent =>
                     });
                 });
             })
-                    .Bind(ViewData["line"] ?? templateContent.DataItem)
+                    .Bind(ViewBag.DetailCompta ?? templateContent.DataItem)
                     .Render();
         });
 
-#endregion
+        #endregion
 
-settings.DataBinding = (sender, e) =>
+        settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(DetailCompta));
         };

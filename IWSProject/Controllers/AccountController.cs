@@ -62,11 +62,9 @@ namespace IWSProject.Controllers
                         string user = model.UserName;
                         Session["UserName"] = user;
 
-                        if (Session["CompanyID"] != null)
-                            Session["CompanyID"] = null;
+                        GetTimeZoneInfo();
 
                         string companyId= IWSLookUp.GetCompany(model.UserName);
-
                         Session["CompanyID"] = companyId;
 
                         Session["TimeZoneId"] = IWSLookUp.GetTimeZoneId(companyId);
@@ -75,7 +73,94 @@ namespace IWSProject.Controllers
                         {
                             Session["Menus"] = IWSLookUp.GetMenu(companyId);
                         }
-
+                        if (Session["ComboAccounts"] == null)
+                        {
+                            Session["ComboAccounts"] = IWSLookUp.GetAccounts();
+                        }
+                        if (Session["Articles"] == null)
+                        {
+                            Session["Articles"] = IWSLookUp.GetArticles();
+                        }
+                        if (Session["Accounts"] == null)
+                        {
+                            Session["Accounts"] = IWSLookUp.GetAccount();
+                        }
+                        if (Session["VAT"] == null)
+                        {
+                            Session["VAT"] = IWSLookUp.GetVats();
+                        }
+                        if (Session["ComboVAT"] == null)
+                        {
+                            Session["ComboVAT"] = IWSLookUp.GetVAT();
+                        }
+                        if (Session["Banks"] == null)
+                        {
+                            Session["Banks"] = IWSLookUp.GetBanks();
+                        }
+                        if (Session["ComboBanks"] == null)
+                        {
+                            Session["ComboBanks"] = IWSLookUp.GetBIC();
+                        }
+                        if (Session["CostCenters"] == null)
+                        {
+                            Session["CostCenters"] = IWSLookUp.GetCostCenter(); 
+                        }
+                        if (Session["ComboCostCenters"] == null)
+                        {
+                            Session["ComboCostCenters"] = IWSLookUp.GetCostCenters();
+                        }
+                        if (Session["QuantityUnits"] == null)
+                        {
+                            Session["QuantityUnits"] = IWSLookUp.GetQuantityUnits();
+                        }
+                        if (Session["Stores"] == null)
+                        {
+                            Session["Stores"] = IWSLookUp.GetStores();
+                        }
+                        if (Session["ComboStores"] == null)
+                        {
+                            Session["ComboStores"] = IWSLookUp.GetStore();
+                        }
+                        if (Session["Currencies"] == null)
+                        {
+                            Session["Currencies"] = IWSLookUp.GetCurrencies();
+                        }
+                        if (Session["ComboCurrency"] == null)
+                        {
+                            Session["ComboCurrency"] = IWSLookUp.GetCurrency();
+                        }
+                        if (Session["TypeJournal"] == null)
+                        {
+                            Session["TypeJournal"] = IWSLookUp.GetTypeJournals();
+                        }
+                        if (Session["ComboTypeJournal"] == null)
+                        {
+                            Session["ComboTypeJournal"] = IWSLookUp.GetTypeJournal();
+                        }
+                        if (Session["AffectatioJournal"] == null)
+                        {
+                            Session["AffectationJournal"] = IWSLookUp.GetAffectationJournal();
+                        }
+                        if (Session["Assets"] == null)
+                        {
+                            Session["Assets"] = IWSLookUp.GetAssets();
+                        }
+                        if (Session["Journal"] == null)
+                        {
+                            Session["Journal"] = IWSLookUp.GetTypeJournal();
+                        }
+                        if (Session["Customers"] == null)
+                        {
+                            Session["Customers"] = IWSLookUp.GetCustomer();
+                        }
+                        if (Session["Suppliers"] == null)
+                        {
+                            Session["Suppliers"] = IWSLookUp.GetSupplier();
+                        }
+                        if (Session["Company"] == null)
+                        {
+                            Session["Company"] = IWSLookUp.GetCompany();
+                        }
                         return RedirectToLocal(returnUrl);
                     case SignInStatus.LockedOut:
                         return View("Lockout");

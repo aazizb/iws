@@ -17,16 +17,13 @@
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
         settings.SettingsContextMenu.Enabled = true;
 
-        //settings.ClientSideEvents.RowClick = "OnMRowClick";
-        //settings.ClientSideEvents.RowDblClick = "OnMRowClick";
         settings.ClientSideEvents.Init = "OnMInit";
         settings.ClientSideEvents.SelectionChanged = "OnMSelectionChanged";
         settings.ClientSideEvents.BeginCallback = "OnMBeginCallback";
         settings.ClientSideEvents.EndCallback = "OnMEndCallback";
-        settings.ClientSideEvents.DetailRowCollapsing = "OnDetailRowCollapsing";
-        settings.ClientSideEvents.DetailRowExpanding = "OnDetailRowExpanding";
 
         settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
         settings.SettingsBehavior.EnableCustomizationWindow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
@@ -62,29 +59,30 @@
         settings.SettingsPager.PageSize = 19;
 
         settings.SettingsDetail.AllowOnlyOneMasterRowExpanded = true;
+        settings.SettingsDetail.ShowDetailButtons = true;
         settings.SettingsDetail.ShowDetailRow = true;
 
-        settings.Images.DetailCollapsedButton.IconID = IconID.ActionsAdd16x16;
-        settings.Images.DetailExpandedButton.IconID = IconID.ActionsRemove16x16;
+        //settings.Images.DetailCollapsedButton.IconID = IconID.ActionsAdd16x16;
+        //settings.Images.DetailExpandedButton.IconID = IconID.ActionsRemove16x16;
 
         settings.CommandColumn.Visible = true;
-        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowEditButton = false;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowSelectCheckbox = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
         settings.CommandColumn.Width = Unit.Percentage(8);
 
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
+        //settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
+        //settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
+        //settings.SettingsCommandButton.NewButton.Text = " ";
 
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
+        //settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
+        //settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
+        //settings.SettingsCommandButton.EditButton.Text = " ";
 
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
+        //settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
+        //settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
+        //settings.SettingsCommandButton.DeleteButton.Text = " ";
 
         settings.CommandColumn.SetHeaderTemplateContent(c =>
         {
@@ -142,9 +140,9 @@
         settings.InitNewRow = (s, e) =>
         {
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            e.NewValues["TransDate"] = dateTime;// DateTime.Today;
-            e.NewValues["ItemDate"] = dateTime;//DateTime.Today;
-            e.NewValues["EntryDate"] = dateTime;//DateTime.Today;
+            e.NewValues["TransDate"] = dateTime;
+            e.NewValues["ItemDate"] = dateTime;
+            e.NewValues["EntryDate"] = dateTime;
             e.NewValues["IsValidated"] = false;
             e.NewValues["oid"] = 0;
         };
@@ -203,7 +201,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetCostCenters();
+                combo.DataSource = Session["ComboCostCenters"];
                 combo.Columns.Add("id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("name", IWSLocalResource.costcenters, Unit.Percentage(75));
                 combo.Width = Unit.Percentage(100);
@@ -221,7 +219,7 @@
                 combo.TextField = "Name";
                 combo.ValueField = "Id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetTypeJournal();
+                combo.DataSource = Session["ComboTypeJournal"];
                 combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(20));
                 combo.Columns.Add("Name", IWSLocalResource.TypeJournal, Unit.Percentage(80));
                 combo.TextFormatString = "{0}-{1}";
@@ -252,8 +250,8 @@
             column.Width = Unit.Percentage(8);
             column.EditorProperties().DateEdit(d =>
             {
-                d.EditFormatString = "MM/dd/yyyy";
-                d.NullDisplayText = "MM/dd/yyyy";
+                d.EditFormatString = "yyyy-MM-dd";
+                d.NullDisplayText = "yyyy-MM-dd";
                 d.EditFormat = EditFormat.Custom;
                 d.Width = Unit.Percentage(100);
                 d.DisplayFormatString = "yyyy-MM-dd";
@@ -271,8 +269,8 @@
             column.Width = Unit.Percentage(8);
             column.EditorProperties().DateEdit(d =>
             {
-                d.EditFormatString = "MM/dd/yyyy";
-                d.NullDisplayText = "MM/dd/yyyy";
+                d.EditFormatString = "yyyy-MM-dd";
+                d.NullDisplayText = "yyyy-MM-dd";
                 d.EditFormat = EditFormat.Custom;
                 d.Width = Unit.Percentage(100);
                 d.DisplayFormatString = "yyyy-MM-dd";
@@ -290,8 +288,8 @@
             column.Width = Unit.Percentage(8);
             column.EditorProperties().DateEdit(d =>
             {
-                d.EditFormatString = "MM/dd/yyyy";
-                d.NullDisplayText = "MM/dd/yyyy";
+                d.EditFormatString = "yyyy-MM-dd";
+                d.NullDisplayText = "yyyy-MM-dd";
                 d.EditFormat = EditFormat.Custom;
                 d.Width = Unit.Percentage(100);
                 d.DisplayFormatString = "yyyy-MM-dd";
@@ -490,9 +488,12 @@
                     i.NestedExtension().DateEdit(s =>
                     {
                         s.Properties.UseMaskBehavior = true;
-                        s.Properties.EditFormat = EditFormat.Date;
-                        s.Properties.EditFormatString = "d";
+                        s.Properties.NullText = "yyyy-MM-dd";
+                        s.Properties.EditFormat = EditFormat.Custom;
+                        s.Properties.EditFormatString = "yyyy-MM-dd";
                         s.Width = Unit.Percentage(93);
+                        s.Properties.DisplayFormatString = "yyyy-MM-dd";
+                        s.Properties.DisplayFormatInEditMode = true;
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
                         s.TabIndex = 5;
@@ -507,7 +508,7 @@
                         s.Properties.TextField = "Name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetCostCenter();
+                        s.Properties.DataSource = Session["ComboCostCenters"];
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "id";
@@ -536,12 +537,15 @@
                     i.NestedExtension().DateEdit(s =>
                     {
                         s.Properties.UseMaskBehavior = true;
-                        s.Properties.EditFormat = EditFormat.Date;
-                        s.Properties.EditFormatString = "d";
+                        s.Properties.NullText = "yyyy-MM-dd";
+                        s.Properties.EditFormat = EditFormat.Custom;
+                        s.Properties.EditFormatString = "yyyy-MM-dd";
                         s.Width = Unit.Percentage(93);
+                        s.Properties.DisplayFormatString = "yyyy-MM-dd";
+                        s.Properties.DisplayFormatInEditMode = true;
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
-                        //s.ReadOnly = true;
+                        s.ReadOnly = true;
                         s.TabIndex = 6;
                     });
                 });
@@ -582,13 +586,16 @@
                     i.NestedExtension().DateEdit(s =>
                     {
                         s.Properties.UseMaskBehavior = true;
-                        s.Properties.EditFormat = EditFormat.Date;
-                        s.Properties.EditFormatString = "d";
+                        s.Properties.NullText = "yyyy-MM-dd";
+                        s.Properties.EditFormat = EditFormat.Custom;
+                        s.Properties.EditFormatString = "yyyy-MM-dd";
                         s.Width = Unit.Percentage(93);
+                        s.Properties.DisplayFormatString = "yyyy-MM-dd";
+                        s.Properties.DisplayFormatInEditMode = true;
                         s.Properties.AllowUserInput = true;
                         s.Properties.AllowMouseWheel = true;
+                        s.ReadOnly = true;
                         s.TabIndex = 7;
-                        //s.ReadOnly = true;
                     });
                 });
                 formLayoutSettings.Items.AddEmptyItem();
@@ -601,7 +608,7 @@
                         s.Properties.TextField = "Name";
                         s.Properties.ValueField = "Id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetTypeJournal();
+                        s.Properties.DataSource = Session["ComboTypeJournal"];
                         s.Properties.Columns.Add(a =>
                         {
                             a.FieldName = "Id";
@@ -637,7 +644,7 @@
                     });
                 });
             })
-            .Bind(ViewData["item"] ?? c.DataItem)
+            .Bind(ViewBag.MasterCompta ?? c.DataItem)
             .Render();
         });
         #endregion

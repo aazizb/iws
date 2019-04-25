@@ -13,16 +13,15 @@
         settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Currencies", Action = "CurrenciesGridViewPartialDelete" };
 
         settings.ClientSideEvents.CustomizationWindowCloseUp = "CustomizationWindowCloseUp";
-
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
         settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
         settings.SettingsContextMenu.Enabled = true;
 
         settings.CommandColumn.Visible = true;
-        settings.CommandColumn.Width = Unit.Pixel(80);
-        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.Width = Unit.Percentage(8);
+        settings.CommandColumn.ShowEditButton = false;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
-
 
         settings.SettingsBehavior.EnableCustomizationWindow = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
@@ -39,20 +38,6 @@
         settings.Styles.AlternatingRow.BackColor = System.Drawing.Color.WhiteSmoke;
         settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
         settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
-
-        settings.ClientSideEvents.RowDblClick = "function(s, e) { s.StartEditRow(e.visibleIndex); }";
-
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
-
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
 
         settings.KeyFieldName = "Id";
         settings.CustomJSProperties = (s, e) =>
@@ -92,7 +77,8 @@
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
 
-        settings.SettingsPager.PageSize = 19;
+        settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "20", "25", "30", "40", "45", "50" };
+        settings.SettingsPager.PageSize = 20;
 
         settings.Columns.Add("Id").Caption = IWSLocalResource.id;
         settings.Columns.Add("Name").Caption = IWSLocalResource.name;
@@ -129,6 +115,7 @@
             column.Caption = IWSLocalResource.description;
             column.Width = Unit.Percentage(25);
         });
+
         #region Template Edit
         settings.SetEditFormTemplateContent(templateContent =>
         {
@@ -221,7 +208,7 @@
                 }).Render();
                 });
             })
-            .Bind(ViewBag.Currencies ?? templateContent.DataItem)
+            .Bind(ViewBag.Currency ?? templateContent.DataItem)
             .Render();
         });
         #endregion

@@ -15,7 +15,7 @@ namespace IWSProject.Controllers
         {
             db = new IWSDataContext();
         }
-        // GET: costcenters
+        // GET: CostCenters
         public ActionResult Index()
         {
             return View();
@@ -23,7 +23,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult CostCentersGridViewPartial()
         {
-            return PartialView("CostCentersGridViewPartial", IWSLookUp.GetCostCenter());
+            return PartialView(Session["CostCenters"]);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult CostCentersGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))]CostCenter item)
@@ -32,16 +32,17 @@ namespace IWSProject.Controllers
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.CostCenter;
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
-            ViewData["costCenters"] = item;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
+            ViewBag.CostCenter = item;
             if (ModelState.IsValid)
             {
                 try
                 {
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
-                    return PartialView("CostCentersGridViewPartial", IWSLookUp.GetCostCenter());
+                    Session["CostCenters"] = IWSLookUp.GetCostCenter();
+                    return PartialView("CostCentersGridViewPartial", Session["CostCenters"]);
                 }
                 catch (Exception e)
                 {
@@ -52,7 +53,6 @@ namespace IWSProject.Controllers
             else
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
-
             }
             return PartialView("CostCentersGridViewPartial", item);
         }
@@ -60,7 +60,7 @@ namespace IWSProject.Controllers
         public ActionResult CostCentersGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))]CostCenter item)
         {
             var model = db.CostCenters;
-            ViewData["costCenters"] = item;
+            ViewBag.CostCenter = item;
             if (ModelState.IsValid)
             {
                 try
@@ -70,7 +70,8 @@ namespace IWSProject.Controllers
                     {
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
-                        return PartialView("CostCentersGridViewPartial", IWSLookUp.GetCostCenter());
+                        Session["CostCenters"] = IWSLookUp.GetCostCenter();
+                        return PartialView("CostCentersGridViewPartial", Session["CostCenters"]);
                     }
                 }
                 catch (Exception e)
@@ -81,7 +82,6 @@ namespace IWSProject.Controllers
             }
             else
             {
-
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
             return PartialView("CostCentersGridViewPartial", item);
@@ -98,6 +98,7 @@ namespace IWSProject.Controllers
                     if (item != null)
                         model.DeleteOnSubmit(item);
                     db.SubmitChanges();
+                    Session["CostCenters"] = IWSLookUp.GetCostCenter();
                 }
                 catch (Exception e)
                 {
@@ -105,11 +106,11 @@ namespace IWSProject.Controllers
                     IWSLookUp.LogException(e);
                 }
             }
-            return PartialView("CostCentersGridViewPartial", IWSLookUp.GetCostCenter());
+            return PartialView("CostCentersGridViewPartial", Session["CostCenters"]);
         }
         public ActionResult CostCenterView()
         {
-            return PartialView(IWSLookUp.GetCostCenter());
+            return PartialView(Session["CostCenters"]);
         }
     }
 }

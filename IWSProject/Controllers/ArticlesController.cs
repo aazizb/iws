@@ -24,7 +24,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult ArticlesGridViewPartial()
         {
-            return PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
+            return PartialView(Session["Articles"]);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult ArticlesGridViewPartialAddNew([ModelBinder(typeof(DevExpressEditorsBinder))] Article item)
@@ -33,9 +33,9 @@ namespace IWSProject.Controllers
             var model = db.Articles;
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Article;
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
-            ViewData["article"] = item;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
+            ViewData["Article"] = item;
             if (ModelState.IsValid)
             {
                 try
@@ -43,7 +43,8 @@ namespace IWSProject.Controllers
                     model.InsertOnSubmit(item);
 
                     db.SubmitChanges();
-                    return PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
+                    Session["Articles"] = IWSLookUp.GetArticles();
+                    return PartialView("ArticlesGridViewPartial", Session["Articles"]);
                 }
                 catch (Exception e)
                 {
@@ -55,13 +56,13 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
+            return PartialView("ArticlesGridViewPartial", item);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult ArticlesGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] Article item)
         {
             var model = db.Articles;
-            ViewData["article"] = item;
+            ViewData["Article"] = item;
             if (ModelState.IsValid)
             {
                 try
@@ -73,7 +74,8 @@ namespace IWSProject.Controllers
                         this.UpdateModel(modelItem);
 
                         db.SubmitChanges();
-                        PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
+                        Session["Articles"] = IWSLookUp.GetArticles();
+                        return PartialView("ArticlesGridViewPartial", Session["Articles"]);
                     }
                 }
                 catch (Exception e)
@@ -86,7 +88,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
+            return PartialView("ArticlesGridViewPartial", item);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult ArticlesGridViewPartialDelete(string id)
@@ -99,9 +101,8 @@ namespace IWSProject.Controllers
                     var item = model.FirstOrDefault(it => it.id == id);
                     if (item != null)
                         model.DeleteOnSubmit(item);
-
                     db.SubmitChanges();
-
+                    Session["Articles"] = IWSLookUp.GetArticles();
                 }
                 catch (Exception e)
                 {
@@ -109,12 +110,12 @@ namespace IWSProject.Controllers
                     IWSLookUp.LogException(e);
                 }
             }
-            return PartialView("ArticlesGridViewPartial", IWSLookUp.GetArticles());
+            return PartialView("ArticlesGridViewPartial", Session["Articles"]);
         }
 
         public ActionResult ArticleView()
         {
-            return PartialView(IWSLookUp.GetArticles());
+            return PartialView(Session["Articles"]);
         }
     }
 }

@@ -24,15 +24,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult SuppliersGridViewPartial()
         {
-            if (Session["ComboAccounts"] == null)
-            {
-                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
-            }
-            ViewBag.VAT = IWSLookUp.GetVAT();
-
-            ViewBag.Sup = IWSLookUp.GetSupplier();
-  
-            return PartialView("SuppliersGridViewPartial", ViewBag.Sup);
+            return PartialView(Session["Suppliers"]);
         }
 
         [HttpPost, ValidateInput(false)]
@@ -42,16 +34,17 @@ namespace IWSProject.Controllers
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Supplier;
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
-            ViewData["supplier"] = item;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
+            ViewBag.Supplier = item;
             if (ModelState.IsValid)
             {
                 try
                 {
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
-                    return PartialView("SuppliersGridViewPartial", IWSLookUp.GetSupplier());
+                    Session["Suppliers"] = IWSLookUp.GetSupplier();
+                    return PartialView("SuppliersGridViewPartial", Session["Suppliers"]);
                 }
                 catch (Exception e)
                 {
@@ -69,7 +62,7 @@ namespace IWSProject.Controllers
         public ActionResult SuppliersGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))]Supplier item)
         {
             var model = db.Suppliers;
-            ViewData["supplier"] = item;
+            ViewBag.Supplier = item;
             if (ModelState.IsValid)
             {
                 try
@@ -79,7 +72,8 @@ namespace IWSProject.Controllers
                     {
                         this.UpdateModel(modelItem);
                         db.SubmitChanges();
-                        return PartialView("SuppliersGridViewPartial", IWSLookUp.GetSupplier());
+                        Session["Suppliers"] = IWSLookUp.GetSupplier();
+                        return PartialView("SuppliersGridViewPartial", Session["Suppliers"]);
                     }
                 }
                 catch (Exception e)
@@ -106,20 +100,19 @@ namespace IWSProject.Controllers
                     if (item != null)
                         model.DeleteOnSubmit(item);
                     db.SubmitChanges();
+                    Session["Suppliers"] = IWSLookUp.GetSupplier();
                 }
                 catch (Exception e)
                 {
                     ViewData["GenericError"] = e.Message;
                 }
             }
-            return PartialView("SuppliersGridViewPartial", IWSLookUp.GetSupplier());
+            return PartialView("SuppliersGridViewPartial", Session["Suppliers"]);
         }
 
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(string owner)
         {
-            ViewBag.BIC = IWSLookUp.GetBIC();
-
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
         [HttpPost, ValidateInput(false)]
@@ -129,7 +122,8 @@ namespace IWSProject.Controllers
 
             line.Owner = owner;
             line.CompanyID = (string)Session["CompanyID"];
-            ViewData["bankAccount"] = line;
+
+            ViewBag.BankAccount = line;
 
             if (ModelState.IsValid)
             {
@@ -159,7 +153,7 @@ namespace IWSProject.Controllers
 
             line.Owner = owner;
 
-            ViewData["bankAccount"] = line;
+            ViewBag.BankAccount = line;
             if (ModelState.IsValid)
             {
                 try
@@ -215,7 +209,9 @@ namespace IWSProject.Controllers
             {
                 Session["ComboAccounts"] = IWSLookUp.GetAccounts();
             }
-            return PartialView(IWSLookUp.GetSupplier());
+            if(Session["Suppliers"] == null)
+            Session["Suppliers"] = IWSLookUp.GetSupplier();
+            return PartialView(Session["Suppliers"]);
         }
     }
 }

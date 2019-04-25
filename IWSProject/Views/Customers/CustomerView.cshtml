@@ -26,6 +26,11 @@
     function TrackLayout(layout) {
         $("#LastLayoutCU").text(layout)
     }
+    function OnSelectionChanged(s, e) {
+    if (e.isSelected) {
+        s.ExpandDetailRow(e.visibleIndex);
+    }
+    }
 </script>
 @{
     ViewBag.Title = IWSLocalResource.customer;

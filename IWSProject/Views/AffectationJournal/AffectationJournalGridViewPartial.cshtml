@@ -19,7 +19,7 @@
 
         settings.CommandColumn.Visible = true;
         settings.CommandColumn.Width = Unit.Percentage(5);
-        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.ShowEditButton = false;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
 
@@ -40,25 +40,11 @@
         settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
         settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
-        settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
-        //performance tuning
         settings.ClientSideEvents.Init = "function(s, e) { s.PerformCallback(); }";
-        //settings.ClientSideEvents.BeginCallback = "function(s, e) { OnStartCallback(s, e); }";
+
         settings.ClientSideEvents.EndCallback = "function(s, e) { OnEndCallback(s, e); }";
-
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
-
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
-
 
         settings.InitNewRow = (s, e) =>
         {
@@ -84,7 +70,9 @@
                     break;
             }
         };
+
         settings.KeyFieldName = "AccountID;Side;OAccountID";
+
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRowMenu = true;
@@ -102,7 +90,8 @@
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
 
-        settings.SettingsPager.PageSize = 19;
+        settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "20", "25", "30", "40", "45", "50" };
+        settings.SettingsPager.PageSize = 20;
 
         settings.Columns.Add(column =>
         {
@@ -190,7 +179,6 @@
                 formLayoutSettings.Width = Unit.Percentage(100);
                 formLayoutSettings.ColCount = 3;
                 formLayoutSettings.Items.AddEmptyItem();
-
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.Add(i =>
                 {
@@ -271,7 +259,6 @@
                 });
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
-
                 formLayoutSettings.Items.Add(i =>
                 {
                     i.FieldName = "TypeJournalID";
@@ -317,7 +304,6 @@
                         s.Height = Unit.Pixel(80);
                     });
                 });
-
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
                 formLayoutSettings.Items.AddEmptyItem();
@@ -356,12 +342,11 @@
                 }).Render();
                 });
             })
-            .Bind(ViewData["affectationJournal"] ?? templateContent.DataItem)
+            .Bind(ViewBag.AffectationDraft ?? templateContent.DataItem)
             .Render();
         });
 
         #endregion
-
 
         settings.DataBinding = (sender, e) =>
         {

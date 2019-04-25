@@ -1,5 +1,5 @@
 ﻿@using IWSProject.Content
-@using IWSProject.Models
+@*@using IWSProject.Models*@
 @using IWSProject.Models.Entities
 
 @{
@@ -16,31 +16,21 @@
 
         settings.SettingsEditing.Mode = GridViewEditingMode.EditForm;
         settings.SettingsContextMenu.Enabled = true;
-
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
         settings.SettingsBehavior.ConfirmDelete = true;
         settings.SettingsBehavior.EnableRowHotTrack = true;
         settings.SettingsBehavior.AllowEllipsisInText = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
         settings.SettingsBehavior.ColumnMoveMode = GridColumnMoveMode.AmongSiblings;
+
         settings.SettingsResizing.ColumnResizeMode = ColumnResizeMode.NextColumn;
         settings.SettingsResizing.Visualization = ResizingMode.Live;
 
         settings.CommandColumn.Visible = true;
-        settings.CommandColumn.Width = Unit.Percentage(10);
-        settings.CommandColumn.ShowEditButton = true;
+        settings.CommandColumn.Width = Unit.Percentage(5);
+        settings.CommandColumn.ShowEditButton = false;
         settings.CommandColumn.ShowDeleteButton = true;
         settings.CommandColumn.ShowNewButtonInHeader = true;
-
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
-
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
 
         settings.KeyFieldName = "IBAN";
 
@@ -56,11 +46,10 @@
         settings.Styles.SelectedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
         settings.Styles.FocusedRow.BackColor = System.Drawing.ColorTranslator.FromHtml("#BFDBFF");
 
-        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.Visible = false;
         settings.Settings.ShowGroupPanel = false;
         settings.Settings.ShowFilterRow = true;
         settings.Settings.ShowFilterRowMenu = true;
-        settings.SettingsBehavior.AllowSelectByRowClick = false;
 
         settings.Columns.Add(column =>
         {
@@ -78,13 +67,12 @@
                 combo.TextField = "Name";
                 combo.ValueField = "Id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetBIC();
+                combo.DataSource = Session["ComboBanks"];
                 combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("Name", IWSLocalResource.name, Unit.Percentage(75));
                 combo.TextFormatString = "{0}-{1}";
             });
         });
-
         settings.Columns.Add(column =>
         {
             column.FieldName = "Account";
@@ -95,16 +83,16 @@
                 combo.TextField = "Name";
                 combo.ValueField = "Id";
                 combo.ValueType = typeof(string);
-                combo.DataSource = IWSLookUp.GetBankChildren();
-        combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
+                combo.DataSource = Session["BankChildren"];
+                combo.Columns.Add("Id", IWSLocalResource.id, Unit.Percentage(25));
                 combo.Columns.Add("Name", IWSLocalResource.name, Unit.Percentage(75));
                 combo.TextFormatString = "{0}-{1}";
             });
         });
 
-#region Template
+        #region Template
 
-settings.SetEditFormTemplateContent(templateContent =>
+        settings.SetEditFormTemplateContent(templateContent =>
         {
 
             Html.DevExpress().FormLayout(formLayoutSettings =>
@@ -166,7 +154,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetBIC();
+                        s.Properties.DataSource = Session["ComboBanks"];
                         s.Properties.Columns.Add("id").Caption = IWSLocalResource.bic;
                         s.Properties.Columns.Add("name").Caption = IWSLocalResource.banks;
                         s.Properties.TextFormatString = "{0}-{1}";
@@ -184,7 +172,7 @@ settings.SetEditFormTemplateContent(templateContent =>
                         s.Properties.TextField = "name";
                         s.Properties.ValueField = "id";
                         s.Properties.ValueType = typeof(string);
-                        s.Properties.DataSource = IWSLookUp.GetBankChildren();
+                        s.Properties.DataSource = Session["BankChildren"];
                         s.Properties.Columns.Add(column =>
                         {
                             column.FieldName = "id";
@@ -208,13 +196,13 @@ settings.SetEditFormTemplateContent(templateContent =>
                     });
                 });
             })
-            .Bind(ViewData["bankAccount"] ?? templateContent.DataItem)
+            .Bind(ViewBag.BankAccount ?? templateContent.DataItem)
             .Render();
         });
 
-#endregion
+        #endregion
 
-settings.DataBinding = (sender, e) =>
+        settings.DataBinding = (sender, e) =>
         {
             ((MVCxGridView)sender).ForceDataRowType(typeof(BankAccount));
         };

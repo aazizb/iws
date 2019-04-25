@@ -47,14 +47,14 @@
         settings.ClientSideEvents.SelectionChanged = "OnSelectionChanged";
         settings.ClientSideEvents.BeginCallback = "OnBeginCallback";
 
-        settings.ClientSideEvents.RowDblClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
+        settings.ClientSideEvents.RowClick = "function(sender, e) { sender.StartEditRow(e.visibleIndex); }";
 
         settings.CommandColumn.SetHeaderTemplateContent(c =>
         {
             Html.DevExpress().CheckBox(selectAll =>
             {
                 selectAll.Name = "cbAll";
-                selectAll.Text = IWSLocalResource.Select;
+                selectAll.Text = "";
                 selectAll.Properties.ClientSideEvents.CheckedChanged = "CheckedChanged";
             }).Render();
         });
@@ -80,23 +80,11 @@
             }
         };
 
-        settings.SettingsCommandButton.NewButton.Image.IconID = IconID.ActionsAdditem16x16;
-        settings.SettingsCommandButton.NewButton.Image.ToolTip = IWSLocalResource.btnAddNew;
-        settings.SettingsCommandButton.NewButton.Text = " ";
-
-        settings.SettingsCommandButton.EditButton.Image.IconID = IconID.ActionsEditname16x16;
-        settings.SettingsCommandButton.EditButton.Image.ToolTip = IWSLocalResource.btnEdit;
-        settings.SettingsCommandButton.EditButton.Text = " ";
-
-        settings.SettingsCommandButton.DeleteButton.Image.IconID = IconID.ActionsDeletelist16x16;
-        settings.SettingsCommandButton.DeleteButton.Image.ToolTip = IWSLocalResource.btnDelete;
-        settings.SettingsCommandButton.DeleteButton.Text = " ";
-
         settings.InitNewRow = (s, e) =>
         {
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            e.NewValues["Buchungstag"] = dateTime;// DateTime.Today;
-            e.NewValues["Valutadatum"] = dateTime;// DateTime.Today;
+            e.NewValues["Buchungstag"] = dateTime;
+            e.NewValues["Valutadatum"] = dateTime;
         };
 
         settings.CustomJSProperties = (s, e) =>
@@ -152,7 +140,8 @@
         settings.SettingsPager.LastPageButton.Visible = true;
         settings.SettingsPager.PageSizeItemSettings.Visible = true;
 
-        settings.SettingsPager.PageSize = 19;
+        settings.SettingsPager.PageSizeItemSettings.Items = new string[] { "20", "30", "40", "50", "100", "150" };
+        settings.SettingsPager.PageSize = 20;
 
         settings.Columns.Add(column =>
         {
@@ -491,7 +480,7 @@
         .Bind(ViewData["BankStatement"] ?? templateContent.DataItem)
         .Render();
         });
-        
+
         #endregion
 
         settings.DataBinding = (sender, e) =>
@@ -508,10 +497,10 @@
             });
         }
 
-    settings.SettingsBehavior.AutoExpandAllGroups = true;
-    settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
-    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Betrag").ShowInGroupFooterColumn = "Betrag";
-    settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Waehrung").ShowInGroupFooterColumn = "Waehrung";
+        settings.SettingsBehavior.AutoExpandAllGroups = true;
+        settings.Settings.ShowGroupFooter = GridViewGroupFooterMode.VisibleAlways;
+        settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Sum, "Betrag").ShowInGroupFooterColumn = "Betrag";
+        settings.TotalSummary.Add(DevExpress.Data.SummaryItemType.Custom, "Waehrung").ShowInGroupFooterColumn = "Waehrung";
     });
 
 }

@@ -25,13 +25,7 @@ namespace IWSProject.Controllers
         [ValidateInput(false)]
         public ActionResult CustomersGridViewPartial()
         {
-            if (Session["ComboAccounts"] == null)
-            {
-                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
-            }
-            ViewBag.VAT = IWSLookUp.GetVAT();
-            ViewBag.Cust = IWSLookUp.GetCustomer();
-            return PartialView("CustomersGridViewPartial", ViewBag.Cust);
+            return PartialView(Session["Customers"]);
         }
 
         [HttpPost, ValidateInput(false)]
@@ -41,15 +35,16 @@ namespace IWSProject.Controllers
             item.CompanyID = (string)Session["CompanyID"];
             item.ModelId = (int)IWSLookUp.MetaModelId.Customer;
             DateTime dateTime = IWSLookUp.GetCurrentDateTime();
-            item.Posted = dateTime;// DateTime.Now.Date;
-            item.Updated = dateTime;// DateTime.Now.Date;
-            ViewData["customer"] = item;
+            item.Posted = dateTime;
+            item.Updated = dateTime;
+            ViewBag.Customer = item;
             if (ModelState.IsValid)
             {
                 try
                 {
                     model.InsertOnSubmit(item);
                     db.SubmitChanges();
+                    Session["Customers"] = IWSLookUp.GetCustomer();
                 }
                 catch (Exception e)
                 {
@@ -58,14 +53,16 @@ namespace IWSProject.Controllers
                 }
             }
             else
+            {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
-            return PartialView("CustomersGridViewPartial", IWSLookUp.GetCustomer());
+            }
+            return PartialView("CustomersGridViewPartial", item);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult CustomersGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))]Customer item)
         {
             var model = db.Customers;
-            ViewData["customer"] = item;
+            ViewBag.Customer = item;
             if (ModelState.IsValid)
             {
                 try
@@ -76,6 +73,7 @@ namespace IWSProject.Controllers
                         this.UpdateModel(modelItem);
 
                         db.SubmitChanges();
+                        Session["Customers"] = IWSLookUp.GetCustomer();
                     }
                 }
                 catch (Exception e)
@@ -85,8 +83,10 @@ namespace IWSProject.Controllers
                 }
             }
             else
+            {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
-            return PartialView("CustomersGridViewPartial", IWSLookUp.GetCustomer());
+            }
+            return PartialView("CustomersGridViewPartial", item);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult CustomersGridViewPartialDelete(string id)
@@ -100,6 +100,7 @@ namespace IWSProject.Controllers
                     if (item != null)
                         model.DeleteOnSubmit(item);
                     db.SubmitChanges();
+                    Session["Customers"] = IWSLookUp.GetCustomer();
                 }
                 catch (Exception e)
                 {
@@ -107,14 +108,12 @@ namespace IWSProject.Controllers
                     IWSLookUp.LogException(e);
                 }
             }
-            return PartialView("CustomersGridViewPartial", IWSLookUp.GetCustomer());
+            return PartialView("CustomersGridViewPartial", Session["Customers"]);
         }
 
         [ValidateInput(false)]
         public ActionResult DetailGridViewPartial(string owner)
         {
-            ViewBag.BIC = IWSLookUp.GetBIC();
-
             return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
         }
         [HttpPost, ValidateInput(false)]
@@ -124,7 +123,7 @@ namespace IWSProject.Controllers
 
             line.Owner = owner;
             line.CompanyID = (string)Session["CompanyID"];
-            ViewData["bankAccount"] = line;
+            ViewBag.BankAccount = line;
 
             if (ModelState.IsValid)
             {
@@ -133,6 +132,7 @@ namespace IWSProject.Controllers
                     model.InsertOnSubmit(line);
 
                     db.SubmitChanges();
+                    return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
                 }
                 catch (Exception e)
                 {
@@ -144,7 +144,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
+            return PartialView("DetailGridViewPartial", line);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialUpdate([ModelBinder(typeof(DevExpressEditorsBinder))] BankAccount line, string owner)
@@ -153,7 +153,7 @@ namespace IWSProject.Controllers
 
             line.Owner = owner;
 
-            ViewData["bankAccount"] = line;
+            ViewBag.BankAccount = line;
             if (ModelState.IsValid)
             {
                 try
@@ -165,6 +165,7 @@ namespace IWSProject.Controllers
                         this.UpdateModel(modelItem);
 
                         db.SubmitChanges();
+                        return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
                     }
                 }
                 catch (Exception e)
@@ -177,7 +178,7 @@ namespace IWSProject.Controllers
             {
                 ViewData["GenericError"] = IWSLookUp.GetModelSateErrors(ModelState);
             }
-            return PartialView("DetailGridViewPartial", IWSLookUp.GetBankAccount(owner));
+            return PartialView("DetailGridViewPartial", line);
         }
         [HttpPost, ValidateInput(false)]
         public ActionResult DetailGridViewPartialDelete(string iban, string owner)
@@ -204,11 +205,7 @@ namespace IWSProject.Controllers
 
         public ActionResult CustomerView()
         {
-            if (Session["ComboAccounts"] == null)
-            {
-                Session["ComboAccounts"] = IWSLookUp.GetAccounts();
-            }
-            return PartialView(IWSLookUp.GetCustomer());
+            return PartialView(Session["Customers"]);
         }
     }
 }
